@@ -1,0 +1,99 @@
+toolbar:			raised gradient vertical
+toolbar.color:			rgb:ed/ed/ed
+toolbar.colorTo:		rgb:6b/6b/6b
+toolbar.button:			ParentRelative
+toolbar.button.picColor:	black
+toolbar.button.pressed:		sunken solid
+toolbar.button.pressed.color:	rgb:dd/dd/dd
+toolbar.button.pressed.colorTo:	rgb:80/98/d0
+toolbar.clock:			ParentRelative
+toolbar.clock.textColor:	black
+toolbar.label:			ParentRelative
+toolbar.label.textColor:	black
+toolbar.windowLabel:		ParentRelative
+toolbar.windowLabel.textColor:	black
+toolbar.justify:		center
+
+
+menu.title:			flat gradient vertical
+menu.title.color:		rgb:ed/ed/ed
+menu.title.colorTo:		rgb:6b/6b/6b
+menu.title.textColor:		black
+menu.title.justify:		left
+
+menu.frame:			flat vertical gradient
+menu.frame.color:		rgb:6b/6b/6b
+menu.frame.colorTo:		rgb:dd/dd/dd
+menu.frame.textColor:		black
+menu.frame.justify:		center
+
+menu.hilite:			ParentRelative
+menu.hilite.textColor:		white
+
+menu.bullet:			arrow
+menu.bullet.position:		right
+
+
+window.tab.justify:		center
+window.tab.label.unfocus:		sunken vertical gradient
+window.tab.label.unfocus.color:		rgb:a9/a9/a9
+window.tab.label.unfocus.colorTo:	rgb:29/29/29
+window.tab.label.unfocus.textColor:	black
+
+window.tab.label.focus:			flat vertical gradient
+window.tab.label.focus.color:		rgb:ed/ed/ed
+window.tab.label.focus.colorTo:		rgb:bf/bf/bf
+window.tab.label.focus.textColor:	black
+window.tab.borderWidth:			0
+window.tab.borderColor:			rgb:bf/bf/bf
+
+
+window.title.unfocus:		flat vertical gradient
+window.title.unfocus.color:	rgb:29/29/29
+window.title.unfocus.colorTo:	rgb:a9/a9/a9
+
+window.title.focus:		flat vertical gradient
+window.title.focus.color:	rgb:bf/bf/bf
+window.title.focus.colorTo:	rgb:a9/a9/a9
+
+window.label.focus:		flat vertical gradient
+window.label.focus.color:	rgb:bf/bf/bf
+window.label.focus.colorTo:	rgb:a9/a9/a9
+window.label.focus.textColor:	black
+window.label.unfocus:		ParentRelative
+window.label.unfocus.textColor:	black
+
+window.button.focus:		raised vertical gradient
+window.button.focus.color:	rgb:bf/bf/bf
+window.button.focus.colorTo:	rgb:a9/a9/a9
+window.button.unfocus:		ParentRelative
+window.button.unfocus.picColor:	black
+window.button.pressed:		sunken vertical gradient
+window.button.pressed.color:	rgb:dd/dd/dd
+window.button.pressed.colorTo:	rgb:89/89/89
+
+
+window.frame.focusColor:	rgb:dd/dd/dd
+window.frame.unfocusColor:	rgb:dd/dd/dd
+
+window.handle.focus:		flat solid
+window.handle.focus.color:	rgb:dd/dd/dd
+window.handle.unfocus:		flat solid
+window.handle.unfocus.color:	rgb:dd/dd/dd
+
+window.grip.focus:		raised vertical gradient
+window.grip.focus.color:	rgb:89/89/89
+window.grip.focus.colorTo:	rgb:49/49/49
+window.grip.unfocus:		raised vertical gradient
+window.grip.unfocus.color:	rgb:ee/ee/ee
+window.grip.unfocus.colorTo:	rgb:ad/ad/ad
+
+window.justify:			center
+
+borderColor:			rgb:59/88/8a
+rootCommand:			bsetbg -f ~/.fluxbox/SimpleSmoothGray.jpg
+bevelWidth:			1
+borderWidth:			0
+handleWidth:			2
+
+*Font:	-*-lucida-medium-r-*-*-*-100-*-*-*-*-*-*

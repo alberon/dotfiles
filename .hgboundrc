@@ -1,0 +1,6 @@
+[paths]
+auto-push = http://hg.dave-miller.com/linux-config
+
+[ui]
+bound = True
+

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [ $# -gt 1 ]; then
+  dir=$1
+else
+  dir=.
+fi
+
+find "$dir" -type d -exec chmod g+s '{}' \;
+

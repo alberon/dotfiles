@@ -1,0 +1,129 @@
+style.name:	Sephiroth
+style.author:	DiscoStoo
+style.date:	04/08/02
+style.credits:	Whoever made the bg pic
+style.comments:		
+
+toolbar.button.color:	#000000
+toolbar.button.colorTo:	#010103
+toolbar.button.picColor:	#5e626d
+toolbar.button:	Raised Bevel1 Solid Horizontal
+
+toolbar.button.pressed.color:	#000000
+toolbar.button.pressed.colorTo:	#717580
+toolbar.button.pressed:	Flat Solid Diagonal
+
+toolbar.clock.color:	#000000
+toolbar.clock.colorTo:	#010103
+toolbar.clock.textColor:	#5e626d
+toolbar.clock:	Raised Bevel1 Solid Horizontal
+
+toolbar.color:	#000000
+toolbar.colorTo:	#010103
+toolbar.textColor:	#000000
+toolbar.font:	snap
+toolbar.justify:	Center
+toolbar:	Raised Bevel2 Solid Vertical
+
+toolbar.label.color:	#000000
+toolbar.label.colorTo:	#010103
+toolbar.label.textColor:	#5e626d
+toolbar.label:	Raised Bevel1 Solid Horizontal
+
+toolbar.windowLabel.color:	#000000
+toolbar.windowLabel.colorTo:	#010103
+toolbar.windowLabel.textColor:	#cccccc
+toolbar.windowLabel:	Raised Bevel1 Solid Horizontal
+
+window.button.pressed.color:	#3f3f3f
+window.button.pressed.colorTo:	#010103
+window.button.pressed:	parentrelative
+
+window.button.focus.color:	#5e626d
+window.button.focus.colorTo:	#010103
+window.button.focus.picColor:	#7c808b
+window.button.focus:	parentrelative
+
+window.button.unfocus.color:	#5e626d
+window.button.unfocus.colorTo:	#010103
+window.button.unfocus.picColor:	#484c54
+window.button.unfocus:	parentrelative
+
+window.frame.focus.color:	#5e626d
+window.frame.focus.colorTo:	#000000
+window.frame.focus:	parentrelative
+
+window.frame.unfocus.color:	#5e626d
+window.frame.unfocus.colorTo:	#000000
+window.frame.unfocus:	parentrelative
+
+window.grip.focus.color:	#5e626d
+window.grip.focus.colorTo:	#010103
+window.grip.focus:	parentrelative
+
+window.grip.unfocus.color:	#5e626d
+window.grip.unfocus.colorTo:	#5e626d
+window.grip.unfocus:	parentrelative
+
+window.handle.focus.color:	#5e626d
+window.handle.focus.colorTo:	#5e626d
+window.handle.focus:	parentrelative
+
+window.handle.unfocus.color:	#5e626d
+window.handle.unfocus.colorTo:	#010103
+window.handle.unfocus:	parentrelative
+
+window.font:	snap
+window.justify:	Right
+window.label.focus.color:	#5e626d
+window.label.focus.colorTo:	#010103
+window.label.focus.textColor:	#cccccc
+window.label.focus:	parentrelative
+
+window.label.unfocus.color:	#5e626d
+window.label.unfocus.colorTo:	#010103
+window.label.unfocus.textColor:	#4b4b4b
+window.label.unfocus:	parentrelative
+
+window.title.focus.color:	#1d1e21
+window.title.focus.colorTo:	#010103
+window.title.focus:	Raised Bevel1 Solid Vertical
+
+window.title.unfocus.color:	#000000
+window.title.unfocus.colorTo:	#010103
+window.title.unfocus:	Raised Bevel1 Solid Vertical
+
+menu.frame.color:	#000000
+menu.frame.colorTo:	#363636
+menu.frame.textColor:	#5e626d
+menu.frame.font:	snap
+menu.frame.justify:	Right
+menu.frame:	Flat Solid Diagonal
+
+menu.hilite.color:	#000000
+menu.hilite.colorTo:	#4c4c4c
+menu.hilite.textColor:	#cccccc
+menu.hilite:	Raised Bevel1 Solid CrossDiagonal
+
+menu.title.color:	#000000
+menu.title.colorTo:	#959595
+menu.title.textColor:	#cccccc
+menu.title.font:	snap
+menu.title.justify: Right	
+menu.title:	Raised Bevel1 Solid CrossDiagonal
+
+borderColor:	#5e626d
+
+bevelWidth:	1
+handleWidth:	1
+borderWidth:	1
+frameWidth:	0
+
+menu.bullet:	Triangle
+menu.frame.disableColor:	#000000
+menu.bullet.position:	Right
+
+*Font: snap
+
+rootCommand: Esetroot ~/.fluxbox/backgrounds/sephiroth.jpg
+

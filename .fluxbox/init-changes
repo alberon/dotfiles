@@ -1,0 +1,7 @@
+session.menuFile:	~/.fluxbox/mymenu
+session.keyFile:	~/.fluxbox/mykeys
+session.screen0.reversewheeling:	true
+session.screen0.tabs.intitlebar:	true
+
+session.screen0.rootCommand:	/usr/X11R6/lib/xscreensaver/flurry -root
+

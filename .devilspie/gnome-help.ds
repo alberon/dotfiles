@@ -1,0 +1,2 @@
+if (is (window_class) "Yelp")
+close

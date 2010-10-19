@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# -f to delete the existing configuration
+if [ "$1" = "-f" ]; then
+  rm ~/.bashrc_config
+fi
+
+# Install new .bashrc configuration
+if [ ! -f ~/.bashrc_config ]; then
+  
+  # Check for cPanel server
+  cpanel=0
+  if [ -d /var/cpanel ]; then
+    cpanel=1
+  fi
+  
+  # Generate .bashrc_config
+  echo "auto_screen=0" >> ~/.bashrc_config
+  
+  if [ $cpanel -eq 1 ]; then
+    echo "auto_unlock=0" >> ~/.bashrc_config
+  else
+    echo "auto_unlock=1" >> ~/.bashrc_config
+  fi
+  
+  echo "enable_sudo=0" >> ~/.bashrc_config
+  
+  if [ $cpanel -eq 1 ]; then
+    echo "umask_user=022" >> ~/.bashrc_config
+  else
+    echo "umask_user=007" >> ~/.bashrc_config
+  fi
+  
+  echo "umask_root=022" >> ~/.bashrc_config
+  
+  if which vim >/dev/null 2>&1; then
+    echo "use_vi_for_vim=0" >> ~/.bashrc_config
+  else
+    echo "use_vi_for_vim=1" >> ~/.bashrc_config
+  fi
+  
+  if [ $cpanel -eq 1 ]; then
+    echo "www_dir=~/public_html" >> ~/.bashrc_config
+  else
+    echo "www_dir=" >> ~/.bashrc_config
+  fi
+  
+  # Open in editor
+  if which vim >/dev/null 2>&1; then
+    vim ~/.bashrc_config
+  elif which vi >/dev/null 2>&1; then
+    vi ~/.bashrc_config
+  fi
+  
+fi
+

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+cd
+
+if [ ! -e .hgrc_local ]; then
+  touch .hgrc_local
+  chmod 600 .hgrc_local
+fi
+

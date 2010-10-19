@@ -1,0 +1,219 @@
+# Indent a block tag (<div<TAB>/<TAB>)
+snippet /
+	
+		${1}
+	
+
+#================================================================================
+
+snippet <link
+	<link rel="${1:stylesheet}" href="${2:/css/main.css}" type="text/css" />${3}
+
+snippet <style
+	<style type="text/css">
+	<!--
+	${1}
+	-->
+	</style>${2}
+
+snippet <scr
+	<script src="${1}" type="text/javascript"></script>${2}
+
+snippet <script
+	<script type="text/javascript">
+	//<![CDATA[
+	${1}
+	//]]>
+	</script>${2}
+
+snippet <meta Content-Language
+	<meta name="Content-Language" content="${1:en-GB}" />${2}
+snippet <meta Content-Type
+	<meta name="Content-Type" content="${1:text/html; charset=utf-8}" />${2}
+snippet <meta Other...
+	<meta name="${1:name}" content="${2:content}" />${3}
+
+#================================================================================
+
+snippet <h1
+	<h1>${1}</h1>${2}
+
+snippet <h2
+	<h2>${1}</h2>${2}
+
+snippet <h3
+	<h3>${1}</h3>${2}
+
+snippet <h4
+	<h4>${1}</h4>${2}
+
+snippet <h5
+	<h5>${1}</h5>${2}
+
+snippet <h6
+	<h6>${1}</h6>${2}
+
+#================================================================================
+
+snippet <div
+	<div class="${1}">${2}</div>
+
+snippet <clear
+	<div class="clear"></div>
+
+snippet <p
+	<p>${1}</p>
+
+#================================================================================
+
+snippet <table
+	<table>
+		<tr>
+			<td>${1}</td>${2}
+		</tr>${3}
+	</table>${4}
+
+snippet <tr
+	<tr>
+		<td>${1}</td>${2}
+	</tr>${3}
+
+snippet <th
+	<th>${1}</th>${2}
+
+snippet <td
+	<td>${1}</td>${2}
+
+#================================================================================
+
+snippet <ul
+	<ul>
+		<li>${1}</li>${2}
+	</ul>${3}
+
+snippet <ol
+	<ol>
+		<li>${1}</li>
+	</ol>
+
+snippet <li
+	<li>${1}</li>
+
+#================================================================================
+
+snippet <dl
+	<dl>
+		<dd>${1}</dd>
+		<dt>${2}</dt>
+	</dl>${3}
+
+snippet <dd
+	<dd>${1}</dd>${2}
+
+snippet <dt
+	<dt>${1}</dt>${2}
+
+#================================================================================
+
+snippet <form
+	<form action="${1}" method="post" accept-charset="utf-8">
+		${2}
+	</form>
+
+snippet <fieldset
+	<fieldset>
+		<legend>${1:name}</legend>
+		
+		${2}
+		
+	</fieldset>
+
+snippet <label
+	<label for="${1}">${2}</label>${3}
+
+snippet <input
+	<input type="text" name="${1:name}" id="${2:$1}" value="${3}" />${4}
+
+snippet <hidden
+	<input type="hidden" name="${1:name}" value="${2}" />${3}
+
+snippet <check
+	<input type="checkbox" name="${1:name}" id="${2:$1}" value="${3:1}" />${4}
+
+snippet <checkbox
+	<input type="checkbox" name="${1:name}" id="${2:$1}" value="${3:1}" />${4}
+
+snippet <radio
+	<input type="radio" name="${1:name}" id="${3:$1_$2}" value="${2:value}" />${4}
+
+snippet <textarea
+	<textarea name="${1:name}" id="${2:$1}" rows="${3:5}" cols="${4:40}">${5}</textarea>${6}
+
+snippet <select
+	<select name="${1:name}" id="${2:$1}">
+		<option value="${3:value}">${4:$3}</option>
+	</select>${5}
+
+snippet <opt
+	<option value="${1:value}">${2:$1}</option>${3}
+
+snippet <option
+	<option value="${1:value}">${2:$1}</option>${3}
+
+snippet <submit
+	<input type="submit" value="${1:Submit}" />${2}
+
+#================================================================================
+
+snippet <img
+	<img src="${1}" alt="${2}" width="${3}" height="${4}" />${5}
+
+#================================================================================
+
+snippet <span
+	<span class="${1}">${2}</span>${3}
+
+snippet <a
+	<a href="${1}">${2}</a>${3}
+
+snippet <strong
+	<strong>${1}</strong>${2}
+
+snippet <em
+	<em>${1}</em>${2}
+
+snippet <b
+	<b>${1}</b>${2}
+
+snippet <i
+	<i>${1}</i>${2}
+
+snippet <u
+	<u>${1}</u>${2}
+
+snippet <small
+	<small>${1}</small>${2}
+
+#================================================================================
+
+snippet <br
+	<br />
+
+snippet <hr
+	<hr />
+
+#================================================================================
+
+# Can't use this because it is used for class { } in PHP
+#snippet class
+#	class="${1}"${2}
+
+snippet enctype
+	enctype="multipart/form-data"
+
+snippet href
+	href="${1}"${2}
+
+snippet id
+	id="${1}"${2}
+

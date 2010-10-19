@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if readlink /proc/$$/fd/0 | grep -q "^pipe:"; then
+  input=pipe
+elif file $( readlink /proc/$$/fd/0 ) | grep -q "character special"; then
+  input=keyboard
+else
+  input=file
+fi
+
+if [ "$input" = "keyboard" ]; then
+  echo "Enter key followed by EOF (Ctrl-D)."
+  echo
+fi
+
+mkdir ~/.ssh 2>/dev/null
+cat - >> ~/.ssh/authorized_keys2
+
+fix-ssh-permissions
+
+echo "Key added."
+

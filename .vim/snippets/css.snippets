@@ -1,0 +1,632 @@
+snippet {
+	{
+		${1}
+	}
+
+snippet .
+	.${1:class}
+	{
+		${2}
+	}
+
+snippet #
+	#${1:id}
+	{
+		${2}
+	}
+
+#================================================================================
+
+snippet charset
+	@charset "${1:utf-8}";${2}
+
+snippet import
+	@import url(${1:filename.css})${2: screen};
+
+#================================================================================
+
+snippet media
+	@media ${1:screen}
+	{
+		${2}
+	}
+
+snippet screen
+	@media screen
+	{
+		${1}
+	}
+
+snippet print
+	@media print
+	{
+		${1}
+	}
+
+#================================================================================
+
+snippet /*
+	/* ${1} */
+
+snippet ==
+	/*==============================================================================
+	 ${1}
+	==============================================================================*/
+
+snippet :
+	: ${1};
+
+#================================================================================
+
+# background
+snippet background
+	background: ${1:#fff url(...) no-repeat scroll left top};${2}
+
+snippet bg
+	background: ${1:#fff url(...) no-repeat scroll left top};${2}
+
+# background-attachment
+snippet background-attachment scroll
+	background-attachment: scroll;
+
+snippet background-attachment fixed
+	background-attachment: fixed;
+
+snippet background-attachment inherit
+	background-attachment: inherit;
+
+snippet bga scroll
+	background-attachment: scroll;
+
+snippet bga fixed
+	background-attachment: fixed;
+
+snippet bga inherit
+	background-attachment: inherit;
+
+# background-color
+snippet background-color
+	background-color: ${1};${2}
+
+snippet bgc
+	background-color: ${1};${2}
+
+# background-image
+snippet background-imageolor
+	background-image: ${1};${2}
+
+snippet bgi
+	background-image: ${1};${2}
+
+# background-position
+snippet background-position
+	background-position: ${1:left top};${2}
+
+snippet bgp
+	background-position: ${1:left top};${2}
+
+# background-repeat
+snippet background-repeat repeat
+	background-repeat: repeat;
+
+snippet background-repeat repeat-x
+	background-repeat: repeat-x;
+
+snippet background-repeat repeat-y
+	background-repeat: repeat-y;
+
+snippet background-repeat no-repeat
+	background-repeat: no-repeat;
+
+snippet background-repeat inherit
+	background-repeat: inherit;
+
+snippet bgr repeat
+	background-repeat: repeat;
+
+snippet bgr repeat-x
+	background-repeat: repeat-x;
+
+snippet bgr repeat-y
+	background-repeat: repeat-y;
+
+snippet bgr no-repeat
+	background-repeat: no-repeat;
+
+snippet bgr inherit
+	background-repeat: inherit;
+
+# border
+snippet border
+	border: ${1:1px solid #000};${2}
+
+snippet bordert
+	border-top: ${1:1px solid #000};${2}
+
+snippet borderl
+	border-left: ${1:1px solid #000};${2}
+
+snippet borderr
+	border-right: ${1:1px solid #000};${2}
+
+snippet borderb
+	border-bottom: ${1:1px solid #000};${2}
+
+# bottom
+snippet bottom
+	bottom: ${1};${2}
+
+# clear
+snippet clear both
+	clear: both;
+
+snippet clear left
+	clear: left;
+
+snippet clear right
+	clear: right;
+
+snippet cboth
+	clear: both;
+
+snippet cleft
+	clear: left;
+
+snippet cright
+	clear: right;
+
+# color
+snippet color
+	color: #${1};${2}
+
+# display
+snippet display none
+	display: none;
+
+snippet display block
+	display: block;
+
+snippet display inline
+	display: inline;
+
+snippet hide
+	display: none;
+
+snippet block
+	display: block;
+
+snippet inline
+	display: inline;
+
+# float
+snippet float left
+	float: left;
+
+snippet float right
+	float: right;
+
+snippet float none
+	float: none;
+
+snippet fleft
+	float: left;
+
+snippet fright
+	float: right;
+
+snippet fnone
+	float: none;
+
+# font
+snippet font
+	font: ${1:italic }${2:small-caps }${3:bold }${4:14px}${5:/18px }${6:Arial}${7:,sans-serif};${8}
+
+# font-family
+snippet font-family
+	font-family: ${1:Arial}${2:, sans-serif};${3}
+
+# font-size
+snippet font-size
+	font-size: ${1:13}${2:px};${3}
+
+# font-style
+snippet font-style italic
+	font-style: italic;
+
+snippet font-style normal
+	font-style: normal;
+
+snippet italic
+	font-style: italic;
+
+snippet noitalic
+	font-style: normal;
+
+# font-variant
+snippet font-variant normal
+	font-variant: normal;
+
+snippet font-variant small-caps
+	font-variant: small-caps;
+
+snippet font-variant inherit
+	font-variant: inherit;
+
+# font-weight
+snippet font-weight normal
+	font-weight: bold;
+
+snippet font-weight bold
+	font-weight: bold;
+
+snippet bold
+	font-weight: bold;
+
+snippet nobold
+	font-weight: normal;
+
+# height
+snippet height
+	height: ${1}${2:px};${3}
+
+# left
+snippet left
+	left: ${1};${2}
+
+# letter-spacing
+snippet letter-spacing
+	letter-spacing: ${1}${2:px};${3}
+
+# line-height
+snippet line-height
+	line-height: ${1}${2:px};${3}
+
+# list-style
+snippet list-style type position image
+	list-style: ${1:disc} ${2:outside} url(${3:...});${4}
+
+snippet list-style none
+	list-style: none;
+
+# margin
+snippet margin
+	margin: ${1};${2}
+
+snippet mtop
+	margin-top: ${1};${2}
+
+snippet mleft
+	margin-left: ${1};${2}
+
+snippet mright
+	margin-right: ${1};${2}
+
+snippet mbottom
+	margin-bottom: ${1};${2}
+
+# max-height
+snippet max-height
+	max-height: ${1}${2:px};${3}
+
+snippet maxh
+	max-height: ${1}${2:px};${3}
+
+# max-width
+snippet max-width
+	max-width: ${1}${2:px};${3}
+
+snippet maxw
+	max-width: ${1}${2:px};${3}
+
+# min-height
+snippet min-height
+	min-height: ${1}${2:px};${3}
+
+snippet minh
+	min-height: ${1}${2:px};${3}
+
+# min-width
+snippet min-width
+	min-width: ${1}${2:px};${3}
+
+snippet minw
+	min-width: ${1}${2:px};${3}
+
+# opacity
+snippet opacity
+	filter: alpha(opacity=${1:50});
+	opacity: ${2:0.$1};${3}
+
+# outline
+snippet outline
+	outline: none;
+
+# overflow
+snippet overflow visible
+	overflow: visible;
+
+snippet overflow hidden
+	overflow: hidden;
+
+snippet overflow scroll
+	overflow: scroll;
+
+snippet overflow auto
+	overflow: auto;
+
+snippet overflow inherit
+	overflow: inherit;
+
+# overflow-x
+snippet overflow-x visible
+	overflow-x: visible;
+
+snippet overflow-x hidden
+	overflow-x: hidden;
+
+snippet overflow-x scroll
+	overflow-x: scroll;
+
+snippet overflow-x auto
+	overflow-x: auto;
+
+snippet overflow-x inherit
+	overflow-x: inherit;
+
+# overflow-y
+snippet overflow-y visible
+	overflow-y: visible;
+
+snippet overflow-y hidden
+	overflow-y: hidden;
+
+snippet overflow-y scroll
+	overflow-y: scroll;
+
+snippet overflow-y auto
+	overflow-y: auto;
+
+snippet overflow-y inherit
+	overflow-y: inherit;
+
+# padding
+snippet padding
+	padding: ${1};${2}
+
+snippet ptop
+	padding-top: ${1};${2}
+
+snippet pleft
+	padding-left: ${1};${2}
+
+snippet pright
+	padding-right: ${1};${2}
+
+snippet pbottom
+	padding-bottom: ${1};${2}
+
+# position
+snippet position absolute
+	position: absolute;
+
+snippet position relative
+	position: relative;
+
+snippet position static (default)
+	position: static;
+
+snippet absolute
+	position: absolute;
+
+snippet relative
+	position: relative;
+
+snippet static
+	position: static;
+
+snippet phide
+	position: absolute;
+	left: -9999px;
+	top: -9999px;
+
+# right
+snippet right
+	right: ${1};${2}
+
+# text-align
+snippet text-align left
+	text-align: left;
+
+snippet text-align center
+	text-align: center;
+
+snippet text-align right
+	text-align: right;
+
+snippet text-align justify
+	text-align: justify;
+
+snippet tleft
+	text-align: left;
+
+snippet tcenter
+	text-align: center;
+
+snippet tright
+	text-align: right;
+
+snippet tjustify
+	text-align: justify;
+
+# text-decoration
+snippet text-decoration none
+	text-decoration: none;
+
+snippet text-decoration underline
+	text-decoration: underline;
+
+snippet text-decoration overline
+	text-decoration: overline;
+
+snippet text-decoration line-through
+	text-decoration: line-through;
+
+snippet text-decoration blink
+	text-decoration: blink;
+
+snippet text-decoration inherit
+	text-decoration: inherit;
+
+snippet under
+	text-decoration: underline;
+
+snippet nounder
+	text-decoration: none;
+
+# text-transform
+snippet text-transform uppercase
+	text-transform: uppercase;
+
+snippet text-transform lowercase
+	text-transform: lowercase;
+
+snippet text-transform capitalize
+	text-transform: capitalize;
+
+snippet text-transform none
+	text-transform: none;
+
+snippet text-transform inherit
+	text-transform: inherit;
+
+snippet uppercase
+	text-transform: uppercase;
+
+snippet ucase
+	text-transform: uppercase;
+
+snippet lowercase
+	text-transform: lowercase;
+
+snippet lcase
+	text-transform: lowercase;
+
+# top
+snippet top
+	top: ${1};${2}
+
+# vertical-align
+snippet vertical-align baseline
+	vertical-align: baseline;
+
+snippet vertical-align sub
+	vertical-align: sub;
+
+snippet vertical-align super
+	vertical-align: super;
+
+snippet vertical-align top
+	vertical-align: top;
+
+snippet vertical-align text-top
+	vertical-align: text-top;
+
+snippet vertical-align middle
+	vertical-align: middle;
+
+snippet vertical-align bottom
+	vertical-align: bottom;
+
+snippet vertical-align text-bottom
+	vertical-align: text-bottom;
+
+snippet vertical-align %
+	vertical-align: ${1}%;${2}
+
+snippet vertical-align px
+	vertical-align: ${1}${2:px};${3}
+
+snippet valign baseline
+	vertical-align: baseline;
+
+snippet valign sub
+	vertical-align: sub;
+
+snippet valign super
+	vertical-align: super;
+
+snippet valign top
+	vertical-align: top;
+
+snippet valign text-top
+	vertical-align: text-top;
+
+snippet valign middle
+	vertical-align: middle;
+
+snippet valign bottom
+	vertical-align: bottom;
+
+snippet valign text-bottom
+	vertical-align: text-bottom;
+
+snippet valign %
+	vertical-align: ${1}%;${2}
+
+snippet valign px
+	vertical-align: ${1}${2:px};${3}
+
+# visibility
+snippet visibility visible
+	visibility: visible;
+
+snippet visibility hidden
+	visibility: hidden;
+
+snippet visibility collapse (tables only)
+	visibility: collapse;
+
+snippet visibility inherit
+	visibility: inherit;
+
+# white-space
+snippet white-space normal
+	white-space: normal;
+
+snippet white-space nowrap (collapse multiple spaces, preserve lines)
+	white-space: nowrap;
+
+snippet white-space pre (preserve multiple spaces, preserve lines)
+	white-space: pre;
+
+snippet white-space pre-line (collapse multiple spaces, wrap lines)
+	white-space: pre-line;
+
+snippet white-space pre-wrap (preserve multiple spaces, wrap lines)
+	white-space: pre-wrap;
+
+snippet nowrap
+	white-space: nowrap;
+
+snippet wrap
+	white-space: normal;
+
+# width
+snippet width
+	width: ${1};${2}
+
+# word-spacing
+snippet word-spacing
+	word-spacing: ${1}${2:px};${3}
+
+# z-index
+snippet z-index
+	z-index: ${1:100};${2}
+
+# zoom
+snippet zoom IE6+
+	_zoom: 1;
+
+snippet zoom IE7+
+	*zoom: 1;
+

@@ -1,0 +1,29 @@
+[begin] (Fluxbox)
+	[exec] (Firefox) {firefox}
+	[exec] (Terminal) {gnome-terminal}
+	[separator]
+	[submenu] (Fluxbox)
+		[workspaces] (Workspaces)
+		[separator]
+		[exec] (Edit Menu) {gvim ~/.fluxbox/mymenu}
+		[exec] (Edit Keyboard Shortcuts) {gvim ~/.fluxbox/mykeys}
+		[separator]
+		[config] (Configure)
+		[submenu] (System Styles) {Choose a style...}
+			[stylesdir] (~/opt/fluxbox/share/fluxbox/styles)
+		[end]
+		[submenu] (User Styles) {Choose a style...}
+			[stylesdir] (~/.fluxbox/styles)
+		[end]
+		[separator]
+		[reconfig] (Reload config)
+		[exec] (About) {(fluxbox -v; fluxbox -info | sed 1d) 2> /dev/null | xmessage -file - -center}
+	[end]
+	[submenu] (Tools)
+		[exec] (Screenshot - JPG) {import screenshot.jpg && display screenshot.jpg}
+		[exec] (Screenshot - PNG) {import screenshot.png && display screenshot.png}
+	[end]
+	[separator]
+	[exec] (Lock Screen) {xscreensaver-command -lock}
+	[exit] (Log Out)
+[end]

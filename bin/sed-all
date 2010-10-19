@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [ -n "$2" ]; then
+  dir="$1"
+  cmd="$2"
+else
+  dir="."
+  cmd="$1"
+fi
+
+find "$dir" -type f | xargs sed -i "$cmd"
+

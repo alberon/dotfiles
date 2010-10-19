@@ -1,0 +1,4 @@
+#!/bin/bash
+
+bzr upgrade --rich-root-pack
+

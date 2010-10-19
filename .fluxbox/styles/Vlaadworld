@@ -1,0 +1,122 @@
+toolbar:			raised crossdiagonal gradient
+toolbar.color:			grey20
+toolbar.colorTo:		grey85
+
+toolbar.button:			raised diagonal gradient bevel1
+toolbar.button.color:		grey20
+toolbar.button.colorTo:		grey85
+toolbar.button.picColor:	black
+toolbar.button.pressed:		sunken diagonal gradient bevel1
+toolbar.button.pressed.color:	grey50
+toolbar.button.pressed.colorTo:	grey80
+toolbar.label:			parentrelative
+toolbar.label.textColor:	grey85
+toolbar.windowLabel:		parentrelative
+toolbar.windowLabel.textColor:	grey85
+toolbar.clock:			parentrelative
+toolbar.clock.textColor:	grey85
+toolbar.justify:		right
+toolbar.font:			lucidasans-10
+
+menu.title:			raised diagonal gradient bevel1
+menu.title.color:		grey20
+menu.title.colorTo:		grey85
+menu.title.textColor:		white
+menu.title.font:		lucidasans-10
+menu.title.justify:		left
+
+menu.frame:			raised crossdiagonal gradient
+menu.frame.color:		grey50
+menu.frame.colorTo:		grey80
+menu.frame.textColor:		grey20
+menu.frame.disableColor:	grey40
+menu.frame.font:		lucidasans-10
+menu.frame.justify:		left
+
+menu.bullet.position:		right
+menu.bullet:			triangle
+
+menu.hilite:			sunken crossdiagonal gradient bevel2
+menu.hilite.color:		grey20
+menu.hilite.colorTo:		grey85
+menu.hilite.textColor:		white
+
+window.title.focus:		raised crossdiagonal gradient
+window.title.focus.color:	grey20
+window.title.focus.colorTo:	grey85
+window.title.unfocus:		sunken diagonal gradient
+window.title.unfocus.color:	grey35
+window.title.unfocus.colorTo:	grey20
+
+window.tab.justify:				center
+
+window.tab.label.unfocus:	        sunken gradient diagonal bevel3
+window.tab.label.unfocus.color:	   	grey35
+window.tab.label.unfocus.colorTo:	grey20
+window.tab.label.unfocus.textColor:	grey
+
+window.tab.label.focus:	        	raised crossdiagonal gradient bevel1
+window.tab.label.focus.color:	  	grey20
+window.tab.label.focus.colorTo:	  	grey85
+window.tab.label.focus.textColor:	white
+
+window.tab.borderWidth:		1
+window.tab.borderColor:		black
+
+window.tab.font:	lucidasans-10
+
+window.label.focus:		sunken crossdiagonal gradient bevel1
+window.label.focus.color:	grey20
+window.label.focus.colorTo:	grey85
+window.label.focus.textColor:	white
+window.label.unfocus:		sunken diagonal gradient
+window.label.unfocus.color:	grey20
+window.label.unfocus.colorTo:	grey45
+window.label.unfocus.textColor:	grey60
+
+window.button.focus:		raised crossdiagonal gradient bevel1
+window.button.focus.color:	grey20
+window.button.focus.colorTo:	grey85
+window.button.focus.picColor:	black
+window.button.unfocus:		raised diagonal gradient bevel1
+window.button.unfocus.color:	grey20
+window.button.unfocus.colorTo:	grey85
+window.button.unfocus.picColor:	grey60
+window.button.pressed:		sunken crossdiagonal gradient bevel1
+window.button.pressed.color:	grey50
+window.button.pressed.colorTo:	grey80
+
+window.handle.focus:		flat crossdiagonal gradient
+window.handle.focus.color:	grey20
+window.handle.focus.colorTo:	grey85
+window.handle.unfocus:		flat diagonal gradient
+window.handle.unfocus.color:	grey50
+window.handle.unfocus.colorTo:	grey20
+
+window.grip.focus:		parentrelative
+window.grip.unfocus:		parentrelative
+
+window.frame.focusColor:	grey80
+window.frame.unfocusColor:	grey50
+
+window.font:			lucidasans-9
+window.justify:			center
+
+borderColor:			grey20
+
+bevelWidth:			1
+borderWidth:			1
+handleWidth:			1
+
+*textColor:			grey85
+*Font:				lucidasans-9
+
+rootCommand:			bsetroot -gradient sunkencrossdiagonalgradient -from grey80 -to grey20
+
+bbpager.desktop.focus:		raised diagonal gradient bevel1
+bbpager.desktop.focus.color:	grey80
+bbpager.desktop.focus.colorTo:	grey20
+bbpager.desktop.unfocus:	sunken diagonal gradient bevel1
+bbpager.desktop.unfocus.color:  grey20
+bbpager.desktop.unfocus.colorTo:grey80
+
