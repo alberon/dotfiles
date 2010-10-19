@@ -327,6 +327,10 @@ if [ "$TERM" != "dumb" ]; then
     then
       
       # Store keys for at most 16 hours
+      if [ ! -d ~/.ssh ]; then
+        mkdir ~/.ssh
+        chmod 700 ~/.ssh
+      fi
       ssh-agent -t 57600 | head -2 > ~/.ssh/environment-$HOSTNAME
       source ~/.ssh/environment-$HOSTNAME
       
