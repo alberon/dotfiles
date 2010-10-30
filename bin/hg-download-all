@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -u
+
+base=${1:-http://hg.dave-miller.com}
+base=${base%/}
+
+repos=`curl -s $base?style=raw` || exit
+
+for repo in $repos; do
+  # $repo is in the format "/name/"
+  url="$base$repo"
+  echo
+  echo $url
+  echo
+  hg clone $url
+done
+
