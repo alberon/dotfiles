@@ -18,10 +18,13 @@ function usage
   echo
   echo "  --bzip2|-j:"
   echo "      Decompress with bzip2"
+  echo
+  echo "  --zip:"
+  echo "      Decompress with unzip"
 }
 
 # Use `getopt` to parse the parameters
-args=`getopt -l "strip::,tar,gzip,bzip2" ":s::nzj" "$@"`
+args=`getopt -l "strip::,tar,gzip,bzip2,zip" ":s::nzj" "$@"`
 
 # If there were errors found (e.g. invalid options) then exit now
 if [ $? -ne 0 ]
@@ -38,6 +41,7 @@ eval set -- "$args"
 stripArg=
 compressionArg=
 compressionAuto=1
+compressionCmd=tar
 
 # Loop through all the named arguments until we reach "--"
 while [ -n "$1" ]
@@ -61,6 +65,11 @@ do
     --bzip2|-j)
       compressionAuto=0
       compressionArg=--bzip2
+      ;;
+    
+    --zip)
+      compressionAuto=0
+      compressionCmd=unzip
       ;;
     
     --help|-h)
@@ -94,24 +103,38 @@ if [ "$compressionAuto" -eq 1 ]; then
     compressionArg=--gzip
   elif [ "${url:(-4)}" = ".bz2" ]; then
     compressionArg=--bzip2
+  elif [ "${url:(-4)}" = ".zip" ]; then
+    compressionCmd=zip
   else
     echo "ERROR: Cannot detect compression scheme - please specify -n, -z or -j" >&2
     exit 1
   fi
 fi
 
-# Generate temporary file
-tmpFile=`tempfile` || exit
-trap "rm -f -- '$tmpFile'" EXIT
-
-# Download the file
-wget "$url" -O $tmpFile
-
-if [ $? -ne 0 ]; then
-  echo "ERROR: Download failed" >&2
-  exit 2
+# Download and extract the file
+if [ "$compressionCmd" = "zip" ]; then
+  
+  # Note: unzip doesn't support pipes
+  # Generate temporary file
+  tmpFile=`tempfile` || exit
+  trap "rm -f -- '$tmpFile'" EXIT
+  
+  # Download the file
+  wget "$url" -O $tmpFile
+  
+  if [ $? -ne 0 ]; then
+    echo "ERROR: Download failed" >&2
+    exit 2
+  fi
+  
+  # Extract files
+  # Note: unzip doesn't seem to support --strip either
+  unzip $tmpFile
+  
+else
+  
+  # tar can just read direct from pipe
+  wget "$url" -O - | tar -xv $compressionArg $stripArg
+  
 fi
-
-# Extract files
-tar -xv $compressionArg $stripArg -f $tmpFile
 
