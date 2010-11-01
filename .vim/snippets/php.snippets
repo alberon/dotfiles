@@ -61,6 +61,17 @@ snippet /**#@+
 
 #================================================================================
 
+snippet cls
+	<?php
+	
+	class ${1:`snipMateCustom#AutoClassName()`}
+	{
+		
+		${2}
+		
+	}
+	
+
 snippet class
 	class ${1:`snipMateCustom#AutoClassName()`}
 	{
@@ -89,6 +100,18 @@ snippet fun
 
 snippet pfun
 	protected function _${1:functionName}(${2})
+	{
+		${3}
+	}
+
+snippet sfun
+	public static function ${1:functionName}(${2})
+	{
+		${3}
+	}
+
+snippet psfun
+	protected static function _${1:functionName}(${2})
 	{
 		${3}
 	}
@@ -1741,7 +1764,7 @@ snippet sinc
 #================================================================================
 # Smarty plugins
 #================================================================================
-snippet sfun
+snippet smf
 	<?php
 	
 	function smarty_function_`substitute(Filename('', 'NAME'), '^function\.', '', '')`($params, &$smarty)
@@ -1754,7 +1777,7 @@ snippet sfun
 	}
 	
 
-snippet sblock
+snippet smb
 	<?php
 	
 	function smarty_block_`substitute(Filename('', 'NAME'), '^block\.', '', '')`($params, $content, &$smarty)
@@ -1766,7 +1789,7 @@ snippet sblock
 	}
 	
 
-snippet smod
+snippet smm
 	<?php
 	
 	function smarty_modifier_`substitute(Filename('', 'NAME'), '^modifier\.', '', '')`($text)
