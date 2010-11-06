@@ -2,11 +2,11 @@
 
 class ClassName
 {
-  
-  public function FunctionName()
-  {
     
-  }
-  
+    public function FunctionName()
+    {
+        
+    }
+    
 }
 

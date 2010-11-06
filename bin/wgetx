@@ -5,22 +5,22 @@ set -u
 # Usage
 function usage
 {
-  echo "install-tarball [options] http://server/path/to/tarball.tar.gz"
-  echo
-  echo "  --strip|-s [count=1]:"
-  echo "      If the tarball contains a single directory, extract the contents of that directory"
-  echo
-  echo "  --tar|-n:"
-  echo "      No decompression"
-  echo
-  echo "  --gzip|-z:"
-  echo "      Decompress with gzip"
-  echo
-  echo "  --bzip2|-j:"
-  echo "      Decompress with bzip2"
-  echo
-  echo "  --zip:"
-  echo "      Decompress with unzip"
+    echo "install-tarball [options] http://server/path/to/tarball.tar.gz"
+    echo
+    echo "  --strip|-s [count=1]:"
+    echo "      If the tarball contains a single directory, extract the contents of that directory"
+    echo
+    echo "  --tar|-n:"
+    echo "      No decompression"
+    echo
+    echo "  --gzip|-z:"
+    echo "      Decompress with gzip"
+    echo
+    echo "  --bzip2|-j:"
+    echo "      Decompress with bzip2"
+    echo
+    echo "  --zip:"
+    echo "      Decompress with unzip"
 }
 
 # Use `getopt` to parse the parameters
@@ -29,9 +29,9 @@ args=`getopt -l "strip::,tar,gzip,bzip2,zip" ":s::nzj" "$@"`
 # If there were errors found (e.g. invalid options) then exit now
 if [ $? -ne 0 ]
 then
-  echo "ERROR: Invalid arguments found." >&2
-  usage >&2
-  exit 1
+    echo "ERROR: Invalid arguments found." >&2
+    usage >&2
+    exit 1
 fi
 
 # Replace the arguments with the parsed version for processing
@@ -46,95 +46,94 @@ compressionCmd=tar
 # Loop through all the named arguments until we reach "--"
 while [ -n "$1" ]
 do
-  case "$1" in
-    
-    --strip|-s)
-      stripArg="--strip ${2:-1}"
-      shift
-      ;;
-    
-    --tar|-n)
-      compressionAuto=0
-      ;;
-    
-    --gzip|-z)
-      compressionAuto=0
-      compressionArg=--gzip
-      ;;
-    
-    --bzip2|-j)
-      compressionAuto=0
-      compressionArg=--bzip2
-      ;;
-    
-    --zip)
-      compressionAuto=0
-      compressionCmd=unzip
-      ;;
-    
-    --help|-h)
-      usage
-      exit
-      ;;
-    
-    --)
-      shift
-      break
-      ;;
-    
-  esac
-  shift
+    case "$1" in
+        
+        --strip|-s)
+            stripArg="--strip ${2:-1}"
+            shift
+            ;;
+        
+        --tar|-n)
+            compressionAuto=0
+            ;;
+        
+        --gzip|-z)
+            compressionAuto=0
+            compressionArg=--gzip
+            ;;
+        
+        --bzip2|-j)
+            compressionAuto=0
+            compressionArg=--bzip2
+            ;;
+        
+        --zip)
+            compressionAuto=0
+            compressionCmd=unzip
+            ;;
+        
+        --help|-h)
+            usage
+            exit
+            ;;
+        
+        --)
+            shift
+            break
+            ;;
+        
+    esac
+    shift
 done
 
 # Positional arguments
 if [ -z "${1:-}" ]; then
-  echo "ERROR: Missing URL" >&2
-  usage >&2
-  exit 1
+    echo "ERROR: Missing URL" >&2
+    usage >&2
+    exit 1
 fi
 
 url=$1
 
 # Automatically work out the compression scheme
 if [ "$compressionAuto" -eq 1 ]; then
-  if [ "${url:(-4)}" = ".tar" ]; then
-    compressionArg=
-  elif [ "${url:(-3)}" = ".gz" ]; then
-    compressionArg=--gzip
-  elif [ "${url:(-4)}" = ".bz2" ]; then
-    compressionArg=--bzip2
-  elif [ "${url:(-4)}" = ".zip" ]; then
-    compressionCmd=zip
-  else
-    echo "ERROR: Cannot detect compression scheme - please specify -n, -z or -j" >&2
-    exit 1
-  fi
+    if [ "${url:(-4)}" = ".tar" ]; then
+        compressionArg=
+    elif [ "${url:(-3)}" = ".gz" ]; then
+        compressionArg=--gzip
+    elif [ "${url:(-4)}" = ".bz2" ]; then
+        compressionArg=--bzip2
+    elif [ "${url:(-4)}" = ".zip" ]; then
+        compressionCmd=zip
+    else
+        echo "ERROR: Cannot detect compression scheme - please specify -n, -z or -j" >&2
+        exit 1
+    fi
 fi
 
 # Download and extract the file
 if [ "$compressionCmd" = "zip" ]; then
-  
-  # Note: unzip doesn't support pipes
-  # Generate temporary file
-  tmpFile=`tempfile` || exit
-  trap "rm -f -- '$tmpFile'" EXIT
-  
-  # Download the file
-  wget "$url" -O $tmpFile
-  
-  if [ $? -ne 0 ]; then
-    echo "ERROR: Download failed" >&2
-    exit 2
-  fi
-  
-  # Extract files
-  # Note: unzip doesn't seem to support --strip either
-  unzip $tmpFile
-  
+    
+    # Note: unzip doesn't support pipes
+    # Generate temporary file
+    tmpFile=`tempfile` || exit
+    trap "rm -f -- '$tmpFile'" EXIT
+    
+    # Download the file
+    wget "$url" -O $tmpFile
+    
+    if [ $? -ne 0 ]; then
+        echo "ERROR: Download failed" >&2
+        exit 2
+    fi
+    
+    # Extract files
+    # Note: unzip doesn't seem to support --strip either
+    unzip $tmpFile
+    
 else
-  
-  # tar can just read direct from pipe
-  wget "$url" -O - | tar -xv $compressionArg $stripArg
-  
+    
+    # tar can just read direct from pipe
+    wget "$url" -O - | tar -xv $compressionArg $stripArg
+    
 fi
-

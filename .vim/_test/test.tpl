@@ -1,4 +1,4 @@
 <div>
-  {func}
-    text
-  
+    {func}
+        text
+    

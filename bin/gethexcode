@@ -2,13 +2,12 @@
 <?php
 
 $x = $argv[1];
-for ($i = 0; ; $i++)
-{
-  $part = substr($x, $i, 1);
-  if (!$part)
-    break;
-  echo "\\x" . strtoupper(dechex(ord($part)));
+for ($i = 0; ; $i++) {
+    $part = substr($x, $i, 1);
+    if (!$part) {
+        break;
+    }
+    echo "\\x" . strtoupper(dechex(ord($part)));
 }
 
 echo "\n";
-

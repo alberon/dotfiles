@@ -17,7 +17,6 @@ snippet <?
 	<?php
 	
 	${1}
-	
 
 snippet php
 	<?php
@@ -61,6 +60,16 @@ snippet /**#@+
 
 #================================================================================
 
+snippet cls
+	<?php
+	
+	class ${1:`snipMateCustom#AutoClassName()`}
+	{
+		
+		${2}
+		
+	}
+
 snippet class
 	class ${1:`snipMateCustom#AutoClassName()`}
 	{
@@ -89,6 +98,18 @@ snippet fun
 
 snippet pfun
 	protected function _${1:functionName}(${2})
+	{
+		${3}
+	}
+
+snippet sfun
+	public static function ${1:functionName}(${2})
+	{
+		${3}
+	}
+
+snippet psfun
+	protected static function _${1:functionName}(${2})
 	{
 		${3}
 	}
@@ -158,36 +179,29 @@ snippet $_SS
 #================================================================================
 
 snippet if
-	if (${1:/* condition */})
-	{
+	if (${1:/* condition */}) {
 		${2}
 	}${3}
 
 snippet ife
-	if (${1:/* condition */})
-	{
+	if (${1:/* condition */}) {
 		${2}
-	}
-	else
-	{
+	} else {
 		${3}
 	}${4}
 
 snippet else
-	else
-	{
+	else {
 		${1}
 	}
 
 snippet elseif
-	elseif (${1:/* condition */})
-	{
+	elseif (${1:/* condition */}) {
 		${2}
 	}
 
 snippet elif
-	elseif (${1:/* condition */})
-	{
+	elseif (${1:/* condition */}) {
 		${2}
 	}
 
@@ -199,31 +213,27 @@ snippet ?
 #================================================================================
 
 snippet while
-	while (${1:/* condition */})
-	{
+	while (${1:/* condition */}) {
 		${2}
 	}
 
 snippet wh
-	while (${1:/* condition */})
-	{
+	while (${1:/* condition */}) {
 		${2}
 	}
 
 #================================================================================
 
 snippet do
-	do
-	{
+	do {
 		${2}
 	} while (${1:/* condition */});
 
 #================================================================================
 
 snippet switch
-	switch (${1:$varName})
-	{
-		case '${2:value}':
+	switch (${1:$varName}) {
+		case ${2:value}:
 			${3}
 			break;
 		${5}
@@ -233,29 +243,27 @@ snippet switch
 	}
 
 snippet case
-	case '${1:value}':
+	case ${1:value}:
 		${2}
 		break;${3}
 
 snippet break
 		break;
 	
-	case '${1:value}':
+	case ${1:value}:
 		${2}
 
 #================================================================================
 
 snippet for
-	for (${1:$i} = ${2:0}; $1 < ${3:count}; ${3:$1++})
-	{
+	for (${1:$i} = ${2:0}; $1 < ${3:count}; ${3:$1++}) {
 		${4}
 	}
 
 #================================================================================
 
 snippet foreach
-	foreach (${1:$var} as ${2:$item})
-	{
+	foreach (${1:$var} as ${2:$item}) {
 		${3}
 	}
 
@@ -1741,7 +1749,7 @@ snippet sinc
 #================================================================================
 # Smarty plugins
 #================================================================================
-snippet sfun
+snippet smf
 	<?php
 	
 	function smarty_function_`substitute(Filename('', 'NAME'), '^function\.', '', '')`($params, &$smarty)
@@ -1752,26 +1760,24 @@ snippet sfun
 		
 		return $app->tpl->callInclude(djmSmarty::defaultTemplate(), $params);
 	}
-	
 
-snippet sblock
+snippet smb
 	<?php
 	
 	function smarty_block_`substitute(Filename('', 'NAME'), '^block\.', '', '')`($params, $content, &$smarty)
 	{
-		if ($content === null)
+		if ($content === null) {
 			return;
+		}
 		
 		${1}
 	}
-	
 
-snippet smod
+snippet smm
 	<?php
 	
 	function smarty_modifier_`substitute(Filename('', 'NAME'), '^modifier\.', '', '')`($text)
 	{
 		${1}
 	}
-	
 

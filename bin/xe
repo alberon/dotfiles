@@ -3,6 +3,5 @@
 e "$@"
 
 if [ -n "$1" -a -f "$1" ]; then
-  chmod +x "$1"
+    chmod +x "$1"
 fi
-

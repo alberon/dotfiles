@@ -61,12 +61,12 @@ au BufNewFile,BufRead *.txt setf txt
 
 " Conflict markers
 if version >= 700
-  au BufNewFile,BufRead *
-  \ if match(getline(1, min([line("$"), 100])), '^=======$') > -1
-  \ && match(getline(1, min([line("$"), 100])), '^<<<<<<< ') > -1
-  \ && match(getline(1, min([line("$"), 100])), '^>>>>>>> ') > -1 |
-  \   setlocal syn=conflict |
-  \ endif
+    au BufNewFile,BufRead *
+    \ if match(getline(1, min([line("$"), 100])), '^=======$') > -1
+    \ && match(getline(1, min([line("$"), 100])), '^<<<<<<< ') > -1
+    \ && match(getline(1, min([line("$"), 100])), '^>>>>>>> ') > -1 |
+    \   setlocal syn=conflict |
+    \ endif
 endif
 
 augroup END
@@ -113,44 +113,41 @@ autocmd BufWinEnter *
 \   unlet b:doopenfold |
 \ endif
 
-augroup END 
+augroup END
 
 "================================================================================
 " Indenting
 "================================================================================
 
 " Tabs (use ":ret! [numspaces]" to convert spaces to tabs)
-"set noexpandtab tabstop=2 shiftwidth=2 softtabstop=2
+"set noexpandtab tabstop=4 shiftwidth=4 softtabstop=4
 
-" Spaces (use ":ret" to convert tabs to spaces)
-set expandtab tabstop=2 shiftwidth=2 softtabstop=2
+" 4 spaces (use ":ret" to convert tabs to spaces)
+set expandtab tabstop=4 shiftwidth=4 softtabstop=4
 
+" To do list files use 3 spaces
 autocmd FileType todolist set tabstop=3 shiftwidth=3 softtabstop=3
 
-" Convert 2 space indents to 4 space indents
-" Do it with search and replace so spaces & tabs not at the start of the line
-" aren't affected.
-" Do it in a function so the changes aren't highlighted.
-"fun ReIndent()
-"  %s/^\(\(  \)\+\)/\1\1/
-"endfun
-"
-"command ReIndent call ReIndent()
+" Tab2Space
+" http://vim.wikia.com/wiki/Super_retab
+command! -range=% -nargs=0 Tab2Space execute "<line1>,<line2>s/^\\t\\+/\\=substitute(submatch(0), '\\t', repeat(' ', ".&ts."), 'g')"
 
+" Space2Tab
+" http://vim.wikia.com/wiki/Super_retab
+command! -range=% -nargs=0 Space2Tab execute "<line1>,<line2>s/^\\( \\{".&ts."\\}\\)\\+/\\=substitute(submatch(0), ' \\{".&ts."\\}', '\\t', 'g')"
+
+" Convert mixed spaces/tabs to all spaces
+" Based on http://vim.wikia.com/wiki/Super_retab
 fun ReIndent(...)
-  let origts = (a:0 == 0 ? 2 : a:1)
-  let newts = &tabstop
-  exe "set tabstop=" . origts
-  set noexpandtab
-  retab!
-  exe "set tabstop=" . newts
-  set expandtab
-  retab
+    let origts = (a:0 >= 3 ? a:3 : 2)
+    let newts = &tabstop
+    silent execute a:1 . "," . a:2 . "s/^\\( \\{" . origts . "\\}\\)\\+/\\=substitute(submatch(0), ' \\{" . origts . "\\}', '\\t', 'g')"
+    silent execute a:1 . "," . a:2 . "s/^\\t\\+/\\=substitute(submatch(0), '\\t', repeat(' ', " . newts . "), 'g')"
 endfun
 
 " :ReIndent       Convert 2 space indents to current shiftwidth
 " :ReIndent <N>   Convert N space indents to current shiftwidth
-command -nargs=? ReIndent call ReIndent(<f-args>)
+command -range=% -nargs=? ReIndent call ReIndent(<line1>, <line2>, <f-args>)
 
 "================================================================================
 " Other Settings
@@ -201,21 +198,21 @@ au FileType snippet set nolist
 
 " Mouse support is not available on Cheetah
 if has("mouse")
-  set mouse=a
+    set mouse=a
 endif
 
 " Folding is not available on Cheetah
 if has("folding")
-  set foldmethod=marker
+    set foldmethod=marker
 endif
 
 " Temp directory
 if has("win32")
-  set backupdir=d:/Temp/Vim//
-  set directory=d:/Temp/Vim//
+    set backupdir=d:/Temp/Vim//
+    set directory=d:/Temp/Vim//
 else
-  set backupdir=~/tmp/vim//
-  set directory=~/tmp/vim//
+    set backupdir=~/tmp/vim//
+    set directory=~/tmp/vim//
 endif
 
 "================================================================================
@@ -297,31 +294,31 @@ inoremap <C-W> <C-g>u<C-W>
 " Also use character-wise instead of line-wise paste, so it goes where the
 " cursor is instead of on the line above
 if exists("*paste#Paste")
-  
-  func! MyPaste()
     
-    " Set to character-wise
-    " http://vim.wikia.com/wiki/Unconditional_linewise_or_characterwise_paste
-    let reg_type = getregtype("+")
-    call setreg("+", getreg("+"), "v")
+    func! MyPaste()
+        
+        " Set to character-wise
+        " http://vim.wikia.com/wiki/Unconditional_linewise_or_characterwise_paste
+        let reg_type = getregtype("+")
+        call setreg("+", getreg("+"), "v")
+        
+        " Use the bundled paste command
+        call paste#Paste()
+        
+        " Reset line/character-wise
+        call setreg("+", getreg("+"), reg_type)
+        
+    endfunc
     
-    " Use the bundled paste command
-    call paste#Paste()
+    " Explanation:
+    " <C-g>u                      Set undo point
+    " <C-o>:call MyPaste()<CR>    Call the function above
+    " <C-g>u                      Set another undo point
+    " 2010-06-19 Removed the final undo point because it seems to cause problems
+    "            when ThinkingRock is open...
+    "inoremap <C-V> <C-g>u<C-o>:call MyPaste()<CR><C-g>u
+    inoremap <C-V> <C-g>u<C-o>:call MyPaste()<CR>
     
-    " Reset line/character-wise
-    call setreg("+", getreg("+"), reg_type)
-    
-  endfunc
-  
-  " Explanation:
-  " <C-g>u                      Set undo point
-  " <C-o>:call MyPaste()<CR>    Call the function above
-  " <C-g>u                      Set another undo point
-  " 2010-06-19 Removed the final undo point because it seems to cause problems
-  "            when ThinkingRock is open...
-  "inoremap <C-V> <C-g>u<C-o>:call MyPaste()<CR><C-g>u
-  inoremap <C-V> <C-g>u<C-o>:call MyPaste()<CR>
-  
 endif
 
 "================================================================================
@@ -382,25 +379,25 @@ imap <C-d> <C-R>=strftime("%a %#d %b %Y")<CR>
 "================================================================================
 
 if has("win32")
-  function! MyDiff()
-    let opt = ""
-    if &diffopt =~ "icase"
-      let opt = opt . "-i "
-    endif
-    if &diffopt =~ "iwhite"
-      let opt = opt . "-b "
-    endif
-    silent execute '!="'.$VIMRUNTIME.'\diff.exe" -a '.opt.'"'.v:fname_in.'" "'.v:fname_new.'" > "'.v:fname_out.'"'
-  endfunction
-  set diffexpr=MyDiff()
+    function! MyDiff()
+        let opt = ""
+        if &diffopt =~ "icase"
+            let opt = opt . "-i "
+        endif
+        if &diffopt =~ "iwhite"
+            let opt = opt . "-b "
+        endif
+        silent execute '!="'.$VIMRUNTIME.'\diff.exe" -a '.opt.'"'.v:fname_in.'" "'.v:fname_new.'" > "'.v:fname_out.'"'
+    endfunction
+    set diffexpr=MyDiff()
 endif
 
 "================================================================================
 " Keep selection when indenting block-wise
 "================================================================================
 if version >= 700
-  xnoremap < <gv
-  xnoremap > >gv
+    xnoremap < <gv
+    xnoremap > >gv
 endif
 
 "================================================================================
@@ -409,47 +406,47 @@ endif
 
 " http://vim.wikia.com/wiki/Transposing
 function! MoveLineUp()
-  call MoveLineOrVisualUp(".", "")
+    call MoveLineOrVisualUp(".", "")
 endfunction
 
 function! MoveLineDown()
-  call MoveLineOrVisualDown(".", "")
+    call MoveLineOrVisualDown(".", "")
 endfunction
 
 function! MoveVisualUp()
-  call MoveLineOrVisualUp("'<", "'<,'>")
-  normal gv
+    call MoveLineOrVisualUp("'<", "'<,'>")
+    normal gv
 endfunction
 
 function! MoveVisualDown()
-  call MoveLineOrVisualDown("'>", "'<,'>")
-  normal gv
+    call MoveLineOrVisualDown("'>", "'<,'>")
+    normal gv
 endfunction
 
 function! MoveLineOrVisualUp(line_getter, range)
-  let l_num = line(a:line_getter)
-  if l_num - v:count1 - 1 < 0
-    let move_arg = "0"
-  else
-    let move_arg = a:line_getter." -".(v:count1 + 1)
-  endif
-  call MoveLineOrVisualUpOrDown(a:range."move ".move_arg)
+    let l_num = line(a:line_getter)
+    if l_num - v:count1 - 1 < 0
+        let move_arg = "0"
+    else
+        let move_arg = a:line_getter." -".(v:count1 + 1)
+    endif
+    call MoveLineOrVisualUpOrDown(a:range."move ".move_arg)
 endfunction
 
 function! MoveLineOrVisualDown(line_getter, range)
-  let l_num = line(a:line_getter)
-  if l_num + v:count1 > line("$")
-    let move_arg = "$"
-  else
-    let move_arg = a:line_getter." +".v:count1
-  endif
-  call MoveLineOrVisualUpOrDown(a:range."move ".move_arg)
+    let l_num = line(a:line_getter)
+    if l_num + v:count1 > line("$")
+        let move_arg = "$"
+    else
+        let move_arg = a:line_getter." +".v:count1
+    endif
+    call MoveLineOrVisualUpOrDown(a:range."move ".move_arg)
 endfunction
 
 function! MoveLineOrVisualUpOrDown(move_arg)
-  let col_num = virtcol(".")
-  execute "silent! ".a:move_arg
-  execute "normal! ".col_num."|"
+    let col_num = virtcol(".")
+    execute "silent! ".a:move_arg
+    execute "normal! ".col_num."|"
 endfunction
 
 nnoremap <silent> <C-A-Up> :<C-u>call MoveLineUp()<CR>
@@ -545,40 +542,40 @@ au Filetype * runtime closetag.vim
 " Snippets
 "================================================================================
 let snips_html = "
-  \<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n
-  \<html lang=\"en-GB\" xml:lang=\"en-GB\" dir=\"ltr\" xmlns=\"http://www.w3.org/1999/xhtml\">\n
-  \	<head>\n
-  \		\n
-  \		<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n
-  \		<meta http-equiv=\"Content-Language\" content=\"en-GB\" />\n
-  \		\n
-  \		<title>${1:Untitled Document}</title>\n
-  \		\n
-  \		<link rel=\"stylesheet\" href=\"/css/main.css\" type=\"text/css\" />\n
-  \		\n
-  \	</head>\n
-  \	<body>\n
-  \		\n
-  \		${2}\n
-  \		\n
-  \	</body>\n
-  \</html>"
+    \<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n
+    \<html lang=\"en-GB\" xml:lang=\"en-GB\" dir=\"ltr\" xmlns=\"http://www.w3.org/1999/xhtml\">\n
+    \	<head>\n
+    \		\n
+    \		<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n
+    \		<meta http-equiv=\"Content-Language\" content=\"en-GB\" />\n
+    \		\n
+    \		<title>${1:Untitled Document}</title>\n
+    \		\n
+    \		<link rel=\"stylesheet\" href=\"/css/main.css\" type=\"text/css\" />\n
+    \		\n
+    \	</head>\n
+    \	<body>\n
+    \		\n
+    \		${2}\n
+    \		\n
+    \	</body>\n
+    \</html>"
 
 "================================================================================
-" Highlight long lines with
+" Highlight long lines
 "================================================================================
 fun HighlightLongLines(...)
-  
-  if exists('w:long_line_match')
-    silent! call matchdelete(w:long_line_match)
-    unlet w:long_line_match
-  endif
-  
-  let len = (a:0 == 0 ? 80 : a:1)
-  if len > 0
-    let w:long_line_match = matchadd('ErrorMsg', '\%>'.len.'v.\+', -1)
-  endif
-  
+    
+    if exists('w:long_line_match')
+        silent! call matchdelete(w:long_line_match)
+        unlet w:long_line_match
+    endif
+    
+    let len = (a:0 == 0 ? 80 : a:1)
+    if len > 0
+        let w:long_line_match = matchadd('ErrorMsg', '\%>'.len.'v.\+', -1)
+    endif
+    
 endfun
 
 " :Long       Highlight after 80 characters
@@ -587,4 +584,3 @@ command -nargs=? Long call HighlightLongLines(<f-args>)
 
 " :NoLong     Remove highlighting
 command NoLong call HighlightLongLines(0)
-

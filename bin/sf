@@ -3,14 +3,13 @@
 # Go up the directory tree until we find the correct directory or reach /
 while [ "`pwd`" != "/" -a ! -x "./symfony" -a ! -d "./symfony" ]
 do
-  cd ..
+    cd ..
 done
 
 # Run symfony
 if [ -x "./symfony" -a ! -d "./symfony" ]
 then
-  ./symfony "$@"
+    ./symfony "$@"
 else
-  echo "You do not appear to be within a symfony directory" >&2
+    echo "You do not appear to be within a symfony directory" >&2
 fi
-

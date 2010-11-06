@@ -1,9 +1,9 @@
 #!/bin/bash
 
 if [ -n "$1" ]; then
-  username=$1
+    username=$1
 else
-  username=davejamesmiller
+    username=davejamesmiller
 fi
 
 bzr lp-login $username
@@ -12,6 +12,6 @@ echo "Please upload public key to https://launchpad.net/~$username/+editsshkeys"
 
 key=~/.ssh/id_dsa.pub
 if [ -f "$key" ]; then
-  echo
-  cat "$key"
+    echo
+    cat "$key"
 fi

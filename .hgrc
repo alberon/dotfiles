@@ -34,4 +34,3 @@ pager = LESS='FRSX' less
 
 # Put [auth] section in here:
 %include .hgrc_local
-
