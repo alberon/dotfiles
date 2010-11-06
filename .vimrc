@@ -113,44 +113,41 @@ autocmd BufWinEnter *
 \   unlet b:doopenfold |
 \ endif
 
-augroup END 
+augroup END
 
 "================================================================================
 " Indenting
 "================================================================================
 
 " Tabs (use ":ret! [numspaces]" to convert spaces to tabs)
-"set noexpandtab tabstop=2 shiftwidth=2 softtabstop=2
+"set noexpandtab tabstop=4 shiftwidth=4 softtabstop=4
 
-" Spaces (use ":ret" to convert tabs to spaces)
-set expandtab tabstop=2 shiftwidth=2 softtabstop=2
+" 4 spaces (use ":ret" to convert tabs to spaces)
+set expandtab tabstop=4 shiftwidth=4 softtabstop=4
 
+" To do list files use 3 spaces
 autocmd FileType todolist set tabstop=3 shiftwidth=3 softtabstop=3
 
-" Convert 2 space indents to 4 space indents
-" Do it with search and replace so spaces & tabs not at the start of the line
-" aren't affected.
-" Do it in a function so the changes aren't highlighted.
-"fun ReIndent()
-"  %s/^\(\(  \)\+\)/\1\1/
-"endfun
-"
-"command ReIndent call ReIndent()
+" Tab2Space
+" http://vim.wikia.com/wiki/Super_retab
+command! -range=% -nargs=0 Tab2Space execute "<line1>,<line2>s/^\\t\\+/\\=substitute(submatch(0), '\\t', repeat(' ', ".&ts."), 'g')"
 
+" Space2Tab
+" http://vim.wikia.com/wiki/Super_retab
+command! -range=% -nargs=0 Space2Tab execute "<line1>,<line2>s/^\\( \\{".&ts."\\}\\)\\+/\\=substitute(submatch(0), ' \\{".&ts."\\}', '\\t', 'g')"
+
+" Convert mixed spaces/tabs to all spaces
+" Based on http://vim.wikia.com/wiki/Super_retab
 fun ReIndent(...)
-  let origts = (a:0 == 0 ? 2 : a:1)
+  let origts = (a:0 >= 3 ? a:3 : 2)
   let newts = &tabstop
-  exe "set tabstop=" . origts
-  set noexpandtab
-  retab!
-  exe "set tabstop=" . newts
-  set expandtab
-  retab
+  silent execute a:1 . "," . a:2 . "s/^\\( \\{" . origts . "\\}\\)\\+/\\=substitute(submatch(0), ' \\{" . origts . "\\}', '\\t', 'g')"
+  silent execute a:1 . "," . a:2 . "s/^\\t\\+/\\=substitute(submatch(0), '\\t', repeat(' ', " . newts . "), 'g')"
 endfun
 
 " :ReIndent       Convert 2 space indents to current shiftwidth
 " :ReIndent <N>   Convert N space indents to current shiftwidth
-command -nargs=? ReIndent call ReIndent(<f-args>)
+command -range=% -nargs=? ReIndent call ReIndent(<line1>, <line2>, <f-args>)
 
 "================================================================================
 " Other Settings
