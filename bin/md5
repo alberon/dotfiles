@@ -3,8 +3,7 @@
 password="$1"
 
 while [ -z "$password" ]; do
-  read -p "Enter string: " password
+    read -p "Enter string: " password
 done
 
 echo -n "$password" | md5sum - | cut -d" " -f1
-

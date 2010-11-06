@@ -2,9 +2,9 @@
 
 # Check number of params
 if [ $# -lt 2 ]; then
-  prog=`basename "$0"`
-  echo "Usage: $prog <source> <dest>" >&2
-  exit 1
+    prog=`basename "$0"`
+    echo "Usage: $prog <source> <dest>" >&2
+    exit 1
 fi
 
 src="$1"
@@ -12,23 +12,23 @@ dest="$2"
 
 # Check source exists
 if [ ! -d "$src" ]; then
-  echo "Source directory is not a directory" >&2
-  exit 2
+    echo "Source directory is not a directory" >&2
+    exit 2
 fi
 
 # Check source is a git repo
 if [ ! -d "$src/.git" ]; then
-  echo "Source directory is not a git repository" >&2
-  exit 2
+    echo "Source directory is not a git repository" >&2
+    exit 2
 fi
 
 # Check the source is fully committed
 cd "$src"
 if git status >/dev/null; then
-  echo "Source repo not fully committed (see git-status)" >&2
-  exit 2
+    echo "Source repo not fully committed (see git-status)" >&2
+    exit 2
 fi
-  
+    
 # Check backup directory doesn't exist
 #if [ -d "$src.bak" ]; then
 #  echo "Backup directory $src.bak already exists" >&2
@@ -37,16 +37,16 @@ fi
 
 # Check destination doesn't exist
 if [ -e "$dest" ]; then
-  echo "Destination already exists" >&2
-  exit 2
+    echo "Destination already exists" >&2
+    exit 2
 fi
 
 # Check the destination is writable
 if touch "$dest" 2>/dev/null; then
-  rm -rf $dest
+    rm -rf $dest
 else
-  echo "Destination not writable" >&2
-  exit 2
+    echo "Destination not writable" >&2
+    exit 2
 fi
 
 # Convert source & destination to absolute paths
@@ -61,4 +61,3 @@ git config remote.origin.url "$dest"
 git config remote.origin.fetch refs/heads/*:refs/remotes/origin/*
 git config branch.master.remote origin
 git config branch.master.merge refs/heads/master
-

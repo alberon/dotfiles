@@ -9,28 +9,28 @@ source_name="`basename "$source_dir"`"
 # Compress if possible
 if which bzip2 >/dev/null
 then
-  flags=jcf
-  ext=.bz2
+    flags=jcf
+    ext=.bz2
 elif which gzip >/dev/null
 then
-  flags=zcf
-  ext=.gz
+    flags=zcf
+    ext=.gz
 else
-  flags=cf
-  ext=
+    flags=cf
+    ext=
 fi
 
 # $target_file = Name of the target file
 target="$2"
 if [ -z "$target" ]
 then
-  target="$source_name.tar$ext"
+    target="$source_name.tar$ext"
 fi
 
 # Make $target_file absolute not relative (unless it is already)
 if [ "${target_file:0:1}" != "/" ]
 then
-  target="`pwd`/$target"
+    target="`pwd`/$target"
 fi
 
 # Go to the parent of the source directory, so all file names in the archive are relative to there
@@ -38,4 +38,3 @@ cd "$source_dir/.."
 
 # Create the archive
 tar $flags "$target" "$source_name"
-

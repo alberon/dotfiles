@@ -8,11 +8,12 @@ base=${base%/}
 repos=`curl -s $base?style=raw` || exit
 
 for repo in $repos; do
-  # $repo is in the format "/name/"
-  url="$base$repo"
-  echo
-  echo $url
-  echo
-  hg clone $url
+    
+    # $repo is in the format "/name/"
+    url="$base$repo"
+    echo
+    echo $url
+    echo
+    hg clone $url
+    
 done
-

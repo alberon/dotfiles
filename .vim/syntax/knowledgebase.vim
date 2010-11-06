@@ -26,3 +26,4 @@ hi todoVimModeline guifg=#222222
 
 let b:current_syntax = "knowledgebase"
 
+

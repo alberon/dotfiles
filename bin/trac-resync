@@ -1,10 +1,9 @@
 #!/bin/bash
 
 if [ -n "$1" ]; then
-  path=.
+    path=.
 else
-  path=$1
+    path=$1
 fi
 
 trac-admin "$path" resync $2
-

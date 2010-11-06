@@ -3,4 +3,3 @@
 " setlocal comments=s:<!--,m:\ \ \ \ ,e:-->
 
 setlocal comments=sO:*\ -,mO:*\ \ ,exO:*/,s1:/*,mb:*,ex:*/,://
-

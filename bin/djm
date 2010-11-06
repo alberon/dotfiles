@@ -2,7 +2,8 @@
 
 set -u
 
-function usage {
+function usage
+{
     echo "Usage: djm model ModelName" >&2
     exit 1
 }
@@ -79,4 +80,3 @@ END
 else
     usage
 fi
-

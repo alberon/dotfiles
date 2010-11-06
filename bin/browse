@@ -2,10 +2,9 @@
 
 if [ -n "$1" ]
 then
-  dir="$1"
+    dir="$1"
 else
-  dir="."
+    dir="."
 fi
 
 nautilus --no-desktop --browser $dir >/dev/null 2>&1 &
-

@@ -1,21 +1,21 @@
 " Maximize window automatically
 function! SetGuiPos()
-  
-  if has("win32")
-    let include = $VIM . "/.gvimrc_size"
-  else
-    let include = $HOME . "/.gvimrc_size"
-  endif
-  
-  if filereadable(include)
-    exe "source " . include
-    " e.g.
-    " winpos 0 0
-    " set lines=71 columns=155
-  elseif has("win32")
-    simalt ~x
-  endif
-  
+    
+    if has("win32")
+        let include = $VIM . "/.gvimrc_size"
+    else
+        let include = $HOME . "/.gvimrc_size"
+    endif
+    
+    if filereadable(include)
+        exe "source " . include
+        " e.g.
+        " winpos 0 0
+        " set lines=71 columns=155
+    elseif has("win32")
+        simalt ~x
+    endif
+    
 endfunction
 
 autocmd GUIEnter * exe SetGuiPos()
@@ -55,75 +55,74 @@ an <silent> 20.424   &Edit.Edit\ gvi&mrc :if has("win32")<CR>:edit $VIM/.gvimrc<
 
 " Diff Patch
 if has("diff")
-  
-  func! <SID>diffmakepatch()
-  
-    if expand("%") == ""
-      
-      " Unsaved - Error
-      echo "Please save first!"
-      
-    else
-      
-      " TODO: Warn before overwriting existing file OR create in a new buffer
-      
-      " Get file
-      let filename = browse(0, "Create Patch To File...", expand("%:p:h"), "")
-      if filename == ""
-        return
-      endif
-      
-      " Run diff
-      let opt = ""
-      if &diffopt =~ "icase"
-        let opt = opt . "-i "
-      endif
-      if &diffopt =~ "iwhite"
-        let opt = opt . "-b "
-      endif
-      if has("win32")
-        silent execute '!="'.$VIMRUNTIME.'\diff.exe" -c '.opt.'"'.expand("%").'" "'.filename.'" > "'.expand("%").'.diff"'
-      else
-        silent execute '!diff -c '.opt.'"'.expand("%").'" "'.filename.'" > "'.expand("%").'.diff"'
-      endif
-      
-      " Edit file
-      silent execute "vsplit " . expand("%") . ".diff"
-      
-    endif
     
-  endfunc
-  
-  an 10.430 &File.Split\ C&reate\ Patch\.\.\. :call <SID>diffmakepatch()<CR>
-  
+    func! <SID>diffmakepatch()
+    
+        if expand("%") == ""
+            
+            " Unsaved - Error
+            echo "Please save first!"
+            
+        else
+            
+            " TODO: Warn before overwriting existing file OR create in a new buffer
+            
+            " Get file
+            let filename = browse(0, "Create Patch To File...", expand("%:p:h"), "")
+            if filename == ""
+                return
+            endif
+            
+            " Run diff
+            let opt = ""
+            if &diffopt =~ "icase"
+                let opt = opt . "-i "
+            endif
+            if &diffopt =~ "iwhite"
+                let opt = opt . "-b "
+            endif
+            if has("win32")
+                silent execute '!="'.$VIMRUNTIME.'\diff.exe" -c '.opt.'"'.expand("%").'" "'.filename.'" > "'.expand("%").'.diff"'
+            else
+                silent execute '!diff -c '.opt.'"'.expand("%").'" "'.filename.'" > "'.expand("%").'.diff"'
+            endif
+            
+            " Edit file
+            silent execute "vsplit " . expand("%") . ".diff"
+            
+        endif
+        
+    endfunc
+    
+    an 10.430 &File.Split\ C&reate\ Patch\.\.\. :call <SID>diffmakepatch()<CR>
+    
 endif
 
 " Open URL
 " http://vim.wikia.com/wiki/Open_a_web-browser_with_the_URL_in_the_current_line
 let $PATH = $PATH . ';c:\Program Files (x86)\Mozilla Firefox;c:\Program Files\Mozilla Firefox'
 function! Browser ()
-  
-  let line0 = getline(".")
-  
-  let line = matchstr(line0, "http[^ ]*")
-  if line == ""
-    let line = matchstr(line0, "ftp[^ ]*")
-  endif
-  if line == ""
-    let line = matchstr(line0, "file[^ ]*")
-  endif
-  "let line = escape(line, "#?&;|%")
-  let line = escape(line, "#")
-  
-  " This opens the current file in Firefox by default
-  "if line == ""
-  "  let line = "\"" . (expand("%:p")) . "\""
-  "endif
-  
-  if line != ""
-    exec ':silent !start firefox.exe "' . line . '"'
-  endif
-  
+    
+    let line0 = getline(".")
+    
+    let line = matchstr(line0, "http[^ ]*")
+    if line == ""
+        let line = matchstr(line0, "ftp[^ ]*")
+    endif
+    if line == ""
+        let line = matchstr(line0, "file[^ ]*")
+    endif
+    "let line = escape(line, "#?&;|%")
+    let line = escape(line, "#")
+    
+    " This opens the current file in Firefox by default
+    "if line == ""
+    "  let line = "\"" . (expand("%:p")) . "\""
+    "endif
+    
+    if line != ""
+        exec ':silent !start firefox.exe "' . line . '"'
+    endif
+    
 endfunction
 map <silent> <Leader>w :call Browser ()<CR>
-

@@ -7,9 +7,9 @@ force=0
 fusermountopts=
 if [ "$1" = "-f" ]
 then
-  force=1
-  fusermountopts="-z"
-  shift
+    force=1
+    fusermountopts="-z"
+    shift
 fi
 
 # Get dir name, remove the / from the end if necessary
@@ -17,47 +17,46 @@ dir="${1%/}"
 
 # Show help?
 if [ -z "$dir" ]; then
-  echo "Usage: um <dirname>" >&2
-  exit 1
+    echo "Usage: um <dirname>" >&2
+    exit 1
 fi
 
 # Show error?
 if [ ! -d "$dir" -a $force -eq 0 ]; then
-  echo "Invalid directory" >&2
-  exit 1
+    echo "Invalid directory" >&2
+    exit 1
 fi
 
 # Try SSHFS/FTPFS first
 if which fusermount >/dev/null 2>&1; then
-  echo "Trying fusermount for sshfs or ftpfs..."
-  
-  if fusermount -u $fusermountopts $dir; then
-    echo "Done."
-    exit
-  fi
+    echo "Trying fusermount for sshfs or ftpfs..."
+    
+    if fusermount -u $fusermountopts $dir; then
+        echo "Done."
+        exit
+    fi
 fi
 
 # Then Samba
 if which smbumount >/dev/null 2>&1; then
-  echo "Trying smbumount for Samba..."
-  
-  if smbumount $dir; then
-    echo "Done."
-    exit
-  fi
+    echo "Trying smbumount for Samba..."
+    
+    if smbumount $dir; then
+        echo "Done."
+        exit
+    fi
 fi
 
 # Then TrueCrypt
 if which truecrypt >/dev/null 2>&1; then
-  echo "Trying truecrupt..."
-  
-  if sudo truecrypt -d $dir; then
-    rm -r $dir
-    echo "Done."
-    exit
-  fi
+    echo "Trying truecrupt..."
+    
+    if sudo truecrypt -d $dir; then
+        rm -r $dir
+        echo "Done."
+        exit
+    fi
 fi
 
 # Error
 echo "Failed - cannot unmount directory" >&2
-
