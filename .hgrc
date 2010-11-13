@@ -5,6 +5,7 @@ username = Dave Miller <mercurial@dave-miller.com>
 
 [alias]
 ar = addremove
+pish = push
 
 [defaults]
 diff = --git --show-function --unified 8
