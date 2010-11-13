@@ -7,7 +7,8 @@ username = Dave Miller <mercurial@dave-miller.com>
 ar = addremove
 
 [defaults]
-diff = -g
+diff = --git --show-function --unified 8
+log = --graph
 
 [hooks]
 precommit.strict = x=`hg status -ud --color=always`; if [ -n "$x" ]; then echo "$x"; exit 1; fi; exit 0
