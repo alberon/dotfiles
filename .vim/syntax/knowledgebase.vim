@@ -49,16 +49,6 @@ hi todoItemWaitingForText guifg=#ffffff
 syn match todoItemWaitingForImportant "\*\*\*" contained
 hi todoItemWaitingForImportant guifg=Black guibg=#f09389
 
-" Date item
-syn match todoItemDate "^ # .*$"he=s+3 contains=todoItemDateText
-hi todoItemDate guifg=#80a0ff
-
-syn match todoItemDateText ".*"hs=s+3 contains=todoItemDateImportant contained
-hi todoItemDateText guifg=#ffffff
-
-syn match todoItemDateImportant "\*\*\*" contained
-hi todoItemDateImportant guifg=Black guibg=#80a0ff
-
 " Comment
 syn match todoComment "^   .*$"
 hi todoComment guifg=#808080
