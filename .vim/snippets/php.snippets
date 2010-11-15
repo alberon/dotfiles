@@ -1737,8 +1737,9 @@ snippet common
 snippet deftpl
 	djmSmarty::defaultTemplate()
 
-snippet display
-	$app->tpl->display(${1:djmSmarty::defaultTemplate()});
+snippet disp
+	$app->tpl->assign(compact('${1}'))
+	         ->display(${2:djmSmarty::defaultTemplate()});
 
 snippet gapp
 	global $app;
