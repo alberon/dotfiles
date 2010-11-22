@@ -125,8 +125,8 @@ augroup END
 " 4 spaces (use ":ret" to convert tabs to spaces)
 set expandtab tabstop=4 shiftwidth=4 softtabstop=4
 
-" To do list files use 3 spaces
-autocmd FileType todolist set tabstop=3 shiftwidth=3 softtabstop=3
+" Knowledgebase files use 3 spaces to line comments up under list items
+autocmd FileType knowledgebase set tabstop=3 shiftwidth=3 softtabstop=3
 
 " Tab2Space
 " http://vim.wikia.com/wiki/Super_retab
