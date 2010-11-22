@@ -8,54 +8,64 @@ endif
 syn match kbStars "\*\*\*"
 hi kbStars guifg=Blue guibg=Yellow
 
+" Project
+syn match kbProject "^[^ ].*:$" contains=kbProjectImportant,kbProjectSeparator,kbProjectColon
+hi kbProject guifg=#80a0ff
 
-" Project - removed
+syn match kbProjectColon ":$" contained
+hi kbProjectColon guifg=#000000
+
+syn match kbProjectImportant "\*\*\*" contained
+hi kbProjectImportant guifg=Black guibg=#80a0ff
+
+syn match kbProjectSeparator " :: " contained
+hi kbProjectSeparator guifg=#ff9900
 
 " Separator
-syn match todoSeparator "^-\{80}$"
-hi todoSeparator guifg=#d47fff
+syn match kbSeparator "^-\{80}$"
+hi kbSeparator guifg=#d47fff
 
 " Heading
-syn region todoHeading start="^=\{80}$" end="^=\{80}$"
-hi todoHeading guifg=#d47fff
+syn region kbHeading start="^=\{80}$" end="^=\{80}$"
+hi kbHeading guifg=#d47fff
 
 " Green item
-syn match todoItemNormal "^ \* .*$"he=s+3 contains=todoItemNormalText
-hi todoItemNormal guifg=#99ff00
+syn match kbItemNormal "^ \* .*$"he=s+3 contains=kbItemNormalText
+hi kbItemNormal guifg=#99ff00
 
-syn match todoItemNormalText ".*"hs=s+3 contains=todoItemNormalImportant contained
-hi todoItemNormalText guifg=#ffffff
+syn match kbItemNormalText ".*"hs=s+3 contains=kbItemNormalImportant contained
+hi kbItemNormalText guifg=#ffffff
 
-syn match todoItemNormalImportant "\*\*\*" contained
-hi todoItemNormalImportant guifg=Black guibg=#a6f089
+syn match kbItemNormalImportant "\*\*\*" contained
+hi kbItemNormalImportant guifg=Black guibg=#a6f089
 
 " Orange item
-syn match todoItemAgenda "^ \* [\* ]*@.*$"he=s+3 contains=todoItemAgendaText
-hi todoItemAgenda guifg=#ff9900
+syn match kbItemAgenda "^ \* [\* ]*@.*$"he=s+3 contains=kbItemAgendaText
+hi kbItemAgenda guifg=#ff9900
 
-syn match todoItemAgendaText ".*"hs=s+3 contains=todoItemAgendaImportant contained
-hi todoItemAgendaText guifg=#ffffff
+syn match kbItemAgendaText ".*"hs=s+3 contains=kbItemAgendaImportant contained
+hi kbItemAgendaText guifg=#ffffff
 
-syn match todoItemAgendaImportant "\*\*\*" contained
-hi todoItemAgendaImportant guifg=Black guibg=#f0ca89
+syn match kbItemAgendaImportant "\*\*\*" contained
+hi kbItemAgendaImportant guifg=Black guibg=#f0ca89
 
 " Red item
-syn match todoItemWaitingFor "^ \* [\* ]*WF .*$"he=s+3 contains=todoItemWaitingForText
-hi todoItemWaitingFor guifg=#8e0000
+syn match kbItemWaitingFor "^ \* [\* ]*WF .*$"he=s+3 contains=kbItemWaitingForText
+hi kbItemWaitingFor guifg=#8e0000
 
-syn match todoItemWaitingForText ".*"hs=s+3 contains=todoItemWaitingForImportant contained
-hi todoItemWaitingForText guifg=#ffffff
+syn match kbItemWaitingForText ".*"hs=s+3 contains=kbItemWaitingForImportant contained
+hi kbItemWaitingForText guifg=#ffffff
 
-syn match todoItemWaitingForImportant "\*\*\*" contained
-hi todoItemWaitingForImportant guifg=Black guibg=#f09389
+syn match kbItemWaitingForImportant "\*\*\*" contained
+hi kbItemWaitingForImportant guifg=Black guibg=#f09389
 
 " Comment
-syn match todoComment "^   .*$"
-hi todoComment guifg=#808080
+syn match kbComment "^   .*$"
+hi kbComment guifg=#808080
 
 " Vim modeline
-syn match todoVimModeline "^ vim:.*$"
-hi todoVimModeline guifg=#222222
+syn match kbVimModeline "^ vim:.*$"
+hi kbVimModeline guifg=#222222
 
 let b:current_syntax = "knowledgebase"
 
