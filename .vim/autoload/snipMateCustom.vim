@@ -13,3 +13,8 @@ fun! snipMateCustom#AutoClassName()
     endif
     return filename
 endf
+
+fun! snipMateCustom#SetFileTypeKnowledgebase()
+    set filetype=knowledgebase
+    return ""
+endf
