@@ -56,6 +56,9 @@ au BufNewFile,BufRead *.csv setf csv
 " CakePHP
 au BufNewFile,BufRead *.thtml,*.ctp setf php
 
+" Drupal
+au BufNewFile,BufRead *.module set ft=php
+
 " Text files
 au BufNewFile,BufRead *.txt setf txt
 
