@@ -1,5 +1,5 @@
 # Ignore everything except the following directories
-^(?!(\.bazaar|\.devilspie|\.elinks|\.fluxbox|\.hgextensions|\.vim|bin|gnome|opt)(/|$)).*
+^(?!(\.bazaar|\.devilspie|\.elinks|\.fluxbox|\.hgextensions|\.windows|\.vim|bin|gnome|opt)(/|$)).*
 
 # Ignore Elinks local files
 .elinks/bookmarks
