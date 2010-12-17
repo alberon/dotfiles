@@ -37,4 +37,5 @@ fi
 cd "$source_dir/.."
 
 # Create the archive
+echo "Writing to $target..."
 tar $flags "$target" "$source_name"
