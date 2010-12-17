@@ -234,6 +234,9 @@ if [ "$TERM" != "dumb" ]; then
     alias pwgen15="pwgen -c -n -y -B 15 1"
     alias pwgen20="pwgen -c -n -y -B 20 1"
     
+    # hg
+    alias hgst="hg st"
+    
     # Remember the last directory visited
     function cd {
         command cd "$@"
