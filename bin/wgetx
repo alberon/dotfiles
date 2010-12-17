@@ -104,7 +104,7 @@ if [ "$compressionAuto" -eq 1 ]; then
     elif [ "${url:(-4)}" = ".bz2" ]; then
         compressionArg=--bzip2
     elif [ "${url:(-4)}" = ".zip" ]; then
-        compressionCmd=zip
+        compressionCmd=unzip
     else
         echo "ERROR: Cannot detect compression scheme - please specify -n, -z or -j" >&2
         exit 1
@@ -112,7 +112,7 @@ if [ "$compressionAuto" -eq 1 ]; then
 fi
 
 # Download and extract the file
-if [ "$compressionCmd" = "zip" ]; then
+if [ "$compressionCmd" = "unzip" ]; then
     
     # Note: unzip doesn't support pipes
     # Generate temporary file
