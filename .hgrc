@@ -10,6 +10,7 @@ pish = push
 [defaults]
 diff = --git --show-function --unified 8
 log = --graph
+qdiff = --git --show-function --unified 8
 qimport = --git
 qnew = --git
 qrefresh = --git
@@ -48,3 +49,5 @@ djm.username = dave
 # [auth]
 # djm.password = ABC
 %include .hgrc_local
+
+# vim:ft=dosini
