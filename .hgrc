@@ -10,9 +10,14 @@ pish = push
 [defaults]
 diff = --git --show-function --unified 8
 log = --graph
+qimport = --git
+qnew = --git
+qrefresh = --git
+qseries = --summary
 
 [hooks]
-precommit.strict = x=`hg status -ud --color=always`; if [ -n "$x" ]; then echo "$x"; exit 1; fi; exit 0
+# Removed because it interferes with mq extension
+#precommit.strict = x=`hg status -ud --color=always`; if [ -n "$x" ]; then echo "$x"; exit 1; fi; exit 0
 
 [extensions]
 boundmode = ~/.hgextensions/boundmode.py

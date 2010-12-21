@@ -236,6 +236,7 @@ if [ "$TERM" != "dumb" ]; then
     
     # hg
     alias hgst="hg st"
+    alias mq='hg -R $(hg root)/.hg/patches'
     
     # Remember the last directory visited
     function cd {
