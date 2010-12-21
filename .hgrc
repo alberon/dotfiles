@@ -9,6 +9,7 @@ pish = push
 
 [defaults]
 diff = --git --show-function --unified 8
+export = --git
 log = --graph
 qdiff = --git --show-function --unified 8
 qimport = --git
