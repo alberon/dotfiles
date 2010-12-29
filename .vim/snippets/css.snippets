@@ -157,14 +157,8 @@ snippet bottom
 	bottom: ${1};${2}
 
 # clear
-snippet clear both
-	clear: both;
-
-snippet clear left
-	clear: left;
-
-snippet clear right
-	clear: right;
+snippet clear
+	clear: ${1:both};
 
 snippet cboth
 	clear: both;
@@ -180,14 +174,8 @@ snippet color
 	color: #${1};${2}
 
 # display
-snippet display none
-	display: none;
-
-snippet display block
-	display: block;
-
-snippet display inline
-	display: inline;
+snippet display
+	display: ${1:none};
 
 snippet hide
 	display: none;
@@ -200,13 +188,7 @@ snippet inline
 
 # float
 snippet float left
-	float: left;
-
-snippet float right
-	float: right;
-
-snippet float none
-	float: none;
+	float: ${1:left};
 
 snippet fleft
 	float: left;
@@ -230,11 +212,11 @@ snippet font-size
 	font-size: ${1:13}${2:px};${3}
 
 # font-style
-snippet font-style italic
-	font-style: italic;
+snippet font-style
+	font-style: ${1:italic};
 
-snippet font-style normal
-	font-style: normal;
+snippet style
+	font-style: ${1:italic};
 
 snippet italic
 	font-style: italic;
@@ -243,21 +225,18 @@ snippet noitalic
 	font-style: normal;
 
 # font-variant
-snippet font-variant normal
-	font-variant: normal;
+snippet font-variant
+	font-variant: ${1:small-caps};
 
-snippet font-variant small-caps
-	font-variant: small-caps;
-
-snippet font-variant inherit
-	font-variant: inherit;
+snippet variant
+	font-variant: ${1:small-caps};
 
 # font-weight
-snippet font-weight normal
-	font-weight: bold;
+snippet font-weight
+	font-weight: ${1:bold};
 
-snippet font-weight bold
-	font-weight: bold;
+snippet weight
+	font-weight: ${1:bold};
 
 snippet bold
 	font-weight: bold;
@@ -282,11 +261,8 @@ snippet line-height
 	line-height: ${1}${2:px};${3}
 
 # list-style
-snippet list-style type position image
+snippet list-style
 	list-style: ${1:disc} ${2:outside} url(${3:...});${4}
-
-snippet list-style none
-	list-style: none;
 
 # margin
 snippet margin
