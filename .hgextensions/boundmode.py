@@ -4,7 +4,7 @@
 #
 # Copyright 2009 Bill Barry <after.fallout@gmail.com>
 #
-# Copyright 2010 Dave Miller - www.dave-miller.com
+# Copyright 2010 Dave James Miller - davejamesmiller.com
 # Modified to:
 # - Remove bound-push option (I don't see the point in it)
 # - Make the bind path optional (use default path if none given)

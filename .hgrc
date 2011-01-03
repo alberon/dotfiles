@@ -43,8 +43,11 @@ attend = annotate, cat, diff, export, glog, log, status, qdiff
 pager = LESS='FRSX' less
 
 [auth]
-djm.prefix = http://hg.dave-miller.com
+djm.prefix = http://hg.davejamesmiller.com
 djm.username = dave
+
+djm2.prefix = http://hg.dave-miller.com
+djm2.username = dave
 
 # Put passwords in here:
 # e.g.

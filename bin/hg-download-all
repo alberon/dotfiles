@@ -2,7 +2,7 @@
 
 set -u
 
-base=${1:-http://hg.dave-miller.com}
+base=${1:-http://hg.davejamesmiller.com}
 base=${base%/}
 
 repos=`curl -s $base?style=raw` || exit
