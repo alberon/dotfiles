@@ -1,0 +1,9 @@
+#!/bin/bash
+count=`ls -A1 | wc -l`
+
+if [ $count != 0 ]; then
+    echo "Current directory is not empty ($count files found)" >&2
+    exit 1
+fi
+
+wgetx -s http://wordpress.org/latest.tar.gz
