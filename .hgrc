@@ -8,14 +8,15 @@ ar = addremove
 pish = push
 
 [defaults]
-diff = --git --show-function --unified 8
-export = --git
+#diff = --unified 8
 log = --graph
-qdiff = --git --show-function --unified 8
-qimport = --git
-qnew = --git
-qrefresh = --git
+#qdiff = --unified 8
 qseries = --summary
+
+[diff]
+git=1
+nodates=1
+showfunc=1
 
 [hooks]
 # Removed because it interferes with mq extension
