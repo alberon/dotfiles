@@ -6,6 +6,7 @@ username = Dave Miller <mercurial@dave-miller.com>
 [alias]
 ar = addremove
 pish = push
+qstatus = status --rev qparent
 
 [defaults]
 #diff = --unified 8
