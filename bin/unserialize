@@ -1,0 +1,5 @@
+#!/usr/bin/php
+<?php
+
+var_export(unserialize($argv[1]));
+echo "\n";
