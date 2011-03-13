@@ -30,6 +30,7 @@ convert =
 extdiff =
 fetch =
 graphlog =
+hgsubversion = ~/.hgextensions/hgsubversion
 mq =
 pager =
 rdiff = ~/.hgextensions/rdiff.py
