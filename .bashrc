@@ -59,7 +59,7 @@ if [ "$TERM" != "dumb" ]; then
     
     # Set the titlebar & prompt to "[user@host:/full/path]\n$"
     case "$TERM" in
-        xterm*) Titlebar="\[\e]2;\u@\h:\$PWD\a\]" ;;
+        xterm*) Titlebar="\u@\h:\$PWD" ;;
         *) Titlebar="" ;;
     esac
     
@@ -72,7 +72,29 @@ if [ "$TERM" != "dumb" ]; then
         HostColor="32;1"
     fi
     
-    PS1="${Titlebar}\n\e[0m[\[\e[31;1m\]\u\[\e[0m\]@\[\e[${HostColor}m\]\h\[\e[0m\]:\[\e[33;1m\]\$PWD\[\e[0m\]]\e[1;35m\$KeyStatus\n\[\e[31;1m\]\$\[\e[0m\] "
+    # Function to update the prompt with a given message (makes it easier to distinguish between different windows)
+    function MSG
+    {
+        # Display the provided message above the prompt and in the titlebar
+        if [ -n "$1" ]; then
+            MessageCode="\e[35;1m================================================================================\n $1\n================================================================================\e[0m\n"
+            TitlebarCode="\[\e]2;[$1] $Titlebar\a\]"
+        else
+            MessageCode=
+            TitlebarCode="\[\e]2;$Titlebar\a\]"
+        fi
+        
+        # If changing the titlebar is not supported, remove that code
+        if [ -z "$Titlebar" ]; then
+            TitlebarCode=
+        fi
+        
+        # Set the prompt
+        PS1="${TitlebarCode}\n${MessageCode}\e[0m[\[\e[31;1m\]\u\[\e[0m\]@\[\e[${HostColor}m\]\h\[\e[0m\]:\[\e[33;1m\]\$PWD\[\e[0m\]]\e[1;35m\$KeyStatus\n\[\e[31;1m\]\$\[\e[0m\] "
+    }
+    
+    # Default to prompt with no message
+    MSG
 
     # Reload .bashrc when updated
     alias reload-bashrc='. ~/.bashrc'
