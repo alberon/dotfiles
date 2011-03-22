@@ -573,6 +573,13 @@ if [ "$TERM" != "dumb" ]; then
     
 fi # $TERM != "dumb"
 
+# Prevent errors when MSG is set in .bashrc_local
+if [ "$TERM" = "dumb" ]; then
+    function MSG {
+        : Do nothing
+    }
+fi
+
 # Custom settings for this machine/account
 if [ -f ~/.bashrc_local ]; then
     source ~/.bashrc_local
