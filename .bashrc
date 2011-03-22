@@ -76,9 +76,9 @@ if [ "$TERM" != "dumb" ]; then
     function MSG
     {
         # Display the provided message above the prompt and in the titlebar
-        if [ -n "$1" ]; then
-            MessageCode="\e[35;1m================================================================================\n $1\n================================================================================\e[0m\n"
-            TitlebarCode="\[\e]2;[$1] $Titlebar\a\]"
+        if [ -n "$*" ]; then
+            MessageCode="\e[35;1m================================================================================\n $*\n================================================================================\e[0m\n"
+            TitlebarCode="\[\e]2;[$*] $Titlebar\a\]"
         else
             MessageCode=
             TitlebarCode="\[\e]2;$Titlebar\a\]"
