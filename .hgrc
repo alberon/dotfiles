@@ -1,7 +1,7 @@
 [ui]
 ignore = ~/.hgignore-global
 merge = internal:merge
-username = Dave Miller <mercurial@dave-miller.com>
+username = Dave James Miller <dave@davejamesmiller.com>
 
 [alias]
 ar = addremove

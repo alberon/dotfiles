@@ -1,7 +1,7 @@
 #!/bin/bash
 
-git config --global user.name "Dave Miller"
-git config --global user.email "git@dave-miller.com"
+git config --global user.name "Dave James Miller"
+git config --global user.email "dave@davejamesmiller.com"
 
 git config --global color.branch "auto"
 git config --global color.status "auto"
