@@ -193,9 +193,8 @@ set fileencodings=ucs-bom,utf-8,default,latin1
 set nobomb
 
 " Highlight tabs
-" n.b. I had to move this below changing the encoding to UTF-8 for it to work!
 set list
-set listchars=tab:»\ 
+set listchars=tab:>\ 
 
 au FileType snippet set nolist
 
