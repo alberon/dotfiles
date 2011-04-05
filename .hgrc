@@ -32,6 +32,7 @@ fetch =
 graphlog =
 mq =
 pager =
+purge =
 rdiff = ~/.hgextensions/rdiff.py
 record =
 transplant =
