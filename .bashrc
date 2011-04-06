@@ -19,8 +19,8 @@ else
     umask $umask_user
 fi
 
-# Add my own bin directory to the path
-export PATH="~/local/bin:~/bin:$PATH"
+# Add my own bin directories to the path
+export PATH="~/local/bin:~/bin:~/opt/drush:$PATH"
 
 # Use my favourite programs
 export PAGER=less
