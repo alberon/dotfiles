@@ -337,6 +337,17 @@ if [ "$TERM" != "dumb" ]; then
         # Add sbin folder to my path to make it easier to find the programs
         PATH="$PATH:/usr/local/sbin:/usr/sbin:/sbin"
         
+        # Additional safety checks
+        function sudo {
+            if [ "$1" = "cp" -o "$1" = "mv" -o "$1" = "rm" ]; then
+                exe="$1"
+                shift
+                command sudo "$exe" -i "$@"
+            else
+                command sudo "$@"
+            fi
+        }
+        
     fi
     
     # Make sure ssh-agent is loaded (for this user) - do this now so it's available for `mkkey`
