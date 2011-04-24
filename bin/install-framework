@@ -18,4 +18,9 @@ echo " Downloading framework..."
 echo "================================================================================"
 
 hg clone http://hg.davejamesmiller.com/framework-template
+
+if [ ! -f .htaccess ]; then
+    echo "SetEnv DEBUG 1" > .htaccess
+fi
+
 framework-template/template-setup.sh repo
