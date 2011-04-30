@@ -8,6 +8,11 @@ set nocompatible
 source $VIMRUNTIME/mswin.vim
 
 "================================================================================
+" Append bundle paths
+"================================================================================
+call pathogen#runtime_append_all_bundles()
+
+"================================================================================
 " Color Scheme
 "================================================================================
 
@@ -65,11 +70,11 @@ au BufNewFile,BufRead *.txt setf txt
 " Conflict markers
 if version >= 700
     au BufNewFile,BufRead *
-    \ if match(getline(1, min([line("$"), 100])), '^=======$') > -1
-    \ && match(getline(1, min([line("$"), 100])), '^<<<<<<< ') > -1
-    \ && match(getline(1, min([line("$"), 100])), '^>>>>>>> ') > -1 |
-    \   setlocal syn=conflict |
-    \ endif
+    \   if match(getline(1, min([line("$"), 100])), '^=======$') > -1
+    \   && match(getline(1, min([line("$"), 100])), '^<<<<<<< ') > -1
+    \   && match(getline(1, min([line("$"), 100])), '^>>>>>>> ') > -1 |
+    \       setlocal syn=conflict |
+    \   endif
 endif
 
 augroup END
@@ -94,27 +99,27 @@ augroup JumpCursorOnEdit
 au!
 
 autocmd BufReadPost *
-\ if expand("<afile>:p:h") !=? $TEMP |
-\   if line("'\"") > 1 && line("'\"") <= line("$") |
-\     let JumpCursorOnEdit_foo = line("'\"") |
-\     let b:doopenfold = 1 |
-\     if (foldlevel(JumpCursorOnEdit_foo) > foldlevel(JumpCursorOnEdit_foo - 1)) |
-\        let JumpCursorOnEdit_foo = JumpCursorOnEdit_foo - 1 |
-\        let b:doopenfold = 2 |
-\     endif |
-\     exe JumpCursorOnEdit_foo |
-\   endif |
-\ endif
+\   if expand("<afile>:p:h") !=? $TEMP |
+\       if line("'\"") > 1 && line("'\"") <= line("$") |
+\           let JumpCursorOnEdit_foo = line("'\"") |
+\           let b:doopenfold = 1 |
+\           if (foldlevel(JumpCursorOnEdit_foo) > foldlevel(JumpCursorOnEdit_foo - 1)) |
+\               let JumpCursorOnEdit_foo = JumpCursorOnEdit_foo - 1 |
+\               let b:doopenfold = 2 |
+\           endif |
+\           exe JumpCursorOnEdit_foo |
+\       endif |
+\   endif
 
 " Need to postpone using "zv" until after reading the modelines.
 autocmd BufWinEnter *
-\ if exists("b:doopenfold") |
-\   exe "normal zv" |
-\   if(b:doopenfold > 1) |
-\       exe  "+".1 |
-\   endif |
-\   unlet b:doopenfold |
-\ endif
+\   if exists("b:doopenfold") |
+\       exe "normal zv" |
+\       if (b:doopenfold > 1) |
+\           exe  "+".1 |
+\       endif |
+\       unlet b:doopenfold |
+\   endif
 
 augroup END
 
@@ -355,28 +360,28 @@ vnoremap <S-Down> gj
 "================================================================================
 
 " ^D = Quit (prompts if not saved)
-"no      <C-D>   :q<CR>
-"ino     <C-D>   <C-O>:q<CR>
+"noremap     <C-D>   :q<CR>
+"inoremap    <C-D>   <C-O>:q<CR>
 
 " w = Write
-nmap    w       :w<CR>
-nmap    W       :w<CR>
+nmap        w       :w<CR>
+nmap        W       :w<CR>
 
 " q = Quit
-nmap    q       :q<CR>
-nmap    Q       :q<CR>
+nmap        q       :q<CR>
+nmap        Q       :q<CR>
 
 " e = Explore
-nmap    e       :edit %:p:h<CR>
-nmap    E       :edit %:p:h<CR>
+nmap        e       :edit %:p:h<CR>
+nmap        E       :edit %:p:h<CR>
 
 " gf = Goto file (even if it doesn't exist yet)
 " (Note: gF = Goto file & line)
-nmap    gf      :e <cfile><CR>
+nmap        gf      :e <cfile><CR>
 
 " / = Search using normal RE not Vim's RE syntax that I can never remember!
-nnoremap / /\v
-vnoremap / /\v
+nnoremap    /       /\v
+vnoremap    /       /\v
 
 " \<space> = Stop highlighting search results
 nnoremap    <F12>   :nohlsearch<CR>
@@ -384,17 +389,17 @@ inoremap    <F12>   <C-O>:nohlsearch<CR>
 vnoremap    <F12>   <C-O>:nohlsearch<CR>
 
 " Ctrl+D = Insert Date (DDD D MMM YYYY)
-imap <C-d> <C-R>=strftime("%a %#d %b %Y")<CR>
+imap        <C-d>   <C-R>=strftime("%a %#d %b %Y")<CR>
 
 " <Tab> = Jump between start and end braces
-nnoremap <tab> %
-vnoremap <tab> %
+nnoremap    <tab>   %
+vnoremap    <tab>   %
 
 " ; instead of : for commands
-nnoremap ; :
+nnoremap    ;       :
 
 " Sort CSS properties alphabetically
-nnoremap <leader>S ?{<CR>jV/^\s*\}?$<CR>k:sort<CR>:noh<CR>
+nnoremap    <leader>S   ?{<CR>jV/^\s*\}?$<CR>k:sort<CR>:noh<CR>
 
 "================================================================================
 " Diff setup
@@ -479,80 +484,6 @@ vnoremap <silent> <C-A-Up> :<C-u>call MoveVisualUp()<CR>
 vnoremap <silent> <C-A-Down> :<C-u>call MoveVisualDown()<CR>
 
 "================================================================================
-" Moving back and forth between lines of same or lower indentation.
-"================================================================================
-
-" http://vim.wikia.com/wiki/Back_and_forth_between_indented_lines_again
-"function! NextIndent(exclusive, fwd, lowerlevel, skipblanks)
-" let line = line('.')
-" let column = col('.')
-" let lastline = line('$')
-" let indent = indent(line)
-" let stepvalue = a:fwd ? 1 : -1
-" while (line > 0 && line <= lastline)
-"   let line = line + stepvalue
-"   if ( ! a:lowerlevel && indent(line) == indent ||
-"     \ a:lowerlevel && indent(line) < indent)
-"     if (! a:skipblanks || strlen(getline(line)) > 0)
-"       if (a:exclusive)
-"         let line = line - stepvalue
-"       endif
-"       exe line
-"       exe "normal " column . "|"
-"       return
-"     endif
-"   endif
-" endwhile
-"endfunc
-"
-"nnoremap <silent> [l :call NextIndent(0, 0, 0, 1)<CR>
-"nnoremap <silent> ]l :call NextIndent(0, 1, 0, 1)<CR>
-"nnoremap <silent> [L :call NextIndent(0, 0, 1, 1)<CR>
-"nnoremap <silent> ]L :call NextIndent(0, 1, 1, 1)<CR>
-"vnoremap <silent> [l <Esc>:call NextIndent(0, 0, 0, 1)<CR>m'gv''
-"vnoremap <silent> ]l <Esc>:call NextIndent(0, 1, 0, 1)<CR>m'gv''
-"vnoremap <silent> [L <Esc>:call NextIndent(0, 0, 1, 1)<CR>m'gv''
-"vnoremap <silent> ]L <Esc>:call NextIndent(0, 1, 1, 1)<CR>m'gv''
-"onoremap <silent> [l :call NextIndent(0, 0, 0, 1)<CR>
-"onoremap <silent> ]l :call NextIndent(0, 1, 0, 1)<CR>
-"onoremap <silent> [L :call NextIndent(1, 0, 1, 1)<CR>
-"onoremap <silent> ]L :call NextIndent(1, 1, 1, 1)<CR>
-
-" Press: vai, vii to select outer/inner python blocks by indetation.
-" Press: vii, yii, dii, cii to select/yank/delete/change an indented block.
-" http://vim.wikia.com/wiki/Indent_text_object
-"onoremap <silent>ai :<C-u>cal IndTxtObj(0)<CR>
-"onoremap <silent>ii :<C-u>cal IndTxtObj(1)<CR>
-"vnoremap <silent>ai :<C-u>cal IndTxtObj(0)<CR><Esc>gv
-"vnoremap <silent>ii :<C-u>cal IndTxtObj(1)<CR><Esc>gv
-"
-"function! IndTxtObj(inner)
-"  let curline = line(".")
-"  let lastline = line("$")
-"  let i = indent(line(".")) - &shiftwidth * (v:count1 - 1)
-"  let i = i < 0 ? 0 : i
-"  if getline(".") !~ "^\\s*$"
-"    let p = line(".") - 1
-"    let nextblank = getline(p) =~ "^\\s*$"
-"    while p > 0 && ((i == 0 && !nextblank) || (i > 0 && ((indent(p) >= i && !(nextblank && a:inner)) || (nextblank && !a:inner))))
-"      -
-"      let p = line(".") - 1
-"      let nextblank = getline(p) =~ "^\\s*$"
-"    endwhile
-"    normal! 0V
-"    call cursor(curline, 0)
-"    let p = line(".") + 1
-"    let nextblank = getline(p) =~ "^\\s*$"
-"    while p <= lastline && ((i == 0 && !nextblank) || (i > 0 && ((indent(p) >= i && !(nextblank && a:inner)) || (nextblank && !a:inner))))
-"      +
-"      let p = line(".") + 1
-"      let nextblank = getline(p) =~ "^\\s*$"
-"    endwhile
-"    normal! $
-"  endif
-"endfunction
-
-"================================================================================
 " Auto-complete (X)HTML tags with Ctrl-Hyphen
 "================================================================================
 
@@ -610,11 +541,11 @@ command NoLong call HighlightLongLines(0)
 "================================================================================
 " Learn to use HJKL keys instead of arrows!
 "================================================================================
-nnoremap <up> <nop>
-nnoremap <down> <nop>
-nnoremap <left> <nop>
-nnoremap <right> <nop>
-inoremap <up> <nop>
-inoremap <down> <nop>
-inoremap <left> <nop>
-inoremap <right> <nop>
+nnoremap <up>       <nop>
+nnoremap <down>     <nop>
+nnoremap <left>     <nop>
+nnoremap <right>    <nop>
+"inoremap <up>       <nop>
+"inoremap <down>     <nop>
+"inoremap <left>     <nop>
+"inoremap <right>    <nop>
