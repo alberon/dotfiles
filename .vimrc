@@ -158,6 +158,7 @@ command -range=% -nargs=? ReIndent call ReIndent(<line1>, <line2>, <f-args>)
 
 set ignorecase
 set smartcase
+set gdefault " Default to replacing all occurrences (/g) in :s
 set whichwrap=b,s,h,l,<,>,~,[,]
 set showbreak=~
 set number
@@ -371,6 +372,10 @@ nmap    E       :edit %:p:h<CR>
 " gf = Goto file (even if it doesn't exist yet)
 " (Note: gF = Goto file & line)
 nmap    gf      :e <cfile><CR>
+
+" / = Search using normal RE not Vim's RE syntax that I can never remember!
+nnoremap / /\v
+vnoremap / /\v
 
 " <F12> = Stop highlighting search results
 nnoremap    <F12>   :nohlsearch<CR>
