@@ -383,10 +383,15 @@ nmap        gf      :e <cfile><CR>
 nnoremap    /       /\v
 vnoremap    /       /\v
 
-" \<space> = Stop highlighting search results
+" <F12> = Stop highlighting search results
 nnoremap    <F12>   :nohlsearch<CR>
 inoremap    <F12>   <C-O>:nohlsearch<CR>
 vnoremap    <F12>   <C-O>:nohlsearch<CR>
+
+" <F5> = Graphical undo
+nnoremap    <F5>    :GundoToggle<CR>
+inoremap    <F5>    <C-O>:nohlsearch<CR>
+vnoremap    <F5>    <C-O>:nohlsearch<CR>
 
 " Ctrl+D = Insert Date (DDD D MMM YYYY)
 imap        <C-d>   <C-R>=strftime("%a %#d %b %Y")<CR>
