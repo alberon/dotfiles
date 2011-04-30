@@ -188,6 +188,7 @@ set showcmd
 set wildmenu
 set lazyredraw
 set modeline " Debian disables it in /usr/share/vim/vim71/debian.vim
+set colorcolumn=81,121
 
 " Use UTF-8 for everything, but no byte-order mark because it breaks things
 set encoding=utf-8
@@ -377,13 +378,23 @@ nmap    gf      :e <cfile><CR>
 nnoremap / /\v
 vnoremap / /\v
 
-" <F12> = Stop highlighting search results
+" \<space> = Stop highlighting search results
 nnoremap    <F12>   :nohlsearch<CR>
 inoremap    <F12>   <C-O>:nohlsearch<CR>
 vnoremap    <F12>   <C-O>:nohlsearch<CR>
 
 " Ctrl+D = Insert Date (DDD D MMM YYYY)
 imap <C-d> <C-R>=strftime("%a %#d %b %Y")<CR>
+
+" <Tab> = Jump between start and end braces
+nnoremap <tab> %
+vnoremap <tab> %
+
+" ; instead of : for commands
+nnoremap ; :
+
+" Sort CSS properties alphabetically
+nnoremap <leader>S ?{<CR>jV/^\s*\}?$<CR>k:sort<CR>:noh<CR>
 
 "================================================================================
 " Diff setup
@@ -595,3 +606,15 @@ command -nargs=? Long call HighlightLongLines(<f-args>)
 
 " :NoLong     Remove highlighting
 command NoLong call HighlightLongLines(0)
+
+"================================================================================
+" Learn to use HJKL keys instead of arrows!
+"================================================================================
+nnoremap <up> <nop>
+nnoremap <down> <nop>
+nnoremap <left> <nop>
+nnoremap <right> <nop>
+inoremap <up> <nop>
+inoremap <down> <nop>
+inoremap <left> <nop>
+inoremap <right> <nop>
