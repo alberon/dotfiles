@@ -15,3 +15,4 @@ source $VIM/.vimrc
 " Override the backup directory
 "set backupdir=h:/Temp/Vim//
 "set directory=h:/Temp/Vim//
+"set undodir=h:/Temp/Vim//

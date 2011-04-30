@@ -176,7 +176,9 @@ set nocopyindent " Changed because in Vim 7.2 autoindent seems to have started u
 set cinoptions=0{,0},0),:,!^F,o,O,e " Removed 0#
 set formatoptions+=ro " Duplicate comment lines when pressing enter
 set nowritebackup " Removed because it resets executable flag when editing over Samba
-set nobackup " Delete after writing - saves headaches with `sudo gvim`!
+set backup
+"set nobackup " Delete after writing - saves headaches with `sudo gvim`!
+set undofile
 set nomousehide
 set fileformat=unix
 set history=50
@@ -212,9 +214,11 @@ endif
 if has("win32")
     set backupdir=d:/Temp/Vim//
     set directory=d:/Temp/Vim//
+    set undodir=d:/Temp/Vim//
 else
     set backupdir=~/tmp/vim//
     set directory=~/tmp/vim//
+    set undodir=~/tmp/vim//
 endif
 
 "================================================================================
