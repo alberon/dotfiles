@@ -184,7 +184,6 @@ set formatoptions+=ro " Duplicate comment lines when pressing enter
 set nowritebackup " Removed because it resets executable flag when editing over Samba
 set backup
 "set nobackup " Delete after writing - saves headaches with `sudo gvim`!
-set undofile
 set nomousehide
 set fileformat=unix
 set history=50
@@ -193,7 +192,11 @@ set showcmd
 set wildmenu
 set lazyredraw
 set modeline " Debian disables it in /usr/share/vim/vim71/debian.vim
-set colorcolumn=81,121
+
+if version >= 730
+    set undofile
+    set colorcolumn=81,121
+endif
 
 " Use UTF-8 for everything, but no byte-order mark because it breaks things
 set encoding=utf-8
@@ -221,11 +224,15 @@ endif
 if has("win32")
     set backupdir=d:/Temp/Vim//
     set directory=d:/Temp/Vim//
-    set undodir=d:/Temp/Vim//
+    if version >= 730
+        set undodir=d:/Temp/Vim//
+    endif
 else
     set backupdir=~/tmp/vim//
     set directory=~/tmp/vim//
-    set undodir=~/tmp/vim//
+    if version >= 730
+        set undodir=~/tmp/vim//
+    endif
 endif
 
 "================================================================================
