@@ -260,6 +260,11 @@ if [ "$TERM" != "dumb" ]; then
     alias hgst="hg st"
     alias mq='hg -R $(hg root)/.hg/patches'
     
+    # ack (Debian renames to ack-grep)
+    if which ack-grep >/dev/null 2>&1; then
+        alias ack="ack-grep"
+    fi
+    
     # Remember the last directory visited
     function cd {
         command cd "$@"
