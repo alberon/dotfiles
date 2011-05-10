@@ -193,7 +193,7 @@ set wildmenu
 set lazyredraw
 set modeline " Debian disables it in /usr/share/vim/vim71/debian.vim
 
-if version >= 730
+if version >= 703
     set undofile
     set colorcolumn=81,121
 endif
@@ -224,13 +224,13 @@ endif
 if has("win32")
     set backupdir=d:/Temp/Vim//
     set directory=d:/Temp/Vim//
-    if version >= 730
+    if version >= 703
         set undodir=d:/Temp/Vim//
     endif
 else
     set backupdir=~/tmp/vim//
     set directory=~/tmp/vim//
-    if version >= 730
+    if version >= 703
         set undodir=~/tmp/vim//
     endif
 endif
