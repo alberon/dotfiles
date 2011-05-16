@@ -62,7 +62,8 @@ au BufNewFile,BufRead *.csv setf csv
 au BufNewFile,BufRead *.thtml,*.ctp setf php
 
 " Drupal
-au BufNewFile,BufRead *.module set ft=php
+au BufNewFile,BufRead *.module,*.install set ft=php
+au BufNewFile,BufRead *.info setf dosini
 
 " Text files
 au BufNewFile,BufRead *.txt setf txt
