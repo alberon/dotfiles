@@ -6,6 +6,7 @@
 
 # Ignore Elinks local files
 .elinks/bookmarks
+.elinks/cookies
 .elinks/globhist
 
 # Ignore Python compiled files
