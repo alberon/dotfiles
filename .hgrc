@@ -1,6 +1,7 @@
 [ui]
 ignore = ~/.hgignore-global
 merge = internal:merge
+report_untrusted = False
 username = Dave James Miller <dave@davejamesmiller.com>
 
 [alias]
