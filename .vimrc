@@ -388,8 +388,8 @@ nmap        E       :edit %:p:h<CR>
 nmap        gf      :e <cfile><CR>
 
 " / = Search using normal RE not Vim's RE syntax that I can never remember!
-nnoremap    /       /\v
-vnoremap    /       /\v
+"nnoremap    /       /\v
+"vnoremap    /       /\v
 
 " <F12> = Stop highlighting search results
 nnoremap    <F12>   :nohlsearch<CR>
