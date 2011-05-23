@@ -18,6 +18,7 @@ call pathogen#runtime_append_all_bundles()
 
 syntax on
 colorscheme torte
+hi ColorColumn guibg=#333333
 
 " PHP Colour Scheme
 "let php_sql_query = 1
