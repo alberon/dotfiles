@@ -126,3 +126,8 @@ function! Browser ()
     
 endfunction
 map <silent> <Leader>w :call Browser ()<CR>
+
+" Switch to existing gVim if available
+if filereadable($VIMRUNTIME . "/macros/editexisting.vim")
+    source $VIMRUNTIME/macros/editexisting.vim
+endif
