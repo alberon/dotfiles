@@ -1,0 +1,68 @@
+" Copy right : T.N.Satish. Send all your comments to the following address.
+" tnsatish < a t > g m a i l < d o t > c o m
+" This can be redistributed under BSD license.
+" http://www.vim.org/scripts/script.php%3fscript_id=2096
+" Version 1.2
+" Modified by Dave James Miller
+" - Removed Hare Krisha references & use sensible function names instead
+" - Use BufEnter so it's updated more often and almost correctly!
+
+au BufEnter * call UpdateTabMenu()
+
+function! UpdateTabMenu()
+    silent! aunmenu T&abs
+    let commands = []
+    for i in range(1, tabpagenr('$'))
+        let commands += [' T&abs.' . TabTitle(i) . ' :tabnext ' . i . '<CR>']
+    endfor
+    let commands = sort(commands)
+    for i in commands
+        exe 'an 65.' . (i+10) . ' ' . i
+    endfor
+endfunction
+
+function! TabLabel(n)
+    let buflist = tabpagebuflist(a:n)
+    let winnr = tabpagewinnr(a:n)
+    return bufname(buflist[winnr - 1])
+endfunction
+
+function! ShortenFilename(fname)
+    let name = a:fname
+    if g:bmenu_max_pathlen < 5
+        let name = ""
+    else
+        let len = strlen(name)
+        if len > g:bmenu_max_pathlen
+            let amountl = (g:bmenu_max_pathlen / 2) - 2
+            let amountr = g:bmenu_max_pathlen - amountl - 3
+            let pattern = '^\(.\{,' . amountl . '}\).\{-}\(.\{,' . amountr . '}\)$'
+            let left = substitute(name, pattern, '\1', '')
+            let right = substitute(name, pattern, '\2', '')
+            if strlen(left) + strlen(right) < len
+                let name = left . '...' . right
+            endif
+        endif
+    endif
+    return name
+endfunction
+
+function! TabTitle(index)
+    let name = TabLabel(a:index)
+    if name == ''
+        if !exists("g:menutrans_no_file")
+            let g:menutrans_no_file = "[No file]"
+        endif
+        let name = g:menutrans_no_file
+    else
+        let name = fnamemodify(name, ':p:~')
+    endif
+    " detach file name and separate it out:
+    let name2 = fnamemodify(name, ':t')
+    let name1 = ShortenFilename(fnamemodify(name,':h'))
+    let name = name2 . " (" . a:index . ")\t" . name1
+    let name = escape(name, "\\. \t|")
+    let name = substitute(name, "&", "&&", "g")
+    let name = substitute(name, "\n", "^@", "g")
+    return name
+endfunction

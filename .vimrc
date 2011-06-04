@@ -90,7 +90,7 @@ augroup END
 "au BufNewFile,BufRead * if !&readonly | set fileformat=unix | endif
 
 " Always use Unix-format new lines for new files
-au BufNewFile * if !&readonly | set fileformat=unix | endif
+au BufNewFile * if !&readonly && &modifiable | set fileformat=unix | endif
 
 "================================================================================
 " Remember cursor position for each file
@@ -377,7 +377,8 @@ nmap        w       :w<CR>
 nmap        W       :w<CR>
 
 " q = Quit
-nmap        q       :q<CR>
+"nmap        q       :q<CR>
+nmap        q       :bd<CR>
 nmap        Q       :q<CR>
 
 " e = Explore
@@ -563,3 +564,20 @@ command NoLong call HighlightLongLines(0)
 "inoremap <down>     <nop>
 "inoremap <left>     <nop>
 "inoremap <right>    <nop>
+
+"================================================================================
+" Cycle through buffers
+"================================================================================
+nnoremap <C-n> :bnext<CR>
+nnoremap <C-p> :bprevious<CR>
+
+"================================================================================
+" NERDTree
+"================================================================================
+let NERDTreeIgnore = []
+for suffix in split(&suffixes, ',')
+    let NERDTreeIgnore += [ escape(suffix, '.~') . '$' ]
+endfor
+
+let NERDTreeIgnore += ['^.hg$', '^\.$', '^\.\.$']
+let g:NERDTreeShowHidden = 1

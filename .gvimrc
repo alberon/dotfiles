@@ -1,4 +1,23 @@
+" No toolbar - I never use it!
+set guioptions-=T
+
+" Deactivate cursor blinking
+"set guicursor=a:blinkon0
+
+" <Ctrl-S> shows save dialog for new files
+map <silent> <C-s> :if expand("%") == ""<CR>:browse confirm w<CR>:else<CR>:confirm w<CR>:endif<CR>
+inoremap <silent> <C-s> <C-o>:if expand("%") == ""<CR>:browse confirm w<CR>:else<CR>:confirm w<CR>:endif<CR>
+vnoremap <silent> <C-s> <C-c>:if expand("%") == ""<CR>:browse confirm w<CR>:else<CR>:confirm w<CR>:endif<CR>
+
+" <Ctrl-O> shows open dialog
+inoremap <silent> <C-o> <C-o>:browse e<CR>
+
+" <Ctrl-F> shows find dialog
+inoremap <silent> <C-f> <C-o>:promptfind<CR>
+
+"================================================================================
 " Maximize window automatically
+"================================================================================
 function! SetGuiPos()
     
     if has("win32")
@@ -23,37 +42,76 @@ autocmd GUIEnter * exe SetGuiPos()
 "autocmd GUIEnter * simalt ~x
 "autocmd GUIEnter * winpos -1270 10 | set lines=71 columns=155
 
-" Set titlebar to full path to current file
-" Except when it's opened from WinSCP strip the temp directory prefix off
-" TODO: Make this work when viewing directories
-autocmd BufWinEnter * let &titlestring=substitute(expand("%:p"), '^.*\\temp\\scp[0-9]\+\\', '', 'i')
+"================================================================================
+" Titlebar and tab titles
+"================================================================================
+"" Always show tabs
+"set showtabline=2
+"
+"" Tab shortcuts
+"map <C-t> :tabnew<cr>
+"nmap <C-t> :tabnew<cr>
+"imap <C-t> <ESC>:tabnew<cr>
+"
+"map <C-w> :tabclose<cr>
+"
+"" Get current filename
+"function GetTabFilename()
+"    let filename = expand("%:p")
+"    let filename = substitute(filename, '^.*\\temp\\scp[0-9]\+\\', '', 'i')
+"    return filename
+"endfunction
+"
+"" Set titlebar to full path to current file
+"" Except when it's opened from WinSCP strip the temp directory prefix off
+"" TODO: Make this work when viewing directories
+"autocmd BufEnter * let &titlestring=GetTabFilename()
+"
+"" Set up tab labels with tab number, buffer name, number of windows
+"function! GuiTabLabel()
+"    let label = ''
+"    let bufnrlist = tabpagebuflist(v:lnum)
+"    
+"    " Append the tab number
+"    let label .= v:lnum.': '
+"    
+"    " Append the buffer name
+"    let name = bufname(bufnrlist[tabpagewinnr(v:lnum) - 1])
+"    if name == ''
+"        " give a name to no-name documents
+"        if &buftype=='quickfix'
+"            let name = '[Quickfix List]'
+"        else
+"            let name = '[No Name]'
+"        endif
+"    else
+"        " get the file name
+"        let name = fnamemodify(name,":t")
+"        "let name = pathshorten(GetTabFilename())
+"    endif
+"    let label .= name
+"    
+"    " Append the number of windows in the tab page
+"    let wincount = tabpagewinnr(v:lnum, '$')
+"    if wincount > 1
+"        let label .= ' [' . wincount . ']'
+"    endif
+"    
+"    " Add '+' if one of the buffers in the tab page is modified
+"    for bufnr in bufnrlist
+"        if getbufvar(bufnr, "&modified")
+"            let label .= '+'
+"            break
+"        endif
+"    endfor
+"    
+"    return label
+"endfunction
+"set guitablabel=%{GuiTabLabel()}
 
-" No toolbar - I never use it!
-set guioptions-=T
-
-" Deactivate cursor blinking
-"set guicursor=a:blinkon0
-
-" <Ctrl-S> shows save dialog for new files
-map <silent> <C-s> :if expand("%") == ""<CR>:browse confirm w<CR>:else<CR>:confirm w<CR>:endif<CR>
-inoremap <silent> <C-s> <C-o>:if expand("%") == ""<CR>:browse confirm w<CR>:else<CR>:confirm w<CR>:endif<CR>
-vnoremap <silent> <C-s> <C-c>:if expand("%") == ""<CR>:browse confirm w<CR>:else<CR>:confirm w<CR>:endif<CR>
-
-" <Ctrl-O> shows open dialog
-inoremap <silent> <C-o> <C-o>:browse e<CR>
-
-" <Ctrl-F> shows find dialog
-inoremap <silent> <C-f> <C-o>:promptfind<CR>
-
-" Quick-edit settings
-an 20.422  &Edit.-SEP2_5-      <Nop>
-an <silent> 20.423  &Edit.Edit\ &vimrc  :if has("win32")<CR>:edit $VIM/.vimrc<CR>:else<CR>:edit $HOME/.vimrc<CR>:endif<CR>
-an <silent> 20.424   &Edit.Edit\ gvi&mrc :if has("win32")<CR>:edit $VIM/.gvimrc<CR>:else<CR>:edit $HOME/.gvimrc<CR>:endif<CR>
-
-" Example QuickText Menu
-"an 25.1 &QuickText.&PHPDoc\ Header :insert<CR>/**<CR> * @author Dave Miller<CR> */<CR>.<CR>
-
+"================================================================================
 " Diff Patch
+"================================================================================
 if has("diff")
     
     func! <SID>diffmakepatch()
@@ -98,10 +156,12 @@ if has("diff")
     
 endif
 
+"================================================================================
 " Open URL
+"================================================================================
 " http://vim.wikia.com/wiki/Open_a_web-browser_with_the_URL_in_the_current_line
 let $PATH = $PATH . ';c:\Program Files (x86)\Mozilla Firefox;c:\Program Files\Mozilla Firefox'
-function! Browser ()
+function! Browser()
     
     let line0 = getline(".")
     
@@ -126,8 +186,3 @@ function! Browser ()
     
 endfunction
 map <silent> <Leader>w :call Browser ()<CR>
-
-" Switch to existing gVim if available
-if filereadable($VIMRUNTIME . "/macros/editexisting.vim")
-    source $VIMRUNTIME/macros/editexisting.vim
-endif
