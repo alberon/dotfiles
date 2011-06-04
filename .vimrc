@@ -382,7 +382,8 @@ nmap        q       :bd<CR>
 nmap        Q       :q<CR>
 
 " e = Explore
-nmap        e       :edit %:p:h<CR>
+"nmap        e       :edit %:p:h<CR>
+nmap        e       :BufExplorer<CR>
 nmap        E       :edit %:p:h<CR>
 
 " gf = Goto file (even if it doesn't exist yet)
@@ -581,3 +582,8 @@ endfor
 
 let NERDTreeIgnore += ['^.hg$', '^\.$', '^\.\.$']
 let g:NERDTreeShowHidden = 1
+
+"================================================================================
+" Buffer Explorer
+"================================================================================
+let g:bufExplorerSplitOutPathName=0
