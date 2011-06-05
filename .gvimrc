@@ -39,75 +39,67 @@ endfunction
 
 autocmd GUIEnter * exe SetGuiPos()
 
-"autocmd GUIEnter * simalt ~x
-"autocmd GUIEnter * winpos -1270 10 | set lines=71 columns=155
-
 "================================================================================
 " Titlebar and tab titles
 "================================================================================
-"" Always show tabs
-"set showtabline=2
-"
-"" Tab shortcuts
-"map <C-t> :tabnew<cr>
-"nmap <C-t> :tabnew<cr>
-"imap <C-t> <ESC>:tabnew<cr>
-"
-"map <C-w> :tabclose<cr>
-"
-"" Get current filename
-"function GetTabFilename()
-"    let filename = expand("%:p")
-"    let filename = substitute(filename, '^.*\\temp\\scp[0-9]\+\\', '', 'i')
-"    return filename
-"endfunction
-"
-"" Set titlebar to full path to current file
-"" Except when it's opened from WinSCP strip the temp directory prefix off
-"" TODO: Make this work when viewing directories
-"autocmd BufEnter * let &titlestring=GetTabFilename()
-"
-"" Set up tab labels with tab number, buffer name, number of windows
-"function! GuiTabLabel()
-"    let label = ''
-"    let bufnrlist = tabpagebuflist(v:lnum)
-"    
-"    " Append the tab number
-"    let label .= v:lnum.': '
-"    
-"    " Append the buffer name
-"    let name = bufname(bufnrlist[tabpagewinnr(v:lnum) - 1])
-"    if name == ''
-"        " give a name to no-name documents
-"        if &buftype=='quickfix'
-"            let name = '[Quickfix List]'
-"        else
-"            let name = '[No Name]'
-"        endif
-"    else
-"        " get the file name
-"        let name = fnamemodify(name,":t")
-"        "let name = pathshorten(GetTabFilename())
-"    endif
-"    let label .= name
-"    
-"    " Append the number of windows in the tab page
-"    let wincount = tabpagewinnr(v:lnum, '$')
-"    if wincount > 1
-"        let label .= ' [' . wincount . ']'
-"    endif
-"    
-"    " Add '+' if one of the buffers in the tab page is modified
-"    for bufnr in bufnrlist
-"        if getbufvar(bufnr, "&modified")
-"            let label .= '+'
-"            break
-"        endif
-"    endfor
-"    
-"    return label
-"endfunction
-"set guitablabel=%{GuiTabLabel()}
+" Always show tabs
+set showtabline=2
+
+" Tab shortcuts
+map <C-t> :tabnew<cr>
+nmap <C-t> :tabnew<cr>
+imap <C-t> <ESC>:tabnew<cr>
+
+" Set titlebar to full path to current file
+" Except when it's opened from WinSCP strip the temp directory prefix off
+function GetTabFilename()
+    let filename = expand("%:p")
+    let title = 'gVim'
+    if filename != "" && match(filename, 'NERD_tree_[0-9]\+$') == -1
+        let filename = substitute(filename, '^.*\\temp\\scp[0-9]\+\\', '', 'i')
+        let title .= ' - ' . filename
+    endif
+    return title
+endfunction
+
+autocmd BufEnter * let &titlestring = GetTabFilename()
+
+" Set up tab labels with tab number, buffer name, number of windows
+function! GuiTabLabel()
+    let label = ''
+    let bufnrlist = tabpagebuflist(v:lnum)
+    
+    " Tab number
+    let label .= v:lnum.': '
+    
+    " Buffer name
+    let name = bufname(bufnrlist[tabpagewinnr(v:lnum) - 1])
+    if name != ''
+        let name = fnamemodify(name,":t")
+    elseif &buftype == 'quickfix'
+        let name = '[Quickfix List]'
+    else
+        let name = '[No Name]'
+    endif
+    let label .= name
+    
+    " Append the number of windows in the tab page
+    let wincount = tabpagewinnr(v:lnum, '$')
+    if wincount > 1
+        let label .= ' [' . wincount . ']'
+    endif
+    
+    " Add '+' if one of the buffers in the tab page is modified
+    for bufnr in bufnrlist
+        if getbufvar(bufnr, "&modified")
+            let label .= '+'
+            break
+        endif
+    endfor
+    
+    return label
+endfunction
+set guitablabel=%{GuiTabLabel()}
 
 "================================================================================
 " Diff Patch

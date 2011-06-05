@@ -14,7 +14,7 @@ FindExe()
 }
 
 Exe := FindExe()
-Exe = "%Exe%" --remote-silent "`%1" "`%*"
+Exe = "%Exe%" --remote-tab-silent "`%1" "`%*"
 
 ; Use tabs by default
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\Applications\gvim.exe\shell\edit\command, , %Exe%
