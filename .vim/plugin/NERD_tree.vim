@@ -2385,10 +2385,10 @@ function! s:Path._strForEdit()
     let p = self.str({'format': 'UI'})
     let cwd = getcwd()
 
-    if s:running_windows
-        let p = tolower(self.str())
-        let cwd = tolower(getcwd())
-    endif
+"DJM    if s:running_windows
+"DJM        let p = tolower(self.str())
+"DJM        let cwd = tolower(getcwd())
+"DJM    endif
 
     let p = escape(p, s:escape_chars)
 
