@@ -53,9 +53,6 @@ pager = LESS='FRSX' less
 djm.prefix = http://hg.davejamesmiller.com
 djm.username = dave
 
-djm2.prefix = http://hg.dave-miller.com
-djm2.username = dave
-
 # Put passwords in here:
 # e.g.
 # [auth]
