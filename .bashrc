@@ -218,7 +218,7 @@ if [ "$TERM" != "dumb" ]; then
     }
     
     # various tools
-    alias g='grep'
+    alias g='grep -r'
     alias h='head'
     alias t='tail'
     
