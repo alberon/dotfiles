@@ -89,8 +89,23 @@ if [ "$TERM" != "dumb" ]; then
             TitlebarCode=
         fi
         
+        # Mercurial prompt
+        HgPrompt='`hg prompt "{\[\e[0m\] on \[\e[31;1m\]{branch|quiet} branch}\[\e[31;1m\]{update}{status}" 2>/dev/null`'
+        
         # Set the prompt
-        PS1="${TitlebarCode}\n${MessageCode}\e[0m[\[\e[31;1m\]\u\[\e[0m\]@\[\e[${HostColor}m\]\h\[\e[0m\]:\[\e[33;1m\]\$PWD\[\e[0m\]]\e[1;35m\$KeyStatus\n\[\e[31;1m\]\$\[\e[0m\] "
+        PS1="${TitlebarCode}\n"                 # Titlebar (see above)
+        PS1="${PS1}${MessageCode}"              # Message (see above)
+        PS1="${PS1}\[\e[0m\]["                  # [                     Grey
+        PS1="${PS1}\[\e[31;1m\]\u"              # Username              Red
+        PS1="${PS1}\[\e[0m\]@"                  # @                     Grey
+        PS1="${PS1}\[\e[${HostColor}m\]\h"      # Hostname              Green/Grey
+        PS1="${PS1}\[\e[0m\]:"                  # :                     Grey
+        PS1="${PS1}\[\e[33;1m\]\$PWD"           # Working directory     Yellow
+        PS1="${PS1}$HgPrompt"       # Mercurial prompt      Red
+        PS1="${PS1}\[\e[0m\]]"                  # ]                     Grey
+        PS1="${PS1}\[\e[1;35m\]\$KeyStatus"     # SSH key status        Pink
+        PS1="${PS1}\n"                          # (New line)
+        PS1="${PS1}\[\e[31;1m\]\$\[\e[0m\] "    # $                     Red
     }
     
     # Default to prompt with no message
