@@ -45,7 +45,7 @@ cmd.vimdiff = vim
 opts.vimdiff = -f '+next' '+execute "DirDiff" argv(0) argv(1)'
 
 [pager]
-attend = annotate, cat, diff, export, glog, log, status, qdiff
+attend = annotate, cat, diff, export, glog, incoming, log, outgoing, status, qdiff
 pager = LESS='FRSX' less
 
 [auth]
