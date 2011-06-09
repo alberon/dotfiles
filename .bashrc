@@ -91,7 +91,7 @@ if [ "$TERM" != "dumb" ]; then
         
         # Mercurial prompt
         if hg prompt >/dev/null 2>&1; then
-            HgPrompt='`hg prompt "{\[\e[0m\] on \[\e[31;1m\]{branch|quiet} branch}\[\e[31;1m\]{update}{status}{<{incoming}}{>{outgoing}}" 2>/dev/null`'
+            HgPrompt='`hg prompt "{\[\e[0m\] on \[\e[31;1m\]{branch|quiet} branch}\[\e[31;1m\]{update}{status}" 2>/dev/null`'
         fi
         
         # Set the prompt
