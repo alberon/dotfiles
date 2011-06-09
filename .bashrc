@@ -90,7 +90,7 @@ if [ "$TERM" != "dumb" ]; then
         fi
         
         # Mercurial prompt
-        HgPrompt='`hg prompt "{\[\e[0m\] on \[\e[31;1m\]{branch|quiet} branch}\[\e[31;1m\]{update}{status}" 2>/dev/null`'
+        HgPrompt='`hg prompt "{\[\e[0m\] on \[\e[31;1m\]{branch|quiet} branch}\[\e[31;1m\]{update}{status}{<{incoming}}{>{outgoing}}" 2>/dev/null`'
         
         # Set the prompt
         PS1="${TitlebarCode}\n"                 # Titlebar (see above)
