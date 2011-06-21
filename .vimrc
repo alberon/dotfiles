@@ -244,10 +244,13 @@ endif
 "    * For example:
 "    * 
 "    * ^ This line would not be highlighted even though it is indented
+"    * x 
+"    *  ^ But this line would
 "    */
 " n.b. See :help cterm-colors for the cterm colour list
-highlight ExtraWhitespace ctermbg=DarkGreen guibg=DarkGreen
-match ExtraWhiteSpace /\v((\s*\*\s+$)@!\S)@<=\s+$/
+au BufNewFile,BufRead * |
+\   highlight ExtraWhitespace ctermbg=DarkGreen guibg=DarkGreen |
+\   match ExtraWhiteSpace /\v((\s*\*\s+$)@!\S)@<=\s+$/
 
 " Highlight all leading and trailing spaces/tabs
 "highlight ExtraWhitespace ctermbg=DarkGrey guibg=#222222
