@@ -65,14 +65,14 @@ au BufNewFile,BufRead *.info setf dosini
 au BufNewFile,BufRead *.txt setf txt
 
 " Conflict markers
-if version >= 700
-    au BufNewFile,BufRead *
-    \   if match(getline(1, min([line("$"), 100])), '^=======$') > -1
-    \   && match(getline(1, min([line("$"), 100])), '^<<<<<<< ') > -1
-    \   && match(getline(1, min([line("$"), 100])), '^>>>>>>> ') > -1 |
-    \       setlocal syn=conflict |
-    \   endif
-endif
+"if version >= 700
+"    au BufNewFile,BufRead *
+"    \   if match(getline(1, min([line("$"), 100])), '^=======$') > -1
+"    \   && match(getline(1, min([line("$"), 100])), '^<<<<<<< ') > -1
+"    \   && match(getline(1, min([line("$"), 100])), '^>>>>>>> ') > -1 |
+"    \       setlocal syn=conflict |
+"    \   endif
+"endif
 
 augroup END
 
