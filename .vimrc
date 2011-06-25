@@ -582,6 +582,14 @@ nnoremap <C-n> :bnext<CR>
 nnoremap <C-p> :bprevious<CR>
 
 "================================================================================
+" Cycle through tabs with Ctrl-Tab as well as Ctrl-PageDn
+"================================================================================
+map <C-Tab> :tabnext<CR>
+map <C-S-Tab> :tabprev<CR>
+inoremap <C-Tab> <C-O>:tabnext<CR>
+inoremap <C-S-Tab> <C-O>:tabprev<CR>
+
+"================================================================================
 " NERDTree
 "================================================================================
 if version >= 700
