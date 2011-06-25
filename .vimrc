@@ -252,10 +252,15 @@ endif
 "    *  ^ But this line would
 "    */
 " n.b. See :help cterm-colors for the cterm colour list
-au BufNewFile,BufRead * |
-\   highlight ExtraWhitespace ctermbg=DarkGreen guibg=DarkGreen |
-\   match ExtraWhiteSpace /\v((\s*\*\s+$)@!\S)@<=\s+$/
 
+" 2011-06-25: Decided to remove this because it was causing a message to pop
+" up when loading additional buffers. I couldn't work out why, and I decided
+" I can live without this instead of trying to fix it.
+"au BufNewFile,BufRead * |
+"\   highlight ExtraWhitespace ctermbg=DarkGreen guibg=DarkGreen |
+"\   match ExtraWhiteSpace /\v((\s*\*\s+$)@!\S)@<=\s+$/
+
+" OLD VERSIONS:
 " Highlight all leading and trailing spaces/tabs
 "highlight ExtraWhitespace ctermbg=DarkGrey guibg=#222222
 "match ExtraWhiteSpace /\v(^\s+|\s+$)/
