@@ -190,6 +190,10 @@ set wildmenu
 set lazyredraw
 set modeline " Debian disables it in /usr/share/vim/vim71/debian.vim
 
+if exists("+autochdir")
+    set autochdir
+endif
+
 if version >= 703
     set undofile
     set colorcolumn=81,121
@@ -381,10 +385,10 @@ nmap        Q       :q<CR>
 "nmap <silent> q     :Bclose<CR>
 
 " e = Explore
-"nmap        e       :edit %:p:h<CR>
-"nmap        E       :edit %:p:h<CR>
-nmap        e       :NERDTreeToggle %:p:h<CR>
-nmap        E       :NERDTreeToggle %:p:h<CR>
+"nmap        e       :edit .<CR>
+"nmap        E       :edit .<CR>
+nmap        e       :NERDTreeToggle<CR>
+nmap        E       :NERDTreeToggle<CR>
 
 " gf = Goto file (even if it doesn't exist yet)
 " (Note: gF = Goto file & line)
