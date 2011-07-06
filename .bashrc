@@ -59,8 +59,14 @@ if [ "$TERM" != "dumb" ]; then
     
     # Set the titlebar & prompt to "[user@host:/full/path]\n$"
     case "$TERM" in
-        xterm*) Titlebar="\u@\h:\$PWD" ;;
-        *) Titlebar="" ;;
+        xterm*)
+            Titlebar="\u@\h:\$PWD"
+            # Set titlebar now, before SSH key is requested, for KeePass
+            echo -ne "\e]2;$USER@$(hostname -s):$PWD\a"
+            ;;
+        *)
+            Titlebar=""
+            ;;
     esac
     
     # FIXME: $SSH_CLIENT isn't set after using "sudo -s" - is there another way to detect SSH?
