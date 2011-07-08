@@ -113,7 +113,7 @@ if [ "$TERM" != "dumb" ]; then
         PS1="${PS1}\[\e[0m\]]"                  # ]                     Grey
         PS1="${PS1}\[\e[1;35m\]\$KeyStatus"     # SSH key status        Pink
         PS1="${PS1}\n"                          # (New line)
-        PS1="${PS1}\[\e[31;1m\]\$\[\e[0m\] "    # $                     Red
+        PS1="${PS1}\[\e[31;1m\]\\\$\[\e[0m\] "  # $                     Red
     }
     
     # Default to prompt with no message
