@@ -2,7 +2,14 @@
 
 cd
 
+# Create local Mercurial settings file, and chmod to ensure any passwords are protected
 if [ ! -e .hgrc_local ]; then
     touch .hgrc_local
     chmod 600 .hgrc_local
+fi
+
+# Create local MySQL settings file, and chmod to ensure any passwords are protected
+if [ ! -e .my_local.cnf ]; then
+    touch .my_local.cnf
+    chmod 600 .my_local.cnf
 fi
