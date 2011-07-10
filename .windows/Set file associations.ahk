@@ -46,9 +46,11 @@ RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.py                , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.sh                , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.snippets          , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.sql               , , vim
-RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.txt               , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.vim               , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.vimrc             , , vim
+
+; Don't change file type for .txt else New > Text Document disappears from Explorer
+RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\txtfile\shell\edit\command, , %Exe%
 
 ; Tell Windows to refresh the file associations immediately
 DllCall("shell32\SHChangeNotify", uint, 0x08000000, uint, 0, uint, 0, uint, 0)
