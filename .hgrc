@@ -5,12 +5,13 @@ username = Dave James Miller <dave@davejamesmiller.com>
 
 [alias]
 ar = addremove
+glog = log --graph
 pish = push
 qstatus = status --rev qparent
 
 [defaults]
 #diff = --unified 8
-log = --graph
+#log = --graph
 #qdiff = --unified 8
 qseries = --summary
 
