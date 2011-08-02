@@ -5,7 +5,7 @@ username = Dave James Miller <dave@davejamesmiller.com>
 
 [alias]
 ar = addremove
-default = update default
+#default = update default
 glog = log --graph
 pish = push
 qstatus = status --rev qparent
