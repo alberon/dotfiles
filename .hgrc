@@ -41,7 +41,7 @@ record =
 transplant =
 
 # apt-get install python-subversion
-hgsubversion = ~/.hgextensions/hgsubversion
+#hgsubversion = ~/.hgextensions/hgsubversion
 
 [extdiff]
 cmd.vimdiff = vim
