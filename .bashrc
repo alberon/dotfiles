@@ -379,15 +379,18 @@ if [ "$TERM" != "dumb" ]; then
         
     fi
     
-    # Use forwarded SSH agent if present - otherwise use local one
     if [ -n "$SSH_AUTH_SOCK" ]; then
         
-        KeyAgentType=remote
+        # Use forwarded SSH agent
+        echo
+        echo -e "\e[31;1mYou are connected to $HOSTNAME\e[33;1m"
+        echo -e "\e[32;1mUsing forwarded SSH key agent.\e[0m"
+        
+        KeyStatus=
         
     else
         
-        KeyAgentType=local
-        
+        # Use local SSH keys
         # Make sure ssh-agent is loaded (for this user) - do this now so it's available for `mkkey`
         if [ -z "$SSH_AGENT_PID" ] || (! kill -0 "$SSH_AGENT_PID" 2>/dev/null)
         then
@@ -413,93 +416,89 @@ if [ "$TERM" != "dumb" ]; then
             
         fi
         
-    fi
-    
-    # Statuses for locked/unlocked
-    KeyStatusLocked="-SSH Keys Locked-"
-    KeyStatusUnlocked=""
-    
-    # Unlock keys
-    function unlock {
+        # Statuses for locked/unlocked
+        KeyStatusLocked="-SSH Keys Locked-"
+        KeyStatusUnlocked=""
         
-        # Make it clear which server is asking for the password!
-        echo
-        echo -e "\e[31;1mYou are connected to $HOSTNAME\e[33;1m"
-        
-        # Allow different files to be used
-        if [ -n "$1" -a "$1" != "AUTO" ]
-        then
-            file="$1"
-        elif [ -f ~/.ssh/id_dsa ]
-        then
-            file="$HOME/.ssh/id_dsa"
-        else
-            echo -e "\e[32;1mNo SSH keys are available.\e[0m"
-        fi
-        
-        # Make sure the key is loaded (assume there is only one - any more can be added manually)
-        if [ "`ssh-add -l`" != "The agent has no identities." ]; then
+        # Unlock keys
+        function unlock {
             
-            # Already unlocked
-            if [ "$KeyAgentType" = "remote" ]; then
-                echo -e "\e[32;1mUsing forwarded SSH key agent.\e[0m"
+            # Make it clear which server is asking for the password!
+            echo
+            echo -e "\e[31;1mYou are connected to $HOSTNAME\e[33;1m"
+            
+            # Allow different files to be used
+            if [ -n "$1" -a "$1" != "AUTO" ]
+            then
+                file="$1"
+            elif [ -f ~/.ssh/id_dsa ]
+            then
+                file="$HOME/.ssh/id_dsa"
             else
-                echo -e "\e[32;1mSSH keys are unlocked.\e[0m"
+                echo -e "\e[32;1mNo SSH keys are available.\e[0m"
             fi
-            KeyStatus=$KeyStatusUnlocked
             
-        elif [ "$1" = "AUTO" -a $auto_unlock -ne 1 ]; then
+            # Make sure the key is loaded (assume there is only one - any more can be added manually)
+            if [ "`ssh-add -l`" != "The agent has no identities." ]; then
+                
+                # Already unlocked
+                echo -e "\e[32;1mSSH keys are unlocked.\e[0m"
+                KeyStatus=$KeyStatusUnlocked
+                
+            elif [ "$1" = "AUTO" -a $auto_unlock -ne 1 ]; then
+                
+                # Automatic unlock disabled
+                echo -e "\e[30;1mSSH keys are locked.\e[0m"
+                KeyStatus=$KeyStatusLocked
+                
+            else
+                
+                # Unlock now
+                
+                # Trap Ctrl-C
+                trapped=0
+                trap 'trapped=1' SIGINT
+                
+                # Store keys for at most 16 hours
+                ssh-add -t 57600 "$file"
+                
+                if [ $? -eq 0 -a $trapped -eq 0 ]; then
+                    echo -e "\e[32;1mSSH keys are now unlocked.\e[0m"
+                    KeyStatus=$KeyStatusUnlocked
+                    return 0
+                else
+                    echo -e "\e[30;1mCancelled. SSH keys are still locked.\e[0m"
+                    KeyStatus=$KeyStatusLocked
+                fi
+                
+                # Reset trap
+                trap SIGINT
+                trapped=
+                
+            fi
             
-            # Automatic unlock disabled
-            echo -e "\e[30;1mSSH keys are locked.\e[0m"
+        }
+        
+        # Lock keys
+        function lock {
+            
+            # Allow different files to be used
+            if [ -N "$1" ]; then
+                ssh-add -d "$1"
+            else
+                # All
+                ssh-add -D
+            fi
+            
             KeyStatus=$KeyStatusLocked
             
-        else
-            
-            # Unlock now
-            
-            # Trap Ctrl-C
-            trapped=0
-            trap 'trapped=1' SIGINT
-            
-            # Store keys for at most 16 hours
-            ssh-add -t 57600 "$file"
-            
-            if [ $? -eq 0 -a $trapped -eq 0 ]; then
-                echo -e "\e[32;1mSSH keys are now unlocked.\e[0m"
-                KeyStatus=$KeyStatusUnlocked
-                return 0
-            else
-                echo -e "\e[30;1mCancelled. SSH keys are still locked.\e[0m"
-                KeyStatus=$KeyStatusLocked
-            fi
-            
-            # Reset trap
-            trap SIGINT
-            trapped=
-            
+        }
+        
+        # Unlock default keys at login
+        if [ -f ~/.ssh/id_dsa ]; then
+            unlock "AUTO"
         fi
         
-    }
-    
-    # Lock keys
-    function lock {
-        
-        # Allow different files to be used
-        if [ -N "$1" ]; then
-            ssh-add -d "$1"
-        else
-            # All
-            ssh-add -D
-        fi
-        
-        KeyStatus=$KeyStatusLocked
-        
-    }
-    
-    # Unlock default keys at login
-    if [ -f ~/.ssh/id_dsa ]; then
-        unlock "AUTO"
     fi
     
     # Make it easy to get the svn root of the current directory working copy
