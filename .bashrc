@@ -379,26 +379,37 @@ if [ "$TERM" != "dumb" ]; then
         
     fi
     
-    # Make sure ssh-agent is loaded (for this user) - do this now so it's available for `mkkey`
-    if [ -z "$SSH_AGENT_PID" ] || (! kill -0 "$SSH_AGENT_PID" 2>/dev/null)
-    then
+    # Use forwarded SSH agent if present - otherwise use local one
+    if [ -n "$SSH_AUTH_SOCK" ]; then
         
-        # Try the stored settings instead
-        if [ -f ~/.ssh/environment-$HOSTNAME ]
-        then
-            source ~/.ssh/environment-$HOSTNAME
-        fi
+        KeyAgentType=remote
         
+    else
+        
+        KeyAgentType=local
+        
+        # Make sure ssh-agent is loaded (for this user) - do this now so it's available for `mkkey`
         if [ -z "$SSH_AGENT_PID" ] || (! kill -0 "$SSH_AGENT_PID" 2>/dev/null)
         then
             
-            # Store keys for at most 16 hours
-            if [ ! -d ~/.ssh ]; then
-                mkdir ~/.ssh
-                chmod 700 ~/.ssh
+            # Try the stored settings instead
+            if [ -f ~/.ssh/environment-$HOSTNAME ]
+            then
+                source ~/.ssh/environment-$HOSTNAME
             fi
-            ssh-agent -t 57600 | head -2 > ~/.ssh/environment-$HOSTNAME
-            source ~/.ssh/environment-$HOSTNAME
+            
+            if [ -z "$SSH_AGENT_PID" ] || (! kill -0 "$SSH_AGENT_PID" 2>/dev/null)
+            then
+                
+                # Store keys for at most 16 hours
+                if [ ! -d ~/.ssh ]; then
+                    mkdir ~/.ssh
+                    chmod 700 ~/.ssh
+                fi
+                ssh-agent -t 57600 | head -2 > ~/.ssh/environment-$HOSTNAME
+                source ~/.ssh/environment-$HOSTNAME
+                
+            fi
             
         fi
         
@@ -430,7 +441,11 @@ if [ "$TERM" != "dumb" ]; then
         if [ "`ssh-add -l`" != "The agent has no identities." ]; then
             
             # Already unlocked
-            echo -e "\e[32;1mSSH keys are unlocked.\e[0m"
+            if [ "$KeyAgentType" = "remote" ]; then
+                echo -e "\e[32;1mUsing forwarded SSH key agent.\e[0m"
+            else
+                echo -e "\e[32;1mSSH keys are unlocked.\e[0m"
+            fi
             KeyStatus=$KeyStatusUnlocked
             
         elif [ "$1" = "AUTO" -a $auto_unlock -ne 1 ]; then
