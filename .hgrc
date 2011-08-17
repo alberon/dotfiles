@@ -5,6 +5,8 @@ username = Dave James Miller <dave@davejamesmiller.com>
 
 [alias]
 ar = addremove
+bincoming = merge --preview
+bin = bincoming
 #default = update default
 glog = log --graph
 pish = push
