@@ -383,7 +383,7 @@ if [ "$TERM" != "dumb" ]; then
         
         # Use forwarded SSH agent
         echo
-        echo -e "\e[31;1mYou are connected to $HOSTNAME\e[33;1m"
+        echo -e "\e[31;1mYou are connected to $HOSTNAME.\e[33;1m"
         echo -e "\e[32;1mUsing forwarded SSH key agent.\e[0m"
         
         KeyStatus=
@@ -425,7 +425,7 @@ if [ "$TERM" != "dumb" ]; then
             
             # Make it clear which server is asking for the password!
             echo
-            echo -e "\e[31;1mYou are connected to $HOSTNAME\e[33;1m"
+            echo -e "\e[31;1mYou are connected to $HOSTNAME.\e[33;1m"
             
             # Allow different files to be used
             if [ -n "$1" -a "$1" != "AUTO" ]
