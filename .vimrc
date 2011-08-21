@@ -372,6 +372,14 @@ inoremap <S-Down> <C-O>gh<C-O>gj
 vnoremap <S-Down> gj
 
 "================================================================================
+" Automatically cd into the directory that the file is in
+"================================================================================
+autocmd BufEnter * execute "chdir ".escape(expand("%:p:h"), ' ')
+
+" http://stackoverflow.com/questions/164847/what-is-in-your-vimrc/652632#652632
+"set autochdir
+
+"================================================================================
 " Some other keyboard shortcuts
 "================================================================================
 
