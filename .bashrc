@@ -59,8 +59,14 @@ if [ "$TERM" != "dumb" ]; then
     
     # Set the titlebar & prompt to "[user@host:/full/path]\n$"
     case "$TERM" in
-        xterm*) Titlebar="\u@\h:\$PWD" ;;
-        *) Titlebar="" ;;
+        xterm*)
+            Titlebar="\u@\h:\$PWD"
+            # Set titlebar now, before SSH key is requested, for KeePass
+            echo -ne "\e]2;$USER@$(hostname -s):$PWD\a"
+            ;;
+        *)
+            Titlebar=""
+            ;;
     esac
     
     # FIXME: $SSH_CLIENT isn't set after using "sudo -s" - is there another way to detect SSH?
@@ -91,7 +97,8 @@ if [ "$TERM" != "dumb" ]; then
         
         # Mercurial prompt
         if hg prompt >/dev/null 2>&1; then
-            HgPrompt='`hg prompt "{\[\e[0m\] on \[\e[31;1m\]{branch|quiet} branch}\[\e[31;1m\]{update}{status}" 2>/dev/null`'
+            #HgPrompt='`hg prompt "{\[\e[0m\] on \[\e[31;1m\]{branch|quiet}\[\e[0m\] branch}\[\e[31;1m\]{update}{status}" 2>/dev/null`'
+            HgPrompt='`hg prompt "\[\e[0m\] revision \[\e[31;1m\]{rev}\[\e[0m\]{ of \[\e[31;1m\]{branch|quiet}\[\e[0m\] branch} of {root}\[\e[31;1m\]{update}{status}" 2>/dev/null`'
         fi
         
         # Set the prompt
@@ -103,11 +110,11 @@ if [ "$TERM" != "dumb" ]; then
         PS1="${PS1}\[\e[${HostColor}m\]\h"      # Hostname              Green/Grey
         PS1="${PS1}\[\e[0m\]:"                  # :                     Grey
         PS1="${PS1}\[\e[33;1m\]\$PWD"           # Working directory     Yellow
-        PS1="${PS1}$HgPrompt"       # Mercurial prompt      Red
+        PS1="${PS1}$HgPrompt"                   # Mercurial prompt
         PS1="${PS1}\[\e[0m\]]"                  # ]                     Grey
         PS1="${PS1}\[\e[1;35m\]\$KeyStatus"     # SSH key status        Pink
         PS1="${PS1}\n"                          # (New line)
-        PS1="${PS1}\[\e[31;1m\]\$\[\e[0m\] "    # $                     Red
+        PS1="${PS1}\[\e[31;1m\]\\\$\[\e[0m\] "  # $                     Red
     }
     
     # Default to prompt with no message
@@ -235,7 +242,7 @@ if [ "$TERM" != "dumb" ]; then
     }
     
     # various tools
-    alias g='grep -r'
+    alias g='grep -ir'
     alias h='head'
     alias t='tail'
     
@@ -372,112 +379,126 @@ if [ "$TERM" != "dumb" ]; then
         
     fi
     
-    # Make sure ssh-agent is loaded (for this user) - do this now so it's available for `mkkey`
-    if [ -z "$SSH_AGENT_PID" ] || (! kill -0 "$SSH_AGENT_PID" 2>/dev/null)
-    then
+    if [ -n "$SSH_AUTH_SOCK" ]; then
         
-        # Try the stored settings instead
-        if [ -f ~/.ssh/environment-$HOSTNAME ]
-        then
-            source ~/.ssh/environment-$HOSTNAME
-        fi
+        # Use forwarded SSH agent
+        echo
+        echo -e "\e[31;1mYou are connected to $HOSTNAME.\e[33;1m"
+        echo -e "\e[32;1mUsing forwarded SSH key agent.\e[0m"
         
+        KeyStatus=
+        
+    else
+        
+        # Use local SSH keys
+        # Make sure ssh-agent is loaded (for this user) - do this now so it's available for `mkkey`
         if [ -z "$SSH_AGENT_PID" ] || (! kill -0 "$SSH_AGENT_PID" 2>/dev/null)
         then
             
-            # Store keys for at most 16 hours
-            if [ ! -d ~/.ssh ]; then
-                mkdir ~/.ssh
-                chmod 700 ~/.ssh
+            # Try the stored settings instead
+            if [ -f ~/.ssh/environment-$HOSTNAME ]
+            then
+                source ~/.ssh/environment-$HOSTNAME
             fi
-            ssh-agent -t 57600 | head -2 > ~/.ssh/environment-$HOSTNAME
-            source ~/.ssh/environment-$HOSTNAME
+            
+            if [ -z "$SSH_AGENT_PID" ] || (! kill -0 "$SSH_AGENT_PID" 2>/dev/null)
+            then
+                
+                # Store keys for at most 16 hours
+                if [ ! -d ~/.ssh ]; then
+                    mkdir ~/.ssh
+                    chmod 700 ~/.ssh
+                fi
+                ssh-agent -t 57600 | head -2 > ~/.ssh/environment-$HOSTNAME
+                source ~/.ssh/environment-$HOSTNAME
+                
+            fi
             
         fi
         
-    fi
-    
-    # Statuses for locked/unlocked
-    KeyStatusLocked="-SSH Keys Locked-"
-    KeyStatusUnlocked=""
-    
-    # Unlock keys
-    function unlock {
+        # Statuses for locked/unlocked
+        KeyStatusLocked="-SSH Keys Locked-"
+        KeyStatusUnlocked=""
         
-        # Make it clear which server is asking for the password!
-        echo
-        echo -e "\e[31;1mYou are connected to $HOSTNAME\e[33;1m"
+        # Unlock keys
+        function unlock {
+            
+            # Make it clear which server is asking for the password!
+            echo
+            echo -e "\e[31;1mYou are connected to $HOSTNAME.\e[33;1m"
+            
+            # Allow different files to be used
+            if [ -n "$1" -a "$1" != "AUTO" ]
+            then
+                file="$1"
+            elif [ -f ~/.ssh/id_dsa ]
+            then
+                file="$HOME/.ssh/id_dsa"
+            else
+                echo -e "\e[32;1mNo SSH keys are available.\e[0m"
+            fi
+            
+            # Make sure the key is loaded (assume there is only one - any more can be added manually)
+            if [ "`ssh-add -l`" != "The agent has no identities." ]; then
+                
+                # Already unlocked
+                echo -e "\e[32;1mSSH keys are unlocked.\e[0m"
+                KeyStatus=$KeyStatusUnlocked
+                
+            elif [ "$1" = "AUTO" -a $auto_unlock -ne 1 ]; then
+                
+                # Automatic unlock disabled
+                echo -e "\e[30;1mSSH keys are locked.\e[0m"
+                KeyStatus=$KeyStatusLocked
+                
+            else
+                
+                # Unlock now
+                
+                # Trap Ctrl-C
+                trapped=0
+                trap 'trapped=1' SIGINT
+                
+                # Store keys for at most 16 hours
+                ssh-add -t 57600 "$file"
+                
+                if [ $? -eq 0 -a $trapped -eq 0 ]; then
+                    echo -e "\e[32;1mSSH keys are now unlocked.\e[0m"
+                    KeyStatus=$KeyStatusUnlocked
+                    return 0
+                else
+                    echo -e "\e[30;1mCancelled. SSH keys are still locked.\e[0m"
+                    KeyStatus=$KeyStatusLocked
+                fi
+                
+                # Reset trap
+                trap SIGINT
+                trapped=
+                
+            fi
+            
+        }
         
-        # Allow different files to be used
-        if [ -n "$1" -a "$1" != "AUTO" ]
-        then
-            file="$1"
-        elif [ -f ~/.ssh/id_dsa ]
-        then
-            file="$HOME/.ssh/id_dsa"
-        else
-            echo -e "\e[32;1mNo SSH keys are available.\e[0m"
-        fi
-        
-        # Make sure the key is loaded (assume there is only one - any more can be added manually)
-        if [ "`ssh-add -l`" != "The agent has no identities." ]; then
+        # Lock keys
+        function lock {
             
-            # Already unlocked
-            echo -e "\e[32;1mSSH keys are unlocked.\e[0m"
-            KeyStatus=$KeyStatusUnlocked
+            # Allow different files to be used
+            if [ -N "$1" ]; then
+                ssh-add -d "$1"
+            else
+                # All
+                ssh-add -D
+            fi
             
-        elif [ "$1" = "AUTO" -a $auto_unlock -ne 1 ]; then
-            
-            # Automatic unlock disabled
-            echo -e "\e[30;1mSSH keys are locked.\e[0m"
             KeyStatus=$KeyStatusLocked
             
-        else
-            
-            # Unlock now
-            
-            # Trap Ctrl-C
-            trapped=0
-            trap 'trapped=1' SIGINT
-            
-            # Store keys for at most 16 hours
-            ssh-add -t 57600 "$file"
-            
-            if [ $? -eq 0 -a $trapped -eq 0 ]; then
-                echo -e "\e[32;1mSSH keys are now unlocked.\e[0m"
-                KeyStatus=$KeyStatusUnlocked
-                return 0
-            else
-                echo -e "\e[30;1mCancelled. SSH keys are still locked.\e[0m"
-                KeyStatus=$KeyStatusLocked
-            fi
-            
-            # Reset trap
-            trap SIGINT
-            trapped=
-            
+        }
+        
+        # Unlock default keys at login
+        if [ -f ~/.ssh/id_dsa ]; then
+            unlock "AUTO"
         fi
         
-    }
-    
-    # Lock keys
-    function lock {
-        
-        # Allow different files to be used
-        if [ -N "$1" ]; then
-            ssh-add -d "$1"
-        else
-            # All
-            ssh-add -D
-        fi
-        
-        KeyStatus=$KeyStatusLocked
-        
-    }
-    
-    # Unlock default keys at login
-    if [ -f ~/.ssh/id_dsa ]; then
-        unlock "AUTO"
     fi
     
     # Make it easy to get the svn root of the current directory working copy

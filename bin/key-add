@@ -14,7 +14,7 @@ if [ "$input" = "keyboard" ]; then
 fi
 
 mkdir ~/.ssh 2>/dev/null
-cat - >> ~/.ssh/authorized_keys2
+cat - >> ~/.ssh/authorized_keys
 
 fix-ssh-permissions
 
