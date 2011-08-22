@@ -128,7 +128,10 @@ augroup END
 "set noexpandtab tabstop=4 shiftwidth=4 softtabstop=4
 
 " 4 spaces (use ":ret" to convert tabs to spaces)
-set expandtab tabstop=4 shiftwidth=4 softtabstop=4
+set expandtab tabstop=4 softtabstop=4 shiftwidth=4
+
+" Make it easier to change the tab size later
+command -nargs=1 TabSize set tabstop=<args> softtabstop=<args> shiftwidth=<args>
 
 " Knowledgebase files use 3 spaces to line comments up under list items
 autocmd FileType knowledgebase set tabstop=3 shiftwidth=3 softtabstop=3
