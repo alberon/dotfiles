@@ -3,7 +3,7 @@
 cd
 
 # Update the settings for this repo
-echo -e "[paths]\ndefault = http://hg.davejamesmiller.com/linux-config\ndefault-push = ssh://hg.davejamesmiller.com//home/sites/hg.davejamesmiller.com/repos/linux-config\n\n[hooks]\nupdate.cfg-update = bin/cfg-update" > .hg/hgrc
+echo -e "[paths]\ndefault = http://hg.davejamesmiller.com/linux-config\ndefault-push = ssh://dave@hg.davejamesmiller.com//home/sites/hg.davejamesmiller.com/repos/linux-config\n\n[hooks]\nupdate.cfg-update = bin/cfg-update" > .hg/hgrc
 
 # Create local Mercurial settings file, and chmod to ensure any passwords are protected
 if [ ! -e .hgrc_local ]; then
