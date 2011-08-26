@@ -1,0 +1,4 @@
+#!/usr/bin/php
+<?php
+$format = ($argc > 2 ? $argv[2] : 'r');
+echo date($format, $argv[1]) . "\n";
