@@ -7,7 +7,7 @@ snippet /
 #================================================================================
 
 snippet <link
-	<link rel="${1:stylesheet}" href="${2:/css/main.css}" type="text/css" />${3}
+	<link rel="${1:stylesheet}" href="${2:/css/main.css}" type="${3:text/css}" />${4}
 
 snippet <favicon
 	<link rel="shortcut icon" type="image/vnd.microsoft.icon" href="${1:/favicon.ico}" />${2}
@@ -17,7 +17,7 @@ snippet <style
 	<!--
 	${1}
 	-->
-	</style>${2}
+	</style>
 
 snippet <scr
 	<script src="${1}" type="text/javascript"></script>${2}
@@ -27,7 +27,7 @@ snippet <script
 	//<![CDATA[
 	${1}
 	//]]>
-	</script>${2}
+	</script>
 
 snippet <meta Content-Language
 	<meta name="Content-Language" content="${1:en-GB}" />${2}
@@ -39,22 +39,22 @@ snippet <meta Other...
 #================================================================================
 
 snippet <h1
-	<h1>${1}</h1>${2}
+	<h1>${1}</h1>
 
 snippet <h2
-	<h2>${1}</h2>${2}
+	<h2>${1}</h2>
 
 snippet <h3
-	<h3>${1}</h3>${2}
+	<h3>${1}</h3>
 
 snippet <h4
-	<h4>${1}</h4>${2}
+	<h4>${1}</h4>
 
 snippet <h5
-	<h5>${1}</h5>${2}
+	<h5>${1}</h5>
 
 snippet <h6
-	<h6>${1}</h6>${2}
+	<h6>${1}</h6>
 
 #================================================================================
 
@@ -72,27 +72,27 @@ snippet <p
 snippet <table
 	<table>
 		<tr>
-			<td>${1}</td>${2}
-		</tr>${3}
-	</table>${4}
+			<td>${1}</td>
+		</tr>
+	</table>
 
 snippet <tr
 	<tr>
-		<td>${1}</td>${2}
-	</tr>${3}
+		<td>${1}</td>
+	</tr>
 
 snippet <th
-	<th>${1}</th>${2}
+	<th>${1}</th>
 
 snippet <td
-	<td>${1}</td>${2}
+	<td>${1}</td>
 
 #================================================================================
 
 snippet <ul
 	<ul>
-		<li>${1}</li>${2}
-	</ul>${3}
+		<li>${1}</li>
+	</ul>
 
 snippet <ol
 	<ol>
@@ -108,13 +108,13 @@ snippet <dl
 	<dl>
 		<dd>${1}</dd>
 		<dt>${2}</dt>
-	</dl>${3}
+	</dl>
 
 snippet <dd
-	<dd>${1}</dd>${2}
+	<dd>${1}</dd>
 
 snippet <dt
-	<dt>${1}</dt>${2}
+	<dt>${1}</dt>
 
 #================================================================================
 
@@ -132,7 +132,7 @@ snippet <fieldset
 	</fieldset>
 
 snippet <label
-	<label for="${1}">${2}</label>${3}
+	<label for="${1}">${2}</label>
 
 snippet <input
 	<input type="text" name="${1:name}" id="${2:$1}" value="${3}" />${4}
@@ -150,18 +150,23 @@ snippet <radio
 	<input type="radio" name="${1:name}" id="${3:$1_$2}" value="${2:value}" />${4}
 
 snippet <textarea
-	<textarea name="${1:name}" id="${2:$1}" rows="${3:5}" cols="${4:40}">${5}</textarea>${6}
+	<textarea name="${1:name}" id="${2:$1}" rows="${3:5}" cols="${4:40}">${5}</textarea>
 
 snippet <select
 	<select name="${1:name}" id="${2:$1}">
 		<option value="${3:value}">${4:$3}</option>
-	</select>${5}
+	</select>
 
 snippet <opt
-	<option value="${1:value}">${2:$1}</option>${3}
+	<option value="${1:value}">${2:$1}</option>
 
 snippet <option
-	<option value="${1:value}">${2:$1}</option>${3}
+	<option value="${1:value}">${2:$1}</option>
+
+snippet <optgroup
+	<optgroup label="${1}">
+		${2}
+	</optgroup>
 
 snippet <submit
 	<input type="submit" value="${1:Submit}" />${2}
@@ -174,28 +179,28 @@ snippet <img
 #================================================================================
 
 snippet <span
-	<span class="${1}">${2}</span>${3}
+	<span class="${1}">${2}</span>
 
 snippet <a
-	<a href="${1}">${2}</a>${3}
+	<a href="${1}">${2}</a>
 
 snippet <strong
-	<strong>${1}</strong>${2}
+	<strong>${1}</strong>
 
 snippet <em
-	<em>${1}</em>${2}
+	<em>${1}</em>
 
 snippet <b
-	<b>${1}</b>${2}
+	<b>${1}</b>
 
 snippet <i
-	<i>${1}</i>${2}
+	<i>${1}</i>
 
 snippet <u
-	<u>${1}</u>${2}
+	<u>${1}</u>
 
 snippet <small
-	<small>${1}</small>${2}
+	<small>${1}</small>
 
 #================================================================================
 
