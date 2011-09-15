@@ -120,9 +120,6 @@ if [ "$TERM" != "dumb" ]; then
     # Default to prompt with no message
     MSG
 
-    # Reload .bashrc when updated
-    alias reload-bashrc='. ~/.bashrc'
-    
     # For safety!
     alias cp='cp -i'
     alias mv='mv -i'
