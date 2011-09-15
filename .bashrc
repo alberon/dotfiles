@@ -97,24 +97,44 @@ if [ "$TERM" != "dumb" ]; then
         
         # Mercurial prompt
         if hg prompt >/dev/null 2>&1; then
+            function myprompt
+            {
+                HgPrompt=`hg prompt "{root}@@@\e[0m revision \e[31;1m{rev}\e[0m{ of \e[31;1m{branch|quiet}\e[0m branch}\e[31;1m{update}{status}" 2>/dev/null`
+                if [ -n "$HgPrompt" ]; then
+                    # In a Mercurial repo - highlight the root
+                    root=${HgPrompt/@@@*}
+                    prompt=${HgPrompt/*@@@}
+                    relative=${PWD#$root}
+                    # e.g. /home/repo/subdir revision ...
+                    #      ^yellow   ^white  ^grey
+                    echo -e "$root\e[0;1m$relative$prompt"
+                else
+                    # Not in Mercurial repo
+                    echo $PWD
+                fi
+            }
             #HgPrompt='`hg prompt "{\[\e[0m\] on \[\e[31;1m\]{branch|quiet}\[\e[0m\] branch}\[\e[31;1m\]{update}{status}" 2>/dev/null`'
-            HgPrompt='`hg prompt "\[\e[0m\] revision \[\e[31;1m\]{rev}\[\e[0m\]{ of \[\e[31;1m\]{branch|quiet}\[\e[0m\] branch} of {root}\[\e[31;1m\]{update}{status}" 2>/dev/null`'
+            #HgPrompt='`hg prompt "\[\e[0m\] revision \[\e[31;1m\]{rev}\[\e[0m\]{ of \[\e[31;1m\]{branch|quiet}\[\e[0m\] branch} of {root}\[\e[31;1m\]{update}{status}" 2>/dev/null`'
+        else
+            function myprompt
+            {
+                echo $PWD;
+            }
         fi
         
         # Set the prompt
         PS1="${TitlebarCode}\n"                 # Titlebar (see above)
         PS1="${PS1}${MessageCode}"              # Message (see above)
-        PS1="${PS1}\[\e[0m\]["                  # [                     Grey
-        PS1="${PS1}\[\e[31;1m\]\u"              # Username              Red
-        PS1="${PS1}\[\e[0m\]@"                  # @                     Grey
-        PS1="${PS1}\[\e[${HostColor}m\]\h"      # Hostname              Green/Grey
-        PS1="${PS1}\[\e[0m\]:"                  # :                     Grey
-        PS1="${PS1}\[\e[33;1m\]\$PWD"           # Working directory     Yellow
-        PS1="${PS1}$HgPrompt"                   # Mercurial prompt
-        PS1="${PS1}\[\e[0m\]]"                  # ]                     Grey
-        PS1="${PS1}\[\e[1;35m\]\$KeyStatus"     # SSH key status        Pink
+        PS1="${PS1}\[\e[0m\]["                  # [                                 Grey
+        PS1="${PS1}\[\e[31;1m\]\u"              # Username                          Red
+        PS1="${PS1}\[\e[0m\]@"                  # @                                 Grey
+        PS1="${PS1}\[\e[${HostColor}m\]\h"      # Hostname                          Green/Grey
+        PS1="${PS1}\[\e[0m\]:"                  # :                                 Grey
+        PS1="${PS1}\[\e[33;1m\]\`myprompt\`"    # Working directory / Mercurial     Yellow
+        PS1="${PS1}\[\e[0m\]]"                  # ]                                 Grey
+        PS1="${PS1}\[\e[1;35m\]\$KeyStatus"     # SSH key status                    Pink
         PS1="${PS1}\n"                          # (New line)
-        PS1="${PS1}\[\e[31;1m\]\\\$\[\e[0m\] "  # $                     Red
+        PS1="${PS1}\[\e[31;1m\]\\\$\[\e[0m\] "  # $                                 Red
     }
     
     # Default to prompt with no message
