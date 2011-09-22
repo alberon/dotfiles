@@ -1,0 +1,44 @@
+#!/bin/bash
+
+if [ $# -ge 1 ]; then
+    
+    # Given at command line
+    server="$@"
+    
+else
+    
+    # Get the server hostname
+    read -r -p "Hostname: " host
+    
+    if [ -z "$host" ]
+    then
+        exit 2
+    fi
+    
+    # Get the username (default: current username)
+    read -r -p "Username [`whoami`]: " user
+    
+    if [ -z "$user" ]
+    then
+        user="`whoami`"
+    fi
+    
+    # Get the port number (default: 22)
+    read -r -p "Port [22]: " port
+    
+    if [ -z "$port" ]
+    then
+        port=22
+    fi
+    
+    server="-p $port $user@$host"
+    
+fi
+
+# Upload the public key & set the correct permissions
+echo "Uploading key & setting remote permissions (you should be prompted for a password)..."
+ssh $server "chmod go-w ~; mkdir ~/.ssh 2>/dev/null; chmod 700 ~/.ssh; echo 'ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAtBU5qXCC042vHpqXzSVh3rqZ4P+CfYUUijK2jNJPr6kINdbZDdHf5zY5ip8LaN3K6XAIh0+fQiXGxUvetH1PRi9sOrt6hIDfKLq46sIPrBOPMaza34G5WXMXkFIrnMfo7XZmFaNO61XmrghU68JtnZBE4voRZninll60+cMH74Fc6YVhLqSqB572JaudC7o3rN2P8vLdXxhJPM60oQewFKIWKtg9NrF7JxTFxZnryoir/NDt8ID9+RUUR1vPsI7LZwTcrSIMVLh0nwwzHI1eJI/86wXRvNATcuceInHjOe6/531T9g6Xs6qHy1B75jsLDtWolIbodQc2Al2zfD6/AQ== dave@davejamesmiller.com' >> ~/.ssh/authorized_keys; chmod 600 ~/.ssh/authorized_keys"
+
+# Test the connection
+echo "Testing (you should NOT be asked for a password)..."
+ssh $server 'echo "SUCCESS!"'
