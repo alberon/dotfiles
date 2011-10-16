@@ -48,7 +48,7 @@ if [ "$TERM" != "dumb" ]; then
         then
             export STARTED_SCREEN=1
             #sleep 1
-            screen -RR -t "`whoami`@$HOSTNAME" && exit 0
+            exec screen -RR -t "`whoami`@$HOSTNAME"
             # normally execution of this script ends here...
             echo "Screen failed! continuing with normal bash startup"
         fi
