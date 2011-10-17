@@ -1,0 +1,9 @@
+[user]
+	name = Dave James Miller
+	email = dave@davejamesmiller.com
+[color]
+	branch = auto
+	status = auto
+	diff = auto
+[pack]
+	threads = 0
