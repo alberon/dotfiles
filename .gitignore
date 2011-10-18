@@ -1,0 +1,25 @@
+# Ignore everything in the root except the specified files
+/*
+!/.bazaar
+!/.devilspie
+!/.drush
+!/.elinks
+!/.fluxbox
+!/.hgextensions
+!/.windows
+!/.vim
+!/bin
+!/gnome
+!/opt
+!/.gitconfig
+
+# Ignore Vim history
+./vim/.netrwhist
+
+# Ignore Elinks local files
+./elinks/bookmarks
+./elinks/cookies
+./elinks/globhist
+
+# Ignore Python compiled files
+*.pyc
