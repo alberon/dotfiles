@@ -14,12 +14,12 @@
 !/.gitconfig
 
 # Ignore Vim history
-./vim/.netrwhist
+/.vim/.netrwhist
 
 # Ignore Elinks local files
-./elinks/bookmarks
-./elinks/cookies
-./elinks/globhist
+/.elinks/bookmarks
+/.elinks/cookies
+/.elinks/globhist
 
 # Ignore Python compiled files
 *.pyc
