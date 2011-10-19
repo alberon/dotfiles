@@ -33,6 +33,8 @@ if [ ! -f ~/.bashrc_config ]; then
     
     echo "umask_root=022" >> ~/.bashrc_config
     
+    echo "prompt_vcs=git" >> ~/.bashrc_config
+    
     if which vim >/dev/null 2>&1; then
         echo "use_vi_for_vim=0" >> ~/.bashrc_config
     else
