@@ -29,6 +29,8 @@ RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\vim\shell\edit\command, , %
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.bashrc            , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.conf              , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.fcgi              , , vim
+RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.gitconfig         , , vim
+RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.gitignore         , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.gvimrc            , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.gvimrc_size       , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.hgignore          , , vim
