@@ -301,6 +301,11 @@ if [ "$TERM" != "dumb" ]; then
     alias hgst="hg st"
     alias mq='hg -R $(hg root)/.hg/patches'
     
+    # git
+    if which ruby >/dev/null 2>&1; then
+        alias git=hub
+    fi
+    
     # ack (Debian renames to ack-grep)
     if which ack-grep >/dev/null 2>&1; then
         alias ack="ack-grep"
