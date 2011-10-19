@@ -106,9 +106,8 @@ if [ "$TERM" != "dumb" ]; then
                 if [ -n "$root" ]; then
                     # In a Git repo - highlight the root
                     relative=${PWD#$root}
-                    ref=`git branch --no-color`
-                    ref=${ref#* }
-                    echo -e "$root\e[36;1m$relative\e[30;1m on \e[35;1m$ref"
+                    branch=`git branch --no-color 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
+                    echo -e "$root\e[36;1m$relative\e[30;1m on \e[35;1m$branch"
                     #        ^yellow      ^aqua            ^grey       ^pink
                 else
                     # Not in Mercurial repo
