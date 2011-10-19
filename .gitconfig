@@ -24,6 +24,7 @@
     #g = !git gui &
     #gr = log --graph
     #go = log --graph --pretty=oneline --abbrev-commit
+    id = log --pretty=format:'ID:    %h%nDate:  %aD%nRefs:%d' --abbrev-commit --date=short -1
     #k = !gitk &
     #ka = !gitk --all &
     #lc = log ORIG_HEAD.. --stat --no-merges
