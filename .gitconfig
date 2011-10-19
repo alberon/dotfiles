@@ -25,6 +25,7 @@
     #gr = log --graph
     #go = log --graph --pretty=oneline --abbrev-commit
     id = log --pretty=format:'ID:    %h%nDate:  %aD%nRefs:%d' --abbrev-commit --date=short -1
+    in = incoming
     #k = !gitk &
     #ka = !gitk --all &
     #lc = log ORIG_HEAD.. --stat --no-merges
@@ -32,6 +33,7 @@
     #mnf = merge --no-ff
     #mnff = merge --no-ff
     #mt = mergetool
+    out = outgoing
     #p = format-patch -1
     #serve = !git daemon --reuseaddr --verbose --base-path=. --export-all ./.git
     #sra = svn rebase --all
