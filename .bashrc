@@ -143,16 +143,17 @@ if [ "$TERM" != "dumb" ]; then
         # Set the prompt
         PS1="${TitlebarCode}\n"                 # Titlebar (see above)
         PS1="${PS1}${MessageCode}"              # Message (see above)
-        PS1="${PS1}\[\e[0m\]["                  # [                         Grey
+        PS1="${PS1}\[\e[30;1m\]["               # [                         Grey
         PS1="${PS1}\[\e[31;1m\]\u"              # Username                  Red
-        PS1="${PS1}\[\e[0m\]@"                  # @                         Grey
+        PS1="${PS1}\[\e[30;1m\]@"               # @                         Grey
         PS1="${PS1}\[\e[${HostColor}m\]\h"      # Hostname                  Green/Grey
-        PS1="${PS1}\[\e[0m\]:"                  # :                         Grey
+        PS1="${PS1}\[\e[30;1m\]:"               # :                         Grey
         PS1="${PS1}\[\e[33;1m\]\`myprompt\`"    # Working directory / Git   Yellow
-        PS1="${PS1}\[\e[0m\]]"                  # ]                         Grey
+        PS1="${PS1}\[\e[30;1m\]]"               # ]                         Grey
         PS1="${PS1}\[\e[1;35m\]\$KeyStatus"     # SSH key status            Pink
         PS1="${PS1}\n"                          # (New line)
-        PS1="${PS1}\[\e[31;1m\]\\\$\[\e[0m\] "  # $                         Red
+        PS1="${PS1}\[\e[31;1m\]\\\$"            # $                         Red
+        PS1="${PS1}\[\e[0m\] "
     }
     
     # Default to prompt with no message
