@@ -2,6 +2,13 @@
 
 cd
 
+# Delete old .hg directory if necessary
+# Note: This is because Mercurial writes to the .hg/dirstate after it is
+# deleted by the old version of cfg-update!
+if [ -d .hg ]; then
+    rm -rf .hg
+fi
+
 # Create local Mercurial settings file, and chmod to ensure any passwords are protected
 if [ ! -e .hgrc_local ]; then
     touch .hgrc_local
