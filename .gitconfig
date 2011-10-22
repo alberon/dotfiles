@@ -42,3 +42,6 @@
     #stm = status --untracked=no
     #stfu = status --untracked=no
     #pullsrb = !git stash save && git pull --rebase && git stash pop && echo 'Success!'
+
+[github]
+    user = davejamesmiller
