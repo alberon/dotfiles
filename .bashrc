@@ -107,6 +107,7 @@ if [ "$TERM" != "dumb" ]; then
                     # In a Git repo - highlight the root
                     relative=${PWD#$root}
                     branch=`git branch --no-color 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
+                    branch=${branch:-(unknown)}
                     echo -e "$root\e[36;1m$relative\e[30;1m on \e[35;1m$branch"
                     #        ^yellow      ^aqua            ^grey       ^pink
                 else
