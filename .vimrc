@@ -35,7 +35,7 @@ nmap <silent> <Leader>ds :%s/^\s\+$<CR>
 nmap <silent> <Leader>dt :%s/\s\+$<CR>
 
 " NERDtree
-nmap <silent> <Leader>e :NERDTreeFind<CR>
+nmap <silent> <Leader>e :NERDTree<CR>
 
 " Open URL in Firefox = <Leader>ff (see .gvimrc)
 
