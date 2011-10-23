@@ -47,6 +47,7 @@ RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.patch             , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.php               , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.py                , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.sh                , , vim
+RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.snippet           , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.snippets          , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.sql               , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.vba               , , vim
