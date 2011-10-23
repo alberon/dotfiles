@@ -1,21 +1,124 @@
 " Debugging
 "set verbose=9
 
-" Default settings block
-set nocompatible
-
-" Behave like a Windows program
+" Behave more like a Windows program
 source $VIMRUNTIME/mswin.vim
 
-"================================================================================
-" Color Scheme
-"================================================================================
+" Except the xterm selection method is better
+behave xterm
 
+" Use Pathogen to manage plugin bundles
+call pathogen#infect()
+call pathogen#helptags()
+
+" Use ; instead of : for commands (don't need to press shift so much)
+nnoremap ; :
+
+" Use , as the leader for my own keyboard shortcuts
+let mapleader = ","
+
+" Sort CSS properties alphabetically
+nmap <silent> <Leader>az ?{<CR>jV/^\s*\}?$<CR>k:sort<CR>:noh<CR>
+
+" Buffers (list and open prompt ready to switch)
+"nmap <Leader>b :buffers<CR>:buffer 
+" Buffers (Buffer Explorer)
+nmap <Leader>b :BufExplorer<CR>
+
+" NERD Commenter = <Leader>c (then various letters - e.g. cc, cu, cn)
+
+" Delete spaces from otherwise empty lines
+nmap <silent> <Leader>ds :%s/^\s\+$<CR>
+
+" Delete trailing spaces (be careful with this - e.g. in .vimrc there are
+" lines that need to end with spaces to work!)
+nmap <silent> <Leader>dt :%s/\s\+$<CR>
+
+" NERDtree
+nmap <silent> <Leader>e :NERDTreeFind<CR>
+
+" Open URL in Firefox = <Leader>ff (see .gvimrc)
+
+" Goto buffer
+nmap <silent> <Leader>gb :FufBuffer<CR>
+
+" Goto file
+nmap <silent> <Leader>gf :FufFile<CR>
+
+" Insert Date (DDD D MMM YYYY)
+nmap <silent> <Leader>id a<C-R>=strftime("%a %#d %b %Y")<CR>
+
+" Disable search highlight
+nmap <silent> <Leader>n :nohlsearch<CR>
+
+" Open .vimrc / .gvimrc
+nmap <silent> <Leader>ov :edit $VIM/.vimrc<CR>
+nmap <silent> <Leader>og :edit $VIM/.gvimrc<CR>
+
+" Quit
+nmap <silent> <Leader>q :q<CR>
+nmap <silent> <Leader>Q :wq<CR>
+
+" Split screen in various ways (with a new file rather than the same file -
+" it's rare that I want to edit the current buffer twice, and there's always
+" <C-W><C-V> for that)
+nmap <silent> <Leader>ss         :new<CR>
+nmap <silent> <Leader>sv         :vnew<CR>
+nmap <silent> <Leader>sh         :leftabove  :vnew<CR>
+nmap <silent> <Leader>sj         :belowright :new<CR>
+nmap <silent> <Leader>sk         :aboveleft  :new<CR>
+nmap <silent> <Leader>sl         :rightbelow :vnew<CR>
+nmap <silent> <Leader>s<Left>    :leftabove  :vnew<CR>
+nmap <silent> <Leader>s<Down>    :belowright :new<CR>
+nmap <silent> <Leader>s<Up>      :aboveleft  :new<CR>
+nmap <silent> <Leader>s<Right>   :rightbelow :vnew<CR>
+
+" Change the tab size
+nmap <silent> <Leader>1t :set tabstop=1 softtabstop=1 shiftwidth=1<CR>
+nmap <silent> <Leader>2t :set tabstop=2 softtabstop=2 shiftwidth=2<CR>
+nmap <silent> <Leader>3t :set tabstop=3 softtabstop=3 shiftwidth=3<CR>
+nmap <silent> <Leader>4t :set tabstop=4 softtabstop=4 shiftwidth=4<CR>
+nmap <silent> <Leader>5t :set tabstop=5 softtabstop=5 shiftwidth=5<CR>
+nmap <silent> <Leader>6t :set tabstop=6 softtabstop=6 shiftwidth=6<CR>
+nmap <silent> <Leader>7t :set tabstop=7 softtabstop=7 shiftwidth=7<CR>
+nmap <silent> <Leader>8t :set tabstop=8 softtabstop=8 shiftwidth=8<CR>
+
+" Switch to using tabs instead of spaces to indent (or back again)
+nmap <silent> <Leader>t :set noexpandtab<CR>
+nmap <silent> <Leader>T :set expandtab<CR>
+
+" Write
+nmap <silent> <Leader>w :w<CR>
+
+" Graphical undo
+nmap <silent> <Leader>z :GundoToggle<CR>
+
+" Ctrl+direction to switch buffers
+nnoremap <C-h>      <C-w>h
+nnoremap <C-j>      <C-w>j
+nnoremap <C-k>      <C-w>k
+nnoremap <C-l>      <C-w>l
+
+" Make % jump between XML tags as well as normal brackets
+runtime macros/matchit.vim
+
+" Color Scheme
 syntax on
 colorscheme torte
-hi ColorColumn guibg=#333333
 
-" PHP Colour Scheme
+" Make the line numbers less visible
+hi LineNr guifg=#444444
+
+" Make folded sections easier to read (dark grey instead of light)
+hi Folded guibg=#111111
+
+" Highlight just after 80 and 120 columns (standard widths)
+if version >= 703
+    set colorcolumn=81,121
+    hi ColorColumn guibg=#333333
+endif
+
+" PHP syntax highlighting settings
 "let php_sql_query = 1
 "let php_htmlInStrings = 1
 let php_smart_members = 1
@@ -24,73 +127,49 @@ let php_alt_construct_parents = 1
 let php_sync_method = 0            " Sync from file start
 let php_show_semicolon_error = 0   " This causes errors with /* */ multiline comments
 
-"================================================================================
+" Use UTF-8 for everything, but no byte-order mark because it breaks things
+set encoding=utf-8
+set fileencoding=utf-8
+set fileencodings=ucs-bom,utf-8,default,latin1
+set nobomb
+
 " File type detection
-"================================================================================
+filetype plugin indent on
 
-"filetype plugin indent on
-filetype plugin on
-
-" Note: setlocal ft= is used because the commands in filetype.vim are executed
-" first, so setf is ignored. This particularly has an effect when one of the
-" first 5 lines of the file start with a #, so ft=conf is used.
-" TODO: Move to filetype.vim?
-"       See http://bakery.cakephp.org/articles/view/turn-on-syntax-highlighting-for-editing-thtml-files-in-vim
 augroup CustomFileTypes
 
-" Clear Group
-au!
+    " Clear Group
+    au!
 
-" AutoIt syntax
-au BufNewFile,BufRead *.au3 setlocal ft=autoit
+    " AutoIt syntax
+    au BufNewFile,BufRead *.au3 setlocal ft=autoit
 
-" Standard ML syntax
-au BufNewFile,BufRead *.ml,*.sml setlocal ft=sml
+    " Standard ML syntax
+    au BufNewFile,BufRead *.ml,*.sml setlocal ft=sml
 
-" Java syntax
-au BufNewFile,BufRead *.class setlocal ft=class
-au BufNewFile,BufRead *.jad setlocal ft=java
+    " Java syntax
+    au BufNewFile,BufRead *.class setlocal ft=class
+    au BufNewFile,BufRead *.jad setlocal ft=java
 
-" CSV files
-au BufNewFile,BufRead *.csv setf csv
+    " CSV files
+    au BufNewFile,BufRead *.csv setf csv
 
-" CakePHP
-au BufNewFile,BufRead *.thtml,*.ctp setf php
+    " CakePHP
+    au BufNewFile,BufRead *.thtml,*.ctp setf php
 
-" Drupal
-au BufNewFile,BufRead *.module,*.install set ft=php
-au BufNewFile,BufRead *.info setf dosini
+    " Drupal
+    au BufNewFile,BufRead *.module,*.install set ft=php
+    au BufNewFile,BufRead *.info setf dosini
 
-" Text files
-au BufNewFile,BufRead *.txt setf txt
-
-" Conflict markers
-"if version >= 700
-"    au BufNewFile,BufRead *
-"    \   if match(getline(1, min([line("$"), 100])), '^=======$') > -1
-"    \   && match(getline(1, min([line("$"), 100])), '^<<<<<<< ') > -1
-"    \   && match(getline(1, min([line("$"), 100])), '^>>>>>>> ') > -1 |
-"    \       setlocal syn=conflict |
-"    \   endif
-"endif
+    " Text files
+    au BufNewFile,BufRead *.txt setf txt
 
 augroup END
-
-"================================================================================
-" Unix <LF> line endings
-"================================================================================
-
-" Always use Unix-format new lines, even when editing files!
-" (Removed because I was making it hard for people at work to read files using Notepad!)
-"au BufNewFile,BufRead * if !&readonly | set fileformat=unix | endif
 
 " Always use Unix-format new lines for new files
 au BufNewFile * if !&readonly && &modifiable | set fileformat=unix | endif
 
-"================================================================================
 " Remember cursor position for each file
-"================================================================================
-
 " http://vim.sourceforge.net/tips/tip.php?tip_id=80
 augroup JumpCursorOnEdit
 au!
@@ -120,31 +199,21 @@ autocmd BufWinEnter *
 
 augroup END
 
-"================================================================================
-" Indenting
-"================================================================================
-
-" Tabs (use ":ret! [numspaces]" to convert spaces to tabs)
-"set noexpandtab tabstop=4 shiftwidth=4 softtabstop=4
-
-" 4 spaces (use ":ret" to convert tabs to spaces)
+" Use 4 spaces to indent (use ":ret" to convert tabs to spaces)
 set expandtab tabstop=4 softtabstop=4 shiftwidth=4
-
-" Make it easier to change the tab size later
-command -nargs=1 TabSize set tabstop=<args> softtabstop=<args> shiftwidth=<args>
 
 " Knowledgebase files use 3 spaces to line comments up under list items
 autocmd FileType knowledgebase set tabstop=3 shiftwidth=3 softtabstop=3
 
-" Tab2Space
-" http://vim.wikia.com/wiki/Super_retab
+" Tab2Space - http://vim.wikia.com/wiki/Super_retab
 command! -range=% -nargs=0 Tab2Space execute "<line1>,<line2>s/^\\t\\+/\\=substitute(submatch(0), '\\t', repeat(' ', ".&ts."), 'g')"
 
-" Space2Tab
-" http://vim.wikia.com/wiki/Super_retab
+" Space2Tab - http://vim.wikia.com/wiki/Super_retab
 command! -range=% -nargs=0 Space2Tab execute "<line1>,<line2>s/^\\( \\{".&ts."\\}\\)\\+/\\=substitute(submatch(0), ' \\{".&ts."\\}', '\\t', 'g')"
 
-" Convert mixed spaces/tabs to all spaces
+" Convert mixed spaces/tabs to all spaces:
+" :ReIndent       Convert 2 space indents & tabs to current shiftwidth (i.e. default 4)
+" :ReIndent <N>   Convert N space indents & tabs to current shiftwidth (i.e. default 4)
 " Based on http://vim.wikia.com/wiki/Super_retab
 fun ReIndent(...)
     let origts = (a:0 >= 3 ? a:3 : 2)
@@ -153,85 +222,123 @@ fun ReIndent(...)
     silent execute a:1 . "," . a:2 . "s/^\\t\\+/\\=substitute(submatch(0), '\\t', repeat(' ', " . newts . "), 'g')"
 endfun
 
-" :ReIndent       Convert 2 space indents to current shiftwidth
-" :ReIndent <N>   Convert N space indents to current shiftwidth
 command -range=% -nargs=? ReIndent call ReIndent(<line1>, <line2>, <f-args>)
 
-"================================================================================
-" Other Settings
-"================================================================================
+" Make > and < shift to a multiple of N instead of just adding/removing N spaces
+set shiftround
 
+" Case-insensitive search unless there's a capital letter (then case-sensitive)
 set ignorecase
 set smartcase
-set gdefault " Default to replacing all occurrences (/g) in :s
-set whichwrap=b,s,h,l,<,>,~,[,]
-set showbreak=~
-set number
+
+" Highlight searches as you type
 set hlsearch
 set incsearch
+
+" Default to replacing all occurrences in :s (swaps the meaning of the /g flag)
+set gdefault
+
+" Wrap to the next line for all commands that move left/right
+set whichwrap=b,s,h,l,<,>,~,[,]
+
+" Show line numbers
+set number
+
+" Always show the status line
 set laststatus=2
+
+" Open split windows below/right instead of above/left by default
+set splitbelow
 set splitright
-set shortmess=filnxtToOI
+
+" Shorten some status messages, and don't show the intro splash screen
+set shortmess=ilxtToOI
+
+" Use dialogs to confirm things like quiting without saving, instead of failing
 set confirm
-set errorbells
+
+" Don't put two spaces between sentences
 set nojoinspaces
-set autoindent
-set smartindent
+
+" Some old indenting options... TODO: Delete if I don't need them...
+"set autoindent
+"set smartindent
 "set copyindent
-set nocopyindent " Changed because in Vim 7.2 autoindent seems to have started using a tab for the last char even with expandtab on
-set cinoptions=0{,0},0),:,!^F,o,O,e " Removed 0#
-set formatoptions+=ro " Duplicate comment lines when pressing enter
-set nowritebackup " Removed because it resets executable flag when editing over Samba
-"set backup
-set nobackup " Delete after writing - saves headaches with `sudo gvim`!
+"set nocopyindent " Changed because in Vim 7.2 autoindent seems to have started using a tab for the last char even with expandtab on
+"set cinoptions=0{,0},0),:,!^F,o,O,e " Removed 0#
+"set formatoptions+=ro " Duplicate comment lines when pressing enter
+
+" Always write a separate backup, don't use renaming because it resets the
+" executable flag when editing over Samba
+set backupcopy=yes
+
+" Don't hide the mouse when typing
 set nomousehide
-set fileformat=unix
+
+" Remember 50 history items instead of 20
 set history=50
+
+" Show position in the file in the status line
 set ruler
+
+" Show selection size
 set showcmd
+
+" Show a menu when autocompleting commands
 set wildmenu
+
+" Don't redraw the screen while executing macros, etc.
 set lazyredraw
-set modeline " Debian disables it in /usr/share/vim/vim71/debian.vim
 
-if exists("+autochdir")
-    set autochdir
-endif
+" Enable modeline support, because Debian disables it (for security reasons)
+set modeline
 
-if version >= 703
-    set undofile
-    set colorcolumn=81,121
-endif
+" Allow hidden buffers, so I can move between buffers without having to save first
+set hidden
 
-" Use UTF-8 for everything, but no byte-order mark because it breaks things
-set encoding=utf-8
-set fileencoding=utf-8
-set fileencodings=ucs-bom,utf-8,default,latin1
-set nobomb
+" Show the filename in the titlebar when using console vim
+set title
 
-" Highlight tabs
-set list
-set listchars=tab:>\ 
+" Keep 3 lines of text on screen above/below the cursor
+set scrolloff=3
 
-au FileType snippet set nolist
-
-" Mouse support is not available on Cheetah
+" Enable mouse support in all modes
 if has("mouse")
     set mouse=a
 endif
 
-" Folding is not available on Cheetah
+" Automatically fold when markers are used
 if has("folding")
     set foldmethod=marker
 endif
 
-" Temp directory
+" Keep an undo history after closing Vim (Vim 7.3+)
+if version >= 703
+    set undofile
+endif
+
+" In case I ever use encryption, Blowfish is more secure (but requires Vim 7.3+)
+if version >= 703
+    set cryptmethod=blowfish
+endif
+
+" Show tabs and trailing spaces...
+set list
+set listchars=tab:>\ ,trail:.
+
+" Use the temp directory for all backups and swap files, instead of cluttering
+" up the filesystem with .*.swp and *~ files
+" Note the trailing // means include the full path of the current file so
+" files with the same name in different folders don't conflict
 if has("win32")
+    " Windows
     set backupdir=d:/Temp/Vim//
     set directory=d:/Temp/Vim//
     if version >= 703
         set undodir=d:/Temp/Vim//
     endif
 else
+    " Linux
     set backupdir=~/tmp/vim//
     set directory=~/tmp/vim//
     if version >= 703
@@ -239,109 +346,32 @@ else
     endif
 endif
 
-"================================================================================
-" Highlight trailing spaces
-"================================================================================
-
-" http://vim.wikia.com/wiki/Highlight_unwanted_spaces
-" Modified
-" - ignore lines of purely white space (see "Keep the indent of blank lines" below)
-" - ignore lines of spaces inside a phpDocumentor comment
-"   /**
-"    * For example:
-"    * 
-"    * ^ This line would not be highlighted even though it is indented
-"    * x 
-"    *  ^ But this line would
-"    */
-" n.b. See :help cterm-colors for the cterm colour list
-
-" 2011-06-25: Decided to remove this because it was causing a message to pop
-" up when loading additional buffers. I couldn't work out why, and I decided
-" I can live without this instead of trying to fix it.
-"au BufNewFile,BufRead * |
-"\   highlight ExtraWhitespace ctermbg=DarkGreen guibg=DarkGreen |
-"\   match ExtraWhiteSpace /\v((\s*\*\s+$)@!\S)@<=\s+$/
-
-" OLD VERSIONS:
-" Highlight all leading and trailing spaces/tabs
-"highlight ExtraWhitespace ctermbg=DarkGrey guibg=#222222
-"match ExtraWhiteSpace /\v(^\s+|\s+$)/
-
-" These seem to make the cursor disappear when moving between lines quickly in
-" insert mode, and are not 100% reliable anyway:
-"au InsertEnter * match ExtraWhiteSpace /\S\@<=\s\+\%#\@<!$/
-"au InsertLeave * match ExtraWhiteSpace /\S\@<=\s\+$/
-
-" Much simpler but more annoying method of highlighting trailing spaces:
-"set listchars=trail:·
-
-"================================================================================
-" Keep the indent of blank lines
-"================================================================================
-
-" http://vim.wikia.com/wiki/Prevent_autoindent_from_removing_indentation
-" (Modified so that backspace works as expected when indenting with spaces
-" i.e. it backspaces two spaces at a time)
-inoremap <CR> <CR><Left><Right>
-nnoremap o o<Left><Right>
-nnoremap O O<Left><Right>
-
-"================================================================================
-" Indent/unindent shortcuts
-"================================================================================
-" Note: MOVED TO vimfiles/plugin/snipMate.vim so I can use <Tab> instead
-
-" Visual mode indent, keeping highlight afterwards
-"vnoremap <C-[> <gv
-"vnoremap <C-]> >gv
-
-" Visual mode indent, keeping highlight afterwards, and indenting blank lines also
-"function! MyIndent()
-"  " Explanation:
-"  " :'<,'>s   Replace within visual selection
-"  " ^         Replace start of line
-"  " (.*\)\%V  Visual selection must start/end *after* the matched new line
-"  "           i.e. exclude the last line of the selection *if* no characters are highlighted
-"  "           but always include the first line of the selection
-"  let spaces = (&expandtab ? repeat(" ", &sw) : "\t")
-"  execute ":'<,'>s/^\\(.*\\)\\%V/" . spaces . "\\1"
-"endfunction
-
-" Note: Can't use <Tab> - it interferes with SnipMate, which uses <Tab> to jump to the next placeholder
-" Note: Call indent, unindent first to convert leading tabs to spaces or vice-versa
-"vnoremap <silent> <C-]> >gv<gv:<C-u>call MyIndent()<CR>
-"vnoremap <C-[> <gv
-
-"================================================================================
 " Make ^Z undo smaller chunks at a time
-"================================================================================
-
 " http://vim.wikia.com/wiki/Modified_undo_behavior
 inoremap <BS> <C-g>u<BS>
 inoremap <Del> <C-g>u<Del>
 inoremap <C-W> <C-g>u<C-W>
 
-" Make paste a single action, rather than joining with text typed in
+" Make paste an undoable action, rather than joining it with any text that's typed in
 " Also use character-wise instead of line-wise paste, so it goes where the
 " cursor is instead of on the line above
 if exists("*paste#Paste")
-    
+
     func! MyPaste()
-        
+
         " Set to character-wise
         " http://vim.wikia.com/wiki/Unconditional_linewise_or_characterwise_paste
         let reg_type = getregtype("+")
         call setreg("+", getreg("+"), "v")
-        
+
         " Use the bundled paste command
         call paste#Paste()
-        
+
         " Reset line/character-wise
         call setreg("+", getreg("+"), reg_type)
-        
+
     endfunc
-    
+
     " Explanation:
     " <C-g>u                      Set undo point
     " <C-o>:call MyPaste()<CR>    Call the function above
@@ -350,123 +380,41 @@ if exists("*paste#Paste")
     "            when ThinkingRock is open...
     "inoremap <C-V> <C-g>u<C-o>:call MyPaste()<CR><C-g>u
     inoremap <C-V> <C-g>u<C-o>:call MyPaste()<CR>
-    
+
 endif
 
-"================================================================================
-" <Up>/<Down> navigates screen lines rather than file lines
-"================================================================================
-
+" Navigate by screen lines rather than file lines
 nnoremap k gk
 nnoremap j gj
 nnoremap <Up> gk
 inoremap <Up> <C-O>gk
+vnoremap <Up> gk
 nnoremap <Down> gj
 inoremap <Down> <C-O>gj
+vnoremap <Down> gj
 nnoremap <Home> g0
 inoremap <Home> <C-O>g0
 nnoremap <End> g$
 inoremap <End> <C-O>g$
-nnoremap <S-Up> gh<C-O>gk
-inoremap <S-Up> <C-O>gh<C-O>gk
-vnoremap <S-Up> gk
-nnoremap <S-Down> gh<C-O>gj
-inoremap <S-Down> <C-O>gh<C-O>gj
-vnoremap <S-Down> gj
 
-"================================================================================
-" Automatically cd into the directory that the file is in
-"================================================================================
-autocmd BufEnter * execute "chdir ".escape(expand("%:p:h"), ' ')
-
+" Automatically cd to the directory that the current file is in
+" This first option is built in but doesn't quite work as you'd expect - see
 " http://stackoverflow.com/questions/164847/what-is-in-your-vimrc/652632#652632
 "set autochdir
+" This ones works, but I'm trying Vim without it for a while to see if it
+" makes things like FuzzyFinder better by having a non-changing root
+"autocmd BufEnter * execute "chdir ".escape(expand("%:p:h"), ' ')
 
-"================================================================================
-" Some other keyboard shortcuts
-"================================================================================
+" gf = Goto file under cursor even if it doesn't exist yet
+nmap gf :e <cfile><CR>
 
-" ^D = Quit (prompts if not saved)
-"noremap     <C-D>   :q<CR>
-"inoremap    <C-D>   <C-O>:q<CR>
-
-" w = Write
-nmap        w       :w<CR>
-nmap        W       :w<CR>
-
-" q = Quit
-nmap        q       :q<CR>
-nmap        Q       :q<CR>
-"nmap        q       :bd<CR>
-"nmap <silent> q     :Bclose<CR>
-
-" e = Explore
-"nmap        e       :edit .<CR>
-"nmap        E       :edit .<CR>
-nmap        e       :NERDTreeToggle<CR>
-nmap        E       :NERDTreeToggle<CR>
-
-" gf = Goto file (even if it doesn't exist yet)
-" (Note: gF = Goto file & line)
-nmap        gf      :e <cfile><CR>
-
-" / = Search using normal RE not Vim's RE syntax that I can never remember!
-"nnoremap    /       /\v
-"vnoremap    /       /\v
-
-" <F12> = Stop highlighting search results
-nnoremap    <F12>   :nohlsearch<CR>
-inoremap    <F12>   <C-O>:nohlsearch<CR>
-vnoremap    <F12>   <C-O>:nohlsearch<CR>
-
-" <F5> = Graphical undo
-nnoremap    <F5>    :GundoToggle<CR>
-inoremap    <F5>    <C-O>:nohlsearch<CR>
-vnoremap    <F5>    <C-O>:nohlsearch<CR>
-
-" Ctrl+D = Insert Date (DDD D MMM YYYY)
-imap        <C-d>   <C-R>=strftime("%a %#d %b %Y")<CR>
-
-" <Tab> = Jump between start and end braces
-nnoremap    <tab>   %
-vnoremap    <tab>   %
-
-" ; instead of : for commands
-nnoremap    ;       :
-
-" Sort CSS properties alphabetically
-nnoremap    <leader>S   ?{<CR>jV/^\s*\}?$<CR>k:sort<CR>:noh<CR>
-
-"================================================================================
-" Diff setup
-"================================================================================
-
-if has("win32")
-    function! MyDiff()
-        let opt = ""
-        if &diffopt =~ "icase"
-            let opt = opt . "-i "
-        endif
-        if &diffopt =~ "iwhite"
-            let opt = opt . "-b "
-        endif
-        silent execute '!="'.$VIMRUNTIME.'\diff.exe" -a '.opt.'"'.v:fname_in.'" "'.v:fname_new.'" > "'.v:fname_out.'"'
-    endfunction
-    set diffexpr=MyDiff()
-endif
-
-"================================================================================
 " Keep selection when indenting block-wise
-"================================================================================
 if version >= 700
     xnoremap < <gv
     xnoremap > >gv
 endif
 
-"================================================================================
 " <Ctrl-Alt-Up/Down> swaps lines
-"================================================================================
-
 " http://vim.wikia.com/wiki/Transposing
 function! MoveLineUp()
     call MoveLineOrVisualUp(".", "")
@@ -519,90 +467,44 @@ inoremap <silent> <C-A-Down> <C-o>:<C-u>call MoveLineDown()<CR>
 vnoremap <silent> <C-A-Up> :<C-u>call MoveVisualUp()<CR>
 vnoremap <silent> <C-A-Down> :<C-u>call MoveVisualDown()<CR>
 
-"================================================================================
 " Auto-complete (X)HTML tags with Ctrl-Hyphen
-"================================================================================
-
-"au Filetype html,xml,xsl,php,smarty,javascript runtime closetag.vim
 au Filetype * runtime closetag.vim
-"au Filetype html,xml,xsl,php,smarty,javascript runtime xml.vim
 
-"================================================================================
-" Snippets
-"================================================================================
-let snips_html = "
-    \<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n
-    \<html lang=\"en-GB\" xml:lang=\"en-GB\" dir=\"ltr\" xmlns=\"http://www.w3.org/1999/xhtml\">\n
-    \	<head>\n
-    \		\n
-    \		<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n
-    \		<meta http-equiv=\"Content-Language\" content=\"en-GB\" />\n
-    \		\n
-    \		<title>${1:Untitled Document}</title>\n
-    \		\n
-    \		<link rel=\"stylesheet\" href=\"/css/main.css\" type=\"text/css\" />\n
-    \		\n
-    \	</head>\n
-    \	<body>\n
-    \		\n
-    \		${2}\n
-    \		\n
-    \	</body>\n
-    \</html>"
+" Use Sparkup to generate HTML quickly (Ctrl-E)
+au Filetype * runtime sparkup.vim
 
-"================================================================================
-" Highlight long lines
-"================================================================================
+" Highlight long lines:
+" :Long       Highlight after 80 characters
+" :Long <N>   Highlight after <N> characters
+" :NoLong     Remove highlighting
 fun HighlightLongLines(...)
-    
+
     if exists('w:long_line_match')
         silent! call matchdelete(w:long_line_match)
         unlet w:long_line_match
     endif
-    
+
     let len = (a:0 == 0 ? 80 : a:1)
     if len > 0
         let w:long_line_match = matchadd('ErrorMsg', '\%>'.len.'v.\+', -1)
     endif
-    
+
 endfun
 
-" :Long       Highlight after 80 characters
-" :Long <N>   Highlight after <N> characters
-command -nargs=? Long call HighlightLongLines(<f-args>)
+command -nargs=? LongLines call HighlightLongLines(<f-args>)
+command NoLongLines call HighlightLongLines(0)
 
-" :NoLong     Remove highlighting
-command NoLong call HighlightLongLines(0)
-
-"================================================================================
-" Learn to use HJKL keys instead of arrows!
-"================================================================================
-"nnoremap <up>       <nop>
-"nnoremap <down>     <nop>
-"nnoremap <left>     <nop>
-"nnoremap <right>    <nop>
-"inoremap <up>       <nop>
-"inoremap <down>     <nop>
-"inoremap <left>     <nop>
-"inoremap <right>    <nop>
-
-"================================================================================
 " Cycle through buffers
-"================================================================================
 nnoremap <C-n> :bnext<CR>
 nnoremap <C-p> :bprevious<CR>
 
-"================================================================================
-" Cycle through tabs with Ctrl-Tab as well as Ctrl-PageDn
-"================================================================================
-map <C-Tab> :tabnext<CR>
-map <C-S-Tab> :tabprev<CR>
-inoremap <C-Tab> <C-O>:tabnext<CR>
-inoremap <C-S-Tab> <C-O>:tabprev<CR>
-
-"================================================================================
-" NERDTree
-"================================================================================
+" NERDTree config has to be in a separate file to avoid causing errors in
+" older versions of Vim due to the array syntax
 if version >= 700
     runtime nerdtree-config.vim
 endif
+
+" FuzzyFinder - if search begins with a space do a recursive search
+let g:fuf_abbrevMap = {
+    \   "^ " : [ "**/", ],
+    \ }

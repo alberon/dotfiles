@@ -1,4 +1,0 @@
-<div>
-    {func}
-        text
-    

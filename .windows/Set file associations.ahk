@@ -4,17 +4,18 @@ FindExe()
     Exe = c:\Program Files\Vim\vim73\gvim.exe
     If FileExist(Exe)
         Return Exe
-    
+
     Exe = c:\Program Files (x86)\Vim\vim73\gvim.exe
     If FileExist(Exe)
         Return Exe
-    
+
     MsgBox 0x10, , Gvim not found
     Exit 1
 }
 
 Exe := FindExe()
-Exe = "%Exe%" --remote-tab-silent "`%1" "`%*"
+;Exe = "%Exe%" --remote-tab-silent "`%1" "`%*"
+Exe = "%Exe%" --remote-silent "`%1" "`%*"
 
 ; Use tabs by default
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\Applications\gvim.exe\shell\edit\command, , %Exe%
@@ -48,6 +49,7 @@ RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.py                , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.sh                , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.snippets          , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.sql               , , vim
+RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.vba               , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.vim               , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.vimrc             , , vim
 

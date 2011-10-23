@@ -2,4 +2,5 @@
 " Default is:
 " setlocal comments=s:<!--,m:\ \ \ \ ,e:-->
 
-setlocal comments=sO:*\ -,mO:*\ \ ,exO:*/,s1:/*,mb:*,ex:*/,://
+" 2011-10-23 Testing new indent settings without this...
+"setlocal comments=sO:*\ -,mO:*\ \ ,exO:*/,s1:/*,mb:*,ex:*/,://

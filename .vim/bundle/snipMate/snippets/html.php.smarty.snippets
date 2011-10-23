@@ -1,0 +1,218 @@
+snippet <link
+	<link rel="${1:stylesheet}" href="${2:/css/main.css}" type="${3:text/css}" />${4}
+
+snippet <favicon
+	<link rel="shortcut icon" type="image/vnd.microsoft.icon" href="${1:/favicon.ico}" />${2}
+
+snippet <style
+	<style type="text/css">
+	<!--
+	${1}
+	-->
+	</style>
+
+snippet <scr
+	<script src="${1}" type="text/javascript"></script>${2}
+
+snippet <script
+	<script type="text/javascript">
+	//<![CDATA[
+	${1}
+	//]]>
+	</script>
+
+snippet <meta Content-Language
+	<meta name="Content-Language" content="${1:en-GB}" />${2}
+snippet <meta Content-Type
+	<meta name="Content-Type" content="${1:text/html; charset=utf-8}" />${2}
+snippet <meta Other...
+	<meta name="${1:name}" content="${2:content}" />${3}
+
+#================================================================================
+
+snippet <h1
+	<h1>${1}</h1>
+
+snippet <h2
+	<h2>${1}</h2>
+
+snippet <h3
+	<h3>${1}</h3>
+
+snippet <h4
+	<h4>${1}</h4>
+
+snippet <h5
+	<h5>${1}</h5>
+
+snippet <h6
+	<h6>${1}</h6>
+
+#================================================================================
+
+snippet <div
+	<div class="${1}">${2}</div>
+
+snippet <clear
+	<div class="clear"></div>
+
+snippet <p
+	<p>${1}</p>
+
+#================================================================================
+
+snippet <table
+	<table>
+		<tr>
+			<td>${1}</td>
+		</tr>
+	</table>
+
+snippet <tr
+	<tr>
+		<td>${1}</td>
+	</tr>
+
+snippet <th
+	<th>${1}</th>
+
+snippet <td
+	<td>${1}</td>
+
+#================================================================================
+
+snippet <ul
+	<ul>
+		<li>${1}</li>
+	</ul>
+
+snippet <ol
+	<ol>
+		<li>${1}</li>
+	</ol>
+
+snippet <li
+	<li>${1}</li>
+
+#================================================================================
+
+snippet <dl
+	<dl>
+		<dd>${1}</dd>
+		<dt>${2}</dt>
+	</dl>
+
+snippet <dd
+	<dd>${1}</dd>
+
+snippet <dt
+	<dt>${1}</dt>
+
+#================================================================================
+
+snippet <form
+	<form action="${1}" method="post" accept-charset="utf-8">
+		${2}
+	</form>
+
+snippet <fieldset
+	<fieldset>
+		<legend>${1:name}</legend>
+		
+		${2}
+		
+	</fieldset>
+
+snippet <label
+	<label for="${1}">${2}</label>
+
+snippet <input
+	<input type="text" name="${1:name}" id="${2:$1}" value="${3}" />${4}
+
+snippet <hidden
+	<input type="hidden" name="${1:name}" value="${2}" />${3}
+
+snippet <check
+	<input type="checkbox" name="${1:name}" id="${2:$1}" value="${3:1}" />${4}
+
+snippet <checkbox
+	<input type="checkbox" name="${1:name}" id="${2:$1}" value="${3:1}" />${4}
+
+snippet <radio
+	<input type="radio" name="${1:name}" id="${3:$1_$2}" value="${2:value}" />${4}
+
+snippet <textarea
+	<textarea name="${1:name}" id="${2:$1}" rows="${3:5}" cols="${4:40}">${5}</textarea>
+
+snippet <select
+	<select name="${1:name}" id="${2:$1}">
+		<option value="${3:value}">${4:$3}</option>
+	</select>
+
+snippet <opt
+	<option value="${1:value}">${2:$1}</option>
+
+snippet <option
+	<option value="${1:value}">${2:$1}</option>
+
+snippet <optgroup
+	<optgroup label="${1}">
+		${2}
+	</optgroup>
+
+snippet <submit
+	<input type="submit" value="${1:Submit}" />${2}
+
+#================================================================================
+
+snippet <img
+	<img src="${1}" alt="${2}" width="${3}" height="${4}" />${5}
+
+#================================================================================
+
+snippet <span
+	<span class="${1}">${2}</span>
+
+snippet <a
+	<a href="${1}">${2}</a>
+
+snippet <strong
+	<strong>${1}</strong>
+
+snippet <em
+	<em>${1}</em>
+
+snippet <b
+	<b>${1}</b>
+
+snippet <i
+	<i>${1}</i>
+
+snippet <u
+	<u>${1}</u>
+
+snippet <small
+	<small>${1}</small>
+
+#================================================================================
+
+snippet <br
+	<br />
+
+snippet <hr
+	<hr />
+
+#================================================================================
+
+# Can't use this because it is used for class { } in PHP
+#snippet class
+#	class="${1}"${2}
+
+snippet enctype
+	enctype="multipart/form-data"
+
+snippet href
+	href="${1}"${2}
+
+snippet id
+	id="${1}"${2}
