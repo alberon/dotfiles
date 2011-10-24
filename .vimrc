@@ -508,3 +508,9 @@ endif
 let g:fuf_abbrevMap = {
     \   "^ " : [ "**/", ],
     \ }
+
+" Remember open buffers when loading Vim with no arguments
+set viminfo+=%
+
+" Remember mark positions also
+set viminfo+=f1
