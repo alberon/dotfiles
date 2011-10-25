@@ -134,7 +134,9 @@ set fileencodings=ucs-bom,utf-8,default,latin1
 set nobomb
 
 " File type detection
-filetype plugin indent on
+"TODO Make indenting work to my satisfaction, especially in PHP
+"filetype plugin indent on
+filetype plugin on
 
 augroup CustomFileTypes
 
