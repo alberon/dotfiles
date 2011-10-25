@@ -516,3 +516,10 @@ set viminfo+=%
 
 " Remember mark positions also
 set viminfo+=f1
+
+" Indenting - using this until I work out how to make the automatic indenting
+" work to my satisfaction
+set autoindent
+set smartindent
+set cinoptions=0{,0},0),:,!^F,o,O,e " Removed 0#
+set formatoptions+=ro " Duplicate comment lines when pressing enter
