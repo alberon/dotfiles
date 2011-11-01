@@ -22,10 +22,12 @@ nmap <silent> <Leader>az ?{<CR>jV/^\s*\}?$<CR>k:sort<CR>:noh<CR>
 
 " Buffers (list and open prompt ready to switch)
 "nmap <Leader>b :buffers<CR>:buffer 
-" Buffers (Buffer Explorer)
-nmap <Leader>b :BufExplorer<CR>
+" Buffers (FuzzyFinder)
+nmap <Leader>bf :FufBuffer<CR>
 
-" NERD Commenter = <Leader>c (then various letters - e.g. cc, cu, cn)
+" NERD Commenter = <Leader>c* (e.g. c, n, u)
+
+" DirDiff = <Leader>d* (k, j, p, g)
 
 " Delete spaces from otherwise empty lines
 nmap <silent> <Leader>ds :%s/^\s\+$<CR>
@@ -39,21 +41,23 @@ nmap <silent> <Leader>e :NERDTree<CR>
 
 " Open URL in Firefox = <Leader>ff (see .gvimrc)
 
-" Goto buffer
-nmap <silent> <Leader>gb :FufBuffer<CR>
-
-" Goto file
-nmap <silent> <Leader>gf :FufFile<CR>
-
 " Insert Date (DDD D MMM YYYY)
 nmap <silent> <Leader>id a<C-R>=strftime("%a %#d %b %Y")<CR>
 
 " Disable search highlight
 nmap <silent> <Leader>n :nohlsearch<CR>
 
-" Open .vimrc / .gvimrc
-nmap <silent> <Leader>ov :edit $VIM/.vimrc<CR>
+" Toggle search highlight
+nmap <silent> <Leader>n :set hlsearch!<CR>
+
+" Open file
+nmap <silent> <Leader>of :FufFile<CR>
+
+" Open .gvimrc
 nmap <silent> <Leader>og :edit $VIM/.gvimrc<CR>
+
+" Open .vimrc
+nmap <silent> <Leader>ov :edit $VIM/.vimrc<CR>
 
 " Quit
 nmap <silent> <Leader>q :q<CR>
@@ -233,8 +237,8 @@ set shiftround
 set ignorecase
 set smartcase
 
-" Highlight searches as you type
-set hlsearch
+" Highlight search results as you type
+"set hlsearch
 set incsearch
 
 " Default to replacing all occurrences in :s (swaps the meaning of the /g flag)
