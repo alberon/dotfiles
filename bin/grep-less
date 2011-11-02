@@ -1,13 +1,14 @@
 #!/bin/bash
 
 if readlink /proc/$$/fd/1 | grep -q "^pipe:"; then
-    
+
     # Pipe output, so don't use pager
     grep --color=auto "$@"
-    
+
 else
-    
+
     # Standard output, so use pager
     grep --color=always "$@" | less -FRSX
-    
+    exit ${PIPESTATUS[0]}
+
 fi

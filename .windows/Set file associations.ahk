@@ -28,7 +28,10 @@ RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\vim\shell\edit\command, , %
 
 ; Associate various extensions with that file type
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.bashrc            , , vim
+RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.builder           , , vim
+RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.coffee            , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.conf              , , vim
+RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.erb               , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.fcgi              , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.gitconfig         , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.gitignore         , , vim
@@ -46,6 +49,11 @@ RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.orig              , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.patch             , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.php               , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.py                , , vim
+RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.rb                , , vim
+RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.rhtml             , , vim
+RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.ru                , , vim
+RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.sass              , , vim
+RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.scss              , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.sh                , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.snippet           , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.snippets          , , vim
