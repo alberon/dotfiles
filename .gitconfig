@@ -45,3 +45,6 @@
 
 [github]
     user = davejamesmiller
+
+[remote "origin"]
+    push = HEAD
