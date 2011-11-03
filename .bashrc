@@ -274,6 +274,9 @@ if [ "$TERM" != "dumb" ]; then
         alias git=hub
     fi
 
+    # rvm
+    [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+
     # ack (Debian renames to ack-grep)
     if which ack-grep >/dev/null 2>&1; then
         alias ack="ack-grep"
