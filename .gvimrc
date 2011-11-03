@@ -1,9 +1,6 @@
 " No toolbar - I never use it!
 set guioptions-=T
 
-" Deactivate cursor blinking
-set guicursor=a:blinkon0
-
 " <Ctrl-S> shows save dialog for new files
 map <silent> <C-s> :if expand("%") == ""<CR>:browse confirm w<CR>:else<CR>:confirm w<CR>:endif<CR>
 inoremap <silent> <C-s> <C-o>:if expand("%") == ""<CR>:browse confirm w<CR>:else<CR>:confirm w<CR>:endif<CR>

@@ -7,6 +7,10 @@ source $VIMRUNTIME/mswin.vim
 " Except the xterm selection method is better
 behave xterm
 
+" And make Ctrl-A use visual not select mode
+noremap <C-A> ggVG
+inoremap <C-A> <C-O>gg<C-O>VG
+
 " Use Pathogen to manage plugin bundles
 call pathogen#infect()
 call pathogen#helptags()
@@ -196,7 +200,7 @@ autocmd BufReadPost *
 " Need to postpone using "zv" until after reading the modelines.
 autocmd BufWinEnter *
 \   if exists("b:doopenfold") |
-\       exe "normal zv" |
+"\       exe "normal zv" |
 \       if (b:doopenfold > 1) |
 \           exe  "+".1 |
 \       endif |
@@ -230,9 +234,6 @@ endfun
 
 command -range=% -nargs=? ReIndent call ReIndent(<line1>, <line2>, <f-args>)
 
-" Make > and < shift to a multiple of N instead of just adding/removing N spaces
-set shiftround
-
 " Case-insensitive search unless there's a capital letter (then case-sensitive)
 set ignorecase
 set smartcase
@@ -265,14 +266,6 @@ set confirm
 
 " Don't put two spaces between sentences
 set nojoinspaces
-
-" Some old indenting options... TODO: Delete if I don't need them...
-"set autoindent
-"set smartindent
-"set copyindent
-"set nocopyindent " Changed because in Vim 7.2 autoindent seems to have started using a tab for the last char even with expandtab on
-"set cinoptions=0{,0},0),:,!^F,o,O,e " Removed 0#
-"set formatoptions+=ro " Duplicate comment lines when pressing enter
 
 " Always write a separate backup, don't use renaming because it resets the
 " executable flag when editing over Samba
@@ -318,6 +311,9 @@ if has("folding")
     set foldmethod=marker
 endif
 
+" Remove all the ---s after a fold to make it easier to read
+set fillchars=vert:\|,fold:\ 
+
 " Keep an undo history after closing Vim (Vim 7.3+)
 if version >= 703
     set undofile
@@ -331,6 +327,9 @@ endif
 " Show tabs and trailing spaces...
 set list
 set listchars=tab:>\ ,trail:.
+
+" Except in snippet files because they have to use tabs
+au FileType snippet,snippets setl listchars+=tab:\ \ 
 
 " Use the temp directory for all backups and swap files, instead of cluttering
 " up the filesystem with .*.swp and *~ files
@@ -513,17 +512,34 @@ endif
 " FuzzyFinder - if search begins with a space do a recursive search
 let g:fuf_abbrevMap = {
     \   "^ " : [ "**/", ],
-    \ }
+    \}
 
 " Remember open buffers when loading Vim with no arguments
-set viminfo+=%
+" Removed because when loading with --remote-silent it always seems to load
+" the buffers, even if filename arguments are given
+"set viminfo+=%
 
-" Remember mark positions also
+" Remember mark positions
 set viminfo+=f1
 
 " Indenting - using this until I work out how to make the automatic indenting
 " work to my satisfaction
 set autoindent
 set smartindent
+set copyindent
 set cinoptions=0{,0},0),:,!^F,o,O,e " Removed 0#
 set formatoptions+=ro " Duplicate comment lines when pressing enter
+
+" snipMate aliases
+let g:snipMate = {}
+let g:snipMate['scope_aliases'] = {
+    \   'cpp':    'c',
+    \   'cs':     'c',
+    \   'html':   'htmlonly,javascript',
+    \   'mxml':   'actionscript',
+    \   'objc':   'c',
+    \   'php':    'html,javascript',
+    \   'smarty': 'html,javascript',
+    \   'ur':     'html,javascript',
+    \   'xhtml':  'htmlonly,html,javascript',
+    \}

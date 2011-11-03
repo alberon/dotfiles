@@ -6,4 +6,4 @@
 	url = git://github.com/MarcWeber/vim-addon-mw-utils.git
 [submodule ".vim/bundle/snipMate"]
 	path = .vim/bundle/snipMate
-	url = git://github.com/garbas/vim-snipmate.git
+	url = git://github.com/davejamesmiller/vim-snipmate.git

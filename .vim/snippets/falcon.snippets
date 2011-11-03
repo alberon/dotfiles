@@ -1,71 +1,5 @@
 snippet #!
 	#!/usr/bin/env falcon
-# Import	
-snippet imp
-	import ${1:module}
-# Function
-snippet fun
-	function ${2:function_name}(${3})	
-		${4:/* code */}
-	end	
-# Class
-snippet class
-	class ${1:class_name}(${2:class_params})
-		${3:/* members/methods */}
-	end
-# If 
-snippet if
-	if ${1:condition}
-		${2:/* code */}		
-	end
-# If else
-snippet ife
-	if ${1:condition}
-		${2:/* code */}		
-	else
-	    ${1}	
-	end
-# If else if	
-snippet elif
-	elif ${1:condition}
-		${2:/* code */}	        
-# For/in Loop
-snippet forin
-	for ${1:element} in ${2:container}
-		${3:/* code */}
-	end
-# For/to Loop
-snippet forto
-	for ${1:lowerbound} to ${2:upperbound}
-		${3:/* code */}
-	end
-# While Loop
-snippet while 
-	while ${1:conidition}
-		${2:/* code */}	
-	end
- 
-#====================================
-# Common Licenses
-#====================================
-# GPL
-snippet gpl
-	/* Copyright (c) `strftime("%Y")` ${1:`g:snips_author`} <${2:email}>
-	 *
-	 * This program is free software: you can redistribute it and/or modify
-	 * it under the terms of the GNU General Public License as published by
-	 * the Free Software Foundation, either version ${3:version} of the License, or
-	 * (at your option) any later version.
-	 *
-	 * This program is distributed in the hope that it will be useful,
-	 * but WITHOUT ANY WARRANTY; without even the implied warranty of
-	 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-	 * GNU General Public License for more details.
-	 *
-	 * You should have received a copy of the GNU General Public License
-	 * along with this program. If not, see <http://www.gnu.org/licenses/>.
-	 */
-# APLv2
 snippet apache
 	/* Copyright (c) `strftime("%Y")` ${1:`g:snips_author`} <${2:email}>
 	 *
@@ -81,7 +15,6 @@ snippet apache
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-# BSD
 snippet bsd
 	/* Copyright (c) `strftime("%Y")` ${1:`g:snips_author`} <${2:email}>
 	 * All rights reserved.
@@ -107,4 +40,55 @@ snippet bsd
 	 * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 	 * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 	 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-	 */       
+	 */
+snippet class
+	class ${1:class_name}(${2:class_params})
+		${3:/* members/methods */}
+	end
+snippet elif
+	elif ${1:condition}
+		${2:/* code */}	        
+snippet forin
+	for ${1:element} in ${2:container}
+		${3:/* code */}
+	end
+snippet forto
+	for ${1:lowerbound} to ${2:upperbound}
+		${3:/* code */}
+	end
+snippet fun
+	function ${2:function_name}(${3})	
+		${4:/* code */}
+	end	
+snippet gpl
+	/* Copyright (c) `strftime("%Y")` ${1:`g:snips_author`} <${2:email}>
+	 *
+	 * This program is free software: you can redistribute it and/or modify
+	 * it under the terms of the GNU General Public License as published by
+	 * the Free Software Foundation, either version ${3:version} of the License, or
+	 * (at your option) any later version.
+	 *
+	 * This program is distributed in the hope that it will be useful,
+	 * but WITHOUT ANY WARRANTY; without even the implied warranty of
+	 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+	 * GNU General Public License for more details.
+	 *
+	 * You should have received a copy of the GNU General Public License
+	 * along with this program. If not, see <http://www.gnu.org/licenses/>.
+	 */
+snippet if
+	if ${1:condition}
+		${2:/* code */}		
+	end
+snippet ife
+	if ${1:condition}
+		${2:/* code */}		
+	else
+	    ${1}	
+	end
+snippet imp
+	import ${1:module}
+snippet while
+	while ${1:conidition}
+		${2:/* code */}	
+	end
