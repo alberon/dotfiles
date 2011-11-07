@@ -10,6 +10,9 @@
 [pack]
     threads = 0
 
+[pager]
+    status = true
+
 [alias]
     addremove = add -A
     ar = add -A
