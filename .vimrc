@@ -530,7 +530,8 @@ set copyindent
 set cinoptions=0{,0},0),:,!^F,o,O,e " Removed 0#
 set formatoptions+=ro " Duplicate comment lines when pressing enter
 
-" snipMate aliases
+" snipMate config
+let snips_author = 'Dave James Miller'
 let g:snipMate = {}
 let g:snipMate['scope_aliases'] = {
     \   'cpp':    'c',
