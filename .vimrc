@@ -142,8 +142,6 @@ set fileencodings=ucs-bom,utf-8,default,latin1
 set nobomb
 
 " File type detection
-"TODO Make indenting work to my satisfaction, especially in PHP
-"filetype plugin indent on
 filetype plugin on
 
 augroup CustomFileTypes
@@ -522,11 +520,9 @@ let g:fuf_abbrevMap = {
 " Remember mark positions
 set viminfo+=f1
 
-" Indenting - using this until I work out how to make the automatic indenting
-" work to my satisfaction
+" Indenting
 set autoindent
 set smartindent
-set copyindent
 set cinoptions=0{,0},0),:,!^F,o,O,e " Removed 0#
 set formatoptions+=ro " Duplicate comment lines when pressing enter
 
