@@ -7,17 +7,17 @@ snippet /* /*
 	 */
 snippet /** /**
 	/**
-	 * ${1}
+	 * ${1:Description...}
 	 */
 snippet /**# /**#
 	/**#@+
-	 * ${1}
+	 * ${1:Description...}
 	 */
 	${2}
 	/**#@-*/
 snippet /**#@+ /**#@+
 	/**#@+
-	 * ${1}
+	 * ${1:Description...}
 	 */
 	${2}
 	/**#@-*/
@@ -65,26 +65,26 @@ snippet abs
 	abs(${1:number})${2}
 snippet abstract
 	/**
-	 * ${2}
-	 *
+	 * ${2:Description...}
+	 *${3}
 	 * @author `g:snips_author`
 	 */
 	abstract class ${1:`snipMateCustom#AutoClassName()`}
 	{
 
-		${3}
+		${4}
 
 	}
 snippet abstracte
 	/**
-	 * ${3}
-	 *
+	 * ${3:Description...}
+	 *${4}
 	 * @author `g:snips_author`
 	 */
 	abstract class ${1:`snipMateCustom#AutoClassName()`} extends ${2}
 	{
 
-		${4}
+		${5}
 
 	}
 snippet addcslashes
@@ -262,26 +262,26 @@ snippet chr
 	chr(${1:ascii_code})${2}
 snippet class
 	/**
-	 * ${2}
-	 *
+	 * ${2:Description...}
+	 *${3}
 	 * @author `g:snips_author`
 	 */
 	class ${1:`snipMateCustom#AutoClassName()`}
 	{
 
-		${3}
+		${4}
 
 	}
 snippet classe
 	/**
-	 * ${3}
-	 *
+	 * ${3:Description...}
+	 *${4}
 	 * @author `g:snips_author`
 	 */
 	class ${1:`snipMateCustom#AutoClassName()`} extends ${2}
 	{
 
-		${4}
+		${5}
 
 	}
 snippet class_exists
@@ -298,44 +298,54 @@ snippet cls
 	<?php
 
 	/**
-	 * ${2}
-	 *
+	 * ${2:Description...}
+	 *${4}
 	 * @author `g:snips_author`
 	 */
 	class ${1:`snipMateCustom#AutoClassName()`}
 	{
 
-		${3}
+		${4}
 
 	}
 snippet clse
 	<?php
 
 	/**
-	 * ${3}
-	 *
+	 * ${3:Description...}
+	 *${4}
 	 * @author `g:snips_author`
 	 */
 	class ${1:`snipMateCustom#AutoClassName()`} extends ${2}
 	{
 
-		${4}
+		${5}
 
 	}
 snippet common
 	require_once $_SERVER['DOCUMENT_ROOT'] . '/../includes/common.php';
 snippet compact
 	compact(${1:var1.../array})${4}
-snippet cons
+snippet const
 	/**
-	 * ${2}
+	 * ${3:Description...}
+	 *${5}
+	 * @const ${4:string}
+	 */
+	const ${1:NAME} = ${2:'value'};${6}
+snippet constant
+	constant(${1:string})${2}
+snippet construct
+	/**
+	 * ${2:Constructor.}
+	 *${3}
+	 * @return void
+	 * @author `g:snips_author`
 	 */
 	public function __construct(${1})
 	{
-		${3}
+		${4}
 	}
-snippet constant
-	constant(${1:string})${2}
 snippet cookie
 	$_COOKIE['${1:variable}']${2}
 snippet copy
@@ -563,13 +573,14 @@ snippet ftruncate
 	ftruncate(${1:handle}, ${2:size})${3}
 snippet fun
 	/**
-	 * ${3}
-	 *
+	 * ${3:Description...}
+	 *${5}
 	 * @return ${4:void}
+	 * @author `g:snips_author`
 	 */
 	public function ${1:functionName}(${2})
 	{
-		${5}
+		${6}
 	}
 snippet func_get_arg
 	func_get_arg(${1:0})${2}
@@ -639,14 +650,14 @@ snippet getservbyport
 	getservbyport(${1:port}, ${2:'tcp'})${3}
 snippet gfun
 	/**
-	 * ${3}
-	 *
+	 * ${3:Description...}
+	 *${5}
 	 * @return ${4:void}
 	 * @author `g:snips_author`
 	 */
 	function ${1:function_name}(${2})
 	{
-		${5}
+		${6}
 	}
 snippet glob
 	glob(${1:pattern}${2:, }${3:[flags]})${4}
@@ -794,14 +805,14 @@ snippet ini_set
 	ini_set(${1:var_name}, ${2:value})${3}
 snippet interface
 	/**
-	 * ${2}
-	 *
+	 * ${2:Description...}
+	 *${3}
 	 * @author `g:snips_author`
 	 */
 	interface ${1:`snipMateCustom#AutoClassName()`}
 	{
 
-		${3}
+		${4}
 
 	}
 snippet interface_exists
@@ -975,9 +986,15 @@ snippet pathinfo
 snippet pclose
 	pclose(${1:handle})${2}
 snippet pfun
+	/**
+	 * ${3:Description...}
+	 *${5}
+	 * @return ${4:void}
+	 * @author `g:snips_author`
+	 */
 	protected function _${1:functionName}(${2})
 	{
-		${3}
+		${6}
 	}
 snippet popen
 	popen(${1:command}, ${2:mode})${3}
@@ -991,6 +1008,35 @@ snippet php
 	?>
 snippet phpinfo
 	<?php phpinfo() ?>
+snippet ppfun
+	/**
+	 * ${3:Description...}
+	 *${5}
+	 * @return ${4:void}
+	 * @author `g:snips_author`
+	 */
+	private function _${1:functionName}(${2})
+	{
+		${6}
+	}
+snippet ppsfun
+	/**
+	 * ${3:Description...}
+	 *${5}
+	 * @return ${4:void}
+	 * @author `g:snips_author`
+	 */
+	private static function _${1:functionName}(${2})
+	{
+		${6}
+	}
+snippet ppvar
+	/**
+	 * ${2:Description...}
+	 *${4}
+	 * @var ${3:bool}
+	 */
+	private $_${1:varName};
 snippet preg_filter
 	preg_filter('${1:/}${3:pattern}$1${2:imsuUX}', ${4:replacement}, ${5:subject}${6:, }${7:[limit]}${8:, }${9:[&count]})${10}
 snippet preg_grep
@@ -1021,17 +1067,22 @@ snippet property_exists
 	property_exists(${1:class}, ${2:property})${3}
 snippet psfun
 	/**
-	 * ${3}
-	 *
+	 * ${3:Description...}
+	 *${5}
 	 * @return ${4:void}
+	 * @author `g:snips_author`
 	 */
 	protected static function _${1:functionName}(${2})
 	{
-		${5}
+		${6}
 	}
 snippet pvar
-	protected
-		$_${1:varName};
+	/**
+	 * ${2:Description...}
+	 *${4}
+	 * @var ${3:bool}
+	 */
+	protected $_${1:varName};
 snippet rand
 	rand(${1:min}, ${2:max})${3}
 snippet range
@@ -1134,13 +1185,14 @@ snippet setrawcookie
 	setrawcookie(${1:name}${2:, }${3:[value]}${4:, }${5:[time() + expire]}${6:, }${7:[path]}${8:, }${9:[domain]}${10:, }${11:[secure=false]}${12:, }${13:[httponly=false]})
 snippet sfun
 	/**
-	 * ${3}
-	 *
+	 * ${3:Description...}
+	 *${5}
 	 * @return ${4:void}
+	 * @author `g:snips_author`
 	 */
 	public static function ${1:functionName}(${2})
 	{
-		${5}
+		${6}
 	}
 snippet sha1
 	sha1(${1:string})${2}
@@ -1162,15 +1214,16 @@ snippet smf
 	<?php
 
 	/**
-	 * ${1}
-	 *
+	 * ${1:Description...}
+	 *${3}
 	 * @return ${2:string}
+	 * @author `g:snips_author`
 	 */
 	function smarty_function_`substitute(Filename('', 'NAME'), '^function\.', '', '')`($params, &$smarty)
 	{
 		global $app;
 
-		${3}
+		${4}
 
 		return $app->tpl->callInclude(djmSmarty::defaultTemplate(), $params);
 	}
@@ -1178,9 +1231,10 @@ snippet smb
 	<?php
 
 	/**
-	 * ${1}
-	 *
+	 * ${1:Description...}
+	 *${3}
 	 * @return ${2:string}
+	 * @author `g:snips_author`
 	 */
 	function smarty_block_`substitute(Filename('', 'NAME'), '^block\.', '', '')`($params, $content, &$smarty)
 	{
@@ -1188,19 +1242,20 @@ snippet smb
 			return;
 		}
 
-		${3}
+		${4}
 	}
 snippet smm
 	<?php
 
 	/**
-	 * ${1}
-	 *
+	 * ${1:Description...}
+	 *${3}
 	 * @return ${2:string}
+	 * @author `g:snips_author`
 	 */
 	function smarty_modifier_`substitute(Filename('', 'NAME'), '^modifier\.', '', '')`($text)
 	{
-		${3}
+		${4}
 	}
 snippet sort
 	sort(${1:&array}${2:, }${3:[flags=SORT_REGULAR]})${4}
@@ -1357,8 +1412,12 @@ snippet usleep
 snippet usort
 	usort(${1:&array}, ${2:callback})${3}
 snippet var
-	public
-		$${1:varName};
+	/**
+	 * ${2:Description...}
+	 *${4}
+	 * @var ${3:bool}
+	 */
+	public $${1:varName};
 snippet var_dump
 	var_dump(${1:var})${2}
 snippet var_export

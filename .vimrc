@@ -41,7 +41,7 @@ nmap <silent> <Leader>ds :%s/^\s\+$<CR>
 nmap <silent> <Leader>dt :%s/\s\+$<CR>
 
 " NERDtree
-nmap <silent> <Leader>e :NERDTree<CR>
+nmap <silent> <Leader>e :NERDTreeFind<CR>
 
 " Open URL in Firefox = <Leader>ff (see .gvimrc)
 
@@ -59,6 +59,9 @@ nmap <silent> <Leader>of :FufFile<CR>
 
 " Open .gvimrc
 nmap <silent> <Leader>og :edit $VIM/.gvimrc<CR>
+
+" Open snippets directory
+nmap <silent> <Leader>os :NERDTree $VIM/.vim/snippets<CR>
 
 " Open .vimrc
 nmap <silent> <Leader>ov :edit $VIM/.vimrc<CR>
@@ -512,18 +515,13 @@ let g:fuf_abbrevMap = {
     \   "^ " : [ "**/", ],
     \}
 
-" Remember open buffers when loading Vim with no arguments
-" Removed because when loading with --remote-silent it always seems to load
-" the buffers, even if filename arguments are given
-"set viminfo+=%
-
 " Remember mark positions
 set viminfo+=f1
 
 " Indenting
 set autoindent
 set smartindent
-set cinoptions=0{,0},0),:,!^F,o,O,e " Removed 0#
+set cinoptions=0{,0},0),:,!^F,o,O,e " Removed 0# so #comments aren't unindented
 set formatoptions+=ro " Duplicate comment lines when pressing enter
 
 " snipMate config
@@ -532,11 +530,11 @@ let g:snipMate = {}
 let g:snipMate['scope_aliases'] = {
     \   'cpp':    'c',
     \   'cs':     'c',
-    \   'html':   'htmlonly,javascript',
+    \   'html':   'htmlonly',
     \   'mxml':   'actionscript',
     \   'objc':   'c',
-    \   'php':    'html,javascript',
-    \   'smarty': 'html,javascript',
-    \   'ur':     'html,javascript',
-    \   'xhtml':  'htmlonly,html,javascript',
+    \   'php':    'html',
+    \   'smarty': 'html',
+    \   'ur':     'html',
+    \   'xhtml':  'htmlonly,html',
     \}
