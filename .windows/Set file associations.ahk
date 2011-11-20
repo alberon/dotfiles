@@ -1,11 +1,11 @@
 ; Find the location of gVim
 FindExe()
 {
-    Exe = c:\Program Files\Vim\vim73\gvim.exe
+    Exe = C:\Program Files\Vim\vim73\gvim.exe
     If FileExist(Exe)
         Return Exe
 
-    Exe = c:\Program Files (x86)\Vim\vim73\gvim.exe
+    Exe = C:\Program Files (x86)\Vim\vim73\gvim.exe
     If FileExist(Exe)
         Return Exe
 
@@ -14,17 +14,20 @@ FindExe()
 }
 
 Exe := FindExe()
-;Exe = "%Exe%" --remote-tab-silent "`%1" "`%*"
-Exe = "%Exe%" --remote-silent "`%1" "`%*"
+
+Cmd = "%Exe%" --remote-tab-silent
+;Cmd = "%Exe%" --remote-silent
+
+WindowsCmd = %Cmd% "`%1" "`%*"
 
 ; Use tabs by default
-RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\Applications\gvim.exe\shell\edit\command, , %Exe%
+RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\Applications\gvim.exe\shell\edit\command, , %WindowsCmd%
 
 ; Add "Edit with Vim" to context menus
-RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\*\shell\Edit with Vim\command, , %Exe%
+RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\*\shell\Edit with Vim\command, , %WindowsCmd%
 
 ; Create a new file type
-RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\vim\shell\edit\command, , %Exe%
+RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\vim\shell\edit\command, , %WindowsCmd%
 
 ; Associate various extensions with that file type
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.bashrc            , , vim
@@ -63,10 +66,25 @@ RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.vim               , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.vimrc             , , vim
 
 ; Don't change file type for .txt else New > Text Document disappears from Explorer
-RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\txtfile\shell\edit\command, , %Exe%
+RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\txtfile\shell\edit\command, , %WindowsCmd%
 
 ; Tell Windows to refresh the file associations immediately
 DllCall("shell32\SHChangeNotify", uint, 0x08000000, uint, 0, uint, 0, uint, 0)
+
+; WinSCP editor (replaces existing value, but doesn't add it if it's missing)
+WinSCPCmd = %Cmd% !.!
+StringReplace, WinSCPCmd, WinSCPCmd, \, `%5C, All
+StringReplace, WinSCPCmd, WinSCPCmd, %A_Space%, `%20, All
+
+Loop, HKEY_CURRENT_USER, Software\Martin Prikryl\WinSCP 2\Configuration\Interface\Editor, 2
+{
+    RegRead Value, HKEY_CURRENT_USER, %A_LoopRegSubKey%\%A_LoopRegName%, ExternalEditor
+    IfInString, Value, gvim.exe
+    {
+        ;MsgBox, %Value%`r`n`r`n%WinSCPCmd%
+        RegWrite, REG_SZ, HKEY_CURRENT_USER, %A_LoopRegSubKey%\%A_LoopRegName%, ExternalEditor, %WinSCPCmd%
+    }
+}
 
 ; Confirm it's done
 MsgBox 0x40, , Done.

@@ -47,6 +47,7 @@ call pathogen#helptags()
 
 " Use ; instead of : for commands (don't need to press shift so much)
 nnoremap ; :
+vnoremap ; :
 
 " Use , as the leader for my own keyboard shortcuts
 let mapleader = ","
@@ -64,10 +65,10 @@ nmap <Leader>b :FufBuffer<CR>
 " DirDiff = <Leader>d* (k, j, p, g)
 
 " Delete spaces from otherwise empty lines
-nmap <silent> <Leader>ds :call <SID>Preserve("%s/^\s\+$//e")<CR>
+nmap <silent> <Leader>ds :call <SID>Preserve('%s/^\s\+$//e')<CR>
 
 " Delete trailing spaces
-nmap <silent> <Leader>ds :call <SID>Preserve("%s/\s\+$//e")<CR>
+nmap <silent> <Leader>dt :call <SID>Preserve('%s/\s\+$//e')<CR>
 
 " NERDtree
 nmap <silent> <Leader>e :NERDTreeFind<CR>
@@ -636,6 +637,58 @@ function! <SID>SortSnippets()
 endfunction
 
 command! SortSnippets silent! call <SID>Preserve("call <SID>SortSnippets()")
+
+" Show tab bar always
+set showtabline=2
+
+" Ctrl-T to open a new tab
+map <C-t> :tabnew<cr>
+nmap <C-t> :tabnew<cr>
+imap <C-t> <ESC>:tabnew<cr>
+
+" Cycle through tabs with Ctrl-Tab as well as Ctrl-PageDn
+map <C-Tab> :tabnext<CR>
+map <C-S-Tab> :tabprev<CR>
+inoremap <C-Tab> <C-O>:tabnext<CR>
+inoremap <C-S-Tab> <C-O>:tabprev<CR>
+
+" Set up tab labels with tab number, buffer name, number of windows
+function! GuiTabLabel()
+    let label = ''
+    let bufnrlist = tabpagebuflist(v:lnum)
+
+    " Tab number
+    let label .= v:lnum.': '
+
+    " Buffer name
+    let name = bufname(bufnrlist[tabpagewinnr(v:lnum) - 1])
+    if name != ''
+        let name = fnamemodify(name,":t")
+    elseif &buftype == 'quickfix'
+        let name = '[Quickfix List]'
+    else
+        let name = '[No Name]'
+    endif
+    let label .= name
+
+    " Append the number of windows in the tab page
+    let wincount = tabpagewinnr(v:lnum, '$')
+    if wincount > 1
+        let label .= ' [' . wincount . ']'
+    endif
+
+    " Add '+' if one of the buffers in the tab page is modified
+    for bufnr in bufnrlist
+        if getbufvar(bufnr, "&modified")
+            let label .= '+'
+            break
+        endif
+    endfor
+
+    return label
+endfunction
+
+set guitablabel=%{GuiTabLabel()}
 
 " Finish the autocommands group
 augroup END
