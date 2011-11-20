@@ -1,18 +1,38 @@
 " Debugging
 "set verbose=9
 
+" Make sure any autocommands are replaced not added to when reloading this file
+augroup vimrc
+autocmd!
+
+" This is for the syntax highlighter only! --> augroup END
+" Without that it doesn't highlight the rest of this file correctly...
+" (The real one is at the very end of this file)
+
+" Automatically reload this file when it is modified
+autocmd! BufWritePost .vimrc source $VIM/.vimrc
+
+" Helper to run a command while preserving cursor position & search history
+" http://technotales.wordpress.com/2010/03/31/preserve-a-vim-function-that-keeps-your-state/
+function! <SID>Preserve(command)
+    " Preparation: save last search, and cursor position.
+    let _s=@/
+    let pos = getpos('.')
+    " Do the business:
+    execute a:command
+    " Clean up: restore previous search history, and cursor position
+    let @/=_s
+    call setpos('.', pos)
+endfunction
+
 " Behave more like a Windows program
 source $VIMRUNTIME/mswin.vim
 
-" Except the xterm selection method is better
-behave xterm
-
-" And make Ctrl-A use visual not select mode
-noremap <C-A> ggVG
-inoremap <C-A> <C-O>gg<C-O>VG
-
 " Use Pathogen to manage plugin bundles
 call pathogen#infect()
+
+" Automatically update the help tags so I don't have to do it manually on all my
+" computers every time I install/upgrade/remove a bundle
 call pathogen#helptags()
 
 " Use ; instead of : for commands (don't need to press shift so much)
@@ -27,23 +47,57 @@ nmap <silent> <Leader>az ?{<CR>jV/^\s*\}?$<CR>k:sort<CR>:noh<CR>
 " Buffers (list and open prompt ready to switch)
 "nmap <Leader>b :buffers<CR>:buffer 
 " Buffers (FuzzyFinder)
-nmap <Leader>bf :FufBuffer<CR>
+nmap <Leader>b :FufBuffer<CR>
 
 " NERD Commenter = <Leader>c* (e.g. c, n, u)
 
 " DirDiff = <Leader>d* (k, j, p, g)
 
 " Delete spaces from otherwise empty lines
-nmap <silent> <Leader>ds :%s/^\s\+$<CR>
+nmap <silent> <Leader>ds :call <SID>Preserve("%s/^\s\+$//e")<CR>
 
-" Delete trailing spaces (be careful with this - e.g. in .vimrc there are
-" lines that need to end with spaces to work!)
-nmap <silent> <Leader>dt :%s/\s\+$<CR>
+" Delete trailing spaces
+nmap <silent> <Leader>ds :call <SID>Preserve("%s/\s\+$//e")<CR>
 
 " NERDtree
 nmap <silent> <Leader>e :NERDTreeFind<CR>
 
-" Open URL in Firefox = <Leader>ff (see .gvimrc)
+" Open URL in Firefox
+" http://vim.wikia.com/wiki/Open_a_web-browser_with_the_URL_in_the_current_line
+if has("win32")
+    let $PATH .= ';c:\Program Files (x86)\Mozilla Firefox;c:\Program Files\Mozilla Firefox'
+endif
+
+function! <SID>Browser()
+
+    let line0 = getline(".")
+
+    let line = matchstr(line0, "http[^ ]*")
+    if line == ""
+        let line = matchstr(line0, "ftp[^ ]*")
+    endif
+    if line == ""
+        let line = matchstr(line0, "file[^ ]*")
+    endif
+    "let line = escape(line, "#?&;|%")
+    let line = escape(line, "#")
+
+    " This opens the current file in Firefox by default
+    "if line == ""
+    "  let line = "\"" . (expand("%:p")) . "\""
+    "endif
+
+    if line != ""
+        if has("win32")
+            exec ':silent !start firefox.exe "' . line . '"'
+        else
+            exec ':silent !firefox "' . line . '"'
+        endif
+    endif
+
+endfunction
+
+map <silent> <Leader>ff :call <SID>Browser()<CR>
 
 " Insert Date (DDD D MMM YYYY)
 nmap <silent> <Leader>id a<C-R>=strftime("%a %#d %b %Y")<CR>
@@ -57,10 +111,9 @@ nmap <silent> <Leader>n :set hlsearch!<CR>
 " Open file
 nmap <silent> <Leader>of :FufFile<CR>
 
-" Open .gvimrc
-nmap <silent> <Leader>og :edit $VIM/.gvimrc<CR>
-
 " Open snippets directory
+" TODO: Open the snippets file that corresponds to the current file - list them
+" if there's more than one to choose from
 nmap <silent> <Leader>os :NERDTree $VIM/.vim/snippets<CR>
 
 " Open .vimrc
@@ -105,10 +158,10 @@ nmap <silent> <Leader>w :w<CR>
 nmap <silent> <Leader>z :GundoToggle<CR>
 
 " Ctrl+direction to switch buffers
-nnoremap <C-h>      <C-w>h
-nnoremap <C-j>      <C-w>j
-nnoremap <C-k>      <C-w>k
-nnoremap <C-l>      <C-w>l
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
 
 " Make % jump between XML tags as well as normal brackets
 runtime macros/matchit.vim
@@ -120,10 +173,10 @@ colorscheme torte
 " Make the line numbers less visible
 hi LineNr guifg=#444444
 
-" Make folded sections easier to read (dark grey instead of light)
+" Make folded sections easier to read (dark grey instead of light background)
 hi Folded guibg=#111111
 
-" Highlight just after 80 and 120 columns (standard widths)
+" Highlight just *after* columns 80 and 120
 if version >= 703
     set colorcolumn=81,121
     hi ColorColumn guibg=#333333
@@ -147,44 +200,34 @@ set nobomb
 " File type detection
 filetype plugin on
 
-augroup CustomFileTypes
+" AutoIt syntax
+au BufNewFile,BufRead *.au3 setlocal ft=autoit
 
-    " Clear Group
-    au!
+" Standard ML syntax
+au BufNewFile,BufRead *.ml,*.sml setlocal ft=sml
 
-    " AutoIt syntax
-    au BufNewFile,BufRead *.au3 setlocal ft=autoit
+" Java syntax
+au BufNewFile,BufRead *.class setlocal ft=class
+au BufNewFile,BufRead *.jad setlocal ft=java
 
-    " Standard ML syntax
-    au BufNewFile,BufRead *.ml,*.sml setlocal ft=sml
+" CSV files
+au BufNewFile,BufRead *.csv setf csv
 
-    " Java syntax
-    au BufNewFile,BufRead *.class setlocal ft=class
-    au BufNewFile,BufRead *.jad setlocal ft=java
+" CakePHP
+au BufNewFile,BufRead *.thtml,*.ctp setf php
 
-    " CSV files
-    au BufNewFile,BufRead *.csv setf csv
+" Drupal
+au BufNewFile,BufRead *.module,*.install set ft=php
+au BufNewFile,BufRead *.info setf dosini
 
-    " CakePHP
-    au BufNewFile,BufRead *.thtml,*.ctp setf php
-
-    " Drupal
-    au BufNewFile,BufRead *.module,*.install set ft=php
-    au BufNewFile,BufRead *.info setf dosini
-
-    " Text files
-    au BufNewFile,BufRead *.txt setf txt
-
-augroup END
+" Text files
+au BufNewFile,BufRead *.txt setf txt
 
 " Always use Unix-format new lines for new files
 au BufNewFile * if !&readonly && &modifiable | set fileformat=unix | endif
 
 " Remember cursor position for each file
 " http://vim.sourceforge.net/tips/tip.php?tip_id=80
-augroup JumpCursorOnEdit
-au!
-
 autocmd BufReadPost *
 \   if expand("<afile>:p:h") !=? $TEMP |
 \       if line("'\"") > 1 && line("'\"") <= line("$") |
@@ -208,8 +251,6 @@ autocmd BufWinEnter *
 \       unlet b:doopenfold |
 \   endif
 
-augroup END
-
 " Use 4 spaces to indent (use ":ret" to convert tabs to spaces)
 set expandtab tabstop=4 softtabstop=4 shiftwidth=4
 
@@ -226,14 +267,14 @@ command! -range=% -nargs=0 Space2Tab execute "<line1>,<line2>s/^\\( \\{".&ts."\\
 " :ReIndent       Convert 2 space indents & tabs to current shiftwidth (i.e. default 4)
 " :ReIndent <N>   Convert N space indents & tabs to current shiftwidth (i.e. default 4)
 " Based on http://vim.wikia.com/wiki/Super_retab
-fun ReIndent(...)
+function! <SID>ReIndent(...)
     let origts = (a:0 >= 3 ? a:3 : 2)
     let newts = &tabstop
     silent execute a:1 . "," . a:2 . "s/^\\( \\{" . origts . "\\}\\)\\+/\\=substitute(submatch(0), ' \\{" . origts . "\\}', '\\t', 'g')"
     silent execute a:1 . "," . a:2 . "s/^\\t\\+/\\=substitute(submatch(0), '\\t', repeat(' ', " . newts . "), 'g')"
-endfun
+endfunction
 
-command -range=% -nargs=? ReIndent call ReIndent(<line1>, <line2>, <f-args>)
+command! -range=% -nargs=? ReIndent call <SID>ReIndent(<line1>, <line2>, <f-args>)
 
 " Case-insensitive search unless there's a capital letter (then case-sensitive)
 set ignorecase
@@ -299,8 +340,10 @@ set hidden
 " Show the filename in the titlebar when using console vim
 set title
 
-" Keep 3 lines of text on screen above/below the cursor
-set scrolloff=3
+" Keep 5 lines/columns of text on screen around the cursor
+set scrolloff=5
+set sidescroll=1
+set sidescrolloff=5
 
 " Enable mouse support in all modes
 if has("mouse")
@@ -407,9 +450,7 @@ inoremap <End> <C-O>g$
 " This first option is built in but doesn't quite work as you'd expect - see
 " http://stackoverflow.com/questions/164847/what-is-in-your-vimrc/652632#652632
 "set autochdir
-" This ones works, but I'm trying Vim without it for a while to see if it
-" makes things like FuzzyFinder better by having a non-changing root
-"autocmd BufEnter * execute "chdir ".escape(expand("%:p:h"), ' ')
+autocmd BufEnter * execute "chdir ".escape(expand("%:p:h"), ' ')
 
 " gf = Goto file under cursor even if it doesn't exist yet
 nmap gf :e <cfile><CR>
@@ -422,56 +463,56 @@ endif
 
 " <Ctrl-Alt-Up/Down> swaps lines
 " http://vim.wikia.com/wiki/Transposing
-function! MoveLineUp()
-    call MoveLineOrVisualUp(".", "")
+function! <SID>MoveLineUp()
+    call <SID>MoveLineOrVisualUp(".", "")
 endfunction
 
-function! MoveLineDown()
-    call MoveLineOrVisualDown(".", "")
+function! <SID>MoveLineDown()
+    call <SID>MoveLineOrVisualDown(".", "")
 endfunction
 
-function! MoveVisualUp()
-    call MoveLineOrVisualUp("'<", "'<,'>")
+function! <SID>MoveVisualUp()
+    call <SID>MoveLineOrVisualUp("'<", "'<,'>")
     normal gv
 endfunction
 
-function! MoveVisualDown()
-    call MoveLineOrVisualDown("'>", "'<,'>")
+function! <SID>MoveVisualDown()
+    call <SID>MoveLineOrVisualDown("'>", "'<,'>")
     normal gv
 endfunction
 
-function! MoveLineOrVisualUp(line_getter, range)
+function! <SID>MoveLineOrVisualUp(line_getter, range)
     let l_num = line(a:line_getter)
     if l_num - v:count1 - 1 < 0
         let move_arg = "0"
     else
         let move_arg = a:line_getter." -".(v:count1 + 1)
     endif
-    call MoveLineOrVisualUpOrDown(a:range."move ".move_arg)
+    call <SID>MoveLineOrVisualUpOrDown(a:range."move ".move_arg)
 endfunction
 
-function! MoveLineOrVisualDown(line_getter, range)
+function! <SID>MoveLineOrVisualDown(line_getter, range)
     let l_num = line(a:line_getter)
     if l_num + v:count1 > line("$")
         let move_arg = "$"
     else
         let move_arg = a:line_getter." +".v:count1
     endif
-    call MoveLineOrVisualUpOrDown(a:range."move ".move_arg)
+    call <SID>MoveLineOrVisualUpOrDown(a:range."move ".move_arg)
 endfunction
 
-function! MoveLineOrVisualUpOrDown(move_arg)
+function! <SID>MoveLineOrVisualUpOrDown(move_arg)
     let col_num = virtcol(".")
     execute "silent! ".a:move_arg
     execute "normal! ".col_num."|"
 endfunction
 
-nnoremap <silent> <C-A-Up> :<C-u>call MoveLineUp()<CR>
-nnoremap <silent> <C-A-Down> :<C-u>call MoveLineDown()<CR>
-inoremap <silent> <C-A-Up> <C-o>:<C-u>call MoveLineUp()<CR>
-inoremap <silent> <C-A-Down> <C-o>:<C-u>call MoveLineDown()<CR>
-vnoremap <silent> <C-A-Up> :<C-u>call MoveVisualUp()<CR>
-vnoremap <silent> <C-A-Down> :<C-u>call MoveVisualDown()<CR>
+nnoremap <silent> <C-A-Up> :<C-u>call <SID>MoveLineUp()<CR>
+nnoremap <silent> <C-A-Down> :<C-u>call <SID>MoveLineDown()<CR>
+inoremap <silent> <C-A-Up> <C-o>:<C-u>call <SID>MoveLineUp()<CR>
+inoremap <silent> <C-A-Down> <C-o>:<C-u>call <SID>MoveLineDown()<CR>
+vnoremap <silent> <C-A-Up> :<C-u>call <SID>MoveVisualUp()<CR>
+vnoremap <silent> <C-A-Down> :<C-u>call <SID>MoveVisualDown()<CR>
 
 " Auto-complete (X)HTML tags with Ctrl-Hyphen
 au Filetype * runtime closetag.vim
@@ -483,7 +524,7 @@ au Filetype * runtime sparkup.vim
 " :Long       Highlight after 80 characters
 " :Long <N>   Highlight after <N> characters
 " :NoLong     Remove highlighting
-fun HighlightLongLines(...)
+function! <SID>HighlightLongLines(...)
 
     if exists('w:long_line_match')
         silent! call matchdelete(w:long_line_match)
@@ -495,10 +536,10 @@ fun HighlightLongLines(...)
         let w:long_line_match = matchadd('ErrorMsg', '\%>'.len.'v.\+', -1)
     endif
 
-endfun
+endfunction
 
-command -nargs=? LongLines call HighlightLongLines(<f-args>)
-command NoLongLines call HighlightLongLines(0)
+command! -nargs=? LongLines call <SID>HighlightLongLines(<f-args>)
+command! NoLongLines call <SID>HighlightLongLines(0)
 
 " Cycle through buffers
 nnoremap <C-n> :bnext<CR>
@@ -538,3 +579,47 @@ let g:snipMate['scope_aliases'] = {
     \   'ur':     'html',
     \   'xhtml':  'htmlonly,html',
     \}
+
+" Use OS clipboard by default
+set clipboard+=unnamed
+
+" No GUI toolbar - I never use it
+set guioptions-=T
+
+" Maximize GUI window automatically
+function! <SID>SetGuiPos()
+
+    " If there's a .gvimrc_size file use that instead so it can override
+    " this setting
+    if has("win32")
+        let include = $VIM . "/.gvimrc_size"
+    else
+        let include = $HOME . "/.gvimrc_size"
+    endif
+
+    if filereadable(include)
+        " e.g.
+        " winpos 0 0
+        " set lines=71 columns=155
+        exe "source " . include
+    elseif has("win32")
+        simalt ~x
+    endif
+
+endfunction
+
+autocmd GUIEnter * exe <SID>SetGuiPos()
+
+" <Ctrl-S> shows save dialog for new files
+noremap <silent> <C-s> :if expand("%") == ""<CR>:browse confirm w<CR>:else<CR>:confirm w<CR>:endif<CR>
+inoremap <silent> <C-s> <C-o>:if expand("%") == ""<CR>:browse confirm w<CR>:else<CR>:confirm w<CR>:endif<CR>
+vnoremap <silent> <C-s> <C-c>:if expand("%") == ""<CR>:browse confirm w<CR>:else<CR>:confirm w<CR>:endif<CR>
+
+" <Ctrl-O> shows open dialog
+inoremap <silent> <C-o> <C-o>:browse e<CR>
+
+" <Ctrl-F> shows find dialog
+inoremap <silent> <C-f> <C-o>:promptfind<CR>
+
+" Finish the autocommands group
+augroup END
