@@ -409,11 +409,17 @@ snippet dectohex
 snippet dectooct
 	decoct(${1:number})${2}
 snippet def
-	define('${1}', ${2})${3}
+	/**
+	 * ${3:Description...}
+	 */
+	define('${1}', ${2});${4}
 snippet def?
 	defined('${1}')${2}
 snippet define
-	define('${1}', '${2}')${3}
+	/**
+	 * ${3:Description...}
+	 */
+	define('${1}', ${2});${4}
 snippet defined
 	defined('${1}')${2}
 snippet deftpl
