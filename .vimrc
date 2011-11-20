@@ -621,5 +621,14 @@ inoremap <silent> <C-o> <C-o>:browse e<CR>
 " <Ctrl-F> shows find dialog
 inoremap <silent> <C-f> <C-o>:promptfind<CR>
 
+" Sort .snippets files alphabetically
+function! <SID>SortSnippets()
+    %s/\n\t/__INDENTGOESHERE__
+    sort
+    %s/__INDENTGOESHERE__/\r\t
+endfunction
+
+command! SortSnippets silent! call <SID>Preserve("call <SID>SortSnippets()")
+
 " Finish the autocommands group
 augroup END
