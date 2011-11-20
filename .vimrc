@@ -28,6 +28,16 @@ endfunction
 " Behave more like a Windows program
 source $VIMRUNTIME/mswin.vim
 
+" Use visual mode instead of select mode (for both keyboard and mouse)
+set selectmode=
+
+" Allow pressing arrows (without shift) in visual mode
+" This gives the best of both worlds - you can use shift+arrow in insert mode to
+" quickly start visual mode (instead of <Esc>v<Arrow>), but still use the arrow
+" keys in visual mode as normal (instead of having to hold shift)
+" TODO: Learn to use hjkl instead of the arrow keys so this isn't an issue!
+set keymodel-=stopsel
+
 " Use Pathogen to manage plugin bundles
 call pathogen#infect()
 
