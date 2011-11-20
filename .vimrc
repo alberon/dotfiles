@@ -102,9 +102,6 @@ map <silent> <Leader>ff :call <SID>Browser()<CR>
 " Insert Date (DDD D MMM YYYY)
 nmap <silent> <Leader>id a<C-R>=strftime("%a %#d %b %Y")<CR>
 
-" Disable search highlight
-nmap <silent> <Leader>n :nohlsearch<CR>
-
 " Toggle search highlight
 nmap <silent> <Leader>n :set hlsearch!<CR>
 
