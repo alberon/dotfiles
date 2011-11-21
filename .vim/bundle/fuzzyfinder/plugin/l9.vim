@@ -5,6 +5,12 @@
 "=============================================================================
 " LOAD GUARD {{{1
 
+"DJM:
+if version < 701
+  finish
+endif
+"-DJM
+
 if !l9#guardScriptLoading(expand('<sfile>:p'), 702, 0, [])
   finish
 endif

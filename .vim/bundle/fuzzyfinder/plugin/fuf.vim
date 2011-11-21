@@ -10,7 +10,7 @@ try
     finish
   endif
 catch /E117/
-  echoerr '***** L9 library must be installed! *****'
+  "DJM echoerr '***** L9 library must be installed! *****'
   finish
 endtry
 
