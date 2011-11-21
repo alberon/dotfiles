@@ -20,7 +20,7 @@ else
 fi
 
 # Add my own bin directories to the path
-export PATH="$HOME/local/bin:$HOME/bin:$HOME/opt/drush:$PATH"
+export PATH="$HOME/local/bin:$HOME/bin:$HOME/opt/git-extras/bin:$HOME/opt/drush:$PATH"
 
 # Use my favourite programs
 export PAGER=less

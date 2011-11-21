@@ -38,12 +38,14 @@
     #mt = mergetool
     out = outgoing
     #p = format-patch -1
+    root = rev-parse --show-toplevel
     #serve = !git daemon --reuseaddr --verbose --base-path=. --export-all ./.git
     #sra = svn rebase --all
     #sh = !git-sh
     st = status
     #stm = status --untracked=no
     #stfu = status --untracked=no
+    sub = submodule
     #pullsrb = !git stash save && git pull --rebase && git stash pop && echo 'Success!'
 
 [github]

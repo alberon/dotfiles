@@ -30,3 +30,9 @@ fi
 git submodule init &&
 git submodule sync &&
 git submodule update
+
+# Update sub-submodules!
+cd ~/opt/git-extras
+git submodule init &&
+git submodule sync &&
+git submodule update
