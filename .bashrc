@@ -85,12 +85,19 @@ if [ "$TERM" != "dumb" ]; then
                 if [ -n "$root" ]; then
                     # In a Git repo - highlight the root
                     relative=${PWD#$root}
-                    branch=`git branch --no-color 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
-                    branch=${branch:-(unknown)}
-                    echo -e "$root\e[36;1m$relative\e[30;1m on \e[35;1m$branch"
-                    #        ^yellow      ^aqua            ^grey       ^pink
+                    if [ "$relative" != "$PWD" ]; then
+                        branch=`git branch --no-color 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
+                        branch=${branch:-(unknown)}
+                        echo -e "$root\e[36;1m$relative\e[30;1m on \e[35;1m$branch"
+                        #        ^yellow      ^aqua            ^grey       ^pink
+                    else
+                        branch=`git branch --no-color 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
+                        branch=${branch:-(unknown)}
+                        echo -e "$PWD\e[30;1m on \e[35;1m$branch"
+                        #        ^yellow     ^grey       ^pink
+                    fi
                 else
-                    # Not in Mercurial repo
+                    # Not in Git repo
                     echo $PWD
                 fi
             }
