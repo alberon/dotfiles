@@ -6,30 +6,30 @@ if [ "$1" = "--sudo" ]; then
     shift
 else
     prefix=
-    
+
     # If
     # (a) there is at least one file given,
     # (b) the first file exists,
     # (c) it's not writable,
     # (d) we are not already root
     # then offer to to use sudo instead
-    if [ -f "$1" -a ! -w "$1" -a `id -u` != 0 ]; then
-        read -p "File is write protected. Use sudo? [Y/n] " reply
-        case "$reply" in
-            N*|n*)
-                ;;
-            *)
-                prefix=sudo
-                ;;
-        esac
-    fi
+    #if [ -f "$1" -a ! -w "$1" -a `id -u` != 0 ]; then
+    #    read -p "File is write protected. Use sudo? [Y/n] " reply
+    #    case "$reply" in
+    #        N*|n*)
+    #            ;;
+    #        *)
+    #            prefix=sudo
+    #            ;;
+    #    esac
+    #fi
 fi
 
 # Find path to gvim
 gvim=`which gvim 2>/dev/null`
 
 if [ -n "$gvim" -a -n "$DISPLAY" ]; then
-    
+
     # If there are no parameters, just open gvim
     if [ -z "$*" ]; then
         $prefix $gvim
@@ -37,7 +37,7 @@ if [ -n "$gvim" -a -n "$DISPLAY" ]; then
         #3>&1 1>&2 2>&3 | grep -v "ALSA lib " 3>&1 1>&2 2>&3 &
         exit
     fi
-    
+
     # Loop through all parameters
     while [ -n "$1" ]; do
         $prefix $gvim "$1"
@@ -45,13 +45,13 @@ if [ -n "$gvim" -a -n "$DISPLAY" ]; then
         #3>&1 1>&2 2>&3 | grep -v "ALSA lib " 3>&1 1>&2 2>&3 &
         shift
     done
-    
+
 else
-    
+
     # Over SSH or gVim not installed
-    
+
     # Get full path to the editor in case it's not in the path after running sudo
     EDITOR=`which $EDITOR`
     $prefix $EDITOR "$@"
-    
+
 fi
