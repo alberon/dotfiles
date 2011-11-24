@@ -25,6 +25,7 @@
     fe = fetch
     #fp = format-patch
     #g = !git gui &
+    glog = log --graph
     #gr = log --graph
     #go = log --graph --pretty=oneline --abbrev-commit
     id = log --pretty=format:'ID:    %h%nDate:  %aD%nRefs:%d' --abbrev-commit --date=short -1
