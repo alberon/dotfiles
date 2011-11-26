@@ -326,7 +326,7 @@ if version < 600
   so <sfile>:p:h/html.vim
 else
   runtime! syntax/html.vim
-  unlet b:current_syntax
+  unlet! b:current_syntax
 endif
 
 " accept old options
@@ -453,11 +453,11 @@ syn cluster htmlPreproc add=phpRegion,phpRegionAsp,phpRegionSc
 if version < 600
   syn include @sqlTop <sfile>:p:h/sql.vim
 else
-  syn include @sqlTop syntax/sql.vim
+  silent! syn include @sqlTop syntax/sql.vim
 endif
 
 syn sync clear
-unlet b:current_syntax
+unlet! b:current_syntax
 syn cluster sqlTop remove=sqlString,sqlComment
 if s:show_sql
   syn cluster phpClShowInStrings contains=@sqlTop

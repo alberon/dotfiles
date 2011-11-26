@@ -182,9 +182,12 @@ nnoremap <C-l> <C-w>l
 " Make % jump between XML tags as well as normal brackets
 runtime macros/matchit.vim
 
-" Color Scheme
+" Enable syntax highlighting
 syntax on
-colorscheme torte
+
+" Change color scheme
+" Use silent! because the Git Bash version of Vim doesn't include colour schemes
+silent! colorscheme torte
 
 " Make the line numbers less visible
 hi LineNr guifg=#444444
