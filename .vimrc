@@ -10,7 +10,22 @@ autocmd!
 " (The real one is at the very end of this file)
 
 " Automatically reload this file when it is modified
-autocmd! BufWritePost .vimrc source $VIM/.vimrc
+autocmd! BufWritePost .vimrc source $HOME/.vimrc
+
+" Use ~/.vim instead of ~/vimfiles on Windows (because it's the same Git repo)
+if has("win32")
+    set runtimepath-=$HOME/vimfiles
+    set runtimepath-=$HOME/vimfiles/after
+    set runtimepath^=$HOME/.vim
+    set runtimepath+=$HOME/.vim/after
+endif
+
+" Use Pathogen to manage plugin bundles
+call pathogen#infect()
+
+" Automatically update the help tags so I don't have to do it manually on all my
+" computers every time I install/upgrade/remove a bundle
+call pathogen#helptags()
 
 " Helper to run a command while preserving cursor position & search history
 " http://technotales.wordpress.com/2010/03/31/preserve-a-vim-function-that-keeps-your-state/
@@ -26,7 +41,7 @@ function! <SID>Preserve(command)
 endfunction
 
 " Behave more like a Windows program
-source $VIMRUNTIME/mswin.vim
+runtime mswin.vim
 
 " Use visual mode instead of select mode (for both keyboard and mouse)
 set selectmode=
@@ -37,13 +52,6 @@ set selectmode=
 " keys in visual mode as normal (instead of having to hold shift)
 " TODO: Learn to use hjkl instead of the arrow keys so this isn't an issue!
 set keymodel-=stopsel
-
-" Use Pathogen to manage plugin bundles
-call pathogen#infect()
-
-" Automatically update the help tags so I don't have to do it manually on all my
-" computers every time I install/upgrade/remove a bundle
-call pathogen#helptags()
 
 " Use ; instead of : for commands (don't need to press shift so much)
 nnoremap ; :
@@ -122,10 +130,10 @@ nmap <silent> <Leader>of :FufFile<CR>
 " Open snippets directory
 " TODO: Open the snippets file that corresponds to the current file - list them
 " if there's more than one to choose from
-nmap <silent> <Leader>os :NERDTree $VIM/.vim/snippets<CR>
+nmap <silent> <Leader>os :NERDTree $HOME/.vim/snippets<CR>
 
 " Open .vimrc
-nmap <silent> <Leader>ov :edit $VIM/.vimrc<CR>
+nmap <silent> <Leader>ov :edit $HOME/.vimrc<CR>
 
 " Quit
 nmap <silent> <Leader>q :q<CR>
@@ -387,20 +395,10 @@ au FileType snippet,snippets setl listchars+=tab:\ \
 " up the filesystem with .*.swp and *~ files
 " Note the trailing // means include the full path of the current file so
 " files with the same name in different folders don't conflict
-if has("win32")
-    " Windows
-    set backupdir=d:/Temp/Vim//
-    set directory=d:/Temp/Vim//
-    if version >= 703
-        set undodir=d:/Temp/Vim//
-    endif
-else
-    " Linux
-    set backupdir=~/tmp/vim//
-    set directory=~/tmp/vim//
-    if version >= 703
-        set undodir=~/tmp/vim//
-    endif
+set backupdir=~/tmp/vim//
+set directory=~/tmp/vim//
+if version >= 703
+    set undodir=~/tmp/vim//
 endif
 
 " Make ^Z undo smaller chunks at a time
@@ -599,11 +597,7 @@ function! <SID>SetGuiPos()
 
     " If there's a .gvimrc_size file use that instead so it can override
     " this setting
-    if has("win32")
-        let include = $VIM . "/.gvimrc_size"
-    else
-        let include = $HOME . "/.gvimrc_size"
-    endif
+    let include = $HOME . "/.gvimrc_size"
 
     if filereadable(include)
         " e.g.
