@@ -327,8 +327,10 @@ if [ "$TERM" != "dumb" ]; then
     shopt -s histappend
     PROMPT_COMMAND='history -a'
 
-    # Disable Ctrl-S = Stop output
-    stty -ixon
+    # Disable Ctrl-S = Stop output (except it's not available in Git's Cygwin)
+    if which stty >/dev/null; then
+        stty -ixon
+    fi
 
     # /home/www shortcuts
     if [ -n "$www_dir" ]; then
@@ -397,3 +399,7 @@ fi
 if [ "$TERM" != "dumb" ]; then
     l
 fi
+
+# Git Cygwin loads this file *and* .bash_profile so set a flag to tell
+# .bash_profile not to load .bashrc again
+BASHRC_DONE=1
