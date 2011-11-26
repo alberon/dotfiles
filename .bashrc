@@ -2,7 +2,6 @@
 auto_unlock=1
 enable_sudo=0
 prompt_vcs=git
-use_vi_for_vim=0
 umask_user=007
 umask_root=022
 www_dir=
@@ -24,18 +23,27 @@ export PATH="$HOME/local/bin:$HOME/bin:$HOME/opt/git-extras/bin:$HOME/opt/drush:
 
 # Use my favourite programs
 export PAGER=less
-
-if [ $use_vi_for_vim -eq 1 ]; then
-    export VISUAL=vi
-    export EDITOR=vi
-    alias vim='vi'
-else
-    export VISUAL=vim
-    export EDITOR=vim
-fi
+export VISUAL=vim
+export EDITOR=vim
 
 # Don't do the rest of these when using SCP, only an SSH terminal
 if [ "$TERM" != "dumb" ]; then
+
+    # Use the complete version of Vim on Windows instead of the cut down version
+    # that's included with Git Bash
+    for myvim in \
+        "/c/Program Files (x86)/Vim/vim73/vim.exe" \
+        "/c/Program Files/Vim/vim73/vim.exe";
+    do
+        if [ -f "$myvim" ]; then
+            export VISUAL="\"$myvim\""
+            export EDITOR="\"$myvim\""
+            alias vim="\"$myvim\""
+            alias vi="\"$myvim\""
+        fi
+        break
+    done
+    unset myvim
 
     # Set the titlebar & prompt to "[user@host:/full/path]\n$"
     case "$TERM" in
