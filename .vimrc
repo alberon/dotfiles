@@ -650,11 +650,34 @@ map <C-t> :tabnew<cr>
 nmap <C-t> :tabnew<cr>
 imap <C-t> <ESC>:tabnew<cr>
 
-" Cycle through tabs with Ctrl-Tab as well as Ctrl-PageDn
+" Cycle through tabs with Ctrl-Tab as well as Ctrl-PageDn/Up
 map <C-Tab> :tabnext<CR>
 map <C-S-Tab> :tabprev<CR>
 inoremap <C-Tab> <C-O>:tabnext<CR>
 inoremap <C-S-Tab> <C-O>:tabprev<CR>
+
+" Move tabs around with Alt-PageDn/Up
+function! <SID>TabLeft()
+   let tab_number = tabpagenr() - 1
+   if tab_number == 0
+      execute "tabm" tabpagenr('$') - 1
+   else
+      execute "tabm" tab_number - 1
+   endif
+endfunction
+
+function! <SID>TabRight()
+   let tab_number = tabpagenr() - 1
+   let last_tab_number = tabpagenr('$') - 1
+   if tab_number == last_tab_number
+      execute "tabm" 0
+   else
+      execute "tabm" tab_number + 1
+   endif
+endfunction
+
+map <silent> <A-PageUp> :execute <SID>TabLeft()<CR>
+map <silent> <A-PageDown> :execute <SID>TabRight()<CR>
 
 " Set up tab labels with tab number, buffer name, number of windows
 function! GuiTabLabel()
