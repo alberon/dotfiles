@@ -628,9 +628,16 @@ inoremap <silent> <C-f> <C-o>:promptfind<CR>
 
 " Sort .snippets files alphabetically
 function! <SID>SortSnippets()
-    %s/\n\t/__INDENTGOESHERE__
+    " Join all lines together
+    %s/\n/__NEWLINE__
+    " Split by where the snippets start, so each snippet is one line
+    %s/__NEWLINE__snippet /\rsnippet 
+    " Sort the lines alphabetically
     sort
-    %s/__INDENTGOESHERE__/\r\t
+    " Split the snippets into separate lines again
+    %s/__NEWLINE__/\r
+    " Delete the extra blank line that gets added at the end
+    $d
 endfunction
 
 command! SortSnippets silent! call <SID>Preserve("call <SID>SortSnippets()")
