@@ -20,12 +20,17 @@ if has("win32")
     set runtimepath+=$HOME/.vim/after
 endif
 
-" Use Pathogen to manage plugin bundles
-call pathogen#infect()
+" Vim 6.3 doesn't support the autoload syntax, so we have to use execute instead
+if v:version >= 700
 
-" Automatically update the help tags so I don't have to do it manually on all my
-" computers every time I install/upgrade/remove a bundle
-call pathogen#helptags()
+    " Use Pathogen to manage plugin bundles
+    execute "call pathogen#infect()"
+
+    " Automatically update the help tags so I don't have to do it manually on all my
+    " computers every time I install/upgrade/remove a bundle
+    execute "call pathogen#helptags()"
+
+endif
 
 " Helper to run a command while preserving cursor position & search history
 " http://technotales.wordpress.com/2010/03/31/preserve-a-vim-function-that-keeps-your-state/
@@ -561,9 +566,11 @@ if version >= 700
 endif
 
 " FuzzyFinder - if search begins with a space do a recursive search
-let g:fuf_abbrevMap = {
-    \   "^ " : [ "**/", ],
-    \}
+if v:version >= 700
+    let g:fuf_abbrevMap = {
+        \   "^ " : [ "**/", ],
+        \}
+endif
 
 " Remember mark positions
 set viminfo+=f1
@@ -575,19 +582,21 @@ set cinoptions=0{,0},0),:,!^F,o,O,e " Removed 0# so #comments aren't unindented
 set formatoptions+=ro " Duplicate comment lines when pressing enter
 
 " snipMate config
-let snips_author = 'Dave James Miller'
-let g:snipMate = {}
-let g:snipMate['scope_aliases'] = {
-    \   'cpp':    'c',
-    \   'cs':     'c',
-    \   'html':   'htmlonly',
-    \   'mxml':   'actionscript',
-    \   'objc':   'c',
-    \   'php':    'html',
-    \   'smarty': 'html',
-    \   'ur':     'html',
-    \   'xhtml':  'htmlonly,html',
-    \}
+if v:version >= 700
+    let snips_author = 'Dave James Miller'
+    let g:snipMate = {}
+    let g:snipMate['scope_aliases'] = {
+        \   'cpp':    'c',
+        \   'cs':     'c',
+        \   'html':   'htmlonly',
+        \   'mxml':   'actionscript',
+        \   'objc':   'c',
+        \   'php':    'html',
+        \   'smarty': 'html',
+        \   'ur':     'html',
+        \   'xhtml':  'htmlonly,html',
+        \}
+endif
 
 " Use OS clipboard by default
 set clipboard+=unnamed
@@ -645,7 +654,9 @@ endfunction
 command! SortSnippets silent! call <SID>Preserve("call <SID>SortSnippets()")
 
 " Show tab bar always
-set showtabline=2
+if v:version >= 700
+    set showtabline=2
+endif
 
 " Ctrl-T to open a new tab
 map <C-t> :tabnew<cr>
@@ -707,17 +718,21 @@ function! GuiTabLabel()
     endif
 
     " Add '+' if one of the buffers in the tab page is modified
-    for bufnr in bufnrlist
-        if getbufvar(bufnr, "&modified")
-            let label .= '+'
-            break
-        endif
-    endfor
+    " Wrapped in execute for Vim 6.3 support
+    execute
+        \ 'for bufnr in bufnrlist'
+        \ '|  if getbufvar(bufnr, "&modified")'
+        \ '|      let label .= "+"'
+        \ '|      break'
+        \ '|  endif'
+        \ '|endfor'
 
     return label
 endfunction
 
-set guitablabel=%{GuiTabLabel()}
+if v:version >= 700
+    set guitablabel=%{GuiTabLabel()}
+endif
 
 " Finish the autocommands group
 augroup END
