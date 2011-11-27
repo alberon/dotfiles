@@ -631,13 +631,15 @@ function! <SID>SortSnippets()
     " Join all lines together
     %s/\n/__NEWLINE__
     " Split by where the snippets start, so each snippet is one line
-    %s/__NEWLINE__snippet /\rsnippet 
+    %s/__NEWLINE__snippet /__NEWLINE__\rsnippet 
+    " Remove any __NEWLINE__s that are already followed by a new line
+    %s/__NEWLINE__\n/\r
+    " Delete the extra blank line that gets added at the end
+    $d
     " Sort the lines alphabetically
     sort
     " Split the snippets into separate lines again
     %s/__NEWLINE__/\r
-    " Delete the extra blank line that gets added at the end
-    $d
 endfunction
 
 command! SortSnippets silent! call <SID>Preserve("call <SID>SortSnippets()")
