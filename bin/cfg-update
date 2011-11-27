@@ -2,42 +2,6 @@
 
 cd
 
-# Delete old .hg directory if necessary
-# Note: This is because Mercurial writes to the .hg/dirstate after it is
-# deleted by the old version of cfg-update!
-if [ -d .hg ]; then
-    rm -rf .hg
-fi
-
-# Create local Mercurial settings file, and chmod to ensure any passwords are protected
-if [ ! -e .hgrc_local ]; then
-    touch .hgrc_local
-    chmod 600 .hgrc_local
-fi
-
-# Create local MySQL settings file, and chmod to ensure any passwords are protected
-if [ ! -e .my_local.cnf ]; then
-    touch .my_local.cnf
-    chmod 600 .my_local.cnf
-fi
-
-# Delete post-checkout hook
-if [ -L .git/hooks/post-checkout ]; then
-    rm -f .git/hooks/post-checkout
-fi
-
-# Create post-merge hook
-if [ ! -L .git/hooks/post-merge ]; then
-    ln -s ../../bin/cfg-update .git/hooks/post-merge
-fi
-
-# Update submodules
-git submodule init &&
-git submodule sync &&
-git submodule update
-
-# Update sub-submodules!
-cd ~/opt/git-extras
-git submodule init &&
-git submodule sync &&
-git submodule update
+git remote set-url origin git://github.com/davejamesmiller/dotfiles.git
+git remote set-url --push origin git@github.com:davejamesmiller/dotfiles.git
+git pull
