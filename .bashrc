@@ -40,9 +40,21 @@ if [ "$TERM" != "dumb" ]; then
             export EDITOR="\"$myvim\""
             alias vim="\"$myvim\""
             alias vi="\"$myvim\""
+            break
         fi
-        break
     done
+
+    # And make gvim available too if possible
+    for myvim in \
+        "/c/Program Files (x86)/Vim/vim73/gvim.exe" \
+        "/c/Program Files/Vim/vim73/gvim.exe";
+    do
+        if [ -f "$myvim" ]; then
+            alias gvim="\"$myvim\""
+            break
+        fi
+    done
+
     unset myvim
 
     # Set the titlebar & prompt to "[user@host:/full/path]\n$"
