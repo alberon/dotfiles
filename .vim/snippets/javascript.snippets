@@ -1,21 +1,29 @@
-snippet /*
-	/*
-	${1}
-	*/
-snippet /**
-	/**
-	 * ${1}
-	 */
+snippet $
+	$('${1}')${2}
 snippet (f
 	(function(${1}) {
 		${3:/* code */}
 	}(${2}));
+snippet --
+	/*------------------------------------------------------------------------------
+	 ${1}
+	------------------------------------------------------------------------------*/
+snippet /**
+	/**
+	 * ${1}
+	 */
+snippet /*
+	/*
+	${1}
+	*/
 snippet :f
 	${1:method_name}: function(${2:attribute}) {
 		${4}
 	}${3:,}
-snippet $
-	$('${1}')${2}
+snippet ==
+	/*==============================================================================
+	 ${1}
+	==============================================================================*/
 snippet @par
 	@param {${1:type}} ${2:name} ${3:description}
 snippet @ret
@@ -384,20 +392,6 @@ snippet showf
 	});
 snippet sibl
 	siblings('${1:selector}')${2}
-snippet size
-	size()
-snippet stoggle
-	slideToggle(${1:'fast'})${2}
-snippet stogglef
-	slideToggle(${1:'fast'}, function() {
-		${2}
-	});
-snippet sup
-	slideUp(${1:'fast'})${2}
-snippet supf
-	slideUp(${1:'fast'}, function() {
-		${2}
-	});
 snippet sing
 	function ${1:Singleton} (${2:argument}) {
 		// the cached instance
@@ -421,9 +415,23 @@ snippet sing
 
 		return instance;
 	}
+snippet size
+	size()
+snippet stoggle
+	slideToggle(${1:'fast'})${2}
+snippet stogglef
+	slideToggle(${1:'fast'}, function() {
+		${2}
+	});
 snippet submit
 	submit(function() {
 		${1}
+	});
+snippet sup
+	slideUp(${1:'fast'})${2}
+snippet supf
+	slideUp(${1:'fast'}, function() {
+		${2}
 	});
 snippet switch
 	switch(${1:expression}) {
