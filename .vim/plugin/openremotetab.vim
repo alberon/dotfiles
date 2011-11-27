@@ -2,6 +2,12 @@ if v:version < 700
     finish
 endif
 
+" Only do this with gVim not console Vim, otherwise it breaks Git commit
+" messages by exiting too early
+if ! has("gui")
+    finish
+endif
+
 " Switch to existing tab if available
 if filereadable($VIMRUNTIME . "/macros/editexisting.vim")
     source $VIMRUNTIME/macros/editexisting.vim
@@ -39,7 +45,7 @@ func s:EditElsewhereTab(filename)
             call remote_expr(servername, "OpenTab('" . fname_esc . "')")
             return 'q'
         endif
-        
+
     endwhile
     return ''
 endfunc
