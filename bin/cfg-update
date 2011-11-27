@@ -22,12 +22,12 @@ if [ ! -e .my_local.cnf ]; then
 fi
 
 # Delete post-checkout hook
-if [ -L .git/hooks/post-checkout ]; then
+if [ -f .git/hooks/post-checkout ]; then
     rm -f .git/hooks/post-checkout
 fi
 
 # Create post-merge hook
-if [ ! -L .git/hooks/post-merge ]; then
+if [ ! -f .git/hooks/post-merge ]; then
     ln -s ../../bin/cfg-update .git/hooks/post-merge
 fi
 
