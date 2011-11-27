@@ -21,6 +21,10 @@ if [ ! -e .my_local.cnf ]; then
     chmod 600 .my_local.cnf
 fi
 
+# Check permissions on .ssh/ directory
+chmod 700 .ssh
+chmod 600 .ssh/*
+
 # Delete post-checkout hook
 if [ -f .git/hooks/post-checkout ]; then
     rm -f .git/hooks/post-checkout
