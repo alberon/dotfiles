@@ -420,7 +420,7 @@ inoremap <C-W> <C-g>u<C-W>
 " cursor is instead of on the line above
 if exists("*paste#Paste")
 
-    func! MyPaste()
+    function! <SID>MyPaste()
 
         " Set to character-wise
         " http://vim.wikia.com/wiki/Unconditional_linewise_or_characterwise_paste
@@ -433,7 +433,7 @@ if exists("*paste#Paste")
         " Reset line/character-wise
         call setreg("+", getreg("+"), reg_type)
 
-    endfunc
+    endfunction
 
     " Explanation:
     " <C-g>u                      Set undo point
@@ -442,7 +442,7 @@ if exists("*paste#Paste")
     " 2010-06-19 Removed the final undo point because it seems to cause problems
     "            when ThinkingRock is open...
     "inoremap <C-V> <C-g>u<C-o>:call MyPaste()<CR><C-g>u
-    inoremap <C-V> <C-g>u<C-o>:call MyPaste()<CR>
+    inoremap <C-V> <C-g>u<C-o>:call <SID>MyPaste()<CR>
 
 endif
 
