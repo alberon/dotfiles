@@ -83,8 +83,9 @@ nmap <silent> <Leader>ds :call <SID>Preserve('%s/^\s\+$//e')<CR>
 " Delete trailing spaces
 nmap <silent> <Leader>dt :call <SID>Preserve('%s/\s\+$//e')<CR>
 
-" NERDtree
-nmap <silent> <Leader>e :NERDTreeFind<CR>
+" Browse current directory
+nmap <silent> <Leader>e :edit %:p:h<CR>
+nmap <silent> <Leader>E :tabedit %:p:h<CR>
 
 " Open URL in Firefox
 " http://vim.wikia.com/wiki/Open_a_web-browser_with_the_URL_in_the_current_line
@@ -134,8 +135,8 @@ nmap <silent> <Leader>of :FufFile<CR>
 
 " Open snippets directory
 " TODO: Open the snippets file that corresponds to the current file - list them
-" if there's more than one to choose from
-nmap <silent> <Leader>os :NERDTree $HOME/.vim/snippets<CR>
+" only if there's more than one to choose from
+nmap <silent> <Leader>os :edit $HOME/.vim/snippets<CR>
 
 " Open .vimrc
 nmap <silent> <Leader>ov :edit $HOME/.vimrc<CR>
@@ -558,12 +559,6 @@ command! NoLongLines call <SID>HighlightLongLines(0)
 " Cycle through buffers
 nnoremap <C-n> :bnext<CR>
 nnoremap <C-p> :bprevious<CR>
-
-" NERDTree config has to be in a separate file to avoid causing errors in
-" older versions of Vim due to the array syntax
-if version >= 700
-    runtime nerdtree-config.vim
-endif
 
 " FuzzyFinder - if search begins with a space do a recursive search
 if v:version >= 700
