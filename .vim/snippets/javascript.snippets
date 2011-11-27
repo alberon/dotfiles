@@ -165,10 +165,14 @@ snippet dblclick
 	dblclick(function() {
 		${1}
 	});
+snippet debug
+	console.debug(${1});
 snippet do
 	do {
 		${2:/* code */}
 	} while (${1:/* condition */});
+snippet dump
+	console.debug(${1});
 snippet each
 	each(function(index) {
 		${1:$(this)}
@@ -222,7 +226,7 @@ snippet forr
 		${4:$1[$2]}
 	};
 snippet fun
-	function ${1:function_name} (${2:argument}) {
+	function ${1:function_name}(${2:argument}) {
 		${3:// body...}
 	}
 snippet get
@@ -268,10 +272,26 @@ snippet insbef
 	insertBefore('${1:selector}')${2}
 snippet is
 	is('${1:selector}')${2}
+snippet jquery
+	(function($){
+		${1}
+	})(jQuery);
 snippet jsonp
 	JSON.parse(${1:jstr});
 snippet jsons
 	JSON.stringify(${1:object});
+snippet keydown
+	keydown(function(event) {
+		${1}
+	});
+snippet keypress
+	keypress(function(event) {
+		${1}
+	});
+snippet keyup
+	keyup(function(event) {
+		${1}
+	});
 snippet load
 	load('${1:/path/to/file.cgi}')
 snippet loadf
@@ -482,3 +502,7 @@ snippet width
 	width(${1})${2}
 snippet wrap
 	wrap(${1:'<div></div>'})${2}
+snippet {
+	{
+		${1}
+	}
