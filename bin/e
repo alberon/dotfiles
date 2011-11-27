@@ -30,28 +30,18 @@ gvim=`which gvim 2>/dev/null`
 
 if [ -n "$gvim" -a -n "$DISPLAY" ]; then
 
-    # If there are no parameters, just open gvim
-    if [ -z "$*" ]; then
-        $prefix $gvim
-        #2>~/tmp/vim/errors
-        #3>&1 1>&2 2>&3 | grep -v "ALSA lib " 3>&1 1>&2 2>&3 &
-        exit
-    fi
-
-    # Loop through all parameters
-    while [ -n "$1" ]; do
-        $prefix $gvim "$1"
-        #2>~/tmp/vim/errors
-        #3>&1 1>&2 2>&3 | grep -v "ALSA lib " 3>&1 1>&2 2>&3 &
-        shift
-    done
+    # Use gVim
+    $prefix "$gvim" "$@"
 
 else
 
     # Over SSH or gVim not installed
 
     # Get full path to the editor in case it's not in the path after running sudo
-    EDITOR=`which $EDITOR`
-    $prefix $EDITOR "$@"
+    editor=`which $EDITOR`
+    if [ -z "$editor" ]; then
+        editor="$EDITOR"
+    fi
+    $prefix "$EDITOR" "$@"
 
 fi

@@ -36,8 +36,8 @@ if [ "$TERM" != "dumb" ]; then
         "/c/Program Files/Vim/vim73/vim.exe";
     do
         if [ -f "$myvim" ]; then
-            export VISUAL="\"$myvim\""
-            export EDITOR="\"$myvim\""
+            export VISUAL="$myvim"
+            export EDITOR="$myvim"
             alias vim="\"$myvim\""
             alias vi="\"$myvim\""
             break
