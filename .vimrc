@@ -145,19 +145,17 @@ nmap <silent> <Leader>ov :tabedit $HOME/.vimrc<CR>
 nmap <silent> <Leader>q :q<CR>
 nmap <silent> <Leader>Q :wq<CR>
 
-" Split screen in various ways (with a new file rather than the same file -
-" it's rare that I want to edit the current buffer twice, and there's always
-" <C-W><C-V> for that)
-nmap <silent> <Leader>ss         :new<CR>
-nmap <silent> <Leader>sv         :vnew<CR>
-nmap <silent> <Leader>sh         :leftabove  :vnew<CR>
-nmap <silent> <Leader>sj         :belowright :new<CR>
-nmap <silent> <Leader>sk         :aboveleft  :new<CR>
-nmap <silent> <Leader>sl         :rightbelow :vnew<CR>
-nmap <silent> <Leader>s<Left>    :leftabove  :vnew<CR>
-nmap <silent> <Leader>s<Down>    :belowright :new<CR>
-nmap <silent> <Leader>s<Up>      :aboveleft  :new<CR>
-nmap <silent> <Leader>s<Right>   :rightbelow :vnew<CR>
+" Split screen in various directions
+nmap <silent> <Leader>ss         :split<CR>
+nmap <silent> <Leader>sv         :vsplit<CR>
+nmap <silent> <Leader>sh         :leftabove  :vsplit<CR>
+nmap <silent> <Leader>sj         :belowright :split<CR>
+nmap <silent> <Leader>sk         :aboveleft  :split<CR>
+nmap <silent> <Leader>sl         :rightbelow :vsplit<CR>
+nmap <silent> <Leader>s<Left>    :leftabove  :vsplit<CR>
+nmap <silent> <Leader>s<Down>    :belowright :split<CR>
+nmap <silent> <Leader>s<Up>      :aboveleft  :split<CR>
+nmap <silent> <Leader>s<Right>   :rightbelow :vsplit<CR>
 
 " Change the tab size
 nmap <silent> <Leader>1t :set tabstop=1 softtabstop=1 shiftwidth=1<CR>
