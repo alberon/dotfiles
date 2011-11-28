@@ -579,7 +579,9 @@ set formatoptions+=ro " Duplicate comment lines when pressing enter
 " snipMate config
 if v:version >= 700
     let snips_author = 'Dave James Miller'
-    let g:snipMate = {}
+    if !exists('g:snipMate')
+      let g:snipMate = {}
+    endif
     let g:snipMate['scope_aliases'] = {
         \   'cpp':    'c',
         \   'cs':     'c',
