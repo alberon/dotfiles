@@ -136,10 +136,10 @@ nmap <silent> <Leader>of :FufFile<CR>
 " Open snippets directory
 " TODO: Open the snippets file that corresponds to the current file - list them
 " only if there's more than one to choose from
-nmap <silent> <Leader>os :edit $HOME/.vim/snippets<CR>
+nmap <silent> <Leader>os :tabedit $HOME/.vim/snippets<CR>
 
 " Open .vimrc
-nmap <silent> <Leader>ov :edit $HOME/.vimrc<CR>
+nmap <silent> <Leader>ov :tabedit $HOME/.vimrc<CR>
 
 " Quit
 nmap <silent> <Leader>q :q<CR>
