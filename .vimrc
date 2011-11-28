@@ -278,7 +278,7 @@ autocmd BufWinEnter *
 set expandtab tabstop=4 softtabstop=4 shiftwidth=4
 
 " Knowledgebase files use 3 spaces to line comments up under list items
-autocmd FileType knowledgebase set tabstop=3 shiftwidth=3 softtabstop=3
+autocmd FileType knowledgebase setlocal tabstop=3 shiftwidth=3 softtabstop=3
 
 " Tab2Space - http://vim.wikia.com/wiki/Super_retab
 command! -range=% -nargs=0 Tab2Space execute "<line1>,<line2>s/^\\t\\+/\\=substitute(submatch(0), '\\t', repeat(' ', ".&ts."), 'g')"
