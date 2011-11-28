@@ -684,8 +684,8 @@ function! <SID>TabRight()
    endif
 endfunction
 
-map <silent> <A-PageUp> :execute <SID>TabLeft()<CR>
-map <silent> <A-PageDown> :execute <SID>TabRight()<CR>
+map <silent> <A-PageUp> :call <SID>Preserve("execute <SID>TabLeft()")<CR>
+map <silent> <A-PageDown> :call <SID>Preserve("execute <SID>TabRight()")<CR>
 
 " Set up tab labels with tab number, buffer name, number of windows
 function! GuiTabLabel()
