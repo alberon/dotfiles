@@ -594,7 +594,7 @@ if v:version >= 700
 endif
 
 " Use OS clipboard by default
-set clipboard+=unnamed
+"set clipboard+=unnamed
 
 " No GUI toolbar - I never use it
 set guioptions-=T
