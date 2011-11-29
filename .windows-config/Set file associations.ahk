@@ -64,6 +64,7 @@ RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.sql               , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.vba               , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.vim               , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.vimrc             , , vim
+RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.yml               , , vim
 
 ; Don't change file type for .txt else New > Text Document disappears from Explorer
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\txtfile\shell\edit\command, , %WindowsCmd%
