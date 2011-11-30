@@ -304,6 +304,9 @@ if [ "$TERM" != "dumb" ]; then
     # rvm
     [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 
+    # rails
+    alias r=rails
+
     # ack (Debian renames to ack-grep)
     if which ack-grep >/dev/null 2>&1; then
         alias ack="ack-grep"
