@@ -25,9 +25,14 @@ fi
 chmod 700 .ssh
 chmod 600 .ssh/*
 
-# Delete post-checkout hook
+# Delete old post-checkout hook
 if [ -f .git/hooks/post-checkout ]; then
     rm -f .git/hooks/post-checkout
+fi
+
+# Delete old submodule
+if [ -d .vim/bundle/NERD_tree ]; then
+    rm -rf .vim/bundle/NERD_tree
 fi
 
 # Create post-merge hook
@@ -36,12 +41,10 @@ if [ ! -f .git/hooks/post-merge ]; then
 fi
 
 # Update submodules
-git submodule init &&
-git submodule sync &&
-git submodule update
+git submodule sync >/dev/null &&
+git submodule update --init
 
 # Update sub-submodules!
 cd ~/opt/git-extras
-git submodule init &&
-git submodule sync &&
-git submodule update
+git submodule sync >/dev/null &&
+git submodule update --init
