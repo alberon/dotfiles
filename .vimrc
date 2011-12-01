@@ -581,15 +581,16 @@ if v:version >= 700
       let g:snipMate = {}
     endif
     let g:snipMate['scope_aliases'] = {
-        \   'cpp':    'c',
-        \   'cs':     'c',
-        \   'html':   'htmlonly',
-        \   'mxml':   'actionscript',
-        \   'objc':   'c',
-        \   'php':    'html',
-        \   'smarty': 'html',
-        \   'ur':     'html',
-        \   'xhtml':  'htmlonly,html',
+        \   'cpp':      'c',
+        \   'cs':       'c',
+        \   'eruby':    'html',
+        \   'html':     'htmlonly',
+        \   'mxml':     'actionscript',
+        \   'objc':     'c',
+        \   'php':      'html',
+        \   'smarty':   'html',
+        \   'ur':       'html',
+        \   'xhtml':    'htmlonly,html',
         \}
 endif
 

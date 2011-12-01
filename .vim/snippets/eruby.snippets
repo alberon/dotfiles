@@ -127,7 +127,9 @@ snippet lip
 snippet lipp
 	<%= link_to "${1:Link text...}", ${2:model}s_path %>
 snippet lt
-	<%= link_to "${1:name}", ${2:dest} %>
+	<%= link_to "${1:Link text...}", ${2:dest} %>
+snippet ltuc
+	<%= link_to_unless_current "${1:Link text...}", ${2:dest} %>
 snippet loo
 	loop { ${1} }
 snippet map
@@ -142,6 +144,8 @@ snippet rce
 	<%= ${1} %>${2}
 snippet rej
 	reject { |${1:e}|, ${2} }
+snippet render
+	<%= render '${1:partial}' %>
 snippet reve
 	reverse_each { |${1:e}| ${2} }
 snippet rf
