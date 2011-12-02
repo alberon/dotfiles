@@ -10,3 +10,6 @@
 [submodule "opt/git-extras"]
 	path = opt/git-extras
 	url = git://github.com/visionmedia/git-extras.git
+[submodule ".vim/bundle/gemfile"]
+	path = .vim/bundle/gemfile
+	url = git://github.com/tobiassvn/vim-gemfile.git

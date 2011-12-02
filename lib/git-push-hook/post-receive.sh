@@ -39,4 +39,7 @@ echo "Updating working copy..."
 umask 002
 git reset --hard
 
+git submodule sync >/dev/null &&
+git submodule update --init
+
 echo "========================================================================"

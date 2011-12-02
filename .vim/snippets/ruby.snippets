@@ -1039,8 +1039,8 @@ snippet sweeper
 			expire_page
 		end
 	end
-snippet tas
-	desc "${1:Task description\}"
+snippet task
+	desc "${1:Task description}"
 	task :${2:task_name => [:dependent, :tasks]} do
 		${3}
 	end
