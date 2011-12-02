@@ -222,23 +222,14 @@ if [ "$TERM" != "dumb" ]; then
     # c = cd; ls
     function c {
 
-        # If it's a file, I probably meant to type 'e' not 'c'
-        if [ -n "$1" -a -f "$1" ]; then
-            read -p "That is a file - open in editor instead? [Y/n] " reply
-            case $reply in
-                N*|n*) return ;;
-                *) e "$@"; return ;;
-            esac
-        fi
-
         # cd to the first argument
         if [ "$1" = "" ]; then
             # If none then go to ~ like cd does
-            cd
+            cd || return
         elif [ "$1" != "." ]; then
             # If "." don't do anything, so that "cd -" still works
             # Don't output the path as I'm going to anyway (done by "cd -" and cdspell)
-            cd "$1" >/dev/null
+            cd "$1" >/dev/null || return
         fi
 
         # Remove that argument
@@ -323,8 +314,7 @@ if [ "$TERM" != "dumb" ]; then
 
     # Remember the last directory visited
     function cd {
-        command cd "$@"
-        pwd > ~/.bash_lastdirectory
+        command cd "$@" && pwd > ~/.bash_lastdirectory
     }
 
     # Go to my home directory by default
