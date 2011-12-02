@@ -296,13 +296,13 @@ if [ "$TERM" != "dumb" ]; then
     alias hgst="hg st"
     alias mq='hg -R $(hg root)/.hg/patches'
 
+    # rvm
+    [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+
     # git
     if which ruby >/dev/null 2>&1; then
         alias git=hub
     fi
-
-    # rvm
-    [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 
     # rails
     alias r=rails
