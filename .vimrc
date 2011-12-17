@@ -1,9 +1,10 @@
-" Debugging
-"set verbose=9
-
 " Make sure any autocommands are replaced not added to when reloading this file
 augroup vimrc
 autocmd!
+"===============================================================================
+
+" Debugging
+"set verbose=9
 
 " This is for the syntax highlighter only! --> augroup END
 " Without that it doesn't highlight the rest of this file correctly...
@@ -462,8 +463,9 @@ inoremap <End> <C-O>g$
 " Automatically cd to the directory that the current file is in
 " This first option is built in but doesn't quite work as you'd expect - see
 " http://stackoverflow.com/questions/164847/what-is-in-your-vimrc/652632#652632
+" Added silent! to prevent error messages if the file & directory has been deleted
 "set autochdir
-autocmd BufEnter * execute "chdir ".escape(expand("%:p:h"), ' ')
+autocmd BufEnter * execute "silent! chdir ".escape(expand("%:p:h"), ' ')
 
 " gf = Goto file under cursor even if it doesn't exist yet
 nmap gf :e <cfile><CR>
@@ -570,8 +572,9 @@ set viminfo+=f1
 
 " Indenting
 set autoindent
-set smartindent
-set cinoptions=0{,0},0),:,!^F,o,O,e " Removed 0# so #comments aren't unindented
+"set smartindent    " Removed because it prevent #comments being indented
+"set cindent        " Removed because it indents things when it shouldn't
+"set cinoptions-=0# " So #comments aren't unindented with cindent
 set formatoptions+=ro " Duplicate comment lines when pressing enter
 
 " snipMate config
@@ -660,10 +663,10 @@ nmap <C-t> :tabnew<cr>
 imap <C-t> <ESC>:tabnew<cr>
 
 " Cycle through tabs with Ctrl-Tab as well as Ctrl-PageDn/Up
-map <C-Tab> :tabnext<CR>
-map <C-S-Tab> :tabprev<CR>
-inoremap <C-Tab> <C-O>:tabnext<CR>
-inoremap <C-S-Tab> <C-O>:tabprev<CR>
+"map <C-Tab> :tabnext<CR>
+"map <C-S-Tab> :tabprev<CR>
+"inoremap <C-Tab> <C-O>:tabnext<CR>
+"inoremap <C-S-Tab> <C-O>:tabprev<CR>
 
 " Move tabs around with Alt-PageDn/Up
 function! <SID>TabLeft()
@@ -730,5 +733,6 @@ if v:version >= 700
     set guitablabel=%{GuiTabLabel()}
 endif
 
+"===============================================================================
 " Finish the autocommands group
 augroup END
