@@ -1,20 +1,13 @@
 #!/bin/bash
 
-if readlink /proc/$$/fd/0 | grep -q "^pipe:"; then
-    input=pipe
-elif file $( readlink /proc/$$/fd/0 ) | grep -q "character special"; then
-    input=keyboard
-else
-    input=file
-fi
-
-if [ "$input" = "keyboard" ]; then
-    echo "Enter key followed by EOF (Ctrl-D)."
-    echo
+key=`ssh-add -L`
+if [ -z "$key" ]; then
+    echo "No key loaded." >&2
+    exit 1
 fi
 
 mkdir ~/.ssh 2>/dev/null
-cat - >> ~/.ssh/authorized_keys
+echo "$key" >> ~/.ssh/authorized_keys
 
 fix-ssh-permissions
 

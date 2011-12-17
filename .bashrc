@@ -103,18 +103,27 @@ if [ "$TERM" != "dumb" ]; then
             {
                 root=`git rev-parse --show-toplevel 2>/dev/null`
                 if [ -n "$root" ]; then
-                    # In a Git repo - highlight the root
+                    # In a Git repo - try to highlight the root
                     relative=${PWD#$root}
                     if [ "$relative" != "$PWD" ]; then
-                        branch=`git branch --no-color 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
-                        branch=${branch:-(unknown)}
-                        echo -e "$root\e[36;1m$relative\e[30;1m on \e[35;1m$branch"
-                        #        ^yellow      ^aqua            ^grey       ^pink
+                        echo -en "$root\e[36;1m$relative"
+                        #        ^yellow      ^aqua
                     else
-                        branch=`git branch --no-color 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
-                        branch=${branch:-(unknown)}
-                        echo -e "$PWD\e[30;1m on \e[35;1m$branch"
-                        #        ^yellow     ^grey       ^pink
+                        echo -n $PWD
+                    fi
+
+                    # Show the branch name / tag / id
+                    branch=`git branch --no-color 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
+                    if [ -n "$branch" -a "$branch" != "(no branch)" ]; then
+                        echo -e "\e[30;1m on \e[35;1m$branch"
+                        #                ^grey       ^pink
+                    else
+                        branch=`git describe --always 2>/dev/null`
+                        if [ -z "$branch" ]; then
+                            branch="(unknown)"
+                        fi
+                        echo -e "\e[30;1m at \e[35;1m$branch"
+                        #                ^grey       ^pink
                     fi
                 else
                     # Not in Git repo
@@ -213,23 +222,14 @@ if [ "$TERM" != "dumb" ]; then
     # c = cd; ls
     function c {
 
-        # If it's a file, I probably meant to type 'e' not 'c'
-        if [ -n "$1" -a -f "$1" ]; then
-            read -p "That is a file - open in editor instead? [Y/n] " reply
-            case $reply in
-                N*|n*) return ;;
-                *) e "$@"; return ;;
-            esac
-        fi
-
         # cd to the first argument
         if [ "$1" = "" ]; then
             # If none then go to ~ like cd does
-            cd
+            cd || return
         elif [ "$1" != "." ]; then
             # If "." don't do anything, so that "cd -" still works
             # Don't output the path as I'm going to anyway (done by "cd -" and cdspell)
-            cd "$1" >/dev/null
+            cd "$1" >/dev/null || return
         fi
 
         # Remove that argument
@@ -296,13 +296,13 @@ if [ "$TERM" != "dumb" ]; then
     alias hgst="hg st"
     alias mq='hg -R $(hg root)/.hg/patches'
 
+    # rvm
+    [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+
     # git
     if which ruby >/dev/null 2>&1; then
         alias git=hub
     fi
-
-    # rvm
-    [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 
     # rails
     alias r=rails
@@ -314,8 +314,7 @@ if [ "$TERM" != "dumb" ]; then
 
     # Remember the last directory visited
     function cd {
-        command cd "$@"
-        pwd > ~/.bash_lastdirectory
+        command cd "$@" && pwd > ~/.bash_lastdirectory
     }
 
     # Go to my home directory by default

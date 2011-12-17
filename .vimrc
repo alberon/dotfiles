@@ -52,6 +52,14 @@ runtime mswin.vim
 " Use visual mode instead of select mode (for both keyboard and mouse)
 set selectmode=
 
+" Use visual mode for Ctrl-A (select all) too
+noremap <C-A> ggvG$
+inoremap <C-A> <C-O>gg<C-O>vG$
+cnoremap <C-A> <C-C>ggvG$
+onoremap <C-A> <C-C>ggvG$
+snoremap <C-A> <C-C>ggvG$
+xnoremap <C-A> <C-C>ggvG$
+
 " Allow pressing arrows (without shift) in visual mode
 " This gives the best of both worlds - you can use shift+arrow in insert mode to
 " quickly start visual mode (instead of <Esc>v<Arrow>), but still use the arrow
@@ -125,11 +133,14 @@ endfunction
 
 map <silent> <Leader>ff :call <SID>Browser()<CR>
 
+" Toggle search highlight
+nmap <silent> <Leader>h :set hlsearch!<CR>
+
 " Insert Date (DDD D MMM YYYY)
 nmap <silent> <Leader>id a<C-R>=strftime("%a %#d %b %Y")<CR>
 
-" Toggle search highlight
-nmap <silent> <Leader>n :set hlsearch!<CR>
+" Toggle line numbers
+nmap <silent> <Leader>n :set number!<CR>
 
 " Open file
 nmap <silent> <Leader>of :FufFile<CR>
@@ -141,6 +152,9 @@ nmap <silent> <Leader>os :tabedit $HOME/.vim/snippets<CR>
 
 " Open .vimrc
 nmap <silent> <Leader>ov :tabedit $HOME/.vimrc<CR>
+
+" Toggle paste mode
+nmap <silent> <Leader>p :set paste!<CR>
 
 " Quit
 nmap <silent> <Leader>q :q<CR>
