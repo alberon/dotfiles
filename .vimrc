@@ -124,11 +124,14 @@ endfunction
 
 map <silent> <Leader>ff :call <SID>Browser()<CR>
 
+" Toggle search highlight
+nmap <silent> <Leader>h :set hlsearch!<CR>
+
 " Insert Date (DDD D MMM YYYY)
 nmap <silent> <Leader>id a<C-R>=strftime("%a %#d %b %Y")<CR>
 
-" Toggle search highlight
-nmap <silent> <Leader>n :set hlsearch!<CR>
+" Toggle line numbers
+nmap <silent> <Leader>n :set number!<CR>
 
 " Open file
 nmap <silent> <Leader>of :FufFile<CR>
@@ -140,6 +143,9 @@ nmap <silent> <Leader>os :tabedit $HOME/.vim/snippets<CR>
 
 " Open .vimrc
 nmap <silent> <Leader>ov :tabedit $HOME/.vimrc<CR>
+
+" Toggle paste mode
+nmap <silent> <Leader>p :set paste!<CR>
 
 " Quit
 nmap <silent> <Leader>q :q<CR>
