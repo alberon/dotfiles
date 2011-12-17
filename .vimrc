@@ -51,6 +51,14 @@ runtime mswin.vim
 " Use visual mode instead of select mode (for both keyboard and mouse)
 set selectmode=
 
+" Use visual mode for Ctrl-A (select all) too
+noremap <C-A> ggvG$
+inoremap <C-A> <C-O>gg<C-O>vG$
+cnoremap <C-A> <C-C>ggvG$
+onoremap <C-A> <C-C>ggvG$
+snoremap <C-A> <C-C>ggvG$
+xnoremap <C-A> <C-C>ggvG$
+
 " Allow pressing arrows (without shift) in visual mode
 " This gives the best of both worlds - you can use shift+arrow in insert mode to
 " quickly start visual mode (instead of <Esc>v<Arrow>), but still use the arrow
