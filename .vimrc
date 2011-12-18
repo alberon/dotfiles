@@ -74,8 +74,14 @@ vnoremap ; :
 " Use , as the leader for my own keyboard shortcuts
 let mapleader = ","
 
-" Sort CSS properties alphabetically
-nmap <silent> <Leader>az ?{<CR>jV/^\s*\}?$<CR>k:sort<CR>:noh<CR>
+"-------------------------------------------------------------------------------
+" Start <Leader> shortcuts
+"-------------------------------------------------------------------------------
+
+" Alternate files (a.vim)
+let g:alternateExtensions_php = "tpl"
+let g:alternateExtensions_tpl = "php"
+map <Leader>a :AT<CR>
 
 " Buffers (list and open prompt ready to switch)
 "nmap <Leader>b :buffers<CR>:buffer 
@@ -192,6 +198,10 @@ nmap <silent> <Leader>w :w<CR>
 " Graphical undo
 nmap <silent> <Leader>z :GundoToggle<CR>
 
+"-------------------------------------------------------------------------------
+" End <Leader> shortcuts
+"-------------------------------------------------------------------------------
+
 " Ctrl+direction to switch buffers
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
@@ -217,7 +227,7 @@ hi Folded guibg=#111111
 " Highlight just *after* columns 80 and 120
 if version >= 703
     set colorcolumn=81,121
-    hi ColorColumn guibg=#333333
+    hi ColorColumn ctermbg=DarkGray guibg=#333333
 endif
 
 " PHP syntax highlighting settings
@@ -648,6 +658,9 @@ inoremap <silent> <C-o> <C-o>:browse e<CR>
 " <Ctrl-F> shows find dialog
 inoremap <silent> <C-f> <C-o>:promptfind<CR>
 
+" Sort CSS properties alphabetically
+command! SortCSS silent! call <SID>Preserve("normal \"?{<CR>jV/^\s*\}<CR>k:sort<CR>\"")
+
 " Sort .snippets files alphabetically
 function! <SID>SortSnippets()
     " Join all lines together
@@ -746,6 +759,10 @@ endfunction
 if v:version >= 700
     set guitablabel=%{GuiTabLabel()}
 endif
+
+" :w!! to save using sudo
+" http://blog.stebalien.com/2009/08/write-file-as-root-from-non-root-vim.html
+cmap w!! w !sudo tee % >/dev/null<CR>:e!<CR><CR>
 
 "===============================================================================
 " Finish the autocommands group
