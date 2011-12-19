@@ -81,7 +81,7 @@ let mapleader = ","
 " Alternate files (a.vim)
 let g:alternateExtensions_php = "tpl"
 let g:alternateExtensions_tpl = "php"
-map <Leader>a :AT<CR>
+nmap <Leader>a :AT<CR>
 
 " Buffers (list and open prompt ready to switch)
 "nmap <Leader>b :buffers<CR>:buffer 
@@ -137,7 +137,7 @@ function! <SID>Browser()
 
 endfunction
 
-map <silent> <Leader>ff :call <SID>Browser()<CR>
+nmap <silent> <Leader>ff :call <SID>Browser()<CR>
 
 " Toggle search highlight
 nmap <silent> <Leader>h :set hlsearch!<CR>
