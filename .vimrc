@@ -762,7 +762,12 @@ endif
 
 " :w!! to save using sudo
 " http://blog.stebalien.com/2009/08/write-file-as-root-from-non-root-vim.html
-cmap w!! w !sudo tee % >/dev/null<CR>:e!<CR><CR>
+" TODO Make this a command (:W!) instead of a mapping
+"cmap w!! w !sudo tee % >/dev/null<CR>:e!<CR><CR>
+
+" Make increment/decrement work in Windows using alt
+noremap <M-a> <C-a>
+noremap <M-x> <C-x>
 
 "===============================================================================
 " Finish the autocommands group
