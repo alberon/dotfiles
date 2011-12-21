@@ -57,8 +57,10 @@ noremap <C-A> ggvG$
 inoremap <C-A> <C-O>gg<C-O>vG$
 cnoremap <C-A> <C-C>ggvG$
 onoremap <C-A> <C-C>ggvG$
-snoremap <C-A> <C-C>ggvG$
-xnoremap <C-A> <C-C>ggvG$
+if v:version >= 700
+    snoremap <C-A> <C-C>ggvG$
+    xnoremap <C-A> <C-C>ggvG$
+endif
 
 " Allow pressing arrows (without shift) in visual mode
 " This gives the best of both worlds - you can use shift+arrow in insert mode to
