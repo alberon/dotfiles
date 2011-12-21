@@ -11,6 +11,7 @@
     threads = 0
 
 [pager]
+    ls-files = true
     status = true
 
 [alias]
@@ -29,6 +30,7 @@
     #gr = log --graph
     #go = log --graph --pretty=oneline --abbrev-commit
     id = log --pretty=format:'ID:    %h%nDate:  %aD%nRefs:%d' --abbrev-commit --date=short -1
+    ignored = ls-files --others -i --exclude-standard
     in = incoming
     #k = !gitk &
     #ka = !gitk --all &
