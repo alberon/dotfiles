@@ -299,11 +299,6 @@ if [ "$TERM" != "dumb" ]; then
     # rvm
     [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 
-    # git
-    if which ruby >/dev/null 2>&1; then
-        alias git=hub
-    fi
-
     # rails
     alias r=rails
 
