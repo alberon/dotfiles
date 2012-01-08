@@ -617,6 +617,7 @@ if v:version >= 700
         \   'mxml':     'actionscript',
         \   'objc':     'c',
         \   'php':      'html',
+        \   'scss':     'css',
         \   'smarty':   'html',
         \   'ur':       'html',
         \   'xhtml':    'htmlonly,html',
