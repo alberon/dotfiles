@@ -57,8 +57,10 @@ noremap <C-A> ggvG$
 inoremap <C-A> <C-O>gg<C-O>vG$
 cnoremap <C-A> <C-C>ggvG$
 onoremap <C-A> <C-C>ggvG$
-snoremap <C-A> <C-C>ggvG$
-xnoremap <C-A> <C-C>ggvG$
+if v:version >= 700
+    snoremap <C-A> <C-C>ggvG$
+    xnoremap <C-A> <C-C>ggvG$
+endif
 
 " Allow pressing arrows (without shift) in visual mode
 " This gives the best of both worlds - you can use shift+arrow in insert mode to
@@ -81,7 +83,7 @@ let mapleader = ","
 " Alternate files (a.vim)
 let g:alternateExtensions_php = "tpl"
 let g:alternateExtensions_tpl = "php"
-map <Leader>a :AT<CR>
+nmap <Leader>a :AT<CR>
 
 " Buffers (list and open prompt ready to switch)
 "nmap <Leader>b :buffers<CR>:buffer 
@@ -137,7 +139,7 @@ function! <SID>Browser()
 
 endfunction
 
-map <silent> <Leader>ff :call <SID>Browser()<CR>
+nmap <silent> <Leader>ff :call <SID>Browser()<CR>
 
 " Toggle search highlight
 nmap <silent> <Leader>h :set hlsearch!<CR>
@@ -615,6 +617,7 @@ if v:version >= 700
         \   'mxml':     'actionscript',
         \   'objc':     'c',
         \   'php':      'html',
+        \   'scss':     'css',
         \   'smarty':   'html',
         \   'ur':       'html',
         \   'xhtml':    'htmlonly,html',
@@ -626,6 +629,10 @@ endif
 
 " No GUI toolbar - I never use it
 set guioptions-=T
+
+" Keep scrollbars on the right - the left scrollbar doesn't work with my
+" gaming mouse software
+set guioptions-=L
 
 " Maximize GUI window automatically
 function! <SID>SetGuiPos()
@@ -762,7 +769,12 @@ endif
 
 " :w!! to save using sudo
 " http://blog.stebalien.com/2009/08/write-file-as-root-from-non-root-vim.html
-cmap w!! w !sudo tee % >/dev/null<CR>:e!<CR><CR>
+" TODO Make this a command (:W!) instead of a mapping
+"cmap w!! w !sudo tee % >/dev/null<CR>:e!<CR><CR>
+
+" Make increment/decrement work in Windows using alt
+noremap <M-a> <C-a>
+noremap <M-x> <C-x>
 
 "===============================================================================
 " Finish the autocommands group

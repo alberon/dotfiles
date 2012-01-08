@@ -13,3 +13,6 @@
 [submodule ".vim/bundle/gemfile"]
 	path = .vim/bundle/gemfile
 	url = git://github.com/tobiassvn/vim-gemfile.git
+[submodule ".vim/bundle/vim-coffee-script"]
+	path = .vim/bundle/vim-coffee-script
+	url = git://github.com/kchmck/vim-coffee-script.git
