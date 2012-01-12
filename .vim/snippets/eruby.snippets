@@ -47,19 +47,21 @@ snippet eav
 snippet eawi
 	each_with_index { |${1:e}, ${2:i}| ${3} }
 snippet end
-	<% end -%>
+	<% end %>
+snippet else
+	<% else %>
 snippet ff
-	<%= form_for @${1:model} do |f| -%>
+	<%= form_for @${1:model} do |f| %>
 		${2}
-	<% end -%>
+	<% end %>
 snippet ffcb
 	<%= ${1:f}.check_box :${2:attribute} %>
 snippet ffe
-	<% error_messages_for :${1:model} -%>
+	<% error_messages_for :${1:model} %>
 	
-	<% form_for @${2:model} do |f| -%>
+	<% form_for @${2:model} do |f| %>
 		${3}
-	<% end -%>
+	<% end %>
 snippet ffff
 	<%= ${1:f}.file_field :${2:attribute} %>
 snippet ffhf
@@ -77,17 +79,17 @@ snippet ffta
 snippet fftf
 	<%= ${1:f}.text_field :${2:attribute} %>
 snippet fields
-	<% fields_for :${1:model}, @$1 do |${2:f}| -%>
+	<% fields_for :${1:model}, @$1 do |${2:f}| %>
 		${3}
-	<% end -%>
+	<% end %>
 snippet for
 	<% for ${2:item} in ${1} %>
 		${3}
 	<% end %>
 snippet ft
-	<% form_tag(:action => "${1:update}") do -%>
+	<% form_tag(:action => "${1:update}") do %>
 		${2}
-	<% end -%>
+	<% end %>
 snippet i18
 	I18n.t('${1:type.key}')${2}
 snippet if
@@ -141,7 +143,7 @@ snippet mapwi-
 snippet ofcfs
 	<%= options_from_collection_for_select ${1:collection}, ${2:value_method}, ${3:text_method}, ${4:selected_value} %>
 snippet rc
-	<% ${1} -%>
+	<% ${1} %>
 snippet rce
 	<%= ${1} %>${2}
 snippet rej
