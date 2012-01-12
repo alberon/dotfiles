@@ -214,47 +214,14 @@ snippet case
 	end
 snippet cl
 	classify { |${1:e}| ${2} }
-snippet cla class .. end
+snippet class
 	class ${1:`substitute(Filename(), '^.', '\u&', '')`}
 		${2}
 	end
-snippet cla class .. initialize .. end
-	class ${1:`substitute(Filename(), '^.', '\u&', '')`}
-		def initialize(${2:args})
-			${3}
-		end
-
-
-	end
-snippet cla class .. < ParentClass .. initialize .. end
+snippet classe
 	class ${1:`substitute(Filename(), '^.', '\u&', '')`} < ${2:ParentClass}
 		def initialize(${3:args})
 			${4}
-		end
-
-
-	end
-snippet cla ClassName = Struct .. do .. end
-	${1:`substitute(Filename(), '^.', '\u&', '')`} = Struct.new(:${2:attr_names}) do
-		def ${3:method_name}
-			${4}
-		end
-
-
-	end
-snippet cla class BlankSlate .. initialize .. end
-	class ${1:BlankSlate}
-		instance_methods.each { |meth| undef_method(meth) unless meth =~ /\A__/ }
-snippet cla class << self .. end
-	class << ${1:self}
-		${2}
-	end
-snippet cla-
-	class ${1:`substitute(Filename(), '^.', '\u&', '')`} < DelegateClass(${2:ParentClass})
-		def initialize(${3:args})
-			super(${4:del_obj})
-
-			${5}
 		end
 
 
@@ -561,12 +528,8 @@ snippet habtm
 	has_and_belongs_to_many :${1:object}, :join_table => "${2:table_name}", :foreign_key => "${3}_id"${4}
 snippet hash
 	Hash.new { |${1:hash}, ${2:key}| $1[$2] = ${3} }
-snippet httpget
-	require 'net/http'
-	res = Net::HTTP.get URI.parse('${1:url}')
-snippet httppost
-	require 'net/http'
-	res = Net::HTTP.post_form URI.parse('${1:url}')${2:, params}
+snippet help
+	helper_method :${1:method_name}
 snippet hm
 	has_many :${1:object}
 snippet hmd
@@ -577,6 +540,12 @@ snippet ho
 	has_one :${1:object}
 snippet hsp
 	has_secure_password
+snippet httpget
+	require 'net/http'
+	res = Net::HTTP.get URI.parse('${1:url}')
+snippet httppost
+	require 'net/http'
+	res = Net::HTTP.post_form URI.parse('${1:url}')${2:, params}
 snippet i18
 	I18n.t('${1:type.key}')${2}
 snippet if
@@ -715,30 +684,13 @@ snippet mocw
 	Spec::Runner.configure do |config|
 		config.mock_with :${1:mocha|flexmock|rr}
 	end
-snippet mod module .. end
+snippet mod
 	module ${1:`substitute(Filename(), '^.', '\u&', '')`}
 		${2}
 	end
-snippet mod module .. module_function .. end
+snippet module
 	module ${1:`substitute(Filename(), '^.', '\u&', '')`}
-		module_function
-
 		${2}
-	end
-snippet mod module .. ClassMethods .. end
-	module ${1:`substitute(Filename(), '^.', '\u&', '')`}
-		module ClassMethods
-			${2}
-		end
-
-		module InstanceMethods
-
-		end
-
-		def self.included(receiver)
-			receiver.extend         ClassMethods
-			receiver.send :include, InstanceMethods
-		end
 	end
 snippet mp
 	map(&:${1:id})
