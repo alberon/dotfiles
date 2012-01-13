@@ -267,41 +267,41 @@ snippet <form
 		${3}
 	</form>
 snippet <h1#
-	<h1 id="${1}">${2}</h1>${3}
+	<h1 id="${1}">${2}</h1>
 snippet <h1.
-	<h1 class="${1}">${2}</h1>${3}
+	<h1 class="${1}">${2}</h1>
 snippet <h1
-	<h1>${1}</h1>${2}
+	<h1>${1}</h1>
 snippet <h2#
-	<h2 id="${1}">${2}</h2>${3}
+	<h2 id="${1}">${2}</h2>
 snippet <h2.
-	<h2 class="${1}">${2}</h2>${3}
+	<h2 class="${1}">${2}</h2>
 snippet <h2
-	<h2>${1}</h2>${2}
+	<h2>${1}</h2>
 snippet <h3#
-	<h3 id="${1}">${2}</h2>${3}
+	<h3 id="${1}">${2}</h2>
 snippet <h3.
-	<h3 class="${1}">${2}</h2>${3}
+	<h3 class="${1}">${2}</h2>
 snippet <h3
-	<h3>${1}</h3>${2}
+	<h3>${1}</h3>
 snippet <h4#
-	<h4 id="${1}">${2}</h4>${3}
+	<h4 id="${1}">${2}</h4>
 snippet <h4.
-	<h4 class="${1}">${2}</h4>${3}
+	<h4 class="${1}">${2}</h4>
 snippet <h4
-	<h4>${1}</h4>${2}
+	<h4>${1}</h4>
 snippet <h5#
-	<h5 id="${1}">${2}</h5>${3}
+	<h5 id="${1}">${2}</h5>
 snippet <h5.
-	<h5 class="${1}">${2}</h5>${3}
+	<h5 class="${1}">${2}</h5>
 snippet <h5
-	<h5>${1}</h5>${2}
+	<h5>${1}</h5>
 snippet <h6#
-	<h6 id="${1}">${2}</h6>${3}
+	<h6 id="${1}">${2}</h6>
 snippet <h6.
-	<h6 class="${1}">${2}</h6>${3}
+	<h6 class="${1}">${2}</h6>
 snippet <h6
-	<h6>${1}</h6>${2}
+	<h6>${1}</h6>
 snippet <head
 	<head>
 		<title>${1:`substitute(Filename('', 'Page Title'), '^.', '\u&', '')`}</title>${2}
@@ -698,6 +698,8 @@ snippet backspace
 	&#x232B;
 snippet backtab
 	&#x21E4;
+snippet bind
+	data-bind="${1}"
 snippet charset
 	charset="${1:utf-8}"${2}
 snippet cmd
@@ -716,8 +718,6 @@ snippet enter
 	&#x2305;
 snippet esc
 	&#x238B;
-snippet for
-	for="${1}"${2}
 snippet height
 	height="${1}"${2}
 snippet href
