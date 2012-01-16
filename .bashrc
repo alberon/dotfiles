@@ -305,7 +305,7 @@ if [ "$TERM" != "dumb" ]; then
     fi
 
     # rails
-    alias r=rails
+    alias guard="bundle exec guard"
 
     # ack (Debian renames to ack-grep)
     if which ack-grep >/dev/null 2>&1; then
