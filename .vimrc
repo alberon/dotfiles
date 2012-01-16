@@ -612,11 +612,13 @@ if v:version >= 700
     let g:snipMate['scope_aliases'] = {
         \   'cpp':      'c',
         \   'cs':       'c',
+        \   'eco':      'html',
         \   'eruby':    'html',
         \   'html':     'htmlonly',
         \   'mxml':     'actionscript',
         \   'objc':     'c',
         \   'php':      'html',
+        \   'scss':     'css',
         \   'smarty':   'html',
         \   'ur':       'html',
         \   'xhtml':    'htmlonly,html',
@@ -628,6 +630,10 @@ endif
 
 " No GUI toolbar - I never use it
 set guioptions-=T
+
+" Keep scrollbars on the right - the left scrollbar doesn't work with my
+" gaming mouse software
+set guioptions-=L
 
 " Maximize GUI window automatically
 function! <SID>SetGuiPos()
@@ -770,6 +776,9 @@ endif
 " Make increment/decrement work in Windows using alt
 noremap <M-a> <C-a>
 noremap <M-x> <C-x>
+
+" Make spacebar run macro @q
+nnoremap <Space> @q
 
 "===============================================================================
 " Finish the autocommands group
