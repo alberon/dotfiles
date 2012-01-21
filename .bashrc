@@ -117,13 +117,19 @@ if [ "$TERM" != "dumb" ]; then
         elif [ -e "$root/.hg" ]; then
             HgPrompt=`hg prompt "{root}@@@\e[30;1m on \e[35;1m{branch} \e[0m(hg)\e[30;1m" 2>/dev/null`
             #                             ^grey       ^pink            ^light grey  ^ grey
-            # A bit of hackery so we don't have to run hg prompt twice (it's slow)
-            root=${HgPrompt/@@@*}
-            prompt=${HgPrompt/*@@@}
-            relative=${PWD#$root}
-            echo -e "$root\e[0;1m$relative$prompt"
-            #        ^yellow     ^white
+            if [ $? -eq 0 ]; then
+                # A bit of hackery so we don't have to run hg prompt twice (it's slow)
+                root=${HgPrompt/@@@*}
+                prompt=${HgPrompt/*@@@}
+                relative=${PWD#$root}
+                echo -e "$root\e[0;1m$relative$prompt"
+                #        ^yellow     ^white
+            else
+                # Probably hg prompt isn't installed
+                echo $PWD
+            fi
         else
+            # No .git or .hg found
             echo $PWD
         fi
     }
