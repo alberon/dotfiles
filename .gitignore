@@ -12,6 +12,7 @@
 !/gnome
 !/lib
 !/opt
+!/README.md
 !/.gitconfig
 
 # Ignore Vim history
