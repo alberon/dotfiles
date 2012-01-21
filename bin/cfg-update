@@ -41,10 +41,12 @@ if [ ! -f .git/hooks/post-merge ]; then
 fi
 
 # Update submodules
-git submodule sync >/dev/null &&
-git submodule update --init
+git submodule sync >/dev/null
+git submodule init >/dev/null
+git submodule update
 
 # Update sub-submodules!
 cd ~/opt/git-extras
-git submodule sync >/dev/null &&
-git submodule update --init
+git submodule sync >/dev/null
+git submodule init >/dev/null
+git submodule update
