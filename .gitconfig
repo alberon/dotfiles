@@ -39,15 +39,24 @@
     #mnff = merge --no-ff
     #mt = mergetool
     #p = format-patch -1
+    #pullsrb = !git stash save && git pull --rebase && git stash pop && echo 'Success!'
     root = rev-parse --show-toplevel
     #serve = !git daemon --reuseaddr --verbose --base-path=. --export-all ./.git
+    serve = instaweb
     #sra = svn rebase --all
     #sh = !git-sh
     st = status
     #stm = status --untracked=no
     #stfu = status --untracked=no
     sub = submodule
-    #pullsrb = !git stash save && git pull --rebase && git stash pop && echo 'Success!'
+    web = instaweb
 
 [github]
     user = davejamesmiller
+
+[browser "none"]
+    cmd = git-web-browser
+
+[instaweb]
+    httpd = apache2
+    browser = none
