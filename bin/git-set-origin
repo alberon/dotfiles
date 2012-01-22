@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ $# -ge 1 ]; then
+    git remote rm origin 2>/dev/null
+    git remote add -f origin "$1"
+fi
+
+git branch --set-upstream master origin/master

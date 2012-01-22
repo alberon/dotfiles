@@ -10,6 +10,5 @@ server="dave@precipuus.davejamesmiller.com"
 path="git/$name.git"
 
 ssh $server "git init --bare $path"
-git remote add origin "$server:$path"
-git branch --set-upstream master origin/master
+git set-origin "$server:$path"
 git push --all
