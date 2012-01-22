@@ -2,6 +2,9 @@
     name = Dave James Miller
     email = dave@davejamesmiller.com
 
+[core]
+    excludesfile = ~/.gitignore-global
+
 [color]
     branch = auto
     status = auto
