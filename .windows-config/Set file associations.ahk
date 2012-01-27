@@ -34,6 +34,7 @@ RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.bashrc            , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.builder           , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.coffee            , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.conf              , , vim
+RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.diff              , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.eco               , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.ejs               , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.erb               , , vim
