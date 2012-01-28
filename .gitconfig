@@ -19,6 +19,7 @@
 
 [alias]
     addremove = add -A
+    amend = commit --amend -C HEAD
     ar = add -A
     #b = branch
     #ba = branch -a
