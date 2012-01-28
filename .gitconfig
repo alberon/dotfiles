@@ -23,6 +23,7 @@
     ar = add -A
     b = branch
     ba = branch -a
+    branches = branch
     ci = commit
     co = checkout
     d = diff
@@ -39,6 +40,7 @@
     sh = repl
     st = status
     sub = submodule
+    tags = tag
     web = instaweb
 
 [github]
