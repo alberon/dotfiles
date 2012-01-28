@@ -27,7 +27,7 @@ export VISUAL=vim
 export EDITOR=vim
 
 # Don't do the rest of these when using SCP, only an SSH terminal
-if [ "$TERM" != "dumb" ]; then
+if [ "$TERM" != "dumb" -a -z "$BASH_EXECUTION_STRING" ]; then
 
     # Use the complete version of Vim on Windows instead of the cut down version
     # that's included with Git Bash
@@ -396,7 +396,7 @@ if [ "$TERM" != "dumb" ]; then
 fi # $TERM != "dumb"
 
 # Prevent errors when MSG is set in .bashrc_local
-if [ "$TERM" = "dumb" ]; then
+if [ "$TERM" = "dumb" -a -z "$BASH_EXECUTION_STRING" ]; then
     function MSG {
         : Do nothing
     }
@@ -408,7 +408,8 @@ if [ -f ~/.bashrc_local ]; then
 fi
 
 # *After* doing the rest, show the current directory contents
-if [ "$TERM" != "dumb" ]; then
+# But only do this once - gitolite seems to load this file twice!
+if [ "$TERM" != "dumb" -a -z "$BASH_EXECUTION_STRING" ]; then
     l
 fi
 
