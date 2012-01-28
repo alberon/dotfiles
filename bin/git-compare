@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Usage: git compare [branch1] [branch2]
+#
+# branch1 defaults to origin/master
+# branch2 defaults to HEAD
+
+function help {
+    echo -e "\e[36m$1\e[0m"
+}
+
+if [ $# -lt 2 ]; then
+    left="${1:-origin/master}"
+    help "Lines beginning with a < are incoming (added to $left)"
+    help "Lines beginning with a > are outgoing (added to HEAD)"
+    echo
+    git log --left-right --cherry-pick "$left..."
+else
+    help "Lines beginning with a < are only in $1"
+    help "Lines beginning with a > are only in $2"
+    echo
+    git log --left-right --cherry-pick "$1...$2"
+fi
