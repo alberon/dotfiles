@@ -23,12 +23,6 @@ if [ ! -f ~/.bashrc_config ]; then
     # Generate .bashrc_config
     echo "auto_screen=0" >> ~/.bashrc_config
 
-    if [ $cpanel -eq 1 ]; then
-        echo "auto_unlock=0" >> ~/.bashrc_config
-    else
-        echo "auto_unlock=1" >> ~/.bashrc_config
-    fi
-
     echo "enable_sudo=0" >> ~/.bashrc_config
 
     if [ $cpanel -eq 1 -o $windows -eq 1 ]; then
@@ -38,8 +32,6 @@ if [ ! -f ~/.bashrc_config ]; then
     fi
 
     echo "umask_root=022" >> ~/.bashrc_config
-
-    echo "prompt_vcs=git" >> ~/.bashrc_config
 
     if [ $cpanel -eq 1 ]; then
         echo "www_dir=~/public_html" >> ~/.bashrc_config

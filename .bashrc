@@ -1,7 +1,5 @@
 # Configuration
-auto_unlock=1
 enable_sudo=0
-prompt_vcs=git
 umask_user=007
 umask_root=022
 www_dir=
