@@ -27,3 +27,8 @@
 
 # Ignore Python compiled files
 *.pyc
+
+# Ignore gitolite files
+/bin/gitolite*
+/bin/gl-*
+/bin/sshkeys-lint
