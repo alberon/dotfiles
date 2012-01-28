@@ -40,6 +40,10 @@ if [ ! -f .git/hooks/post-merge ]; then
     ln -s ../../bin/cfg-update .git/hooks/post-merge
 fi
 
+# Add/update remote repositories
+git remote add alberon git://github.com/alberon/dotfiles.git 2>/dev/null
+git remote add dd git://github.com/davedoman/dotfiles.git 2>/dev/null
+
 # Update submodules
 git submodule sync >/dev/null
 git submodule init >/dev/null
