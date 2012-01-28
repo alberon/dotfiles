@@ -5,12 +5,12 @@ snippet case
 	when ${2:condition}
 		${3}
 	end
-snippet col
-	collect { |${1:e}| ${2} }
-snippet conf
+snippet cf
 	<% content_for :${1:head} do %>
 		${2}
 	<% end %>
+snippet col
+	collect { |${1:e}| ${2} }
 snippet cs
 	<%= collection_select ${1:object}, ${2:method}, ${3:collection}, ${4:value_method}, ${5:text_method}${5:, }${6:[options]}${7:, }${8:[html_options]} %>
 snippet ct
@@ -197,4 +197,4 @@ snippet while
 		${2}
 	end
 snippet yield
-	<%= yield${1::content_symbol}%>${2}
+	<%= yield ${1::head} %>${2}
