@@ -21,39 +21,23 @@
     addremove = add -A
     amend = commit --amend -C HEAD
     ar = add -A
-    #b = branch
-    #ba = branch -a
+    b = branch
+    ba = branch -a
     ci = commit
     co = checkout
     d = diff
     dc = diff --cached
     fe = fetch
-    #fp = format-patch
-    #g = !git gui &
     glog = log --graph
-    #gr = log --graph
-    #go = log --graph --pretty=oneline --abbrev-commit
     id = log --pretty=format:'ID:    %h%nDate:  %aD%nRefs:%d' --abbrev-commit --date=short -1
     ignored = ls-files --others -i --exclude-standard
     in = incoming
-    #k = !gitk &
-    #ka = !gitk --all &
-    #lc = log ORIG_HEAD.. --stat --no-merges
-    #lp = log --patch-with-stat
-    #mnf = merge --no-ff
-    #mnff = merge --no-ff
-    #mt = mergetool
+    mt = mergetool
     out = outgoing
-    #p = format-patch -1
-    #pullsrb = !git stash save && git pull --rebase && git stash pop && echo 'Success!'
     root = rev-parse --show-toplevel
-    #serve = !git daemon --reuseaddr --verbose --base-path=. --export-all ./.git
     serve = instaweb
-    #sra = svn rebase --all
     sh = repl
     st = status
-    #stm = status --untracked=no
-    #stfu = status --untracked=no
     sub = submodule
     web = instaweb
 
