@@ -50,7 +50,7 @@
     #serve = !git daemon --reuseaddr --verbose --base-path=. --export-all ./.git
     serve = instaweb
     #sra = svn rebase --all
-    #sh = !git-sh
+    sh = repl
     st = status
     #stm = status --untracked=no
     #stfu = status --untracked=no
