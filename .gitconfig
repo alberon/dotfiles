@@ -34,6 +34,7 @@
     #go = log --graph --pretty=oneline --abbrev-commit
     id = log --pretty=format:'ID:    %h%nDate:  %aD%nRefs:%d' --abbrev-commit --date=short -1
     ignored = ls-files --others -i --exclude-standard
+    in = incoming
     #k = !gitk &
     #ka = !gitk --all &
     #lc = log ORIG_HEAD.. --stat --no-merges
@@ -41,6 +42,7 @@
     #mnf = merge --no-ff
     #mnff = merge --no-ff
     #mt = mergetool
+    out = outgoing
     #p = format-patch -1
     #pullsrb = !git stash save && git pull --rebase && git stash pop && echo 'Success!'
     root = rev-parse --show-toplevel

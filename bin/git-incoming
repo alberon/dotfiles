@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [ $# -eq 0 ]; then
+    remote=origin/master
+else
+    remote="$1"
+    shift
+fi
+
+git log "$@" "..$remote"
