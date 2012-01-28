@@ -3,4 +3,5 @@ cfg remote set-url origin git://github.com/alberon/dotfiles.git
 cfg remote set-url origin git@github.com:alberon/dotfiles.git --push
 cfg remote add dm git://github.com/davejamesmiller/dotfiles.git
 git remote add dd git://github.com/davedoman/dotfiles.git
+git fetch origin
 git reset --hard origin/master
