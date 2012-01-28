@@ -382,6 +382,9 @@ if [ "$TERM" != "dumb" -a -z "$BASH_EXECUTION_STRING" ]; then
 
     fi
 
+    # Man pages
+    export MANPATH="$HOME/opt/git-extras-man:$(manpath -q)"
+
 fi # $TERM != "dumb"
 
 # Prevent errors when MSG is set in .bashrc_local
