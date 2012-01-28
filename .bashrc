@@ -67,15 +67,6 @@ if [ "$TERM" != "dumb" -a -z "$BASH_EXECUTION_STRING" ]; then
             ;;
     esac
 
-    # FIXME: $SSH_CLIENT isn't set after using "sudo -s" - is there another way to detect SSH?
-    if [ -z "$SSH_CLIENT" -o "${SSH_CLIENT:0:9}" = "127.0.0.1" ]; then
-        # localhost
-        HostColor="37"
-    else
-        # SSH
-        HostColor="32;1"
-    fi
-
     # Git/Mercurial prompt
     function vcsprompt
     {
@@ -155,7 +146,7 @@ if [ "$TERM" != "dumb" -a -z "$BASH_EXECUTION_STRING" ]; then
         PS1="${PS1}\[\e[30;1m\]["               # [                             Grey
         PS1="${PS1}\[\e[31;1m\]\u"              # Username                      Red
         PS1="${PS1}\[\e[30;1m\]@"               # @                             Grey
-        PS1="${PS1}\[\e[${HostColor}m\]\h"      # Hostname                      Green/Grey
+        PS1="${PS1}\[\e[32;1m\]\h"              # Hostname                      Green
         PS1="${PS1}\[\e[30;1m\]:"               # :                             Grey
         PS1="${PS1}\[\e[33;1m\]\`vcsprompt\`"   # Working directory / Git / Hg  Yellow
         PS1="${PS1}\[\e[30;1m\]]"               # ]                             Grey
