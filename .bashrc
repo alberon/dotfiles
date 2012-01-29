@@ -381,7 +381,9 @@ if [ "$TERM" != "dumb" -a -z "$BASH_EXECUTION_STRING" ]; then
     fi
 
     # Man pages
-    export MANPATH="$HOME/opt/git-extras-man:$(manpath -q)"
+    if which manpath >/dev/null 2>&1; then
+        export MANPATH="$HOME/opt/git-extras-man:$(manpath -q)"
+    fi
 
 fi # $TERM != "dumb"
 
