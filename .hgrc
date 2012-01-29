@@ -53,14 +53,6 @@ opts.vimdiff = -f '+next' '+execute "DirDiff" argv(0) argv(1)'
 attend = annotate, bin, bincoming, cat, diff, export, glog, incoming, log, outgoing, status, qdiff
 pager = LESS='FRSX' less
 
-[auth]
-djm.prefix = http://hg.davejamesmiller.com
-djm.username = dave
-
-# Put passwords in here:
-# e.g.
-# [auth]
-# djm.password = ABC
 %include .hgrc_local
 
 # vim:ft=dosini
