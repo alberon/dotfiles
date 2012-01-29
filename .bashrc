@@ -243,10 +243,8 @@ if [ "$TERM" != "dumb" -a -z "$BASH_EXECUTION_STRING" ]; then
     # b = back
     alias b='c -'
 
-    # various tools
-    alias g='grep -ir'
-    alias h='head'
-    alias t='tail'
+    # g = git
+    alias g='git'
 
     # I keep typing this wrong:
     alias chmox='chmod'
