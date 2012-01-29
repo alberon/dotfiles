@@ -3,8 +3,12 @@ snippet #!
 snippet case
 	case ${1:word} in
 		${2:pattern})
-			${3};;
+			${3} ;;
 	esac
+snippet do
+	do
+		${1}
+	done
 snippet elif
 	elif [[ ${1:condition} ]]; then
 		${2:#statements}
@@ -16,23 +20,35 @@ snippet fori
 	for ${1:needle} in ${2:haystack} ; do
 		${3:#statements}
 	done
+snippet fun
+	function ${1:function_name} {
+		${2}
+	}
 snippet go
 	while getopts '${1:o}' ${2:opts}
 	do
-		case $$2 in
-		${3:o0})
-			${4:#staments};;
+		case $2 in
+			${3:o0})
+				${4} ;;
 		esac
 	done
 snippet if
-	if [[ ${1:condition} ]]; then
-		${2:#statements}
+	if [ ${1:condition} ]; then
+		${2}
+	fi
+snippet then
+	then
+		${1}
 	fi
 snippet until
-	until [[ ${1:condition} ]]; do
-		${2:#statements}
+	until [ ${1:condition} ]; do
+		${2}
 	done
 snippet wh
-	while [[ ${1:condition} ]]; do
-		${2:#statements}
+	while [ ${1:condition} ]; do
+		${2}
 	done
+snippet {
+	{
+		${1}
+	}
