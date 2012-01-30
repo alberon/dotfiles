@@ -405,16 +405,8 @@ snippet <kbd
 	<kbd>${1}</kbd>${2}
 snippet <keygen
 	<keygen>${1}</keygen>${2}
-snippet <label:i
-	<label for="${2:$1}">${1}</label>
-	<input type="${3:text/submit/hidden/button}" name="${4:$2}" id="${5:$2}" value="${6}" />${7}
-snippet <label:s
-	<label for="${2:$1}">${1}</label>
-	<select name="${3:$2}" id="${4:$2}">
-		<option value="${5}">${6:$5}</option>
-	</select>
 snippet <label
-	<label for="${2:$1}">${1}</label>
+	<label for="${1:id}">${2:$1}</label>
 snippet <legend+
 	<legend><span>${1}</span></legend>${2}
 snippet <legend
