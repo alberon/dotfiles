@@ -393,6 +393,9 @@ if [ "$TERM" != "dumb" -a -z "$BASH_EXECUTION_STRING" ]; then
         done
     fi
 
+    # Reload Bash config
+    alias reload='exec bash -l'
+
 else # $TERM = "dumb"
 
     # Prevent errors when MSG is set in .bashrc_local
