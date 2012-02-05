@@ -283,6 +283,8 @@ if [ "$TERM" != "dumb" -a -z "$BASH_EXECUTION_STRING" ]; then
 
     # rails
     alias guard="bundle exec guard"
+    alias capify="bundle exec capify"
+    alias cap="bundle exec cap"
 
     # ack (Debian renames to ack-grep)
     if which ack-grep >/dev/null 2>&1; then
