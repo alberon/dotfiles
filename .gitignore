@@ -16,6 +16,7 @@
 !/.gitconfig
 !/.gitignore
 !/.gitignore-global
+!/.rdebugrc
 
 # Ignore Vim history
 /.vim/.netrwhist
