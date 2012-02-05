@@ -385,13 +385,21 @@ if [ "$TERM" != "dumb" -a -z "$BASH_EXECUTION_STRING" ]; then
         export MANPATH="$HOME/opt/git-extras-man:$(manpath 2>/dev/null)"
     fi
 
-fi # $TERM != "dumb"
+    # Auto-complete git commands for git aliases (g, cfg, hub)
+    if type _git >/dev/null; then
+        for cmd in g cfg hub; do
+            complete -o bashdefault -o default -o nospace -F _git $cmd 2>/dev/null \
+                || complete -o default -o nospace -F _git $cmd
+        done
+    fi
 
-# Prevent errors when MSG is set in .bashrc_local
-if [ "$TERM" = "dumb" -a -z "$BASH_EXECUTION_STRING" ]; then
+else # $TERM = "dumb"
+
+    # Prevent errors when MSG is set in .bashrc_local
     function MSG {
         : Do nothing
     }
+
 fi
 
 # Custom settings for this machine/account
