@@ -31,7 +31,7 @@
     fe = fetch
     glog = log --graph
     id = log --pretty=format:'ID:    %h%nDate:  %aD%nRefs:%d' --abbrev-commit --date=short -1
-    ignored = ls-files --others -i --exclude-standard
+    ignored = ls-files --others -i --exclude-standard --directory
     in = incoming
     mt = mergetool
     out = outgoing
