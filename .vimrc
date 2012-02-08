@@ -780,6 +780,9 @@ noremap <M-x> <C-x>
 " Make spacebar run macro @q
 nnoremap <Space> @q
 
+" Make ~ behave like an operator
+set tildeop
+
 "===============================================================================
 " Finish the autocommands group
 augroup END
