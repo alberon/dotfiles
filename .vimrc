@@ -670,22 +670,24 @@ inoremap <silent> <C-f> <C-o>:promptfind<CR>
 command! SortCSS silent! call <SID>Preserve("normal \"?{<CR>jV/^\s*\}<CR>k:sort<CR>\"")
 
 " Sort .snippets files alphabetically
-function! <SID>SortSnippets()
-    " Join all lines together
-    %s/\n/__NEWLINE__
-    " Split by where the snippets start, so each snippet is one line
-    %s/__NEWLINE__snippet /__NEWLINE__\rsnippet 
-    " Remove any __NEWLINE__s that are already followed by a new line
-    %s/__NEWLINE__\n/\r
-    " Delete the extra blank line that gets added at the end
-    $d
-    " Sort the lines alphabetically
-    sort
-    " Split the snippets into separate lines again
-    %s/__NEWLINE__/\r
-endfunction
+if v:version >= 700
+    function! <SID>SortSnippets()
+        " Join all lines together
+        %s/\n/__NEWLINE__
+        " Split by where the snippets start, so each snippet is one line
+        %s/__NEWLINE__snippet /__NEWLINE__\rsnippet 
+        " Remove any __NEWLINE__s that are already followed by a new line
+        %s/__NEWLINE__\n/\r
+        " Delete the extra blank line that gets added at the end
+        $d
+        " Sort the lines alphabetically
+        sort
+        " Split the snippets into separate lines again
+        %s/__NEWLINE__/\r
+    endfunction
 
-command! SortSnippets silent! call <SID>Preserve("call <SID>SortSnippets()")
+    command! SortSnippets silent! call <SID>Preserve("call <SID>SortSnippets()")
+endif
 
 " Show tab bar always
 if v:version >= 700
