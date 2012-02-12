@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Easier undoing!
+# (Not perfect because it doesn't cope with moving a file to a directory or with options but still...)
+
+exec mv ${2%/} ${1%/}

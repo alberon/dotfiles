@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ -n "$1" ]; then
+    path="$1"
+else
+    path="."
+fi
+
+# TODO: What's the correct way to do this without PHP?
+echo "<?php echo realpath('$path') ?>" | php -q &&
+echo

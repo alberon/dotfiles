@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ -f ~/.bashrc -a "$BASHRC_DONE" != 1 ]
+if [ -f ~/.bashrc -a -z "$BASHRC_DONE" ]
 then
     source ~/.bashrc
 fi
