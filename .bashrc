@@ -1,7 +1,7 @@
-# Detect Cygwin (Windows)
+# Detect Git Bash (Windows)
 case "`uname`" in
-  CYGWIN*) CYGWIN=true  ;;
-  *)       CYGWIN=false ;;
+  MINGW32*) WINDOWS=true  ;;
+  *)        WINDOWS=false ;;
 esac
 
 # Detect whether there's a terminal (rather than a command like scp),
@@ -23,11 +23,11 @@ if [ -f ~/.bashrc_local ]; then
 fi
 
 # *After* doing the rest, show the current directory contents, except in
-# Cygwin (Git Bash) home directory - there's a load of system files in there
-if $HAS_TERMINAL && ! ($CYGWIN && [ "$PWD" = "$HOME" ]); then
+# Git Bash home directory - there's a load of system files in there
+if $HAS_TERMINAL && ! ($WINDOWS && [ "$PWD" = "$HOME" ]); then
     l
 fi
 
-# Git Cygwin loads this file *and* .bash_profile so set a flag to tell
+# Git Bash loads this file *and* .bash_profile so set a flag to tell
 # .bash_profile not to load .bashrc again
 BASHRC_DONE=true
