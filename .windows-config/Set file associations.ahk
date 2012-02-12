@@ -30,6 +30,7 @@ RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\*\shell\Edit with Vim\comma
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\vim\shell\edit\command, , %WindowsCmd%
 
 ; Associate various extensions with that file type
+RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.bash              , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.bashrc            , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.builder           , , vim
 RegWrite REG_SZ, HKEY_CURRENT_USER, Software\Classes\.coffee            , , vim
