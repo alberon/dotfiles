@@ -19,3 +19,6 @@
 [submodule ".vim/bundle/vim-css3-syntax"]
 	path = .vim/bundle/vim-css3-syntax
 	url = git://github.com/hail2u/vim-css3-syntax.git
+[submodule ".vim/bundle/vim-reload"]
+	path = .vim/bundle/vim-reload
+	url = git://github.com/xolox/vim-reload.git

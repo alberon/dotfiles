@@ -9,13 +9,15 @@ if ! has("gui")
 endif
 
 " Switch to existing tab if available
-if filereadable($VIMRUNTIME . "/macros/editexisting.vim")
-    source $VIMRUNTIME/macros/editexisting.vim
+" Only load if it's not already loaded - otherwise we get an error about
+" the function already being defined (because it doesn't use "func!")
+if !exists("*EditExisting")
+    runtime macros/editexisting.vim
 endif
 
 " Function that finds the Vim instance that is editing "filename" and brings
 " it to the foreground.
-func s:EditElsewhereTab(filename)
+func! s:EditElsewhereTab(filename)
     let fname_esc = substitute(a:filename, "'", "''", "g")
 
     let servers = serverlist()

@@ -50,3 +50,7 @@ cd ~/opt/git-extras
 git submodule sync >/dev/null
 git submodule init >/dev/null
 git submodule update
+cd
+
+# Ignore doc/tags in vim-reload submodule
+echo -e "/.gitignore\ndoc/tags" > .vim/bundle/vim-reload/.gitignore

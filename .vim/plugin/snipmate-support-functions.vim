@@ -1,4 +1,6 @@
-"ruby {{{1
+"===============================================================================
+" Ruby
+"===============================================================================
 function! Snippet_RubyClassNameFromFilename(...)
     let name = expand("%:t:r")
     if len(name) == 0
@@ -24,7 +26,9 @@ function! Snippet_MigrationNameFromFilename(...)
 endfunction
 
 
-"python {{{1
+"===============================================================================
+" Python
+"===============================================================================
 function! Snippet_PythonClassNameFromFilename(...)
     let name = expand("%:t:r")
     if len(name) == 0
@@ -37,7 +41,9 @@ function! Snippet_PythonClassNameFromFilename(...)
     return Snippet_Camelcase(name)
 endfunction
 
-"php {{{1
+"===============================================================================
+" PHP
+"===============================================================================
 function! Snippet_PHPClassNameFromFilename(...)
     let name = expand("%:t:r:r")
     if len(name) == 0
@@ -50,7 +56,9 @@ function! Snippet_PHPClassNameFromFilename(...)
     return name
 endfunction
 
-"java {{{1
+"===============================================================================
+" Java
+"===============================================================================
 function! Snippet_JavaClassNameFromFilename(...)
     let name = expand("%:t:r")
     if len(name) == 0
@@ -83,7 +91,9 @@ function! Snippet_JavaInstanceVarType(name)
 endfunction
 
 
-"global {{{1
+"===============================================================================
+" Global
+"===============================================================================
 function! s:start_comment()
     return substitute(&commentstring, '^\([^ ]*\)\s*%s\(.*\)$', '\1', '')
 endfunction
@@ -109,7 +119,3 @@ function! Snippet_Underscore(s)
     "turn all 'X' into '_x'
     return substitute(toReturn, '\([A-Z]\)', '\=tolower("_".submatch(1))', 'g')
 endfunction
-
-
-" modeline {{{1
-" vim: set fdm=marker:
