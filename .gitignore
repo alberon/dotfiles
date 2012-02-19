@@ -19,6 +19,13 @@
 !/.gitignore-global
 !/.rdebugrc
 
+# Don't ignore the RVM after_cd hook
+!/.rvm/
+/.rvm/*
+!/.rvm/hooks/
+/.rvm/hooks/*
+!/.rvm/hooks/after_cd_record_bash_lastdirectory
+
 # Ignore Vim history
 /.vim/.netrwhist
 
