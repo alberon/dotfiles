@@ -1,8 +1,12 @@
 if $HAS_TERMINAL; then
 
     # Remember the last directory visited
+    function record_bash_lastdirectory {
+        pwd > ~/.bash_lastdirectory
+    }
+
     function cd {
-        command cd "$@" && pwd > ~/.bash_lastdirectory
+        command cd "$@" && record_bash_lastdirectory
     }
 
     # Go to home directory by default
