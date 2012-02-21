@@ -22,3 +22,6 @@
 [submodule ".vim/bundle/vim-reload"]
 	path = .vim/bundle/vim-reload
 	url = git://github.com/xolox/vim-reload.git
+[submodule ".vim/bundle/vim-markdown"]
+	path = .vim/bundle/vim-markdown
+	url = git://github.com/tpope/vim-markdown.git
