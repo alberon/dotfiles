@@ -41,6 +41,7 @@
     sh = repl
     st = status
     sub = submodule
+    sync = !git submodule sync && git submodule update --init
     tags = tag
     web = instaweb
 
