@@ -142,6 +142,3 @@ set guioptions-=T
 " Keep scrollbars on the right - the left scrollbar doesn't work with my
 " gaming mouse software
 set guioptions-=L
-
-" Make ~ behave like an operator
-set tildeop
