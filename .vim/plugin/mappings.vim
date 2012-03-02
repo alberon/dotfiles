@@ -134,8 +134,8 @@ nmap <silent> <Leader>of :FufFile<CR>
 " Open snippets directory
 nmap <silent> <Leader>os :tabedit $HOME/.vim/snippets<CR>
 
-" Open .vimrc
-nmap <silent> <Leader>ov :tabedit $HOME/.vimrc<CR>
+" Open Vim settings (which I mostly keep in plugins)
+nmap <silent> <Leader>ov :tabedit $HOME/.vim/plugin<CR>
 
 " Toggle paste mode
 nmap <silent> <Leader>p :set paste!<CR>
