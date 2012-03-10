@@ -1,3 +1,12 @@
 #!/bin/bash
-touch "$@"
+
+for file in "$@"; do
+    if [ -e "$file" ]; then
+        touch "$file"
+    else
+        # Write EOL to file, to ensure Windows Vim saves the script in Unix format
+        echo > "$file"
+    fi
+done
+
 chmod +x "$@"
