@@ -23,6 +23,9 @@ augroup filetypedetect
     au BufNewFile,BufRead *.module,*.install setf php
     au BufNewFile,BufRead *.info setf dosini
 
+    " Ruby
+    au BufNewFile,BufRead *.rabl setf ruby
+
     " Text files
     au BufNewFile,BufRead *.txt setf txt
 
