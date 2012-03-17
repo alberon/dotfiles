@@ -157,18 +157,27 @@ nmap <silent> <Leader>s<Up>      :aboveleft  :split<CR>
 nmap <silent> <Leader>s<Right>   :rightbelow :vsplit<CR>
 
 " Change the tab size
-nmap <silent> <Leader>1t :setlocal tabstop=1 softtabstop=1 shiftwidth=1<CR>
-nmap <silent> <Leader>2t :setlocal tabstop=2 softtabstop=2 shiftwidth=2<CR>
-nmap <silent> <Leader>3t :setlocal tabstop=3 softtabstop=3 shiftwidth=3<CR>
-nmap <silent> <Leader>4t :setlocal tabstop=4 softtabstop=4 shiftwidth=4<CR>
-nmap <silent> <Leader>5t :setlocal tabstop=5 softtabstop=5 shiftwidth=5<CR>
-nmap <silent> <Leader>6t :setlocal tabstop=6 softtabstop=6 shiftwidth=6<CR>
-nmap <silent> <Leader>7t :setlocal tabstop=7 softtabstop=7 shiftwidth=7<CR>
-nmap <silent> <Leader>8t :setlocal tabstop=8 softtabstop=8 shiftwidth=8<CR>
+nmap <Leader>1t :set tabstop=1 softtabstop=1 shiftwidth=1<CR>
+nmap <Leader>2t :set tabstop=2 softtabstop=2 shiftwidth=2<CR>
+nmap <Leader>3t :set tabstop=3 softtabstop=3 shiftwidth=3<CR>
+nmap <Leader>4t :set tabstop=4 softtabstop=4 shiftwidth=4<CR>
+nmap <Leader>5t :set tabstop=5 softtabstop=5 shiftwidth=5<CR>
+nmap <Leader>6t :set tabstop=6 softtabstop=6 shiftwidth=6<CR>
+nmap <Leader>7t :set tabstop=7 softtabstop=7 shiftwidth=7<CR>
+nmap <Leader>8t :set tabstop=8 softtabstop=8 shiftwidth=8<CR>
 
-" Switch to using tabs instead of spaces to indent (or back again)
-nmap <silent> <Leader>t :setlocal noexpandtab<CR>
-nmap <silent> <Leader>T :setlocal expandtab<CR>
+nmap <Leader>1T :setlocal tabstop=1 softtabstop=1 shiftwidth=1<CR>
+nmap <Leader>2T :setlocal tabstop=2 softtabstop=2 shiftwidth=2<CR>
+nmap <Leader>3T :setlocal tabstop=3 softtabstop=3 shiftwidth=3<CR>
+nmap <Leader>4T :setlocal tabstop=4 softtabstop=4 shiftwidth=4<CR>
+nmap <Leader>5T :setlocal tabstop=5 softtabstop=5 shiftwidth=5<CR>
+nmap <Leader>6T :setlocal tabstop=6 softtabstop=6 shiftwidth=6<CR>
+nmap <Leader>7T :setlocal tabstop=7 softtabstop=7 shiftwidth=7<CR>
+nmap <Leader>8T :setlocal tabstop=8 softtabstop=8 shiftwidth=8<CR>
+
+" Toggle tabs / spaces for indent
+nmap <Leader>t :set expandtab!<CR>
+nmap <Leader>T :setlocal expandtab!<CR>
 
 " Write
 nmap <silent> <Leader>w :w<CR>
