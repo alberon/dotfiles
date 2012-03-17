@@ -184,3 +184,29 @@ nmap <silent> <Leader>w :w<CR>
 
 " Graphical undo
 nmap <silent> <Leader>z :GundoToggle<CR>
+
+" HTML tags
+function! <SID>VisualWrap(before, after, ...)
+    let tmp = @k
+    " Copy to register
+    normal gv"ky
+    " Modify register
+    let @k = a:before . @k . a:after
+    " Paste from register
+    normal gv"kp
+    " Revert register contents
+    let @k = tmp
+    " Position cursor
+    if a:0 > 0 && a:1 > 0
+        normal `<
+        exe "normal " . a:1 . "l"
+    endif
+endfunction
+
+vmap <silent> <Leader><C-b> <Esc>:call <SID>VisualWrap("<strong>", "</strong>")<CR>
+vmap <silent> <Leader><C-d> <Esc>:call <SID>VisualWrap("<div>", "</div>", 4)<CR>
+vmap <silent> <Leader><C-i> <Esc>:call <SID>VisualWrap("<em>", "</em>")<CR>
+vmap <silent> <Leader><C-k> <Esc>:call <SID>VisualWrap("<a href=\"\">", "</a>", 9)<CR>
+vmap <silent> <Leader><C-p> <Esc>:call <SID>VisualWrap("<p>", "</p>")<CR>
+vmap <silent> <Leader><C-s> <Esc>:call <SID>VisualWrap("<span>", "</span>", 5)<CR>
+vmap <silent> <Leader><C-u> <Esc>:call <SID>VisualWrap("<u>", "</u>")<CR>
