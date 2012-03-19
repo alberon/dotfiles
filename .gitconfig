@@ -18,7 +18,7 @@
     status = true
 
 [push]
-    default = upstream
+    default = tracking
 
 [alias]
     addremove = add -A
