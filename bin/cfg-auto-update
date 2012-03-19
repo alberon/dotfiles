@@ -1,0 +1,26 @@
+#!/bin/bash
+cd
+set -eu
+
+today=$(date +%Y%m%d)
+
+# Check if this has already been run today
+# Only run it once per day because it can be slow
+if [ -f ~/.cfg_last_update ]; then
+    last_update=$(cat ~/.cfg_last_update)
+    if [ "$last_update" = "$today" ]; then
+        exit
+    fi
+fi
+
+# Make sure there are no local changes we might overwrite
+if [ -n "$(git status --porcelain)" ]; then
+    exit
+fi
+
+# Pull changes, but don't merge
+echo "Updating configuration files..."
+git pull --ff-only
+
+# Record the last run date
+echo "$today" > ~/.cfg_last_update
