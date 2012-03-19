@@ -17,6 +17,9 @@
     ls-files = true
     status = true
 
+[push]
+    default = upstream
+
 [alias]
     addremove = add -A
     amend = commit --amend -C HEAD
