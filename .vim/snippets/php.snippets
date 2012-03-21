@@ -1233,11 +1233,9 @@ snippet smf
 	 */
 	function smarty_function_`substitute(Filename('', 'NAME'), '^function\.', '', '')`($params, &$smarty)
 	{
-		global $app;
-
 		${4}
 
-		return $app->tpl->callInclude(djmSmarty::defaultTemplate(), $params);
+		return djmSmarty::doInclude($params, $smarty);
 	}
 snippet smb
 	<?php
