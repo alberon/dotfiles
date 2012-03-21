@@ -15,6 +15,7 @@ fi
 
 # Make sure there are no local changes we might overwrite
 if [ -n "$(git status --porcelain)" ]; then
+    echo "Not updating configuration files because there are local changes."
     exit
 fi
 
