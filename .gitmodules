@@ -34,3 +34,6 @@
 [submodule ".vim/bundle/less"]
 	path = .vim/bundle/less
 	url = git://github.com/groenewege/vim-less.git
+[submodule ".vim/bundle/haml-sass-scss"]
+	path = .vim/bundle/haml-sass-scss
+	url = git://github.com/tpope/vim-haml.git
