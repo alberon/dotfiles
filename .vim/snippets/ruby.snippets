@@ -770,8 +770,8 @@ snippet rep
 snippet req
 	require "${1}"${2}
 snippet rest
-	respond_to do |wants|
-		wants.${1:html} { ${2} }
+	respond_to do |format|
+		format.${1:html} { ${2} }
 	end
 snippet reve
 	reverse_each { |${1:e}| ${2} }
