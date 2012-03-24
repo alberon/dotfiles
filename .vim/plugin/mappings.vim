@@ -125,8 +125,11 @@ nmap <silent> <Leader>h :set hlsearch!<CR>
 " Insert Date (DDD D MMM YYYY)
 nmap <silent> <Leader>id a<C-R>=strftime("%a %#d %b %Y")<CR>
 
+" Toggle NERDtree
+nmap <silent> <Leader>n <Plug>NERDTreeTabsToggle<CR>
+
 " Toggle line numbers
-nmap <silent> <Leader>n :set number!<CR>
+nmap <silent> <Leader>N :set number!<CR>
 
 " Open file
 nmap <silent> <Leader>of :FufFile<CR>
