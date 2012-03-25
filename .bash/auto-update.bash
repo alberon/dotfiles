@@ -1,10 +1,14 @@
-# Check what the current revision is
-old_head=$(cd; git rev-parse HEAD)
+if $HAS_TERMINAL; then
 
-# Run the auto-update
-~/bin/cfg-auto-update
+    # Check what the current revision is
+    old_head=$(cd; git rev-parse HEAD)
 
-# Reload Bash if any changes were made
-if [ "$(cd; git rev-parse HEAD)" != "$old_head" ]; then
-    exec bash -l
+    # Run the auto-update
+    ~/bin/cfg-auto-update
+
+    # Reload Bash if any changes were made
+    if [ "$(cd; git rev-parse HEAD)" != "$old_head" ]; then
+        exec bash -l
+    fi
+
 fi
