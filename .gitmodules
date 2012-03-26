@@ -37,3 +37,6 @@
 [submodule ".vim/bundle/haml-sass-scss"]
 	path = .vim/bundle/haml-sass-scss
 	url = git://github.com/tpope/vim-haml.git
+[submodule ".vim/bundle/slime"]
+	path = .vim/bundle/slime
+	url = git://github.com/jpalardy/vim-slime.git
