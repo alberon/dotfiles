@@ -435,31 +435,28 @@ snippet dns_get_record
 snippet do
 	do {
 		${2}
-	} while (${1:/* condition */});
+	} while (${1});
 snippet dump
-	var_dump(${1:var});exit;
+	var_dump(${1});exit;
 snippet each
-	each(${1:array})${2}
+	each(${1})${2}
 snippet ec
 	echo ${1}
 snippet echo
 	echo ${1}
 snippet elif
-	elseif (${1:/* condition */}) {
+	} elseif (${1}) {
 		${2}
-	}
 snippet else
-	else {
+	} else {
 		${1}
-	}
 snippet elseif
-	elseif (${1:/* condition */}) {
+	} elseif (${1}) {
 		${2}
-	}
 snippet empty
-	empty(${1:var})${2}
+	empty(${1})${2}
 snippet end
-	end(${1:&array})${2}
+	end(${1})${2}
 snippet env
 	$_ENV['${1:variable}']${2}
 snippet error_log To PHP's system logger
@@ -743,11 +740,11 @@ snippet idate z - Day of the year
 snippet idate Z - Timezone offset in seconds
 	idate('Z'${1:, }${2:[timestamp]})${3}
 snippet if
-	if (${1:/* condition */}) {
+	if (${1}) {
 		${2}
 	}${3}
 snippet ife
-	if (${1:/* condition */}) {
+	if (${1}) {
 		${2}
 	} else {
 		${3}
