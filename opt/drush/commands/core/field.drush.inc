@@ -23,12 +23,13 @@ function field_drush_help($section) {
 function field_drush_command() {
   $items['field-create'] = array(
     'description' => 'Create fields and instances. Returns urls for field editing.',
-    'core' => array(7),
+    'core' => array('7+'),
     'drupal_dependencies' => array('field_ui'),
     'arguments' => array(
       'bundle' => 'Content type (for nodes). Name of bundle to attach fields to. Required.',
       'field_spec' => 'Comma delimited triple in the form: field_name,field_type,widget_name. If widget_name is omitted, the default widget will be used. Separate multiple fields by space. If omitted, a wizard will prompt you.'
     ),
+    'required-arguments' => 1,
     'options' => array(
       'entity_type' => 'Type of entity (e.g. node, user, comment). Defaults to node.',
     ),
@@ -40,7 +41,7 @@ function field_drush_command() {
   );
   $items['field-update'] = array(
     'description' => 'Return URL for field editing web page.',
-    'core' => array(7),
+    'core' => array('7+'),
     'drupal_dependencies' => array('field_ui'),
     'arguments' => array(
       'field_name' => 'Name of field that needs updating.',
@@ -51,7 +52,7 @@ function field_drush_command() {
   );
   $items['field-delete'] = array(
     'description' => 'Delete a field and its instances.',
-    'core' => array(7),
+    'core' => array('7+'),
     'arguments' => array(
       'field_name' => 'Name of field to delete.',
     ),
@@ -66,7 +67,7 @@ function field_drush_command() {
   );
   $items['field-clone'] = array(
     'description' => 'Clone a field and all its instances.',
-    'core' => array(7),
+    'core' => array('7+'),
     'arguments' => array(
       'source_field_name' => 'Name of field that will be cloned',
       'target_field_name' => 'Name of new, cloned field.',
@@ -79,7 +80,7 @@ function field_drush_command() {
   $items['field-info'] = array(
     'description' => 'View information about fields, field_types, and widgets.',
     'drupal_dependencies' => array('field_ui'),
-    'core' => array(7),
+    'core' => array('7+'),
     'arguments' => array(
       'type' => 'Recognized values: fields, types. If omitted, a choice list appears.',
     ),
@@ -91,6 +92,61 @@ function field_drush_command() {
     ),
   );
   return $items;
+}
+
+/**
+ * Command argument complete callback.
+ */
+function field_field_create_complete() {
+  if (drush_bootstrap_max(DRUSH_BOOTSTRAP_DRUPAL_FULL)) {
+    $all = array();
+    $info = field_info_bundles();
+    foreach ($info as $entity_type => $bundles) {
+      $all = array_merge($all, array_keys($bundles));
+    }
+    return array('values' => array_unique($bundles));
+  }
+}
+
+/**
+ * Command argument complete callback.
+ */
+function field_field_update_complete() {
+  return field_field_complete_field_names();
+}
+
+/**
+ * Command argument complete callback.
+ */
+function field_field_delete_complete() {
+  return field_field_complete_field_names();
+}
+
+/**
+ * Command argument complete callback.
+ */
+function field_field_clone_complete() {
+  return field_field_complete_field_names();
+}
+
+/**
+ * Command argument complete callback.
+ */
+function field_field_info_complete() {
+  return array('values' => array('fields', 'types'));
+}
+
+/**
+ * List field names for completion.
+ *
+ * @return
+ *  Array of available site aliases.
+ */
+function field_field_complete_field_names() {
+  if (drush_bootstrap_max(DRUSH_BOOTSTRAP_DRUPAL_FULL)) {
+    $info = field_info_fields();
+    return array('values' => array_keys($info));
+  }
 }
 
 function drush_field_create($bundle) {
@@ -106,7 +162,7 @@ function drush_field_create($bundle) {
   // Iterate over each field spec.
   foreach ($args as $string) {
     list($name, $type, $widget) = explode(',', $string);
-    $info = field_info_field($field_name);
+    $info = field_info_field($name);
     if (empty($info)) {
       // Field does not exist already. Create it.
       $field = array(
@@ -127,16 +183,25 @@ function drush_field_create($bundle) {
     }
     drush_op('field_create_instance', $instance);
 
-    $urls[] = url(_field_ui_bundle_admin_path($entity_type, $bundle) . '/fields/' . $name, array('absolute' => TRUE));
+    $urls[] = url(drush_field_ui_bundle_admin_path($entity_type, $bundle) . '/fields/' . $name, array('absolute' => TRUE));
   }
   drush_print(implode(' ', $urls));
+}
+
+// Copy of function _field_ui_bundle_admin_path() since we don't want to load UI module.
+function drush_field_ui_bundle_admin_path($entity_type, $bundle_name) {
+  $bundles = field_info_bundles($entity_type);
+  $bundle_info = $bundles[$bundle_name];
+  if (isset($bundle_info['admin'])) {
+    return isset($bundle_info['admin']['real path']) ? $bundle_info['admin']['real path'] : $bundle_info['admin']['path'];
+  }
 }
 
 function drush_field_update($field_name) {
    $info = field_info_field($field_name);
    foreach ($info['bundles'] as $entity_type => $bundles) {
      foreach ($bundles as $bundle) {
-       $urls[] = url(_field_ui_bundle_admin_path($entity_type, $bundle) . '/fields/' . $field_name, array('absolute' => TRUE));
+       $urls[] = url(drush_field_ui_bundle_admin_path($entity_type, $bundle) . '/fields/' . $field_name, array('absolute' => TRUE));
      }
    }
   drush_print(implode(' ', $urls));
@@ -201,7 +266,7 @@ function drush_field_clone($source_field_name, $target_field_name) {
        unset($instance['id']);
        $instance['field_id'] = $target['id'];
        drush_op('field_create_instance', $instance);
-       $urls[] = url(_field_ui_bundle_admin_path($entity_type, $bundle) . '/fields/' . $target_field_name, array('absolute' => TRUE));
+       $urls[] = url(drush_field_ui_bundle_admin_path($entity_type, $bundle) . '/fields/' . $target_field_name, array('absolute' => TRUE));
      }
    }
 

@@ -16,6 +16,12 @@
 define('MAINTENANCE_MODE', 'update');
 
 /**
+ * Drupal's update.inc has functions that are in previous update_X.inc files
+ * for example, update_check_incompatibility() which can prove useful when
+ * enabling modules.
+ */
+require_once DRUSH_DRUPAL_CORE . '/includes/update.inc';
+/**
  * Returns (and optionally stores) extra requirements that only apply during
  * particular parts of the update.php process.
  */
@@ -53,7 +59,6 @@ function drush_update_do_one($module, $number, $dependency_map,  &$context) {
   if (!empty($context['results']['#abort']) && array_intersect($context['results']['#abort'], array_merge($dependency_map, array($function)))) {
     return;
   }
-
 
   $context['log'] = FALSE;
 
@@ -103,10 +108,8 @@ function drush_update_do_one($module, $number, $dependency_map,  &$context) {
     drupal_set_installed_schema_version($module, $number);
   }
 
-  $context['message'] = 'Updating ' . check_plain($module) . ' module';
+  $context['message'] = 'Performing ' . $function;
 }
-
-
 
 /**
  * Check update requirements and report any errors.
@@ -138,24 +141,23 @@ function update_main_prepare() {
   // Our custom error handler is not yet installed, so we just suppress them.
   drush_errors_off();
 
-
   // We prepare a minimal bootstrap for the update requirements check to avoid
   // reaching the PHP memory limit.
-  require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
-  require_once DRUPAL_ROOT . '/includes/update.inc';
-  require_once DRUPAL_ROOT . '/includes/common.inc';
-  require_once DRUPAL_ROOT . '/includes/file.inc';
-  require_once DRUPAL_ROOT . '/includes/entity.inc';
-  include_once DRUPAL_ROOT . '/includes/unicode.inc';
+  $core = DRUSH_DRUPAL_CORE;
+  require_once $core . '/includes/bootstrap.inc';
+  require_once $core . '/includes/common.inc';
+  require_once $core . '/includes/file.inc';
+  require_once $core . '/includes/entity.inc';
+  include_once $core . '/includes/unicode.inc';
 
   update_prepare_d7_bootstrap();
   drupal_bootstrap(DRUPAL_BOOTSTRAP_SESSION);
 
-  require_once DRUPAL_ROOT . '/includes/install.inc';
-  require_once DRUPAL_ROOT . '/modules/system/system.install';
+  require_once $core . '/includes/install.inc';
+  require_once $core . '/modules/system/system.install';
 
   // Load module basics.
-  include_once DRUPAL_ROOT . '/includes/module.inc';
+  include_once $core . '/includes/module.inc';
   $module_list['system']['filename'] = 'modules/system/system.module';
   module_list(TRUE, FALSE, FALSE, $module_list);
   drupal_load('module', 'system');
@@ -201,19 +203,15 @@ function update_main_prepare() {
   module_list(TRUE, FALSE, TRUE);
 }
 
-
-
 function update_main() {
   update_main_prepare();
 
   $pending = update_get_update_list();
 
-
   $start = array();
 
-  // Ensure system module's updates run first 
+  // Ensure system module's updates run first.
   $start['system'] = array();
-
 
   // Print a list of pending updates for this module and get confirmation.
   if (sizeof($pending)) {
@@ -241,7 +239,6 @@ function update_main() {
   else {
     drush_log(dt("No database updates required"), 'success');
   }
-
 }
 
 function _update_batch_command($id) {
@@ -290,7 +287,6 @@ function drush_update_batch($start) {
         unset($start[$update['module']]);
       }
       // Add this update function to the batch.
-
       $function = $update['module'] . '_update_' . $update['number'];
       $operations[] = array('drush_update_do_one', array($update['module'], $update['number'], $dependency_map[$function]));
     }
@@ -313,4 +309,3 @@ function drush_update_batch($start) {
 function drush_update_finished($success, $results, $operations) {
   // Nothing to do here. All caches already cleared. Kept as documentation of 'finished' callback.
 }
-

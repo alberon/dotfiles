@@ -26,7 +26,6 @@ function pm_update_filter(&$project) {
     case UPDATE_NOT_CHECKED:
       $status = dt('Unable to check status');
       break;
-    case UPDATE_UNKNOWN:
     default:
       $status = dt('Unknown');
       break;
@@ -52,7 +51,7 @@ function _pm_refresh() {
  *
  * @return An array containing remote and local versions for all installed projects
  */
-function _pm_get_update_info($projects = NULL) {
+function _pm_get_update_info($projects) {
   // We force a refresh if the cache is not available.
   if (!cache_get('update_available_releases', 'cache_update')) {
     _pm_refresh();
@@ -62,16 +61,33 @@ function _pm_get_update_info($projects = NULL) {
 
   // Force to invalidate some update_status caches that are only cleared
   // when visiting update status report page.
-  _update_cache_clear('update_project_data');
-  _update_cache_clear('update_project_projects');
+  if (function_exists('_update_cache_clear')) {
+    _update_cache_clear('update_project_data');
+    _update_cache_clear('update_project_projects');
+  }
 
   $data = update_calculate_project_data($info);
   foreach ($data as $project_name => $project) {
+    // Discard custom projects.
+    if ($project['status'] == UPDATE_UNKNOWN) {
+      unset($data[$project_name]);
+      continue;
+    }
+    // Discard projects with unknown installation path.
+    if ($project_name != 'drupal' && !isset($projects[$project_name]['path'])) {
+      unset($data[$project_name]);
+      continue;
+    }
+    // Allow to update disabled projects.
     if (in_array($project['project_type'], array('disabled-module', 'disabled-theme'))) {
       $data[$project_name]['project_type'] = substr($project['project_type'], strpos($project['project_type'], '-') + 1);
     }
+    // Add some info from the project to $data.
+    $data[$project_name] += array(
+      'path'  => $projects[$project_name]['path'],
+      'label' => $projects[$project_name]['label'],
+    );
   }
-  $data = _pm_get_project_path($data, 'includes');
 
   return $data;
 }

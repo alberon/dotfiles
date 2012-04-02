@@ -218,7 +218,7 @@ function update_fix_d6_requirements() {
       'primary key' => array('cid'),
     );
     db_create_table($ret, 'cache_block', $schema['cache_block']);
-    
+
     // Create the semaphore table now -- the menu system after 6.15 depends on
     // this table, and menu code runs in updates prior to the table being
     // created in its original update function, system_update_6054().
@@ -306,7 +306,10 @@ function update_main_prepare() {
 
   require_once './includes/bootstrap.inc';
   // Minimum load of components.
-  drush_bootstrap(DRUSH_BOOTSTRAP_DRUPAL_CONFIGURATION);
+  // This differs from the Drupal 6 update.php workflow for compatbility with
+  // the Drupal 6 backport of module_implements() caching.
+  // @see http://drupal.org/node/557542
+  drush_bootstrap(DRUSH_BOOTSTRAP_DRUPAL_DATABASE);
   require_once './includes/install.inc';
   require_once './includes/file.inc';
   require_once './modules/system/system.install';
@@ -316,6 +319,8 @@ function update_main_prepare() {
   $module_list['system']['filename'] = 'modules/system/system.module';
   $module_list['filter']['filename'] = 'modules/filter/filter.module';
   module_list(TRUE, FALSE, FALSE, $module_list);
+  module_implements('', FALSE, TRUE);
+
   drupal_load('module', 'system');
   drupal_load('module', 'filter');
 
@@ -349,10 +354,10 @@ function update_main_prepare() {
 
   // Must unset $theme->status in order to safely rescan and repopulate
   // the system table to ensure we have a full picture of the platform.
-  // This is needed because $theme->status is set to 0 in a call to 
+  // This is needed because $theme->status is set to 0 in a call to
   // list_themes() done by drupal_maintenance_theme().
-  // It is a issue with _system_theme_data() that returns its own cache 
-  // variable and can be modififed by others. When this is fixed in 
+  // It is a issue with _system_theme_data() that returns its own cache
+  // variable and can be modififed by others. When this is fixed in
   // drupal core we can remove this unset.
   // For reference see: http://drupal.org/node/762754
   $themes = _system_theme_data();
@@ -501,4 +506,3 @@ function _update_batch_command($id) {
   update_main_prepare();
   drush_batch_command($id);
 }
-
