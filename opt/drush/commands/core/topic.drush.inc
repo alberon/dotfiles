@@ -37,8 +37,8 @@ function topic_drush_help_alter($command) {
   $implemented = drush_get_commands();
   foreach ($command['topics'] as $topic_name) {
     // We have a related topic. Inject into the $command so the topic displays.
-    $command['sections']['topic_section'] = dt('Topics');
-    $command['topic_section'][$topic_name] = dt($implemented[$topic_name]['description']);
+    $command['sections']['topic_section'] = 'Topics';
+    $command['topic_section'][$topic_name] = $implemented[$topic_name]['description'];
   }
 }
 
@@ -58,7 +58,7 @@ function drush_topic_core_topic($topic_name = NULL) {
       $choices[$key] = $topic['description'];
     }
     natcasesort($choices);
-    if (!$topic_name = drush_choice($choices, dt('Choose a topic'), '!value (!key)')) {
+    if (!$topic_name = drush_choice($choices, dt('Choose a topic'), '!value (!key)', array(5))) {
       return;
     }
   }
@@ -69,6 +69,16 @@ function drush_topic_core_topic($topic_name = NULL) {
     $topic_name = "docs-$topic_name";
   }
   return drush_dispatch($commands[$topic_name]);
+}
+
+/**
+ * A command argument complete callback.
+ *
+ * @return
+ *   Available topic keys.
+ */
+function topic_core_topic_complete() {
+  return array('values' => array_keys(drush_get_topics()));
 }
 
 /**

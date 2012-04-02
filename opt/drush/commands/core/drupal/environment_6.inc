@@ -26,6 +26,19 @@ function drush_get_modules() {
   return $modules;
 }
 
+/**
+ * Returns drupal required modules, including their dependencies.
+ *
+ * A module may alter other module's .info to set a dependency on it.
+ * See for example http://drupal.org/project/phpass
+ */
+function _drush_drupal_required_modules($module_info) {
+  $required = drupal_required_modules();
+  foreach ($required as $module) {
+    $required = array_merge($required, $module_info[$module]->info['dependencies']);
+  }
+  return $required;
+}
 
 /**
  * Return dependencies and its status for modules.
@@ -105,7 +118,7 @@ function drush_module_disable($modules) {
  *   Array of module names
  */
 function drush_module_uninstall($modules) {
-  require_once drush_get_context('DRUSH_DRUPAL_ROOT') . '/includes/install.inc';
+  require_once DRUSH_DRUPAL_CORE . '/includes/install.inc';
   foreach ($modules as $module) {
     drupal_uninstall_module($module);
   }

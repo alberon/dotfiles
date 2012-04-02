@@ -11,10 +11,18 @@ function package_handler_validate() {
   // Check git command exists. Disable possible output.
   $debug = drush_get_context('DRUSH_DEBUG');
   drush_set_context('DRUSH_DEBUG', FALSE);
-  $success = drush_shell_exec('git --version');
+
+  // We need to check for a git executable and then make sure version is >=1.7
+  // (avoid drush_shell_exec because we want to run this even in --simulated mode.)
+  $success = exec('git --version', $git);
+  $git_version_array = explode(" ", $git[0]);
+  $git_version = $git_version_array[2];
+
   drush_set_context('DRUSH_DEBUG', $debug);
   if (!$success) {
     return drush_set_error('DRUSH_SHELL_COMMAND_NOT_FOUND', dt('git executable not found.'));
+  } elseif ($git_version < '1.7') {
+    return drush_set_error('GIT_VERSION_UNSUPPORTED', dt('Your git version !git_version is not supported; please upgrade to git 1.7 or later.', array('!git_version' => $git_version)));
   }
   // Check git_deploy is enabled. Only for bootstrapped sites.
   if (drush_get_context('DRUSH_BOOTSTRAP_PHASE') >= DRUSH_BOOTSTRAP_DRUPAL_FULL) {
@@ -22,6 +30,8 @@ function package_handler_validate() {
       drush_log(dt('git package handler needs git_deploy module enabled to work properly.'), 'warning');
     }
   }
+
+  return TRUE;
 }
 
 /**
@@ -33,19 +43,42 @@ function package_handler_validate() {
  *   The release details array from drupal.org.
  */
 function package_handler_download_project(&$request, $release) {
-  $repository = 'git://git.drupal.org/project/' . $request['name'] . '.git';
+  if ($username = drush_get_option('gitusername')) {
+    // Uses SSH, which enables pushing changes back to git.drupal.org.
+    $repository = $username . '@git.drupal.org:project/' . $request['name'] . '.git';
+  }
+  else {
+    $repository = 'git://git.drupal.org/project/' . $request['name'] . '.git';
+  }
+  $request['repository'] = $repository;
   $tag = $release['tag'];
 
-  if (drush_get_option('cache')) {
-    $gitcache = drush_server_home() . '/.drush/gitcache';
-    drush_gitcache_check($gitcache);
-
-    drush_shell_cd_and_exec($gitcache, 'git remote show');
-    $cached_modules = drush_shell_exec_output();
-
-    if (!in_array($request['name'], $cached_modules)) {
-      drush_gitcache_add_project($gitcache, $request, $repository);
+  // If the --cache option was given, create a new git reference cache of the
+  // remote repository, or update the existing cache to fetch recent changes.
+  if (drush_get_option('cache') && ($cachedir = drush_directory_cache())) {
+    $gitcache = $cachedir . '/git';
+    $projectcache = $gitcache . '/' . $request['name'] . '.git';
+    drush_mkdir($gitcache);
+    // Setup a new cache, if we don't have this project yet.
+    if (!file_exists($projectcache)) {
+      // --mirror works similar to --bare, but retrieves all tags, local
+      // branches, remote branches, and any other refs (notes, stashes, etc).
+      // @see http://stackoverflow.com/questions/3959924
+      $command = 'git clone --mirror';
+      if (drush_get_context('DRUSH_VERBOSE')) {
+        $command .= ' --verbose --progress';
+      }
+      $command .= ' %s %s';
+      drush_shell_cd_and_exec($gitcache, $command, $repository, $request['name'] . '.git');
     }
+    // If we already have this project, update it to speed up subsequent clones.
+    else {
+      // A --mirror clone is fully synchronized with `git remote update` instead
+      // of `git fetch --all`.
+      // @see http://stackoverflow.com/questions/6150188
+      drush_shell_cd_and_exec($projectcache, 'git remote update');
+    }
+    $gitcache = $projectcache;
   }
 
   // Clone the repo into its appropriate target location.
@@ -143,7 +176,7 @@ function package_handler_update_project($request, $release) {
  *
  * Here we add the project as a git submodule.
  */
-function package_handler_post_download($project) {
+function package_handler_post_download($project, $release) {
   if (drush_get_option('gitsubmodule', FALSE)) {
     // Obtain the superproject path, then add as submodule.
     if (drush_shell_cd_and_exec(dirname($project['full_project_path']), 'git rev-parse --show-toplevel')) {
@@ -164,48 +197,66 @@ function package_handler_post_download($project) {
       return drush_set_error('DRUSH_PM_GIT_SUBMODULE_PROBLEMS', dt('Unable to create !project as a git submodule: !dir is not in a Git repository.', array('!project' => $project['name'], '!dir' => dirname($project['full_project_path']))));
     }
   }
+
+  if (drush_get_option('gitinfofile', FALSE)) {
+    $matches = array();
+    if (preg_match('/^(.+).x-dev$/', $release['version'], $matches)) {
+      $full_version = drush_pm_git_drupalorg_compute_rebuild_version($project['project_install_location'], $matches[1]);
+    }
+    else {
+      $full_version = $release['version'];
+    }
+    drush_pm_inject_info_file_metadata($project['project_install_location'], $project['name'], $full_version);
+  }
+
 }
 
 /**
- * Check for gitcache directory or create it.
+ * Helper function to compute the rebulid version string for a project.
  *
- * @param $gitcache
- *   The location of the gitcache directory.
+ * This does some magic in Git to find the latest release tag along
+ * the branch we're packaging from, count the number of commits since
+ * then, and use that to construct this fancy alternate version string
+ * which is useful for the version-specific dependency support in Drupal
+ * 7 and higher.
+ *
+ * NOTE: A similar function lives in git_deploy and in the drupal.org
+ * packaging script (see DrupalorgProjectPackageRelease.class.php inside
+ * drupalorg/drupalorg_project/plugins/release_packager). Any changes to the
+ * actual logic in here should probably be reflected in the other places.
+ *
+ * @param string $project_dir
+ *   The full path to the root directory of the project to operate on.
+ * @param string $branch
+ *   The branch that we're using for -dev. This should only include the
+ *   core version, the dash, and the branch's major version (eg. '7.x-2').
+ *
+ * @return string
+ *   The full 'rebuild version string' in the given Git checkout.
  */
-function drush_gitcache_check($gitcache) {
-  if (is_dir(drush_server_home() . '/.drush')) {
-    drush_mkdir($gitcache);
-    if (!drush_shell_cd_and_exec($gitcache, 'test $(git rev-parse --is-bare-repository) == "true"')) {
-      drush_shell_cd_and_exec($gitcache, 'git init --bare');
-      drush_shell_cd_and_exec($gitcache, 'git config core.compression 1');
+function drush_pm_git_drupalorg_compute_rebuild_version($project_dir, $branch) {
+  $rebuild_version = '';
+  $branch_preg = preg_quote($branch);
+
+  if (drush_shell_cd_and_exec($project_dir, 'git describe --tags')) {
+    $shell_output = drush_shell_exec_output();
+    $last_tag = $shell_output[0];
+    // Make sure the tag starts as Drupal formatted (for eg.
+    // 7.x-1.0-alpha1) and if we are on a proper branch (ie. not master)
+    // then it's on that branch.
+    if (preg_match('/^(?<drupalversion>' . $branch_preg . '\.\d+(?:-[^-]+)?)(?<gitextra>-(?<numberofcommits>\d+-)g[0-9a-f]{7})?$/', $last_tag, $matches)) {
+      // If we found additional git metadata (in particular, number of commits)
+      // then use that info to build the version string.
+      if (isset($matches['gitextra'])) {
+        $rebuild_version = $matches['drupalversion'] . '+' . $matches['numberofcommits'] . 'dev';
+      }
+      // Otherwise, the branch tip is pointing to the same commit as the
+      // last tag on the branch, in which case we use the prior tag and
+      // add '+0-dev' to indicate we're still on a -dev branch.
+      else {
+        $rebuild_version = $last_tag . '+0-dev';
+      }
     }
   }
-}
-
-/**
- * Add a project to the cache.
- *
- * @param $gitcache
- *   The location of the gitcache directory.
- * @param $request
- *   The project array with name, base and full (final) paths.
- * @param $release
- *   The release details array from drupal.org.
- */
-function drush_gitcache_add_project($gitcache, $request, $repository) {
-  // On the first fetch, git will check for common commits with the remote
-  // repository, so to speed this up we initially fetch from a local clone.
-  $tmpdir = drush_tempdir();
-  $command = 'git clone --bare ';
-  if (drush_get_context('DRUSH_VERBOSE')) {
-    $command .= ' --verbose --progress ';
-  }
-  $command .= '%s';
-  if (drush_shell_cd_and_exec($tmpdir, $command, $repository)) {
-    // Temporarily set the remote url to our temporary clone and fetch from there.
-    drush_shell_cd_and_exec($gitcache, 'git remote add %s %s && git fetch %s --tags', $request['name'], $tmpdir, $request['name']);
-
-    // Change the remote URL and fetch normally.
-    drush_shell_cd_and_exec($gitcache, 'git remote set-url %s %s && git fetch %s --tags', $request['name'], $repository, $request['name']);
-  }
+  return $rebuild_version;
 }

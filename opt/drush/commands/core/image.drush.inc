@@ -13,7 +13,7 @@
 function image_drush_command() {
   $items['image-flush'] = array(
     'description' => 'Flush all derived images for a given style.',
-    'core' => array(7),
+    'core' => array('7+'),
     'drupal_dependencies' => array('image'),
     'arguments' => array(
       'style' => 'An image style machine name. If not provided, user may choose from a list of names.',
@@ -30,6 +30,17 @@ function image_drush_command() {
   return $items;
 }
 
+/**
+ * Command argument complete callback.
+ *
+ * @return
+ *   Array of available configuration files for editing.
+ */
+function image_image_flush_complete() {
+  drush_bootstrap(DRUSH_BOOTSTRAP_DRUPAL_FULL);
+  return array('values' => array_keys(image_styles()));
+}
+
 function drush_image_flush($style_name = NULL) {
   if (drush_get_option('all')) {
     drush_image_flush_all();
@@ -42,8 +53,7 @@ function drush_image_flush($style_name = NULL) {
       drush_image_flush_all();
     }
     else {
-      $commands = drush_get_commands();
-      return drush_dispatch($commands['image-flush'], array($style_name));
+      return drush_invoke('image-flush', array($style_name));
     }
   }
   else {

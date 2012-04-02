@@ -7,13 +7,14 @@
  *   To run this *fun* command, execute `sudo drush --include=./examples mmas`
  *   from within your drush directory.
  *
- *   See `drush topic docs-commands` for more information about command authoring. 
+ *   See `drush topic docs-commands` for more information about command authoring.
  *
  *   You can copy this file to any of the following
  *     1. A .drush folder in your HOME folder.
  *     2. Anywhere in a folder tree below an active module on your site.
  *     3. /usr/share/drush/commands (configurable)
  *     4. In an arbitrary folder specified with the --include option.
+ *     5. Drupal's sites/all/drush folder.
  */
 
 /**
@@ -38,10 +39,13 @@ function sandwich_drush_command() {
   $items['make-me-a-sandwich'] = array(
     'description' => "Makes a delicious sandwich.",
     'arguments' => array(
-      'filling' => 'The type of the sandwich (turkey, cheese, etc.)',
+      'filling' => 'The type of the sandwich (turkey, cheese, etc.). Defaults to ascii.',
     ),
     'options' => array(
-      'spreads' => 'Comma delimited list of spreads (e.g. mayonnaise, mustard)',
+      'spreads' => array(
+        'description' => 'Comma delimited list of spreads.',
+        'example-value' => 'mayonnaise,mustard',
+      ),
     ),
     'examples' => array(
       'drush mmas turkey --spreads=ketchup,mustard' => 'Make a terrible-tasting sandwich that is lacking in pickles.',
@@ -49,12 +53,12 @@ function sandwich_drush_command() {
     'aliases' => array('mmas'),
     'bootstrap' => DRUSH_BOOTSTRAP_DRUSH, // No bootstrap at all.
   );
-  
+
   // Commandfiles may also add topics.  These will appear in
   // the list of topics when `drush topic` is executed.
   // To view this topic, run `drush --include=/full/path/to/examples topic`
   $items['sandwich-exposition'] = array(
-    'description' => dt('Ruminations on the true meaning and philosophy of sandwiches.'),
+    'description' => 'Ruminations on the true meaning and philosophy of sandwiches.',
     'hidden' => TRUE,
     'topic' => TRUE,
     'bootstrap' => DRUSH_BOOTSTRAP_DRUSH,
@@ -64,6 +68,8 @@ function sandwich_drush_command() {
 
   return $items;
 }
+
+
 
 /**
  * Implementation of hook_drush_help().
@@ -89,7 +95,7 @@ function sandwich_drush_help($section) {
     // commands in `drush help`.  If a title is not defined,
     // the default is "All commands in ___", with the
     // specific name of the commandfile (e.g. sandwich).
-    // Command files with less than four commands will 
+    // Command files with less than four commands will
     // be placed in the "Other commands" section, _unless_
     // they define a title.  It is therefore preferable
     // to not define a title unless the file defines a lot
@@ -114,9 +120,18 @@ function sandwich_drush_help($section) {
  * for more details.
  */
 function drush_sandwich_make_me_a_sandwich_validate() {
-  $name = posix_getpwuid(posix_geteuid());
-  if ($name['name'] !== 'root') {
-    return drush_set_error('MAKE_IT_YOUSELF', dt('What? Make your own sandwich.'));
+  if (drush_is_windows()) {
+    // $name = getenv('USERNAME');
+    // TODO: implement check for elevated process using w32api
+    // as sudo is not available for Windows
+    // http://php.net/manual/en/book.w32api.php
+    // http://social.msdn.microsoft.com/Forums/en/clr/thread/0957c58c-b30b-4972-a319-015df11b427d
+  }
+  else {
+    $name = posix_getpwuid(posix_geteuid());
+    if ($name['name'] !== 'root') {
+      return drush_set_error('MAKE_IT_YOUSELF', dt('What? Make your own sandwich.'));
+    }
   }
 }
 
@@ -149,6 +164,9 @@ function drush_sandwich_make_me_a_sandwich_validate() {
  */
 function drush_sandwich_make_me_a_sandwich($filling = 'ascii') {
   $str_spreads = '';
+  // Read options with drush_get_options. Note that the options _must_
+  // be documented in the $items structure for this command in the 'command' hook.
+  // See `drush topic docs-commands` for more information.
   if ($spreads = drush_get_option('spreads')) {
     $list = implode(' and ', explode(',', $spreads));
     $str_spreads = ' with just a dash of ' . $list;
@@ -157,5 +175,23 @@ function drush_sandwich_make_me_a_sandwich($filling = 'ascii') {
             array('!filling' => $filling, '!str_spreads' => $str_spreads)
          );
   drush_print("\n" . $msg . "\n");
-  drush_print(file_get_contents(dirname(__FILE__) . '/sandwich.txt'));
+
+  if (drush_get_context('DRUSH_NOCOLOR')) {
+    $filename = dirname(__FILE__) . '/sandwich-nocolor.txt';
+  }
+  else {
+    $filename = dirname(__FILE__) . '/sandwich.txt';
+  }
+  drush_print(file_get_contents($filename));
+}
+
+/**
+ * Command argument complete callback. Provides argument
+ * values for shell completion.
+ *
+ * @return
+ *  Array of popular fillings.
+ */
+function sandwich_make_me_a_sandwich_complete() {
+  return array('values' => array('turkey', 'cheese', 'jelly', 'butter'));
 }
