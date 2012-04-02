@@ -27,6 +27,7 @@
     b = branch
     ba = branch -a
     branches = branch
+    cp = cherry-pick
     ci = commit
     co = checkout
     d = diff
