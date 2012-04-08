@@ -30,8 +30,8 @@
     cp = cherry-pick
     ci = commit
     co = checkout
-    d = diff
-    dc = diff --cached
+    d = diff --find-copies --irreversible-delete
+    dc = diff --cached --find-copies --irreversible-delete
     fe = fetch
     glog = log --graph
     id = log --pretty=format:'ID:    %h%nDate:  %aD%nRefs:%d' --abbrev-commit --date=short -1
