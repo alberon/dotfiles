@@ -1,5 +1,5 @@
 snippet $
-	$('${1}')${2}
+	$('${1}')
 snippet $(f
 	$(function() {
 
@@ -37,11 +37,11 @@ snippet @par
 snippet @ret
 	@return {${1:type}} ${2:description}
 snippet add
-	add('${1:selector}')${2}
+	add('${1:selector}')
 snippet addcls
-	addClass('${1:class name}')${2}
+	addClass('${1:class name}')
 snippet after
-	after('${1:HTML}')${2}
+	after('${1:HTML}')
 snippet ajax
 	$.ajax({
 		url: "${1:/url}",
@@ -125,17 +125,17 @@ snippet ajaxsuccess
 		${1}
 	})
 snippet anim
-	animate({${1:param1: value1, param2: value2}}, ${2:speed})${3}
+	animate({${1:param1: value1, param2: value2}}, ${2:speed})
 snippet append
-	append(${1:'HTML'})${2}
+	append(${1:'HTML'})
 snippet appendto
-	appendTo(${1:'selector'})${2}
+	appendTo(${1:'selector'})
 snippet attr
-	attr('${1:attribute}'${2:, }${3:'value'})${4}
+	attr('${1:attribute}'${2:, }${3:'value'})
 snippet attrm
-	attr({'${1:attr1}': '${2:value1}', '${3:attr2}': '${4:value2}'})${5}
+	attr({'${1:attr1}': '${2:value1}', '${3:attr2}': '${4:value2}'})
 snippet before
-	before(${1:'HTML'})${2}
+	before(${1:'HTML'})
 snippet bind
 	bind('${1:eventname}', function(${2:event}) {
 		${3}
@@ -154,7 +154,7 @@ snippet change
 		${1}
 	})
 snippet children
-	children('${1:selector}')${3}
+	children('${1:selector}')
 snippet cl
 	console.log(${1})
 snippet click
@@ -164,11 +164,11 @@ snippet click
 snippet clone
 	clone()
 snippet contains
-	contains('${1:text to find}')${2}
+	contains('${1:text to find}')
 snippet css
-	css('${1:attribute}', '${2:value}')${3}
+	css('${1:attribute}', '${2:value}')
 snippet cssm
-	css({${1:attribute1}: '${2:value1}', ${3:attribute2}: '${4:value2}'})${5}
+	css({${1:attribute1}: '${2:value1}', ${3:attribute2}: '${4:value2}'})
 snippet dblclick
 	dblclick(function() {
 		${1}
@@ -188,9 +188,8 @@ snippet each
 snippet end
 	end()
 snippet else
-	else {
+	} else {
 		${1}
-	}
 snippet error
 	error(function() {
 		${2}
@@ -200,27 +199,27 @@ snippet f
 		${3}
 	}${2:;}
 snippet fadein
-	fadeIn(${1:'fast'})${2}
+	fadeIn(${1:'fast'})
 snippet fadeinf
 	fadeIn(${1:'fast'}, function() {
 		${2}
 	})
 snippet fadeout
-	fadeOut(${1:'fast'})${2}
+	fadeOut(${1:'fast'})
 snippet fadeoutf
 	fadeOut(${1:'fast'}, function() {
 		${2}
 	})
 snippet fadeto
-	fadeTo(${1:'fast'}, ${2:0.5})${3}
+	fadeTo(${1:'fast'}, ${2:0.5})
 snippet fadetof
 	fadeTo(${1:'fast'}, ${2:0.5}, function() {
 		${3}
 	})
 snippet filter
-	filter('${1:selector}')${2}
+	filter('${1:selector}')
 snippet find
-	find('${1:selector}')${2}
+	find('${1:selector}')
 snippet fn
 	function(${1}) {
 		${2}
@@ -247,17 +246,17 @@ snippet fun
 		${3}
 	}
 snippet get
-	get(${1:index})${2}
+	get(${1:index})
 snippet getid
-	getElementById('${1}')${2}
+	getElementById('${1}')
 snippet gettag
-	getElementsByTagName('${1}')${2}
+	getElementsByTagName('${1}')
 snippet has
 	hasOwnProperty(${1})
 snippet height
-	height(${1})${2}
+	height(${1})
 snippet hide
-	hide(${1:'fast'})${2}
+	hide(${1:'fast'})
 snippet hidef
 	hide(${1:'fast'}, function() {
 		${2}
@@ -272,7 +271,7 @@ snippet hover
 		}
 	)
 snippet html
-	html(${1:'html'})${2}
+	html(${1:'html'})
 snippet if
 	if (${1:true}) {
 		${2}
@@ -284,11 +283,11 @@ snippet ife
 		${3}
 	}
 snippet insaft
-	insertAfter('${1:selector}')${2}
+	insertAfter('${1:selector}')
 snippet insbef
-	insertBefore('${1:selector}')${2}
+	insertBefore('${1:selector}')
 snippet is
-	is('${1:selector}')${2}
+	is('${1:selector}')
 snippet jquery
 	(function($){
 		${1}
@@ -350,9 +349,9 @@ snippet mup
 		${1}
 	})
 snippet next
-	next('${1:selector}')${2}
+	next('${1:selector}')
 snippet not
-	not('${1:selector}')${2}
+	not('${1:selector}')
 snippet once
 	once('${1:eventname}', function() {
 		${2}
@@ -362,15 +361,15 @@ snippet one
 		${2}
 	})
 snippet parent
-	parent(${1:[selector]})${2}
+	parent(${1:[selector]})
 snippet parents
-	parents(${1:[selector]})${2}
+	parents(${1:[selector]})
 snippet prepend
-	prepend(${1:'HTML'})${2}
+	prepend(${1:'HTML'})
 snippet prependto
-	prependTo(${1:'selector'})${2}
+	prependTo(${1:'selector'})
 snippet prev
-	prev(${1:[selector]'})${2}
+	prev(${1:[selector]'})
 snippet proto
 	${1:class_name}.prototype.${2:method_name} = function(${3:first_argument}) {
 		${4:// body...}
@@ -383,13 +382,13 @@ snippet ready
 snippet remove
 	remove()
 snippet removeatt
-	removeAttr('${1}')${2}
+	removeAttr('${1}')
 snippet removeattr
-	removeAttr('${1}')${2}
+	removeAttr('${1}')
 snippet removeclass
-	removeClass('${1}')${2}
+	removeClass('${1}')
 snippet removecls
-	removeClass('${1}')${2}
+	removeClass('${1}')
 snippet reset
 	reset(function() {
 		${1}
@@ -413,7 +412,7 @@ snippet sdf
 		}
 	}
 snippet sdown
-	slideDown(${1:'fast'})${2}
+	slideDown(${1:'fast'})
 snippet sdownf
 	slideDown(${1:'fast'}, function() {
 		${2}
@@ -423,13 +422,13 @@ snippet select
 		${1}
 	})
 snippet show
-	show(${1:'fast'})${2}
+	show(${1:'fast'})
 snippet showf
 	show(${1:'fast'}, function() {
 		${2}
 	})
 snippet sibl
-	siblings('${1:selector}')${2}
+	siblings('${1:selector}')
 snippet sing
 	function ${1:Singleton} (${2:argument}) {
 		// the cached instance
@@ -456,7 +455,7 @@ snippet sing
 snippet size
 	size()
 snippet stoggle
-	slideToggle(${1:'fast'})${2}
+	slideToggle(${1:'fast'})
 snippet stogglef
 	slideToggle(${1:'fast'}, function() {
 		${2}
@@ -466,7 +465,7 @@ snippet submit
 		${1}
 	})
 snippet sup
-	slideUp(${1:'fast'})${2}
+	slideUp(${1:'fast'})
 snippet supf
 	slideUp(${1:'fast'}, function() {
 		${2}
@@ -483,25 +482,25 @@ snippet switch
 snippet t
 	${1:/* condition */} ? ${2:a} : ${3:b}
 snippet text
-	text(${1:'text'})${2}
+	text(${1:'text'})
 snippet this
 	$(this)
 snippet timeout
 	setTimeout(function() {${3}}${2}, ${1:10})
 snippet togclass
-	toggleClass('${1:classname}')${2}
+	toggleClass('${1:classname}')
 snippet togcls
-	toggleClass('${1:classname}')${2}
+	toggleClass('${1:classname}')
 snippet toggle
-	toggle(${1:'fast'})${2}
+	toggle(${1:'fast'})
 snippet togglef
 	toggle(${1:'fast'}, function() {
 		${2}
 	})
 snippet trig
-	trigger('${1:eventname}')${2}
+	trigger('${1:eventname}')
 snippet trim
-	$.trim('${1:string}')${2}
+	$.trim('${1:string}')
 snippet try
 	try {
 		${1:/* code */}
@@ -509,17 +508,17 @@ snippet try
 		${3:/* handle error */}
 	}
 snippet unbind
-	unbind('${1:eventname}')${2}
+	unbind('${1:eventname}')
 snippet val
-	val(${1:[text]})${2}
+	val(${1:[text]})
 snippet wh
 	while (${1:/* condition */}) {
 		${2:/* code */}
 	}
 snippet width
-	width(${1})${2}
+	width(${1})
 snippet wrap
-	wrap(${1:'<div></div>'})${2}
+	wrap(${1:'<div></div>'})
 snippet {
 	{
 		${1}
