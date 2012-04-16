@@ -15,8 +15,8 @@ snippet csrf
 snippet css
 	<%= stylesheet_link_tag '${1}', media: 'all' %>
 snippet do
-	do |${2:object}| %>
-		${3}
+	do |${1:object}| %>
+		${2}
 	<% end
 snippet dump
 	<%= debug ${1} %>
@@ -71,17 +71,15 @@ snippet layout
 		${2}
 	<% end %>
 snippet lt
-	<%= link_to ${1:title}, ${2:root_path} %>
-snippet r Ruby
-	<% ${1} %>
-snippet rc Render collection
-	<%= render ${1} %>
-snippet re Ruby echo
+	<%= link_to ${1} %>
+snippet r Ruby echo
 	<%= ${1} %>
+snippet rc Ruby code
+	<% ${1} %>
 snippet rp Render partial
-	<%= render '${1}' %>
-snippet rt Render template (parent layout)
-	<%= render template: '${1}' %>
+	<%= render partial: '${1}', locals: {${2}} %>
+snippet rn Render partial/model/collection
+	<%= render ${1} %>
 snippet sff
 	<%= simple_form_for ${1:@model} do |${2:f}| %>
 		${3}
