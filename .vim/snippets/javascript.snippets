@@ -5,13 +5,13 @@ snippet $(f
 
 		${1}
 
-	})
+	});
 snippet (f
 	(function(${1:$}) {
 
 		${3}
 
-	}(${2:jQuery}))
+	}(${2:jQuery}));
 snippet --
 	/*------------------------------------------------------------------------------
 	 ${1}
@@ -38,6 +38,8 @@ snippet @ret
 	@return {${1:type}} ${2:description}
 snippet add
 	add('${1:selector}')
+snippet addclass
+	addClass('${1:class name}')
 snippet addcls
 	addClass('${1:class name}')
 snippet after
@@ -60,7 +62,7 @@ snippet ajax
 		error: function() {
 			${7://called when there is an error}
 		},
-	})
+	});
 snippet ajaxerror
 	ajaxError(function(${1:request, settings}) {
 		${2://stuff to do when an AJAX call returns an error}
@@ -69,29 +71,29 @@ snippet ajaxerror
 snippet ajaxget
 	$.get('${1:/path/to/file.xml}', function(xml) {
 		${2}
-	})
+	});
 snippet ajaxgetif
 	$.getIfModified('${1:/path/to/file.cgi}', function(data){
 		${2}
-	})
+	});
 snippet ajaxjson
 	$.getJSON('${1:/path/to/file.cgi}', {${2:/*params*/}}, function(json) {
 		${3}
-	})
+	});
 snippet ajaxpost
 	$.post('${1:/path/to/file.cgi}', {${2:/*params*/}}, function() {
 	    ${3://stuff to do after event occurs}
-	})
+	});
 snippet ajaxscr
-	$.getScript('${1:/path/to/script.js}');${2}
+	$.getScript('${1:/path/to/script.js}');
 snippet ajaxscrf
 	$.getScript('${1:/path/to/script.js}', function() {
 		${2}
-	})
+	});
 snippet ajaxsend
 	ajaxSend(function(${1:request, settings}) {
 		${2://stuff to do when an AJAX call returns an error}
-	})
+	});
 	${3}
 snippet ajaxsetup
 	$.ajaxSetup({
@@ -111,7 +113,7 @@ snippet ajaxsetup
 		error: function() {
 			${7://called when there is an error}
 		},
-	})
+	});
 snippet ajaxstart
 	$.ajaxStart(function() {
 		${1}
@@ -119,11 +121,11 @@ snippet ajaxstart
 snippet ajaxstop
 	$.ajaxStop(function() {
 		${1}
-	})
+	});
 snippet ajaxsuccess
 	$.ajaxSuccess(function() {
 		${1}
-	})
+	});
 snippet anim
 	animate({${1:param1: value1, param2: value2}}, ${2:speed})
 snippet append
@@ -147,8 +149,7 @@ snippet blur
 snippet case
 	case '${1:case}':
 		${2:// code}
-		break
-	${3}
+		break;
 snippet change
 	change(function() {
 		${1}
@@ -156,7 +157,7 @@ snippet change
 snippet children
 	children('${1:selector}')
 snippet cl
-	console.log(${1})
+	console.log(${1});
 snippet click
 	click(function() {
 		${1}
@@ -174,13 +175,13 @@ snippet dblclick
 		${1}
 	})
 snippet debug
-	console.debug(${1})
+	console.debug(${1});
 snippet do
 	do {
 		${2:/* code */}
 	} while (${1:/* condition */})
 snippet dump
-	console.debug(${1})
+	console.debug(${1});
 snippet each
 	each(function(index) {
 		${1:$(this)}
@@ -291,7 +292,7 @@ snippet is
 snippet jquery
 	(function($){
 		${1}
-	})(jQuery)
+	})(jQuery);
 snippet jsonp
 	JSON.parse(${1:jstr})
 snippet jsons
@@ -352,6 +353,10 @@ snippet next
 	next('${1:selector}')
 snippet not
 	not('${1:selector}')
+snippet on
+	on('${1:eventname}',${2} function() {
+		${3}
+	})
 snippet once
 	once('${1:eventname}', function() {
 		${2}
@@ -432,25 +437,25 @@ snippet sibl
 snippet sing
 	function ${1:Singleton} (${2:argument}) {
 		// the cached instance
-		var instance
+		var instance;
 
 		// rewrite the constructor
 		$1 = function $1($2) {
-			return instance
+			return instance;
 		}
 		
 		// carry over the prototype properties
-		$1.prototype = this
+		$1.prototype = this;
 
 		// the instance
-		instance = new $1()
+		instance = new $1();
 
 		// reset the constructor pointer
-		instance.constructor = $1
+		instance.constructor = $1;
 
 		${3:// code ...}
 
-		return instance
+		return instance;
 	}
 snippet size
 	size()
@@ -474,7 +479,7 @@ snippet switch
 	switch(${1:expression}) {
 		case '${3:case}':
 			${4:// code}
-			break
+			break;
 		${5}
 		default:
 			${2:// code}
