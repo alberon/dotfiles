@@ -21,6 +21,12 @@ if has("win32")
     set runtimepath+=$HOME/.vim/after
 endif
 
+" Change out of the c:\windows\system32 directory because NERDtree seems to
+" fail to load (or loads *really* slowly) in that directory
+if getcwd() == $windir . "\\system32"
+    cd $HOME
+endif
+
 " Vim 6.3 doesn't support the autoload syntax, so we have to use execute instead
 if v:version >= 700
 
