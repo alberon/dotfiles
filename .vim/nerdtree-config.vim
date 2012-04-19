@@ -18,3 +18,9 @@ let g:nerdtree_tabs_focus_on_files = 1
 
 " Change working directory to the root automatically
 let g:NERDTreeChDirMode = 2
+
+" Disable automatic open for WinSCP, because the --remote-silent flag causes
+" it to open in the NERDTree window instead of the main window...
+if v:servername == "WINSCP"
+    let g:nerdtree_tabs_open_on_gui_startup = 0
+endif

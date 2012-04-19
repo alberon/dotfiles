@@ -64,7 +64,7 @@ nnoremap <F5> @q
 let mapleader = ","
 
 " Alternate files (a.vim)
-nmap <Leader>a :AT<CR>
+nmap <Leader>a :A<CR>
 
 " Buffers (list and open prompt ready to switch)
 "nmap <Leader>b :buffers<CR>:buffer 

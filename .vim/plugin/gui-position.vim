@@ -1,9 +1,9 @@
 " Maximize GUI window automatically
 function! <SID>SetGuiPos()
 
-    " If there's a .gvimrc_size file use that instead so it can override
+    " If there's a .gvimrc-size file use that instead so it can override
     " this setting
-    let include = $HOME . "/.gvimrc_size"
+    let include = $HOME . "/.vim/.gvimrc-size"
 
     if filereadable(include)
         " e.g.

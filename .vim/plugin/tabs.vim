@@ -1,7 +1,7 @@
 " Show tab bar always
-if v:version >= 700
-    set showtabline=2
-endif
+"if v:version >= 700
+"    set showtabline=2
+"endif
 
 " Ctrl-T to open a new tab
 map <C-t> :tabnew<cr>
