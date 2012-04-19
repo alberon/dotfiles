@@ -15,3 +15,6 @@ let NERDTreeWinSize = 38
 
 " Focus file not tree when switching tabs
 let g:nerdtree_tabs_focus_on_files = 1
+
+" Change working directory to the root automatically
+let g:NERDTreeChDirMode = 2

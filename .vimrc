@@ -116,7 +116,8 @@ command! -range=% -nargs=? ReIndent call <SID>ReIndent(<line1>, <line2>, <f-args
 " http://stackoverflow.com/questions/164847/what-is-in-your-vimrc/652632#652632
 " Added silent! to prevent error messages if the file & directory has been deleted
 "set autochdir
-autocmd BufEnter * execute "silent! chdir ".escape(expand("%:p:h"), ' ')
+" Removed 2012-04-19 because I want paths relative to the project root
+"autocmd BufEnter * execute "silent! chdir ".escape(expand("%:p:h"), ' ')
 
 " Auto-complete (X)HTML tags with Ctrl-Hyphen
 au Filetype * runtime closetag.vim
