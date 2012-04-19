@@ -2,7 +2,7 @@
 nnoremap ; :
 vnoremap ; :
 
-" Ctrl+direction to switch buffers
+" Ctrl+direction to switch windows
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
@@ -11,6 +11,9 @@ nnoremap <C-l> <C-w>l
 " Cycle through buffers
 nnoremap <C-n> :bnext<CR>
 nnoremap <C-p> :bprevious<CR>
+
+" Switch buffer quickly by pressing spacebar
+nnoremap <Space> :buffers<CR>:b 
 
 " Navigate by screen lines rather than file lines
 nnoremap k gk
@@ -49,9 +52,9 @@ endif
 noremap <M-a> <C-a>
 noremap <M-x> <C-x>
 
-" Make spacebar run macro @q (so it can be quickly recorded with 'qq' and then
-" run repeatedly with <Space>)
-nnoremap <Space> @q
+" Make F5 run macro @q (so it can be quickly recorded with 'qq' and then
+" run repeatedly with <F5>)
+nnoremap <F5> @q
 
 "===============================================================================
 " Leader mappings
@@ -61,7 +64,7 @@ nnoremap <Space> @q
 let mapleader = ","
 
 " Alternate files (a.vim)
-nmap <Leader>a :AT<CR>
+nmap <Leader>a :A<CR>
 
 " Buffers (list and open prompt ready to switch)
 "nmap <Leader>b :buffers<CR>:buffer 

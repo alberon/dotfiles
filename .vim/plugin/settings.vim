@@ -78,6 +78,9 @@ set modeline
 " Allow hidden buffers, so I can move between buffers without having to save first
 set hidden
 
+" Use existing window/tab if possible when switching buffers
+set switchbuf=useopen,usetab
+
 " Show the filename in the titlebar when using console vim
 set title
 

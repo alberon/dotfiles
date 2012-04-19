@@ -1,7 +1,7 @@
 " Show tab bar always
-if v:version >= 700
-    set showtabline=2
-endif
+"if v:version >= 700
+"    set showtabline=2
+"endif
 
 " Ctrl-T to open a new tab
 map <C-t> :tabnew<cr>
@@ -9,6 +9,7 @@ nmap <C-t> :tabnew<cr>
 imap <C-t> <ESC>:tabnew<cr>
 
 " Cycle through tabs with Ctrl-Tab as well as Ctrl-PageDn/Up
+" (Removed because Ctrl-Tab is used to cycle windows not tabs now)
 "map <C-Tab> :tabnext<CR>
 "map <C-S-Tab> :tabprev<CR>
 "inoremap <C-Tab> <C-O>:tabnext<CR>
