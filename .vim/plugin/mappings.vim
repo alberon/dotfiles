@@ -124,7 +124,6 @@ nmap <silent> <Leader>h :set hlsearch!<CR>
 
 " Find current file in NERDtree
 nmap <silent> <Leader>n :NERDTreeFind<CR>
-"nmap <silent> <Leader>n <Plug>NERDTreeMirrorToggle<CR>
 
 " Toggle line numbers
 nmap <silent> <Leader>N :set number!<CR>
