@@ -22,7 +22,9 @@ if has("win32")
 endif
 
 " If the file is already open, switch to it
-source $VIMRUNTIME/macros/editexisting.vim
+if !exists("*EditExisting")
+    runtime macros/editexisting.vim
+endif
 
 " Change out of the c:\windows\system32 directory because NERDtree seems to
 " fail to load (or loads *really* slowly) in that directory
