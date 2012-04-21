@@ -66,7 +66,7 @@ set ruler
 " Show selection size
 set showcmd
 
-" Show a menu when autocompleting commands
+" Show list of matches when tab-completing commands
 set wildmenu
 
 " Don't redraw the screen while executing macros, etc.

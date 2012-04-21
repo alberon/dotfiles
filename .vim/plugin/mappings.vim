@@ -66,11 +66,6 @@ let mapleader = ","
 " Alternate files (a.vim)
 nmap <Leader>a :A<CR>
 
-" Buffers (list and open prompt ready to switch)
-"nmap <Leader>b :buffers<CR>:buffer 
-" Buffers (FuzzyFinder)
-nmap <Leader>b :FufBuffer<CR>
-
 " NERD Commenter = <Leader>c* (e.g. c, n, u)
 
 " DirDiff = <Leader>d* (k, j, p, g)
@@ -110,7 +105,9 @@ function! <SID>Browser()
     "  let line = "\"" . (expand("%:p")) . "\""
     "endif
 
-    if line != ""
+    if line == ""
+        echo "No URL found"
+    else
         if has("win32")
             exec ':silent !start firefox.exe "' . line . '"'
         else
@@ -135,14 +132,11 @@ nmap <silent> <Leader>n :NERDTreeFind<CR>
 " Toggle line numbers
 nmap <silent> <Leader>N :set number!<CR>
 
-" Open file
-nmap <silent> <Leader>of :FufFile<CR>
-
 " Open snippets directory
-nmap <silent> <Leader>os :tabedit $HOME/.vim/snippets<CR>
+nmap <silent> <Leader>os :edit $HOME/.vim/snippets<CR>
 
-" Open Vim settings (which I mostly keep in plugins)
-nmap <silent> <Leader>ov :tabedit $HOME/.vim/plugin<CR>
+" Open Vim settings
+nmap <silent> <Leader>ov :edit $HOME/.vim<CR>
 
 " Toggle paste mode
 nmap <silent> <Leader>p :set paste!<CR>
