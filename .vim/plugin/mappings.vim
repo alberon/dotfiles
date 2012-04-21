@@ -122,9 +122,6 @@ nmap <silent> <Leader>ff :call <SID>Browser()<CR>
 " Toggle search highlight
 nmap <silent> <Leader>h :set hlsearch!<CR>
 
-" Insert Date (DDD D MMM YYYY)
-nmap <silent> <Leader>id a<C-R>=strftime("%a %#d %b %Y")<CR>
-
 " Find current file in NERDtree
 nmap <silent> <Leader>n :NERDTreeFind<CR>
 "nmap <silent> <Leader>n <Plug>NERDTreeMirrorToggle<CR>
