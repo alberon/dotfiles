@@ -68,8 +68,6 @@ nmap <Leader>a :A<CR>
 
 " NERD Commenter = <Leader>c* (e.g. c, n, u)
 
-" DirDiff = <Leader>d* (k, j, p, g)
-
 " Delete spaces from otherwise empty lines
 nmap <silent> <Leader>ds :call PreserveCursor('%s/^\s\+$//e')<CR>
 
