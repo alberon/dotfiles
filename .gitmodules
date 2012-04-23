@@ -42,4 +42,4 @@
 	url = git://github.com/jpalardy/vim-slime.git
 [submodule ".vim/bundle/nerdtree-execute"]
 	path = .vim/bundle/nerdtree-execute
-	url = git://github.com/ivalkeen/nerdtree-execute.git
+	url = git://github.com/davejamesmiller/nerdtree-execute.git
