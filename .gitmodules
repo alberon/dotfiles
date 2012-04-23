@@ -40,3 +40,6 @@
 [submodule ".vim/bundle/slime"]
 	path = .vim/bundle/slime
 	url = git://github.com/jpalardy/vim-slime.git
+[submodule ".vim/bundle/nerdtree-execute"]
+	path = .vim/bundle/nerdtree-execute
+	url = git://github.com/ivalkeen/nerdtree-execute.git

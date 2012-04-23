@@ -66,14 +66,37 @@ let mapleader = ","
 " Alternate files (a.vim)
 nmap <Leader>a :A<CR>
 
-" Buffers (list and open prompt ready to switch)
-"nmap <Leader>b :buffers<CR>:buffer 
-" Buffers (FuzzyFinder)
-nmap <Leader>b :FufBuffer<CR>
-
 " NERD Commenter = <Leader>c* (e.g. c, n, u)
 
-" DirDiff = <Leader>d* (k, j, p, g)
+" BufExplorer
+nmap <silent> <Leader>b :call <SID>OpenBufferExplorer()<CR>
+function! s:OpenBufferExplorer()
+
+    " Record which buffer we're currently on
+    let current_buffer = bufnr("%")
+
+    " Do nothing if we're already in Buffer Explorer - otherwise it redraws
+    " with the wrong buffer highlighted
+    if bufname(current_buffer) == "[BufExplorer]"
+        return
+    endif
+
+    " Load Buffer Explorer
+    execute ":BufExplorer"
+
+    " If we're now in a different buffer...
+    if bufnr("%") != current_buffer
+        " Keep a record of the current search
+        let _s=@/
+        " Jump to the buffer number that we were on before
+        silent! execute "/^\\s*" . current_buffer . "\\s\\+"
+        " Jump to the third column (the filename)
+        normal 2W
+        " Reset the search
+        let @/=_s
+    endif
+
+endfunction
 
 " Delete spaces from otherwise empty lines
 nmap <silent> <Leader>ds :call PreserveCursor('%s/^\s\+$//e')<CR>
@@ -110,7 +133,9 @@ function! <SID>Browser()
     "  let line = "\"" . (expand("%:p")) . "\""
     "endif
 
-    if line != ""
+    if line == ""
+        echo "No URL found"
+    else
         if has("win32")
             exec ':silent !start firefox.exe "' . line . '"'
         else
@@ -125,24 +150,17 @@ nmap <silent> <Leader>ff :call <SID>Browser()<CR>
 " Toggle search highlight
 nmap <silent> <Leader>h :set hlsearch!<CR>
 
-" Insert Date (DDD D MMM YYYY)
-nmap <silent> <Leader>id a<C-R>=strftime("%a %#d %b %Y")<CR>
-
 " Find current file in NERDtree
 nmap <silent> <Leader>n :NERDTreeFind<CR>
-"nmap <silent> <Leader>n <Plug>NERDTreeMirrorToggle<CR>
 
 " Toggle line numbers
 nmap <silent> <Leader>N :set number!<CR>
 
-" Open file
-nmap <silent> <Leader>of :FufFile<CR>
-
 " Open snippets directory
-nmap <silent> <Leader>os :tabedit $HOME/.vim/snippets<CR>
+nmap <silent> <Leader>os :edit $HOME/.vim/snippets<CR>
 
-" Open Vim settings (which I mostly keep in plugins)
-nmap <silent> <Leader>ov :tabedit $HOME/.vim/plugin<CR>
+" Open Vim settings
+nmap <silent> <Leader>ov :edit $HOME/.vim<CR>
 
 " Toggle paste mode
 nmap <silent> <Leader>p :set paste!<CR>

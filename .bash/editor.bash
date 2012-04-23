@@ -5,7 +5,7 @@ if $CYGWIN; then
     # Use the complete version of Vim on Windows instead of the cut down version
     # that's included with Git Bash
     for myvim in \
-        "/c/Program Files (x86)/Vim/vim73/vim.exe" \
+        "/c/Program Files \(x86\)/Vim/vim73/vim.exe" \
         "/c/Program Files/Vim/vim73/vim.exe";
     do
         if [ -f "$myvim" ]; then

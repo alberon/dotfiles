@@ -7,20 +7,22 @@ for suffix in split(&suffixes, ',')
 endfor
 let NERDTreeIgnore += ['^.bzr$', '^.git$', '^.hg$', '^.svn$', '^\.$', '^\.\.$', '^Thumbs\.db$']
 
-" Can't move to the right because it breaks the tabs plugin
+" Position on the right
 "let NERDTreeWinPos = 'right'
 
 " Increase tree width slightly
 let NERDTreeWinSize = 38
 
-" Focus file not tree when switching tabs
-let g:nerdtree_tabs_focus_on_files = 1
-
 " Change working directory to the root automatically
 let g:NERDTreeChDirMode = 2
 
-" Disable automatic open for WinSCP, because the --remote-silent flag causes
-" it to open in the NERDTree window instead of the main window...
-if v:servername == "WINSCP"
-    let g:nerdtree_tabs_open_on_gui_startup = 0
+" Don't use for browsing directories because it doesn't work properly when the
+" working directory is a different drive
+let g:NERDTreeHijackNetrw = 0
+
+" Open automatically, except when using CLI, or when editing files in WinSCP
+" (because WinSCP doesn't use a sensible directory structure - every file gets
+" a separate temp directory)
+if has('gui') && v:servername != "WINSCP"
+    autocmd VimEnter * NERDTree | wincmd p
 endif
