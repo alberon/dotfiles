@@ -15,7 +15,11 @@ nnoremap <C-p> :bprevious<CR>
 " Switch buffer quickly by pressing spacebar
 " Note: :b supports tab-completion, and it's much faster than BufExplorer or
 " any or the other plugins I've tried
-nnoremap <Space> :b 
+nmap <Space> :b 
+
+" Ctrl-Space for Buffer Explorer - slower, but easier for browsing the list of
+" open buffers if I can't remember the filename
+nmap <silent> <C-Space> :call MyBufExplorer()<CR>
 
 " Navigate by screen lines rather than file lines
 nnoremap k gk
@@ -71,34 +75,7 @@ nmap <Leader>a :A<CR>
 " NERD Commenter = <Leader>c* (e.g. c, n, u)
 
 " BufExplorer
-nmap <silent> <Leader>b :call <SID>OpenBufferExplorer()<CR>
-function! s:OpenBufferExplorer()
-
-    " Record which buffer we're currently on
-    let current_buffer = bufnr("%")
-
-    " Do nothing if we're already in Buffer Explorer - otherwise it redraws
-    " with the wrong buffer highlighted
-    if bufname(current_buffer) == "[BufExplorer]"
-        return
-    endif
-
-    " Load Buffer Explorer
-    execute ":BufExplorer"
-
-    " If we're now in a different buffer...
-    if bufnr("%") != current_buffer
-        " Keep a record of the current search
-        let _s=@/
-        " Jump to the buffer number that we were on before
-        silent! execute "/^\\s*" . current_buffer . "\\s\\+"
-        " Jump to the third column (the filename)
-        normal 2W
-        " Reset the search
-        let @/=_s
-    endif
-
-endfunction
+nmap <silent> <Leader>b :call MyBufExplorer()<CR>
 
 " Delete spaces from otherwise empty lines
 nmap <silent> <Leader>ds :call PreserveCursor('%s/^\s\+$//e')<CR>
