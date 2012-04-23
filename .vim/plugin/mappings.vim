@@ -13,7 +13,9 @@ nnoremap <C-n> :bnext<CR>
 nnoremap <C-p> :bprevious<CR>
 
 " Switch buffer quickly by pressing spacebar
-nnoremap <Space> :buffers<CR>:b 
+" Note: :b supports tab-completion, and it's much faster than BufExplorer or
+" any or the other plugins I've tried
+nnoremap <Space> :b 
 
 " Navigate by screen lines rather than file lines
 nnoremap k gk
