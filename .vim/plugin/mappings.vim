@@ -2,6 +2,10 @@
 nnoremap ; :
 vnoremap ; :
 
+" Ctrl+tab to switch windows
+nnoremap <C-Tab> <C-w>w
+nnoremap <C-S-Tab> <C-w>p
+
 " Ctrl+direction to switch windows
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
