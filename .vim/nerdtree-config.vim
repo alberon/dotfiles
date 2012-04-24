@@ -20,6 +20,9 @@ let g:NERDTreeChDirMode = 2
 " working directory is a different drive
 let g:NERDTreeHijackNetrw = 0
 
+" Change help key from ? to F1 so that ? can be used for searching
+let g:NERDTreeMapHelp = '<F1>'
+
 " Open automatically, except when using CLI, or when editing files in WinSCP
 " (because WinSCP doesn't use a sensible directory structure - every file gets
 " a separate temp directory)
