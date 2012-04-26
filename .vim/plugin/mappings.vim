@@ -190,6 +190,10 @@ nmap <Leader>T :setlocal expandtab!<CR>
 " Write
 nmap <silent> <Leader>w :w<CR>
 
+" Explorer (current file directory, or current working directory)
+nmap <silent> <Leader>x :silent !start explorer %:p:h<CR>
+nmap <silent> <Leader>X :silent !start explorer .<CR>
+
 " Graphical undo
 nmap <silent> <Leader>z :GundoToggle<CR>
 
