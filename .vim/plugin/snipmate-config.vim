@@ -12,6 +12,7 @@ if v:version >= 700
         \   'eco':      'html',
         \   'eruby':    'html',
         \   'html':     'htmlonly',
+        \   'less':     'css',
         \   'mxml':     'actionscript',
         \   'objc':     'c',
         \   'php':      'html',
