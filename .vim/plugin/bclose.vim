@@ -1,5 +1,5 @@
 " http://vim.wikia.com/wiki/Deleting_a_buffer_without_closing_the_window
-function s:Bclose(kwbdStage)
+function! s:Bclose(kwbdStage)
   if(a:kwbdStage == 1)
     if(!buflisted(winbufnr(0)))
       bd!
@@ -39,9 +39,9 @@ function s:Bclose(kwbdStage)
       execute "bd! " . s:kwbdBufNum
     endif
     if(!s:buflistedLeft)
-      set buflisted
-      set bufhidden=delete
-      set buftype=
+      setlocal buflisted
+      setlocal bufhidden=delete
+      setlocal buftype=
       setlocal noswapfile
     endif
   else
@@ -57,7 +57,4 @@ function s:Bclose(kwbdStage)
 endfunction
 
 command! Bclose call s:Bclose(1)
-nnoremap <silent> <Plug>Bclose :<C-u>Bclose<CR>
-
-" Create a mapping (e.g. in your .vimrc) like this:
-nmap <Leader>bd <Plug>Bclose
+nmap <Leader>bd :<C-u>Bclose<CR>
