@@ -19,7 +19,10 @@ nnoremap <C-p> :bprevious<CR>
 " Switch buffer quickly by pressing spacebar
 " Note: :b supports tab-completion, and it's much faster than BufExplorer or
 " any or the other plugins I've tried
-nmap <Space> :b 
+"nmap <Space> :b 
+" ... Going to try Ctrl-P for a while - but only for buffers because the file
+" search takes ages to load
+nmap <Space> :CtrlPBuffer<CR>
 
 " Ctrl-Space for Buffer Explorer - slower, but easier for browsing the list of
 " open buffers if I can't remember the filename
