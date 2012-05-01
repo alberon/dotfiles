@@ -4,12 +4,16 @@ snippet $
 	{$${1}}
 snippet '
 	'${1}'${2}
+snippet dump
+	{$${1}|var_dump}
 snippet html
 	`snipMateCustom#HTML()`
 snippet {*
 	{* ${1} *}
 snippet {
-	{ldelim}
+	{
+		${1}
+	}
 snippet {alternator
 	{alternator name=${1:name} 1=${2:value}}${3}
 snippet {assign
@@ -122,5 +126,3 @@ snippet {wrap
 	{/wrap}
 snippet {year_range
 	{year_range start=${1:start}${2: end=}${3:[end]}}
-snippet }
-	{rdelim}
