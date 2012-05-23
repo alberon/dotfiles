@@ -114,7 +114,7 @@ endif
 
 " Show tabs and trailing spaces...
 set list
-set listchars=tab:>\ ,trail:.
+set listchars=tab:-\ ,trail:.
 
 " Except in snippet files because they have to use tabs
 au FileType snippet,snippets setl listchars+=tab:\ \ 
