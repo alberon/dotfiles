@@ -1,11 +1,21 @@
 if $HAS_TERMINAL; then
 
+    function prompthostname {
+        if [ -f ~/.hostname ]; then
+            cat ~/.hostname
+        elif [ "$1" = "init" ]; then
+            hostname -s
+        else
+            echo '\h'
+        fi
+    }
+
     # Set the titlebar & prompt to "[user@host:/full/path]\n$"
     case "$TERM" in
         xterm*)
             Titlebar="\u@\h:\$PWD"
             # Set titlebar now, before SSH key is requested, for KeePass
-            echo -ne "\e]2;$USER@$(hostname -s):$PWD\a"
+            echo -ne "\e]2;$USER@$(prompthostname init):$PWD\a"
             ;;
         *)
             Titlebar=""
@@ -86,18 +96,18 @@ if $HAS_TERMINAL; then
         fi
 
         # Set the prompt
-        PS1="${TitlebarCode}\n"                 # Titlebar (see above)
-        PS1="${PS1}${MessageCode}"              # Message (see above)
-        PS1="${PS1}\[\e[30;1m\]["               # [                             Grey
-        PS1="${PS1}\[\e[31;1m\]\u"              # Username                      Red
-        PS1="${PS1}\[\e[30;1m\]@"               # @                             Grey
-        PS1="${PS1}\[\e[32;1m\]\h"              # Hostname                      Green
-        PS1="${PS1}\[\e[30;1m\]:"               # :                             Grey
-        PS1="${PS1}\[\e[33;1m\]\`vcsprompt\`"   # Working directory / Git / Hg  Yellow
-        PS1="${PS1}\[\e[30;1m\]]"               # ]                             Grey
-        PS1="${PS1}\[\e[1;35m\]\$KeyStatus"     # SSH key status                Pink
-        PS1="${PS1}\n"                          # (New line)
-        PS1="${PS1}\[\e[31;1m\]\\\$"            # $                             Red
+        PS1="${TitlebarCode}\n"                     # Titlebar (see above)
+        PS1="${PS1}${MessageCode}"                  # Message (see above)
+        PS1="${PS1}\[\e[30;1m\]["                   # [                             Grey
+        PS1="${PS1}\[\e[31;1m\]\u"                  # Username                      Red
+        PS1="${PS1}\[\e[30;1m\]@"                   # @                             Grey
+        PS1="${PS1}\[\e[32;1m\]$(prompthostname)"   # Hostname                      Green
+        PS1="${PS1}\[\e[30;1m\]:"                   # :                             Grey
+        PS1="${PS1}\[\e[33;1m\]\`vcsprompt\`"       # Working directory / Git / Hg  Yellow
+        PS1="${PS1}\[\e[30;1m\]]"                   # ]                             Grey
+        PS1="${PS1}\[\e[1;35m\]\$KeyStatus"         # SSH key status                Pink
+        PS1="${PS1}\n"                              # (New line)
+        PS1="${PS1}\[\e[31;1m\]\\\$"                # $                             Red
         PS1="${PS1}\[\e[0m\] "
     }
 
