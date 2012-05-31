@@ -13,7 +13,7 @@ if $HAS_TERMINAL; then
     # Set the titlebar & prompt to "[user@host:/full/path]\n$"
     case "$TERM" in
         xterm*)
-            Titlebar="\u@\h:\$PWD"
+            Titlebar="\u@$(prompthostname):\$PWD"
             # Set titlebar now, before SSH key is requested, for KeePass
             echo -ne "\e]2;$USER@$(prompthostname init):$PWD\a"
             ;;
