@@ -68,6 +68,7 @@ noremap <M-x> <C-x>
 " Make F5 run macro @q (so it can be quickly recorded with 'qq' and then
 " run repeatedly with <F5>)
 nnoremap <F5> @q
+vnoremap <F5> @q
 
 "===============================================================================
 " Leader mappings
