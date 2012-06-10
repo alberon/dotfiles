@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Remind me to use icotool instead of png2ico, since that's what's provided by Debian
+echo "Not installed - try this instead:"
+echo
+echo "  icotool -c favicon.png > favicon.ico" >&2
+exit 1
