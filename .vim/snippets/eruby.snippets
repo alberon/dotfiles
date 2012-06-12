@@ -64,6 +64,8 @@ snippet ife
 	<% else %>
 		
 	<% end %>
+snippet img
+	<%= image_tag '${1}', size: '${2:W}x${3:H}', alt: '${4}' %>
 snippet input
 	<%= ${1:f}.input ${2::field} %>
 snippet js
