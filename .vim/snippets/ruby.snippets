@@ -85,6 +85,8 @@ snippet ns
 	namespace :${1} do
 		${2}
 	end
+snippet pry
+	binding.${1:remote_}pry${2}
 snippet r
 	attr_reader :${1}
 snippet rt
@@ -104,5 +106,7 @@ snippet transaction
 	end
 snippet vpo
 	validates :${1:field}, presence: ${2:true}
+snippet vuo
+	validates :${1:field}, uniqueness: ${2:true}
 snippet w
 	attr_writer :${1}
