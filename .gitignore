@@ -17,7 +17,9 @@
 !/.gitconfig
 !/.gitignore
 !/.gitignore-global
+!/.irbrc
 !/.railsrc
+!/.railsrc-x
 !/.rdebugrc
 
 # Don't ignore the RVM after_cd hook
