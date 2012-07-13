@@ -42,3 +42,6 @@
 /bin/gitolite*
 /bin/gl-*
 /bin/sshkeys-lint
+
+# Ignore Drush cache
+/.drush/cache
