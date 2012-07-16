@@ -3,7 +3,9 @@
 IRB.conf[:PROMPT_MODE] = :SIMPLE
 
 begin
-  require 'irbtools'
+  require 'irbtools/configure'
+  Irbtools.railsrc = false
+  Irbtools.start
 rescue LoadError
   if defined? Rails
     puts "Note: IRB Tools is not in Gemfile (gem 'irbtools', require: false)"
