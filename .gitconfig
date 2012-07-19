@@ -33,6 +33,7 @@
     d = diff            #--find-copies --irreversible-delete
     dc = diff --cached  #--find-copies --irreversible-delete
     fe = fetch
+    g = grep
     glog = log --graph
     id = log --pretty=format:'ID:    %h%nDate:  %aD%nRefs:%d' --abbrev-commit --date=short -1
     ignored = ls-files --others -i --exclude-standard --directory
