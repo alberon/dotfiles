@@ -138,7 +138,7 @@ if v:version >= 700
 endif
 
 " Sort CSS properties alphabetically
-command! SortCSS silent! call PreserveCursor("normal \"?{<CR>jV/^\s*\}<CR>k:sort<CR>\"")
+command! SortCSS silent! call PreserveCursor("?{?+1,/}/-1sort")
 
 " Sort .snippets files alphabetically
 if v:version >= 700
