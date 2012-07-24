@@ -49,3 +49,6 @@
 [submodule ".vim/bundle/git"]
 	path = .vim/bundle/git
 	url = git://github.com/tpope/vim-git.git
+[submodule ".vim/bundle/yankring"]
+	path = .vim/bundle/yankring
+	url = git://github.com/vim-scripts/YankRing.vim.git
