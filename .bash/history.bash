@@ -11,4 +11,7 @@ if $HAS_TERMINAL; then
     shopt -s histappend
     PROMPT_COMMAND='history -a'
 
+    # History with additional time information
+    alias history-time='HISTTIMEFORMAT="[%Y-%m-%d %H:%M:%S] " history'
+
 fi
