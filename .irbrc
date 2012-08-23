@@ -14,7 +14,11 @@ rescue LoadError
   end
 end
 
-def vim(object = TOPLEVEL_BINDING, method_name)
+def vim(object, method_name = nil)
+  # This is for Ruby 1.8 support:
+  if method_name.nil?
+    object, method_name = TOPLEVEL_BINDING, object
+  end
   file, line = object.method(method_name).source_location
   Kernel.system('vim', file, "+#{line}")
 end
