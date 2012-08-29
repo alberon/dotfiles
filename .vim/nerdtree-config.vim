@@ -5,7 +5,7 @@ let NERDTreeIgnore = []
 for suffix in split(&suffixes, ',')
     let NERDTreeIgnore += [ escape(suffix, '.~') . '$' ]
 endfor
-let NERDTreeIgnore += ['^.bundle$', '^.bzr$', '^.git$', '^.hg$', '^.svn$', '^\.$', '^\.\.$', '^Thumbs\.db$']
+let NERDTreeIgnore += ['^\.bundle$', '^\.bzr$', '^\.git$', '^\.hg$', '^\.sass-cache$', '^\.svn$', '^\.$', '^\.\.$', '^Thumbs\.db$']
 
 " Position on the right
 "let NERDTreeWinPos = 'right'
