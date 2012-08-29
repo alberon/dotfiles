@@ -5,7 +5,7 @@ for bin in $HOME/opt/*/bin; do
     PATH="$bin:$PATH"
 done
 
-PATH="$HOME/local/bin:$PATH:$HOME/bin"
+PATH="$HOME/local/bin:$PATH:$HOME/bin:$HOME/.rvm/bin"
 
 export PATH
 
