@@ -26,7 +26,8 @@ else
 fi
 
 # Find path to gvim
-gvim=`which gvim 2>/dev/null`
+#gvim=`which gvim 2>/dev/null`
+gvim=
 
 if [ -n "$gvim" -a -n "$DISPLAY" ]; then
 
