@@ -51,21 +51,29 @@ if $HAS_TERMINAL; then
     #export -f c
 
     # Various shortcuts for `ls`
+    # ls, lsa   = short format
+    # l,  la    = long format
+    # ll, lla   = long format (deprecated)
     alias ls='ls -hF --color=always'
+    alias lsa='ls -hFA --color=always'
+
+    alias l='ls -hFl --color=always'
     alias ll='ls -hFl --color=always'
-    alias la='ls -hFA --color=always'
+
+    #alias la='ls -hFA --color=always'
+    alias la='ls -hFlA --color=always'
     alias lla='ls -hFlA --color=always'
 
-    function l {
-        if [ -z "$*" ]; then
-            # Show current directory name above the listing
-            c .
-        else
-            # If there's any other options I can't be bothered to parse them
-            # so just pass them to ls
-            ls "$@"
-        fi
-    }
+    #function l {
+    #    if [ -z "$*" ]; then
+    #        # Show current directory name above the listing
+    #        c .
+    #    else
+    #        # If there's any other options I can't be bothered to parse them
+    #        # so just pass them to ls
+    #        ls "$@"
+    #    fi
+    #}
 
     # Unset the colours that are sometimes set (e.g. Joshua)
     export LS_COLORS=

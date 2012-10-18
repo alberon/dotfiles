@@ -25,7 +25,7 @@ fi
 # *After* doing the rest, show the current directory contents, except in
 # Git Bash home directory - there's a load of system files in there
 if $HAS_TERMINAL && ! ($WINDOWS && [ "$PWD" = "$HOME" ]); then
-    l
+    c .
 fi
 
 # Git Bash loads this file *and* .bash_profile so set a flag to tell
