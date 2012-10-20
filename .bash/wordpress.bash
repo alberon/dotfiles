@@ -24,7 +24,7 @@ function cwt {
     wp_root=$(find_wordpress_wp_content) || return
     if [ -d $wp_root/themes ]; then
         wp_theme=$(find $wp_root/themes -mindepth 1 -maxdepth 1 -type d -not -name twentyten -not -name twentyeleven)
-        if [ $(echo "$possible_themes" | wc -l) -eq 1 ]; then
+        if [ $(echo "$wp_theme" | wc -l) -eq 1 ]; then
             # Only 1 non-default theme found - assume we want that
             c $wp_theme
         else
