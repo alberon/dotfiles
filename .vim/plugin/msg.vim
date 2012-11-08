@@ -25,8 +25,15 @@ function! UpdateVimTitleString()
         let &titlestring .= "[" . g:vim_session_name . "] "
     endif
 
-    " Filename (Path)
-    let &titlestring .= expand("%:t") . " (".expand("%:p:h") . ")"
+    " Filename
+    if expand("%:t") != ""
+        let &titlestring .= expand("%:t")
+    else
+        let &titlestring .= "[No Name]"
+    endif
+
+    " (Path)
+    let &titlestring .= " (".expand("%:p:h") . ")"
 
     " - GVIM1
     if exists ("v:servername") && v:servername != ""
