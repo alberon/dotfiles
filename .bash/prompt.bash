@@ -83,9 +83,11 @@ if $HAS_TERMINAL; then
     {
         # Display the provided message above the prompt and in the titlebar
         if [ -n "$*" ]; then
+            PromptMessage="$1"
             MessageCode="\e[35;1m--------------------------------------------------------------------------------\n $*\n--------------------------------------------------------------------------------\e[0m\n"
             TitlebarCode="\[\e]2;[$*] $Titlebar\a\]"
         else
+            PromptMessage=
             MessageCode=
             TitlebarCode="\[\e]2;$Titlebar\a\]"
         fi

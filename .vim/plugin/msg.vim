@@ -41,4 +41,8 @@ function! UpdateVimTitleString()
     endif
 endfunction
 
+if $PromptMessage != ""
+    call SetVimTitle($PromptMessage)
+endif
+
 call UpdateVimTitleString()
