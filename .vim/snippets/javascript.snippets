@@ -239,12 +239,12 @@ snippet do
 snippet dump
 	console.debug(${1});
 snippet each
-	each(function(index) {
-		${1:$(this)}
+	each(function() {
+		var $${1:this} = $(this);${2}
 	})
 snippet each;
-	each(function(index) {
-		${1:$(this)}
+	each(function() {
+		var $${1:this} = $(this);${2}
 	});
 snippet end
 	end()
