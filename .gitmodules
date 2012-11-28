@@ -42,7 +42,7 @@
 	url = git://github.com/jpalardy/vim-slime.git
 [submodule ".vim/bundle/nerdtree-execute"]
 	path = .vim/bundle/nerdtree-execute
-	url = git://github.com/davejamesmiller/nerdtree-execute.git
+	url = git://github.com/ivalkeen/nerdtree-execute.git
 [submodule ".vim/bundle/ctrlp"]
 	path = .vim/bundle/ctrlp
 	url = git://github.com/kien/ctrlp.vim.git
