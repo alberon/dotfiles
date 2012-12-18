@@ -61,6 +61,10 @@ if version >= 700
     xnoremap > >gv
 endif
 
+" Swap two text blocks by deleting the first block then visually selecting the
+" second block and pressing x (mneumonic: eXchange)
+vnoremap x <Esc>`.``gvP``P
+
 " Make increment/decrement work in Windows using alt
 noremap <M-a> <C-a>
 noremap <M-x> <C-x>
