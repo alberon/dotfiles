@@ -1,7 +1,14 @@
 export VISUAL=vim
 export EDITOR=vim
 
-if $CYGWIN; then
+if $MAC; then
+
+    if which mvim 2>/dev/null; then
+        alias gvim=mvim
+        export VISUAL=mvim
+    fi
+
+elif $CYGWIN; then
     # Use the complete version of Vim on Windows instead of the cut down version
     # that's included with Git Bash
     for vimpath in \

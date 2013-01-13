@@ -160,6 +160,14 @@ if v:version >= 700
     command! SortSnippets silent! call PreserveCursor("call <SID>SortSnippets()")
 endif
 
+" Load local config
+let include = $HOME . "/.vimrc_local"
+
+if filereadable(include)
+    exe "source " . include
+endif
+
+
 "===============================================================================
 " Finish the autocommands group
 augroup END

@@ -5,6 +5,10 @@ for bin in $HOME/opt/*/bin; do
     PATH="$bin:$PATH"
 done
 
+if $MAC && [ -e /Applications/MacVim.app ]; then
+    PATH="$HOME/.vim/mac-bin:$PATH"
+fi
+
 PATH="$HOME/local/bin:$PATH:$HOME/bin:$HOME/.rvm/bin"
 
 export PATH
