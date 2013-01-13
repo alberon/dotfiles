@@ -1,7 +1,10 @@
-# Detect Git Bash (Windows)
+# Detect operating system
+WINDOWS=false
+MAC=false
+
 case "`uname`" in
-  MINGW32*) WINDOWS=true  ;;
-  *)        WINDOWS=false ;;
+    MINGW32*) WINDOWS=true  ;;
+    Darwin)   MAC=true ;;
 esac
 
 # Detect whether there's a terminal (rather than a command like scp),

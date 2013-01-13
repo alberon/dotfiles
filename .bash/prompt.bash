@@ -15,7 +15,7 @@ if $HAS_TERMINAL; then
         xterm*)
             Titlebar="\u@$(prompthostname):\$PWD"
             # Set titlebar now, before SSH key is requested, for KeePass
-            echo -ne "\e]2;$USER@$(prompthostname init):$PWD\a"
+            echo -ne "\033]2;$USER@$(prompthostname init):$PWD\a"
             ;;
         *)
             Titlebar=""
@@ -30,15 +30,15 @@ if $HAS_TERMINAL; then
         # that's closer to us if they're nested
         root=$(pwd 2>/dev/null)
         while [ ! -e "$root/.git" -a ! -e "$root/.hg" ]; do
-          if [ "$root" = "" ]; then break; fi
-          root=${root%/*}
+            if [ "$root" = "" ]; then break; fi
+            root=${root%/*}
         done
 
         if [ -e "$root/.git" ]; then
             # Git
             relative=${PWD#$root}
             if [ "$relative" != "$PWD" ]; then
-                echo -en "$root\e[36;1m$relative"
+                echo -en "$root\033[36;1m$relative"
                 #         ^yellow  ^aqua
             else
                 echo -n $PWD
@@ -48,25 +48,25 @@ if $HAS_TERMINAL; then
             # Show the branch name / tag / id
             branch=`git branch --no-color 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
             if [ -n "$branch" -a "$branch" != "(no branch)" ]; then
-                echo -e "\e[30;1m on \e[35;1m$branch \e[0m(git)\e[30;1m"
+                echo -e "\033[30;1m on \033[35;1m$branch \033[0m(git)\033[30;1m"
                 #        ^grey       ^pink           ^light grey  ^ grey
             else
                 tag=`git describe --always 2>/dev/null`
                 if [ -z "$tag" ]; then
                     tag="(unknown)"
                 fi
-                echo -e "\e[30;1m at \e[35;1m$tag \e[0m(git)\e[30;1m"
+                echo -e "\033[30;1m at \033[35;1m$tag \033[0m(git)\033[30;1m"
                 #        ^grey       ^pink        ^light grey  ^ grey
             fi
         elif [ -e "$root/.hg" ]; then
-            HgPrompt=`hg prompt "{root}@@@\e[30;1m on \e[35;1m{branch} \e[0m(hg)\e[30;1m" 2>/dev/null`
+            HgPrompt=`hg prompt "{root}@@@\033[30;1m on \033[35;1m{branch} \033[0m(hg)\033[30;1m" 2>/dev/null`
             #                             ^grey       ^pink            ^light grey  ^ grey
             if [ $? -eq 0 ]; then
                 # A bit of hackery so we don't have to run hg prompt twice (it's slow)
                 root=${HgPrompt/@@@*}
                 prompt=${HgPrompt/*@@@}
                 relative=${PWD#$root}
-                echo -e "$root\e[0;1m$relative$prompt"
+                echo -e "$root\033[0;1m$relative$prompt"
                 #        ^yellow     ^white
             else
                 # Probably hg prompt isn't installed
@@ -84,12 +84,12 @@ if $HAS_TERMINAL; then
         # Display the provided message above the prompt and in the titlebar
         if [ -n "$*" ]; then
             PromptMessage="$1"
-            MessageCode="\e[35;1m--------------------------------------------------------------------------------\n $*\n--------------------------------------------------------------------------------\e[0m\n"
-            TitlebarCode="\[\e]2;[$*] $Titlebar\a\]"
+            MessageCode="\033[35;1m--------------------------------------------------------------------------------\n $*\n--------------------------------------------------------------------------------\033[0m\n"
+            TitlebarCode="\[\033]2;[$*] $Titlebar\a\]"
         else
             PromptMessage=
             MessageCode=
-            TitlebarCode="\[\e]2;$Titlebar\a\]"
+            TitlebarCode="\[\033]2;$Titlebar\a\]"
         fi
 
         # If changing the titlebar is not supported, remove that code
@@ -100,17 +100,17 @@ if $HAS_TERMINAL; then
         # Set the prompt
         PS1="${TitlebarCode}\n"                     # Titlebar (see above)
         PS1="${PS1}${MessageCode}"                  # Message (see above)
-        PS1="${PS1}\[\e[30;1m\]["                   # [                             Grey
-        PS1="${PS1}\[\e[31;1m\]\u"                  # Username                      Red
-        PS1="${PS1}\[\e[30;1m\]@"                   # @                             Grey
-        PS1="${PS1}\[\e[32;1m\]$(prompthostname)"   # Hostname                      Green
-        PS1="${PS1}\[\e[30;1m\]:"                   # :                             Grey
-        PS1="${PS1}\[\e[33;1m\]\`vcsprompt\`"       # Working directory / Git / Hg  Yellow
-        PS1="${PS1}\[\e[30;1m\]]"                   # ]                             Grey
-        PS1="${PS1}\[\e[1;35m\]\$KeyStatus"         # SSH key status                Pink
+        PS1="${PS1}\[\033[30;1m\]["                   # [                             Grey
+        PS1="${PS1}\[\033[31;1m\]\u"                  # Username                      Red
+        PS1="${PS1}\[\033[30;1m\]@"                   # @                             Grey
+        PS1="${PS1}\[\033[32;1m\]$(prompthostname)"   # Hostname                      Green
+        PS1="${PS1}\[\033[30;1m\]:"                   # :                             Grey
+        PS1="${PS1}\[\033[33;1m\]\`vcsprompt\`"       # Working directory / Git / Hg  Yellow
+        PS1="${PS1}\[\033[30;1m\]]"                   # ]                             Grey
+        PS1="${PS1}\[\033[1;35m\]\$KeyStatus"         # SSH key status                Pink
         PS1="${PS1}\n"                              # (New line)
-        PS1="${PS1}\[\e[31;1m\]\\\$"                # $                             Red
-        PS1="${PS1}\[\e[0m\] "
+        PS1="${PS1}\[\033[31;1m\]\\\$"                # $                             Red
+        PS1="${PS1}\[\033[0m\] "
     }
 
     # Default to prompt with no message

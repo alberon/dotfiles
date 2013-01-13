@@ -6,7 +6,7 @@
 # branch2 defaults to HEAD
 
 function help {
-    echo -e "\e[36m$1\e[0m"
+    echo -e "\033[36m$1\e[0m"
 }
 
 if [ $# -lt 2 ]; then

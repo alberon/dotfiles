@@ -39,28 +39,35 @@ if $HAS_TERMINAL; then
 
         # Output the path
         echo
-        echo -en "\e[4;1m"
+        echo -en "\033[4;1m"
         echo $PWD
-        echo -en "\e[0m"
+        echo -en "\033[0m"
 
         # Then pass the rest to ls (just in case we have any use for that!)
-        ls -h --color=always "$@"
+        ls -hF $ls_opts "$@"
 
     }
+
+    # Need some different options for Mac
+    if $MAC; then
+        ls_opts='-G'
+    else
+        ls_opts='--color=always'
+    fi
 
     # Various shortcuts for `ls`
     # ls, lsa   = short format
     # l,  la    = long format
     # ll, lla   = long format (deprecated)
-    alias ls='ls -hF --color=always'
-    alias lsa='ls -hFA --color=always'
+    alias ls="ls -hF $ls_opts"
+    alias lsa="ls -hFA $ls_opts"
 
-    alias l='ls -hFl --color=always'
-    alias la='ls -hFlA --color=always'
+    alias l="ls -hFl $ls_opts"
+    alias la="ls -hFlA $ls_opts"
 
     # Old aliases
-    alias ll='echo -e "\n\e[31mREMINDER: Use \`l\` instead of \`ll\`\e[0m\n"; l'
-    alias lla='echo -e "\n\e[31mREMINDER: Use \`la\` instead of \`lla\`\e[0m\n"; la'
+    alias ll='echo -e "\n\033[31mREMINDER: Use \`l\` instead of \`ll\`\033[0m\n"; l'
+    alias lla='echo -e "\n\033[31mREMINDER: Use \`la\` instead of \`lla\`\033[0m\n"; la'
 
     # Unset the colours that are sometimes set (e.g. Joshua)
     export LS_COLORS=
