@@ -28,7 +28,8 @@
     ba = branch -a
     branches = branch
     cp = cherry-pick
-    ci = commit -m
+    ci = commit
+    cim = commit -m
     co = checkout
     d = diff            #--find-copies --irreversible-delete
     dc = diff --cached  #--find-copies --irreversible-delete
