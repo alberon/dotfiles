@@ -1,7 +1,13 @@
 if $HAS_TERMINAL; then
 
     # s=sudo
-    alias s='sudo'
+    s() {
+        if [[ $# == 0 ]]; then
+            sudo $(history -p '!!')
+        else
+            sudo "$@"
+        fi
+    }
 
     # se. = se . (sudoedit - browse current directory)
     alias se.="se ."
