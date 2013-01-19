@@ -32,7 +32,7 @@ if $HAS_TERMINAL; then
     PATH="$PATH:/usr/local/sbin:/usr/sbin:/sbin"
 
     # Add additional safety checks for cp, mv, rm
-    function sudo {
+    sudo() {
         if [ "$1" = "cp" -o "$1" = "mv" -o "$1" = "rm" ]; then
             exe="$1"
             shift

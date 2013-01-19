@@ -1,6 +1,6 @@
 if $HAS_TERMINAL; then
 
-    function prompthostname {
+    prompthostname() {
         if [ -f ~/.hostname ]; then
             cat ~/.hostname
         elif [ "$1" = "init" ]; then
@@ -23,7 +23,7 @@ if $HAS_TERMINAL; then
     esac
 
     # Git/Mercurial prompt
-    function vcsprompt
+    vcsprompt()
     {
         # Walk up the tree looking for a .git or .hg directory
         # This is faster than trying each in turn and means we get the one
@@ -79,7 +79,7 @@ if $HAS_TERMINAL; then
     }
 
     # Function to update the prompt with a given message (makes it easier to distinguish between different windows)
-    function MSG
+    MSG()
     {
         # Display the provided message above the prompt and in the titlebar
         if [ -n "$*" ]; then
@@ -119,7 +119,7 @@ if $HAS_TERMINAL; then
 else
 
     # Prevent errors when MSG is set in .bashrc_local
-    function MSG {
+    MSG() {
         : Do nothing
     }
 

@@ -1,4 +1,4 @@
-function find_wordpress_wp_content {
+find_wordpress_wp_content() {
     if [ -d wp-content ]; then
         echo wp-content
     elif [ -d www/wp-content ]; then
@@ -14,13 +14,13 @@ function find_wordpress_wp_content {
 # cwc = "cd wp-content"
 # This is because it's very hard to tab-complete "wp-content" because you have
 # to type "wp-cont" before you get to a non-ambiguous prefix
-function cwc {
+cwc() {
     wp_root=$(find_wordpress_wp_content) || return
     c $wp_root
 }
 
 # cwt = "cd WordPress Theme"
-function cwt {
+cwt() {
     wp_root=$(find_wordpress_wp_content) || return
     if [ -d $wp_root/themes ]; then
         wp_theme=$(find $wp_root/themes -mindepth 1 -maxdepth 1 -type d -not -name twentyten -not -name twentyeleven)

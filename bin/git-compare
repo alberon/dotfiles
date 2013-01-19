@@ -5,8 +5,8 @@
 # branch1 defaults to origin/master
 # branch2 defaults to HEAD
 
-function help {
-    echo -e "\033[36m$1\e[0m"
+help() {
+    echo -e "\033[36m$1\033[0m"
 }
 
 if [ $# -lt 2 ]; then

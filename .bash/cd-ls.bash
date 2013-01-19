@@ -1,11 +1,11 @@
 if $HAS_TERMINAL; then
 
     # Remember the last directory visited
-    function record_bash_lastdirectory {
+    record_bash_lastdirectory() {
         pwd > ~/.bash_lastdirectory
     }
 
-    function cd {
+    cd() {
         command cd "$@" && record_bash_lastdirectory
     }
 
@@ -22,7 +22,7 @@ if $HAS_TERMINAL; then
     shopt -s cdspell
 
     # c = cd; ls
-    function c {
+    c() {
 
         # cd to the first argument
         if [ "$1" = "" ]; then

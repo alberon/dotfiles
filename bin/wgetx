@@ -3,8 +3,7 @@
 set -u
 
 # Usage
-function usage
-{
+usage() {
     echo "install-tarball [options] http://server/path/to/tarball.tar.gz"
     echo
     echo "  --strip|-s [count=1]:"

@@ -2,7 +2,7 @@
 alias g='git'
 
 # git with no parameters to load REPL interactive session
-function git {
+git() {
     if [ $# -gt 0 ]; then
         env git "$@"
     else
