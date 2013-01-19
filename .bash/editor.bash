@@ -3,7 +3,7 @@ export EDITOR=vim
 
 if $MAC; then
 
-    if which mvim 2>/dev/null; then
+    if which mvim >/dev/null; then
         alias gvim=mvim
         export VISUAL=mvim
     fi
