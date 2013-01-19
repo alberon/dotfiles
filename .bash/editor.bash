@@ -1,11 +1,11 @@
-export VISUAL=vim
 export EDITOR=vim
+export GEDITOR=vim
 
 if $MAC; then
 
     if which mvim >/dev/null; then
         alias gvim=mvim
-        export VISUAL=mvim
+        export GEDITOR=mvim
     fi
 
 elif $CYGWIN; then
@@ -20,11 +20,13 @@ elif $CYGWIN; then
             alias vi=vim.exe
             alias vim=vim.exe
             alias gvim=gvim.exe
-            export VISUAL=vim.exe
             export EDITOR=vim.exe
+            export GEDITOR=gvim.exe
             break
         fi
     done
 
     unset vimpath
 fi
+
+export VISUAL=$EDITOR

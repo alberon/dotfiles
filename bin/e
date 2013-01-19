@@ -1,10 +1,18 @@
 #!/bin/bash
 
 # Get full path to the editor in case it's not in the path after running sudo
-editor=`which "$VISUAL"`
+editor=`which "$GEDITOR"`
+
+if [ -z "$editor" ]; then
+    editor="$GEDITOR"
+fi
 
 if [ -z "$editor" ]; then
     editor="$VISUAL"
+fi
+
+if [ -z "$editor" ]; then
+    editor="$EDITOR"
 fi
 
 # 'e' or 'se'?
