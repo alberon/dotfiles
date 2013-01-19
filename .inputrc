@@ -53,3 +53,8 @@ set match-hidden-files off
 
 # Add the / to completed symlinks to directories
 set mark-symlinked-directories on
+
+# Expand history immediately (press space)
+$if Bash
+    Space: magic-space
+$endif

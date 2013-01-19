@@ -11,7 +11,19 @@ if $HAS_TERMINAL; then
     shopt -s histappend
     PROMPT_COMMAND='history -a'
 
-    # History with additional time information
+    # Record multi-line commands as a single entry
+    shopt -s cmdhist
+
+    # Preserve new lines in history instead of converting to semi-colons
+    shopt -s lithist
+
+    # Confirm history expansions (e.g. "!1") before running them
+    shopt -s histverify
+
+    # If a history expansion fails, let the user re-edit the command
+    shopt -s histreedit
+
+    # Display history with additional time information
     alias history-time='HISTTIMEFORMAT="[%Y-%m-%d %H:%M:%S] " history'
 
 fi
