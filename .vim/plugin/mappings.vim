@@ -173,27 +173,25 @@ nmap <silent> <Leader>s<Up>      :aboveleft  :split<CR>
 nmap <silent> <Leader>s<Right>   :rightbelow :vsplit<CR>
 
 " Change the tab size
-nmap <Leader>1t :set tabstop=1 softtabstop=1 shiftwidth=1<CR>
-nmap <Leader>2t :set tabstop=2 softtabstop=2 shiftwidth=2<CR>
-nmap <Leader>3t :set tabstop=3 softtabstop=3 shiftwidth=3<CR>
-nmap <Leader>4t :set tabstop=4 softtabstop=4 shiftwidth=4<CR>
-nmap <Leader>5t :set tabstop=5 softtabstop=5 shiftwidth=5<CR>
-nmap <Leader>6t :set tabstop=6 softtabstop=6 shiftwidth=6<CR>
-nmap <Leader>7t :set tabstop=7 softtabstop=7 shiftwidth=7<CR>
-nmap <Leader>8t :set tabstop=8 softtabstop=8 shiftwidth=8<CR>
+nmap <Leader>0t :set tabstop=4 softtabstop=4 shiftwidth=4 noexpandtab listchars-=tab:-\   listchars+=tab:\ \ <CR>
+nmap <Leader>1t :set tabstop=1 softtabstop=1 shiftwidth=1 expandtab   listchars-=tab:\ \  listchars+=tab:-\ <CR>
+nmap <Leader>2t :set tabstop=2 softtabstop=2 shiftwidth=2 expandtab   listchars-=tab:\ \  listchars+=tab:-\ <CR>
+nmap <Leader>3t :set tabstop=3 softtabstop=3 shiftwidth=3 expandtab   listchars-=tab:\ \  listchars+=tab:-\ <CR>
+nmap <Leader>4t :set tabstop=4 softtabstop=4 shiftwidth=4 expandtab   listchars-=tab:\ \  listchars+=tab:-\ <CR>
+nmap <Leader>5t :set tabstop=5 softtabstop=5 shiftwidth=5 expandtab   listchars-=tab:\ \  listchars+=tab:-\ <CR>
+nmap <Leader>6t :set tabstop=6 softtabstop=6 shiftwidth=6 expandtab   listchars-=tab:\ \  listchars+=tab:-\ <CR>
+nmap <Leader>7t :set tabstop=7 softtabstop=7 shiftwidth=7 expandtab   listchars-=tab:\ \  listchars+=tab:-\ <CR>
+nmap <Leader>8t :set tabstop=8 softtabstop=8 shiftwidth=8 expandtab   listchars-=tab:\ \  listchars+=tab:-\ <CR>
 
-nmap <Leader>1T :setlocal tabstop=1 softtabstop=1 shiftwidth=1<CR>
-nmap <Leader>2T :setlocal tabstop=2 softtabstop=2 shiftwidth=2<CR>
-nmap <Leader>3T :setlocal tabstop=3 softtabstop=3 shiftwidth=3<CR>
-nmap <Leader>4T :setlocal tabstop=4 softtabstop=4 shiftwidth=4<CR>
-nmap <Leader>5T :setlocal tabstop=5 softtabstop=5 shiftwidth=5<CR>
-nmap <Leader>6T :setlocal tabstop=6 softtabstop=6 shiftwidth=6<CR>
-nmap <Leader>7T :setlocal tabstop=7 softtabstop=7 shiftwidth=7<CR>
-nmap <Leader>8T :setlocal tabstop=8 softtabstop=8 shiftwidth=8<CR>
-
-" Toggle tabs / spaces for indent
-nmap <Leader>t :set expandtab!<CR>
-nmap <Leader>T :setlocal expandtab!<CR>
+nmap <Leader>0T :setlocal tabstop=4 softtabstop=4 shiftwidth=4 noexpandtab listchars-=tab:-\   listchars-=tab:-\ <CR>
+nmap <Leader>1T :setlocal tabstop=1 softtabstop=1 shiftwidth=1 expandtab   listchars-=tab:\ \  listchars+=tab:-\ <CR>
+nmap <Leader>2T :setlocal tabstop=2 softtabstop=2 shiftwidth=2 expandtab   listchars-=tab:\ \  listchars+=tab:-\ <CR>
+nmap <Leader>3T :setlocal tabstop=3 softtabstop=3 shiftwidth=3 expandtab   listchars-=tab:\ \  listchars+=tab:-\ <CR>
+nmap <Leader>4T :setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab   listchars-=tab:\ \  listchars+=tab:-\ <CR>
+nmap <Leader>5T :setlocal tabstop=5 softtabstop=5 shiftwidth=5 expandtab   listchars-=tab:\ \  listchars+=tab:-\ <CR>
+nmap <Leader>6T :setlocal tabstop=6 softtabstop=6 shiftwidth=6 expandtab   listchars-=tab:\ \  listchars+=tab:-\ <CR>
+nmap <Leader>7T :setlocal tabstop=7 softtabstop=7 shiftwidth=7 expandtab   listchars-=tab:\ \  listchars+=tab:-\ <CR>
+nmap <Leader>8T :setlocal tabstop=8 softtabstop=8 shiftwidth=8 expandtab   listchars-=tab:\ \  listchars+=tab:-\ <CR>
 
 " Write
 nmap <silent> <Leader>w :w<CR>
