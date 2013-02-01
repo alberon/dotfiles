@@ -26,6 +26,6 @@ let g:NERDTreeMapHelp = '<F1>'
 " Open automatically, except when using CLI, or when editing files in WinSCP
 " (because WinSCP doesn't use a sensible directory structure - every file gets
 " a separate temp directory)
-if has('gui_running') && v:servername != "WINSCP"
+if has('gui_running') && v:servername != "WINSCP" && !exists("g:nonerdtree")
     autocmd VimEnter * NERDTree | wincmd p
 endif
