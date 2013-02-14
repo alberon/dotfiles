@@ -9,6 +9,7 @@
     branch = auto
     status = auto
     diff = auto
+    grep = auto
 
 [pack]
     threads = 0
