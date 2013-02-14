@@ -7,5 +7,6 @@ if $HAS_TERMINAL; then
     alias guard="bundle exec guard"
     alias capify="bundle exec capify"
     alias cap="bundle exec cap"
+    alias rake="bundle exec rake"
 
 fi
