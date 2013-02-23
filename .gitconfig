@@ -35,7 +35,7 @@
     d = diff            #--find-copies --irreversible-delete
     dc = diff --cached  #--find-copies --irreversible-delete
     fe = fetch
-    g = grep
+    g = grep --untracked
     glog = log --graph
     id = log --pretty=format:'ID:    %h%nDate:  %aD%nRefs:%d' --abbrev-commit --date=short -1
     ignored = ls-files --others -i --exclude-standard --directory
@@ -50,6 +50,7 @@
     sub = submodule
     sync = !git submodule sync && git submodule update --init
     tags = tag
+    todo = grep --untracked 'TODO\\|XXX\\|FIXME'
     web = instaweb
 
 [github]
