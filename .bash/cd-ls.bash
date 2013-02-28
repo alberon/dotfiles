@@ -51,6 +51,9 @@ if $HAS_TERMINAL; then
     # Need some different options for Mac
     if $MAC; then
         ls_opts='-G'
+        # Use the same color scheme as Debian
+        # http://geoff.greer.fm/lscolors/
+        export LSCOLORS=ExGxFxDaCaDaDahbaDacec
     else
         ls_opts='--color=always'
     fi
