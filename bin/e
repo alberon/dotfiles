@@ -3,17 +3,9 @@
 # Get full path to the editor in case it's not in the path after running sudo
 editor=`which "$GEDITOR"`
 
-if [ -z "$editor" ]; then
-    editor="$GEDITOR"
-fi
-
-if [ -z "$editor" ]; then
-    editor="$VISUAL"
-fi
-
-if [ -z "$editor" ]; then
-    editor="$EDITOR"
-fi
+[ -z "$editor" ] && editor="$GEDITOR"
+[ -z "$editor" ] && editor="$VISUAL"
+[ -z "$editor" ] && editor="$EDITOR"
 
 # 'e' or 'se'?
 if [ "`basename $0`" = "se" ]; then

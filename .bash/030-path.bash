@@ -1,19 +1,34 @@
-# Add my own bin directories to the path
-PATH="$HOME/opt/drush:$PATH"
+# Note: The most general ones should be at the top, and the most specific at the
+# bottom (e.g. local script) so they override the general ones if needed
 
+# MacPorts
+$MAC && PATH="/opt/local/bin:/opt/local/sbin:$PATH"
+
+# RVM
+PATH="$HOME/.rvm/bin:$PATH"
+
+# My packages
 for bin in $HOME/opt/*/bin; do
     PATH="$bin:$PATH"
 done
 
-if $MAC && [ -e /Applications/MacVim.app ]; then
-    PATH="$HOME/.vim/mac-bin:$PATH"
-fi
+PATH="$HOME/opt/drush:$PATH"
 
-PATH="$HOME/local/bin:$PATH:$HOME/bin:$HOME/.rvm/bin"
+# My scripts
+PATH="$HOME/bin:$PATH"
 
+# My Mac-specific scripts
+$MAC && PATH="$HOME/bin/osx:$PATH"
+
+# My local scripts
+PATH="$HOME/local/bin:$PATH"
+
+# Export the path so subprocesses can use it
 export PATH
 
-# And man pages
+# Add extra man pages
 if which manpath >/dev/null 2>&1; then
-    export MANPATH="$HOME/opt/git-extras-man:$(manpath 2>/dev/null)"
+    MANPATH="$(manpath 2>/dev/null)"
+    MANPATH="$HOME/opt/git-extras-man:$MANPATH"
+    export MANPATH
 fi
