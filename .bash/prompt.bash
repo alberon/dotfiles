@@ -79,15 +79,44 @@ if $HAS_TERMINAL; then
     }
 
     # Function to update the prompt with a given message (makes it easier to distinguish between different windows)
+    # TODO: Tidy this up, especially the variable names!
     MSG()
     {
+        # Determine prompt colour
+        if [ "${1:0:2}" = "--" ]; then
+            # e.g. --live
+            PromptType="${1:2}"
+            shift
+        else
+            PromptType="$prompt_type"
+        fi
+
+        if [ "$PromptType" = "dev" ]; then
+            prompt_color='41;1' # Red
+        elif [ "$PromptType" = "live" ]; then
+            prompt_color='42;1' # Green
+        elif [ "$PromptType" = "staging" ]; then
+            prompt_color='30;43' # Yellow (black text)
+        elif [ "$PromptType" = "special" ]; then
+            prompt_color='44;1' # Blue
+        else
+            prompt_color='45;1' # Pink
+        fi
+
         # Display the provided message above the prompt and in the titlebar
         if [ -n "$*" ]; then
-            PromptMessage="$1"
-            MessageCode="\033[35;1m--------------------------------------------------------------------------------\n $*\n--------------------------------------------------------------------------------\033[0m\n"
-            TitlebarCode="\[\033]2;[$*] $Titlebar\a\]"
+            PromptMessage="$*"
         else
-            PromptMessage=
+            PromptMessage="$prompt_default"
+        fi
+
+        if [ -n "$PromptMessage" ]; then
+            #MessageCode="\033[35;1m--------------------------------------------------------------------------------\n $*\n--------------------------------------------------------------------------------\033[0m\n"
+            columns=${COLUMNS:-$(tput cols)}
+            spaces=`printf '%*s\n' "$(($columns-${#PromptMessage}-1))" ''`
+            MessageCode="\033[${prompt_color}m $PromptMessage$spaces\033[0m\n"
+            TitlebarCode="\[\033]2;[$PromptMessage] $Titlebar\a\]"
+        else
             MessageCode=
             TitlebarCode="\[\033]2;$Titlebar\a\]"
         fi

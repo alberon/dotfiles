@@ -25,6 +25,14 @@ if [ ! -f ~/.bashrc_config ]; then
 
     echo "enable_sudo=0" >> ~/.bashrc_config
 
+    echo "#prompt_default=''" >> ~/.bashrc_config
+
+    if [ $cpanel -eq 1 ]; then
+        echo "prompt_type=live #live/staging/dev/special" >> ~/.bashrc_config
+    else
+        echo "prompt_type= #live/staging/dev/special" >> ~/.bashrc_config
+    fi
+
     if [ $cpanel -eq 1 -o $windows -eq 1 ]; then
         echo "umask_user=022" >> ~/.bashrc_config
     else
