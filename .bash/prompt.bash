@@ -94,7 +94,7 @@ if $HAS_TERMINAL; then
         if [ "$PromptType" = "dev" ]; then
             prompt_color='41;1' # Red
         elif [ "$PromptType" = "live" ]; then
-            prompt_color='42;1' # Green
+            prompt_color='30;42' # Green (black text)
         elif [ "$PromptType" = "staging" ]; then
             prompt_color='30;43' # Yellow (black text)
         elif [ "$PromptType" = "special" ]; then
