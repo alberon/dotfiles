@@ -1,3 +1,4 @@
+# SSH key
 file=
 
 if ! $MAC; then
@@ -45,3 +46,11 @@ if [ -f "$file" ]; then
 
     fi
 fi
+
+# Clear screen before and after connecting
+# Not for security - more so I don't think I'm connected to the wrong server!
+function ssh {
+    clear
+    command ssh "$@"
+    clear
+}
