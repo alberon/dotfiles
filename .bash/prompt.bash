@@ -112,8 +112,11 @@ if $HAS_TERMINAL; then
 
         if [ -n "$PromptMessage" ]; then
             #MessageCode="\033[35;1m--------------------------------------------------------------------------------\n $*\n--------------------------------------------------------------------------------\033[0m\n"
-            columns=${COLUMNS:-$(tput cols)}
-            spaces=`printf '%*s\n' "$(($columns-${#PromptMessage}-1))" ''`
+            #columns=${COLUMNS:-$(tput cols)}
+            # Lots of escaped characters here to prevent this being executed
+            # until the prompt is displayed, so it can adjust when the window
+            # is resized
+            spaces="\$(printf '%*s\n' \"\$((\$COLUMNS-${#PromptMessage}-1))\" '')"
             MessageCode="\033[${prompt_color}m $PromptMessage$spaces\033[0m\n"
             TitlebarCode="\[\033]2;[$PromptMessage] $Titlebar\a\]"
         else
