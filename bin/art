@@ -10,4 +10,9 @@ while [ ! -f artisan ]; do
 done
 
 # Run artisan
-exec php artisan "$@"
+if [ $# = 0 ]; then
+    # Laravel 3 doesn't list the commands by default, it just gives an error
+    exec php artisan help:commands
+else
+    exec php artisan "$@"
+fi
