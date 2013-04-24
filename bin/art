@@ -10,7 +10,7 @@ while [ ! -f artisan ]; do
 done
 
 # Run artisan
-if [ $# = 0 ]; then
+if [ $# = 0 ] && grep -q '@version\s\+3\.' artisan; then
     # Laravel 3 doesn't list the commands by default, it just gives an error
     exec php artisan help:commands
 else
