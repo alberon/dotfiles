@@ -2,7 +2,7 @@
 
 # Go up the directory tree until we find the correct directory or reach /
 while [ ! -f artisan ]; do
-    if "`pwd`" = "/"; then
+    if [ "`pwd`" = "/" ]; then
         echo "You do not appear to be within a Laravel directory" >&2
         exit 1
     fi
