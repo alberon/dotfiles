@@ -25,6 +25,7 @@
     ba = branch -a
     branches = branch
     ci = commit
+    cim = commit -m
     co = checkout
     d = diff
     dc = diff --cached
