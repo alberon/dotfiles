@@ -7,12 +7,14 @@ $MAC && PATH="/opt/local/bin:/opt/local/sbin:$PATH"
 # RVM
 PATH="$HOME/.rvm/bin:$PATH"
 
+# WP-CLI - note: should go before ~/opt/boris/bin to use my version not theirs
+PATH="$HOME/.composer/bin:$PATH"
+
 # My packages
 for bin in $HOME/opt/*/bin; do
     PATH="$bin:$PATH"
 done
 
-PATH="$HOME/opt/boris:$PATH"
 PATH="$HOME/opt/drush:$PATH"
 
 # My scripts
