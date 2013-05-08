@@ -12,6 +12,7 @@ for bin in $HOME/opt/*/bin; do
     PATH="$bin:$PATH"
 done
 
+PATH="$HOME/opt/boris:$PATH"
 PATH="$HOME/opt/drush:$PATH"
 
 # My scripts
