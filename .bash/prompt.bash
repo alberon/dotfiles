@@ -46,12 +46,13 @@ if $HAS_TERMINAL; then
             fi
 
             # Show the branch name / tag / id
-            branch=`git branch --no-color 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
+            # Note: Using 'command git' to bypass 'hub' which is slightly slower and not needed here
+            branch=`command git branch --no-color 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
             if [ -n "$branch" -a "$branch" != "(no branch)" ]; then
                 echo -e "\033[30;1m on \033[35;1m$branch \033[0m(git)\033[30;1m"
                 #        ^grey       ^pink           ^light grey  ^ grey
             else
-                tag=`git describe --always 2>/dev/null`
+                tag=`command git describe --always 2>/dev/null`
                 if [ -z "$tag" ]; then
                     tag="(unknown)"
                 fi
