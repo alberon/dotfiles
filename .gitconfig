@@ -40,6 +40,7 @@
     id = log --pretty=format:'ID:    %h%nDate:  %aD%nRefs:%d' --abbrev-commit --date=short -1
     ignored = ls-files --others -i --exclude-standard --directory
     in = incoming
+    io = inout
     mt = mergetool
     out = outgoing
     remotes = remote -v
