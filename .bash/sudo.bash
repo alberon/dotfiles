@@ -29,10 +29,10 @@ if $HAS_TERMINAL; then
     alias acsh='apt-cache show'
 
     # Poweroff and reboot need sudo
-    alias poweroff='sudo poweroff; exit'
-    alias pow='sudo poweroff; exit'
-    alias shutdown='sudo poweroff; exit'
-    alias reboot='sudo reboot; exit'
+    alias poweroff='sudo poweroff && exit'
+    alias pow='sudo poweroff && exit'
+    alias shutdown='sudo poweroff && exit'
+    alias reboot='sudo reboot && exit'
 
     # Add sbin folder to my path so they can be auto-completed
     PATH="$PATH:/usr/local/sbin:/usr/sbin:/sbin"
