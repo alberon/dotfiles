@@ -1,1 +1,1 @@
-alias bob='art bob::build'
+alias t='phpunit'
