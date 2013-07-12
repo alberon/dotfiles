@@ -5,6 +5,10 @@ find_wordpress_wp_content() {
         echo www/wp-content
     elif [ -d ../wp-content ]; then
         echo ../wp-content
+    elif [ -d ../../wp-content ]; then
+        echo ../../wp-content
+    elif [ -d ../../../wp-content ]; then
+        echo ../../../wp-content
     else
         echo "Cannot find wp-content/ directory" >&2
         return 1
