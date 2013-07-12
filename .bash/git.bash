@@ -47,3 +47,8 @@ if type _git >/dev/null 2>&1; then
         complete -o default -o nospace -F _git $cmd
     done
 fi
+
+# cd to repo root
+cgit() {
+    cd "$(git rev-parse --show-toplevel)"
+}
