@@ -24,7 +24,8 @@ if $HAS_TERMINAL; then
     alias agr='sudo apt-get remove'
     alias agar='sudo apt-get autoremove'
     alias agu='sudo apt-get update && sudo apt-get upgrade'
-    alias agup='sudo apt-get upgrade'
+    alias agupdate='sudo apt-get update'
+    alias agupgrade='sudo apt-get upgrade'
     alias acs='apt-cache search'
     alias acsh='apt-cache show'
 
