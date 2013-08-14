@@ -24,18 +24,12 @@ if $HAS_TERMINAL; then
     # c = cd; ls
     c() {
 
-        # cd to the first argument
-        if [ "$1" = "" ]; then
-            # If none then go to ~ like cd does
-            cd || return
-        elif [ "$1" != "." ]; then
+        # cd to the given directory
+        if [[ "$@" != "." ]]; then
             # If "." don't do anything, so that "cd -" still works
             # Don't output the path as I'm going to anyway (done by "cd -" and cdspell)
-            cd "$1" >/dev/null || return
+            cd "$@" >/dev/null || return
         fi
-
-        # Remove that argument
-        shift
 
         # Output the path
         echo
@@ -43,8 +37,8 @@ if $HAS_TERMINAL; then
         echo $PWD
         echo -en "\033[0m"
 
-        # Then pass the rest to ls (just in case we have any use for that!)
-        ls -hF $ls_opts "$@"
+        # List the directory contents
+        ls -hF $ls_opts
 
     }
 
