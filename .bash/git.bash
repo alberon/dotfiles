@@ -49,6 +49,6 @@ if type _git >/dev/null 2>&1; then
 fi
 
 # cd to repo root
-cgit() {
+cg() {
     cd "$(git rev-parse --show-toplevel)"
 }
