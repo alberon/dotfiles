@@ -4,7 +4,11 @@ if $HAS_TERMINAL; then
         if [ -f ~/.hostname ]; then
             cat ~/.hostname
         elif [ "$1" = "init" ]; then
-            hostname -s
+            if $WINDOWS; then
+                hostname
+            else
+                hostname -s
+            fi
         else
             echo '\h'
         fi
