@@ -23,9 +23,15 @@ unmark() {
 }
 
 marks() {
-    command ls -l --color=always --classify $MARKPATH | sed '1d;s/  / /g' | cut -d' ' -f9-
+    if $MAC; then
+        CLICOLOR_FORCE=1 command ls -lGF $MARKPATH | sed '1d;s/  / /g' | cut -d' ' -f9-
+    else
+        command ls -l --color=always --classify $MARKPATH | sed '1d;s/  / /g' | cut -d' ' -f9-
+    fi
 }
 
-for mark in `command ls $MARKPATH`; do
-    alias $mark="jump $mark"
-done
+if [ -d $MARKPATH ]; then
+    for mark in `command ls $MARKPATH`; do
+        alias $mark="jump $mark"
+    done
+fi
