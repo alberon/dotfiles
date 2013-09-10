@@ -22,12 +22,14 @@
     default = tracking
 
 [alias]
+    a = add -A
     addremove = add -A
     amend = commit --amend -C HEAD
     ar = add -A
     b = branch
     ba = branch -a
     branches = branch
+    c = commit -m
     cp = cherry-pick
     ci = commit
     cim = commit -m
@@ -43,9 +45,11 @@
     io = inout
     mt = mergetool
     out = outgoing
+    p = push
     remotes = remote -v
     root = rev-parse --show-toplevel
     serve = instaweb
+    s = status
     sh = repl
     st = status
     sub = submodule
