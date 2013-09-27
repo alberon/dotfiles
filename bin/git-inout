@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Usage: git compare [branch1] [branch2]
+# Usage: git inout [branch1] [branch2]
 #
 # branch1 defaults to origin/master
 # branch2 defaults to HEAD

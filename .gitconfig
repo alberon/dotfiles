@@ -30,10 +30,10 @@
     ba = branch -a
     branches = branch
     c = commit -m
-    cp = cherry-pick
     ci = commit
     cim = commit -m
     co = checkout
+    cp = cherry-pick
     d = diff            #--find-copies --irreversible-delete
     dc = diff --cached  #--find-copies --irreversible-delete
     fe = fetch
@@ -48,8 +48,8 @@
     p = push
     remotes = remote -v
     root = rev-parse --show-toplevel
-    serve = instaweb
     s = status
+    serve = instaweb
     sh = repl
     st = status
     sub = submodule
