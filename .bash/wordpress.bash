@@ -23,6 +23,17 @@ cwc() {
     c $wp_root
 }
 
+# cwp = "cd WordPress plugins"
+cwp() {
+    wp_root=$(find_wordpress_wp_content) || return
+    if [ -d $wp_root/plugins ]; then
+        c $wp_root/plugins
+    else
+        echo "Cannot find wp-content/plugins/ directory" >&2
+        return 1
+    fi
+}
+
 # cwt = "cd WordPress Theme"
 cwt() {
     wp_root=$(find_wordpress_wp_content) || return
