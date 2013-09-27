@@ -1,6 +1,16 @@
 # g = git
 alias g='git'
 
+# 'git' with no parameters loads interactive REPL
+git() {
+    if [ $# -gt 0 ]; then
+        command git "$@"
+    else
+        command git status &&
+        command git repl
+    fi
+}
+
 # Auto-complete git commands for git aliases (g, cfg, hub)
 if type _git >/dev/null 2>&1; then
     for cmd in g cfg hub; do
@@ -8,3 +18,8 @@ if type _git >/dev/null 2>&1; then
         complete -o default -o nospace -F _git $cmd
     done
 fi
+
+# cd to repo root
+cg() {
+    cd "$(git rev-parse --show-toplevel)"
+}

@@ -18,31 +18,40 @@
     status = true
 
 [alias]
+    a = add -A
     addremove = add -A
     amend = commit --amend -C HEAD
     ar = add -A
     b = branch
     ba = branch -a
     branches = branch
+    c = commit -m
     ci = commit
     cim = commit -m
     co = checkout
+    cp = cherry-pick
     d = diff
     dc = diff --cached
     fe = fetch
+    g = grep
     glog = log --graph
     id = log --pretty=format:'ID:    %h%nDate:  %aD%nRefs:%d' --abbrev-commit --date=short -1
     ignored = ls-files --others -i --exclude-standard --directory
     in = incoming
+    io = inout
     mt = mergetool
     out = outgoing
+    p = push
     remotes = remote -v
     root = rev-parse --show-toplevel
+    s = status
     serve = instaweb
     sh = repl
     st = status
     sub = submodule
+    sync = !git submodule sync && git submodule update --init
     tags = tag
+    todo = grep --untracked 'TODO\\|XXX\\|FIXME'
     web = instaweb
 
 [github]
