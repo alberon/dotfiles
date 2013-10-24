@@ -31,7 +31,7 @@ if [ -f .git/hooks/post-checkout ]; then
 fi
 
 # Delete old submodules
-for i in .vim/bundle/nerdtree-tabs .vim/bundle/slime; do
+for i in .vim/bundle/nerdtree-tabs .vim/bundle/slime .vim/bundle/gemfile; do
     if [ -d "$i" ]; then
         rm -rf "$i"
     fi
