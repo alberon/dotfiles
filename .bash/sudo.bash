@@ -29,7 +29,8 @@ if $HAS_TERMINAL; then
     alias acs='apt-cache search'
     alias acsh='apt-cache show'
 
-    # Poweroff and reboot need sudo
+    # These commands require sudo
+    alias service='sudo service'
     alias poweroff='sudo poweroff && exit'
     alias pow='sudo poweroff && exit'
     alias shutdown='sudo poweroff && exit'
