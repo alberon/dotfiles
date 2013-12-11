@@ -10,7 +10,7 @@ help() {
 }
 
 if [ $# -lt 2 ]; then
-    left="${1:-origin/master}"
+    left=$(git for-each-ref --format='%(upstream:short)' $(git symbolic-ref -q HEAD))
     help "Lines beginning with a < are incoming (added to $left)"
     help "Lines beginning with a > are outgoing (added to HEAD)"
     echo
