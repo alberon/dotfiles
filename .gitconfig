@@ -28,7 +28,7 @@
     ar = add -A
     b = branch
     ba = branch -a
-    branches = branch
+    branches = branch -avv
     c = commit -m
     ci = commit
     cim = commit -m
