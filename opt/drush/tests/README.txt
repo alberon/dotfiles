@@ -1,9 +1,11 @@
-Drush's test suite based on PHPUnit (http://www.phpunit.de/).
+Drush's test suite based on PHPUnit (http://www.phpunit.de/). In order to maintain
+high quality, our tests are run on every commit - https://travis-ci.org/drush-ops/drush
 
 Usage
 --------
 - Install PHPUnit [*]
-- Review the configuration settings in phpunit.xml.dist. If customization is needed, copy and rename to phpunit.xml and edit away.
+- Review the configuration settings in phpunit.xml.dist. If customization is needed,
+  copy and rename to phpunit.xml and edit away.
 - From the /tests subdirectory, run `phpunit .`
 
 Advanced usage
@@ -21,7 +23,14 @@ such as `phpunit --bootstrap=/path/to/drush/tests/drush_testcase.inc`.
 The devel project does exactly this -
 http://drupalcode.org/project/devel.git/blob/refs/heads/8.x-1.x:/develDrushTest.php
 
+Cache
+-----------
+In order to speed up test runs, Unish (the drush testing class) caches built Drupal sites
+and restores them as requested by tests. Once in while, you might need to clear this cache
+by deleting the <tmp>/drush-cache directory.
+
 [*] Install PHPUnit:
+---------------
 
 Drush requires PHPUnit 3.5 or later; installing with PEAR is easiest.
  
@@ -32,7 +41,7 @@ On Linux/OSX:
   sudo pear upgrade --force PEAR
   sudo pear channel-discover pear.phpunit.de
   sudo pear channel-discover components.ez.no
-  sudo pear channel-discover pear.symfony-project.com
+  sudo pear channel-discover pear.symfony.com
   sudo pear install --alldeps phpunit/PHPUnit
 
 On Windows:

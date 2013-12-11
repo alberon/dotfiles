@@ -40,8 +40,9 @@ function drush_pm_download_validate() {
   // Validate --variant or enforce a sane default.
   $variant = drush_get_option('variant', FALSE);
   if ($variant) {
-    if (!in_array($variant, array('full', 'projects', 'profile-only'))) {
-      drush_log(dt('Unknown variant !variant. Valid values: !variations', array('!variant' => $variant, '!variations' => implode(', ', $variations))), 'error');
+    $variants = array('full', 'projects', 'profile-only');
+    if (!in_array($variant, $variants)) {
+      return drush_set_error('DRUSH_PM_PROFILE_INVALID_VARIANT', dt('Invalid variant !variant. Valid values: !variants.', array('!variant' => $variant, '!variants' => implode(', ', $variants))));
     }
   }
   // 'full' and 'projects' variants are only valid for wget package handler.
@@ -96,7 +97,8 @@ function drush_pm_download() {
     // Determine the name of the directory that will contain the project.
     // We face here all the asymetries to make it smooth for package handlers.
     // For Drupal core: --drupal-project-rename or drupal-x.y
-    if ($request['project_type'] == 'core') {
+    if (($request['project_type'] == 'core') ||
+        (($request['project_type'] == 'profile') && (drush_get_option('variant', 'full') == 'full'))) {
       // Avoid downloading core into existing core.
       if (drush_get_context('DRUSH_BOOTSTRAP_PHASE') >= DRUSH_BOOTSTRAP_DRUPAL_ROOT) {
         if (strpos(realpath(drush_get_option('destination')), DRUPAL_ROOT) !== FALSE) {
@@ -106,7 +108,7 @@ function drush_pm_download() {
 
       if ($rename = drush_get_option('drupal-project-rename', FALSE)) {
         if ($rename === TRUE) {
-          $request['project_dir'] = 'drupal';
+          $request['project_dir'] = $request['name'];
         }
         else {
           $request['project_dir'] = $rename;
@@ -137,6 +139,9 @@ function drush_pm_download() {
     // --destination has preference.
     $destination = drush_get_option('destination');
     if (!empty($destination)) {
+      if (!file_exists($destination)) {
+        drush_mkdir($destination);
+      }
       $request['project_install_location'] = realpath($destination);
     }
     else {
@@ -212,8 +217,8 @@ function drush_pm_download() {
       drush_pm_extensions_in_project($request);
     }
     else {
-      drush_log(dt("Project !project (!version) could not be downloaded to !dest.", array('!project' => $request['name'], '!version' => $release['version'], '!dest' => $request['project_install_location'])), 'error');
-      continue;
+      // We don't `return` here in order to proceed with downloading additional projects.
+      drush_set_error('DRUSH_PM_DOWNLOAD_FAILED', dt("Project !project (!version) could not be downloaded to !dest.", array('!project' => $request['name'], '!version' => $release['version'], '!dest' => $request['project_install_location'])));
     }
   }
 }

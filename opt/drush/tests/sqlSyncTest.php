@@ -10,6 +10,7 @@
 
 /*
  *  @group slow
+ *  @group commands
  */
 class sqlSyncTest extends Drush_CommandTestCase {
 
@@ -33,10 +34,11 @@ class sqlSyncTest extends Drush_CommandTestCase {
    * Do the same test as above, but use Drupal 6 sites instead of Drupal 7.
    */
   public function testLocalSqlSyncD6() {
-    if (strpos(UNISH_DB_URL, 'sqlite') !== FALSE) {
-      $this->markTestSkipped('SQL Sync does not apply to SQLite.');
+    if (UNISH_DRUPAL_MAJOR_VERSION != 6) {
+      $this->markTestSkipped('This test class is designed for Drupal 6.');
       return;
     }
+
     chdir(UNISH_TMP); // Avoids perm denied Windows error.
     $this->setUpBeforeClass();
     $sites = $this->setUpDrupal(2, TRUE, '6');
@@ -85,6 +87,28 @@ class sqlSyncTest extends Drush_CommandTestCase {
     $row  = str_getcsv($output);
     $uid = $row[1];
     $this->assertEquals("user+$uid@localhost", $row[2], 'email address was sanitized on destination site.');
+    $this->assertEquals($name, $row[0]);
+
+    // Copy stage to dev with --sanitize and a fixed sanitized email
+    $sync_options = array(
+      'sanitize' => NULL,
+      'yes' => NULL,
+      'dump-dir' => $dump_dir,
+      'sanitize-email' => 'user@localhost',
+    );
+    $this->drush('sql-sync', array('@stage', '@dev'), $sync_options);
+
+    $options = array(
+      'root' => $this->webroot(),
+      'uri' => 'dev',
+      'yes' => NULL,
+    );
+    // Confirm that the sample user's email address has been sanitized on the dev site
+    $this->drush('user-information', array($name), $options + array('pipe' => NULL));
+    $output = $this->getOutput();
+    $row  = str_getcsv($output);
+    $uid = $row[1];
+    $this->assertEquals("user@localhost", $row[2], 'email address was sanitized (fixed email) on destination site.');
     $this->assertEquals($name, $row[0]);
   }
 }

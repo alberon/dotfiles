@@ -37,21 +37,32 @@ function package_handler_validate() {
 function package_handler_download_project(&$request, $release) {
   // Install profiles come in several variants. User may specify which one she wants.
   if ($request['project_type'] == 'profile') {
-    // @todo Use xpath to get the right file url.
-    $files = $release['files'];
-    foreach ($files as $key => $file) {
-      if ((string)$file->variant == drush_get_option('variant', 'full') && (string)$file->archive_type == 'tar.gz') {
-        $release['download_link'] = (string)$file->url;
-        $release['mdhash'] = (string)$file->md5;
-        break;
+    if (!empty($release['files'])) {
+      // @todo Use xpath to get the right file url.
+      $files = $release['files'];
+      foreach ($files as $key => $file) {
+        if ((string)$file->variant == drush_get_option('variant', 'full') && (string)$file->archive_type == 'tar.gz') {
+          $release['download_link'] = (string)$file->url;
+          $release['mdhash'] = (string)$file->md5;
+          $release['date'] = (string)$file->filedate;
+          break;
+        }
       }
     }
   }
 
-  // Dev snapshots can be cached for 4 hours and releases for 1 year.
-  $max_age = strpos($release['download_link'], '-dev') !== FALSE ? 3600*4 : 86400*365;
+  // Add <date> to URL so it is part of the cache key . Dev snapshots can then be cached forever.
+  if (strpos($release['download_link'], '-dev') !== FALSE) {
+    $release['download_link'] .= '?date=' . $release['date'];
+  }
   $filename = basename($release['download_link']);
-  $path = drush_download_file($release['download_link'], $request['base_project_path'] . $filename, $max_age);
+  // On Windows file name cannot contain '?'
+  // See http://drupal.org/node/1782444
+  if(drush_is_windows()) {
+    $filename = str_replace('?', '_', $filename);
+  }
+  $cache_duration = 86400*365;
+  $path = drush_download_file($release['download_link'], $request['base_project_path'] . DIRECTORY_SEPARATOR . $filename, $cache_duration);
   if ($path || drush_get_context('DRUSH_SIMULATE')) {
     drush_log("Downloading " . $filename . " was successful.");
   }
@@ -72,7 +83,7 @@ function package_handler_download_project(&$request, $release) {
   $file_list = drush_tarball_extract($path, $request['base_project_path'], TRUE);
 
   // Move untarred directory to project_dir, if distinct.
-  if (($request['project_type'] == 'core') || (($request['project_type'] == 'profile') && (drush_get_option('variant', 'core') == 'core'))) {
+  if (($request['project_type'] == 'core') || (($request['project_type'] == 'profile') && (drush_get_option('variant', 'full') == 'full'))) {
     // Obtain the dodgy project_dir for drupal core.
     $project_dir = drush_trim_path($file_list[0]);
     if ($request['project_dir'] != $project_dir) {

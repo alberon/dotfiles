@@ -130,13 +130,12 @@ function drush_sitealias_valid_alias_format($alias) {
  * values in the specification.
  *
  * Site specifications come in several forms:
- *
- * 1.) /path/to/drupal#sitename
- * 2.) user@server/path/to/drupal#sitename
- * 3.) user@server/path/to/drupal            (sitename == server)
- * 4.) user@server#sitename                  (only if $option['r'] set in some drushrc file on server)
- * 5.) #sitename                             (only if $option['r'] already set, and 'sitename' is a folder in $option['r']/sites)
- * 6.) sitename                              (only if $option['r'] already set, and 'sitename' is a folder in $option['r']/sites)
+ * - /path/to/drupal#sitename
+ * - user@server/path/to/drupal#sitename
+ * - user@server/path/to/drupal            (sitename == server)
+ * - user@server#sitename                  (only if $option['r'] set in some drushrc file on server)
+ * - #sitename                             (only if $option['r'] already set, and 'sitename' is a folder in $option['r']/sites)
+ * - sitename                              (only if $option['r'] already set, and 'sitename' is a folder in $option['r']/sites)
  *
  * Note that in the case of the first four forms, it is also possible
  * to add additional site variable to the specification using uri query
@@ -402,13 +401,15 @@ function _drush_sitealias_load_alias($alias, $alias_path_context = NULL) {
     // Only aliases--those named entities that begin with '@'--can be loaded this way.
     // We also skip any alias that has already been loaded.
     if ((substr($alias,0,1) == '@') && !array_key_exists($alias,$all_site_aliases)) {
-      drush_log(dt('Load alias !alias', array('!alias' => $alias)));
       $aliasname = substr($alias,1);
       $result = _drush_sitealias_find_and_load_alias($aliasname, $alias_path_context);
       if (!empty($result)) {
         $alias_options = array('site-aliases' => array($aliasname => $result));
         _drush_sitealias_add_inherited_values($alias_options['site-aliases']);
         drush_set_config_special_contexts($alias_options);
+        if (array_key_exists('#file', $result)) {
+          drush_log(dt('Loaded alias !alias from file !file', array('!alias' => $alias, '!file' => $result['#file'])));
+        }
       }
     }
   }
@@ -631,7 +632,7 @@ function _drush_sitealias_find_and_load_alias($aliasname, $alias_path_context = 
         // If the alias name is exactly the same as a previous match, then
         // merge the two records together
         if (!empty($result) && ($result['#name'] == $one_result['#name'])) {
-          $result = _sitealias_array_merge($result, $aliases);
+          $result = _sitealias_array_merge($result, $one_result);
         }
         // Add the name of the found record to the list of results
         else {
@@ -649,14 +650,26 @@ function _drush_sitealias_find_and_load_alias($aliasname, $alias_path_context = 
   return $result;
 }
 
-// array_merge_recursive is too much; we only want to run
-// array_merge on the common top-level keys of the array.
-function _sitealias_array_merge($a, $b) {
-  $result = $a;
+/**
+ * Merges two site aliases.
+ *
+ * array_merge_recursive is too much; we only want to run
+ * array_merge on the common top-level keys of the array.
+ *
+ * @param array $site_alias_a
+ *   A site alias array.
+ * @param array $site_alias_b
+ *   A site alias array.
+ * @return
+ *   A site alias array where the keys from $site_alias_a are overwritten by the
+ *   keys from $site_alias_b.
+ */
+function _sitealias_array_merge($site_alias_a, $site_alias_b) {
+  $result = $site_alias_a;
 
-  foreach($b as $key => $value) {
-    if (array_key_exists($key, $result)) {
-      $result[$key] = array_merge($result[$key], $b[$key]);
+  foreach($site_alias_b as $key => $value) {
+    if (is_array($value) && array_key_exists($key, $result)) {
+      $result[$key] = array_merge($result[$key], $value);
     }
     else {
       $result[$key] = $value;
@@ -1047,7 +1060,7 @@ function _drush_sitelist_check_site_records($source, $target) {
  * in the cache.
  *
  * @param alias_record
- *   The alias record to be initialized; paramter is modified in place.
+ *   The alias record to be initialized; parameter is modified in place.
  */
 function _drush_sitealias_initialize_alias_record(&$alias_record) {
   // If there is a 'from-list' entry, then build a derived
@@ -1685,7 +1698,14 @@ function _drush_sitealias_preflight_path($path) {
   return array('alias' => $alias, 'path' => $path, 'machine' => $machine);
 }
 
-
+/**
+ * Given a properly-escaped options string, replace any occurance of
+ * %files and so on embedded inside it with its corresponding path.
+ */
+function drush_sitealias_evaluate_paths_in_options($option_string) {
+  $path_aliases = _core_path_aliases();
+  return str_replace(array_keys($path_aliases), array_values($path_aliases), $option_string);
+}
 
 /**
  * Evaluate a path from its shorthand form to a literal path
@@ -1768,7 +1788,7 @@ function drush_sitealias_evaluate_path($path, &$additional_options, $local_only 
       $machine = "$remote_user$machine";
     }
   }
-  
+
   // TOD:  The code below is a little rube-goldberg-ish, and needs to be
   // reworked.  core-rsync will call this function twice: once to
   // evaluate the destination, and then again to evaluate the source.  Things

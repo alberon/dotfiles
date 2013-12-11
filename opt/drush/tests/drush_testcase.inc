@@ -16,6 +16,13 @@ abstract class Drush_TestCase extends PHPUnit_Framework_TestCase {
    * a clean environment - http://drupal.org/node/1103568.
    */
   public static function setUpBeforeClass() {
+    self::setUpFreshSandBox();
+  }
+
+  /**
+   * Remove any pre-existing sandbox, then create a new one.
+   */
+  public static function setUpFreshSandBox() {
     $sandbox = UNISH_SANDBOX;
     if (file_exists($sandbox)) {
       unish_file_delete_recursive($sandbox);
@@ -46,8 +53,8 @@ abstract class Drush_TestCase extends PHPUnit_Framework_TestCase {
     }
   }
 
-  /*
-   *Print a log message to the console.
+  /**
+   * Print a log message to the console.
    *
    * @param string $message
    * @param string $type
@@ -102,8 +109,8 @@ abstract class Drush_TestCase extends PHPUnit_Framework_TestCase {
     return $path;
   }
 
-  /*
-   *Borrowed from Drush.
+  /**
+   * Borrowed from Drush.
    * Checks operating system and returns
    * supported bit bucket folder.
    */
@@ -209,7 +216,7 @@ abstract class Drush_TestCase extends PHPUnit_Framework_TestCase {
     return substr(UNISH_DB_URL, 0, 6) == 'sqlite'  ?  "sqlite://sites/$env/files/unish.sqlite" : UNISH_DB_URL . '/unish_' . $env;
   }
 
-  function setUpDrupal($num_sites = 1, $install = FALSE, $version_string = '7', $profile = NULL) {
+  function setUpDrupal($num_sites = 1, $install = FALSE, $version_string = UNISH_DRUPAL_MAJOR_VERSION, $profile = NULL) {
     $sites_subdirs_all = array('dev', 'stage', 'prod', 'retired', 'elderly', 'dead', 'dust');
     $sites_subdirs = array_slice($sites_subdirs_all, 0, $num_sites);
     $root = $this->webroot();
@@ -251,7 +258,7 @@ abstract class Drush_TestCase extends PHPUnit_Framework_TestCase {
     return $this->sites;
   }
 
-  function fetchInstallDrupal($env = 'dev', $install = FALSE, $version_string = '7', $profile = NULL) {
+  function fetchInstallDrupal($env = 'dev', $install = FALSE, $version_string = UNISH_DRUPAL_MAJOR_VERSION, $profile = NULL) {
     $root = $this->webroot();
     $site = "$root/sites/$env";
 
@@ -304,13 +311,24 @@ abstract class Drush_CommandTestCase extends Drush_TestCase {
    *
    * @param string $command
    *   The actual command line to run.
+   * @param integer $expected_return
+   *   The return code to expect
    * @return integer
    *   Exit code. Usually self::EXIT_ERROR or self::EXIT_SUCCESS.
    */
-  function execute($command, $expected_return = self::EXIT_SUCCESS) {
+  function execute($command, $expected_return = self::EXIT_SUCCESS, $env = array()) {
     $this->_output = FALSE;
+    $return = 1;
     $this->log("Executing: $command", 'notice');
-    exec($command, $this->_output, $return);
+
+    // Apply the environment variables we need for our test
+    // to the head of the command
+    $prefix = '';
+    foreach ($env as $env_name => $env_value) {
+      $prefix .= $env_name . '=' . self::escapeshellarg($env_value) . ' ';
+    }
+    exec($prefix . $command, $this->_output, $return);
+
     $this->assertEquals($expected_return, $return, 'Unexpected exit code: ' .  $command);
     return $return;
   }
@@ -335,7 +353,7 @@ abstract class Drush_CommandTestCase extends Drush_TestCase {
     * @return integer
     *   An exit code.
     */
-  function drush($command, array $args = array(), array $options = array(), $site_specification = NULL, $cd = NULL, $expected_return = self::EXIT_SUCCESS, $suffix = NULL) {
+  function drush($command, array $args = array(), array $options = array(), $site_specification = NULL, $cd = NULL, $expected_return = self::EXIT_SUCCESS, $suffix = NULL, $env = array()) {
     $global_option_list = array('simulate', 'root', 'uri', 'include', 'config', 'alias-path', 'ssh-options');
     // insert "cd ... ; drush"
     $cmd[] = $cd ? sprintf('cd %s &&', self::escapeshellarg($cd)) : NULL;
@@ -378,7 +396,7 @@ abstract class Drush_CommandTestCase extends Drush_TestCase {
     }
     $cmd[] = $suffix;
     $exec = array_filter($cmd, 'strlen'); // Remove NULLs
-    return $this->execute(implode(' ', $exec), $expected_return);
+    return $this->execute(implode(' ', $exec), $expected_return, $env);
   }
 
   function drush_major_version() {
@@ -445,6 +463,16 @@ abstract class Drush_UnitTestCase extends Drush_TestCase {
  * Initialize our environment at the start of each run (i.e. suite).
  */
 function unish_init() {
+  // Default drupal major version to run tests over.
+  $unish_drupal_major = '7';
+  if (getenv('UNISH_DRUPAL_MAJOR_VERSION')) {
+    $unish_drupal_major = getenv('UNISH_DRUPAL_MAJOR_VERSION');
+  }
+  elseif (isset($GLOBALS['UNISH_DRUPAL_MAJOR_VERSION'])) {
+    $unish_drupal_major = $GLOBALS['UNISH_DRUPAL_MAJOR_VERSION'];
+  }
+  define('UNISH_DRUPAL_MAJOR_VERSION', $unish_drupal_major);
+
   // We read from env then globals then default to mysql.
   $unish_db_url = 'mysql://root:@127.0.0.1';
   if (getenv('UNISH_DB_URL')) {
@@ -489,6 +517,8 @@ function unish_init() {
 
   putenv('ETC_PREFIX=' . UNISH_SANDBOX);
   putenv('SHARE_PREFIX=' . UNISH_SANDBOX);
+
+  define('UNISH_USERGROUP', isset($GLOBALS['UNISH_USERGROUP']) ? $GLOBALS['UNISH_USERGROUP'] : NULL);
 
   define('UNISH_BACKEND_OUTPUT_DELIMITER', 'DRUSH_BACKEND_OUTPUT_START>>>%s<<<DRUSH_BACKEND_OUTPUT_END');
 }

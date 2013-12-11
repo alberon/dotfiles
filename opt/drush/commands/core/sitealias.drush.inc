@@ -93,13 +93,16 @@ function _drush_sitealias_alias_list() {
  */
 function _drush_sitealias_site_list() {
   $site_list = array();
-  $base_path = drush_get_context('DRUSH_DRUPAL_ROOT') . '/sites';
-  $files = drush_scan_directory($base_path, '/settings\.php/', array('.', '..', 'CVS', 'all'));
-  foreach ($files as $filename => $info) {
-    if ($info->basename == 'settings.php') {
-      $alias_record = drush_sitealias_build_record_from_settings_file($filename);
-      if (!empty($alias_record)) {
-        $site_list[drush_sitealias_uri_to_site_dir($alias_record['uri'])] = $alias_record;
+  $base_path = drush_get_context('DRUSH_DRUPAL_ROOT');
+  if ($base_path) {
+    $base_path .= '/sites';
+    $files = drush_scan_directory($base_path, '/settings\.php/', array('.', '..', 'CVS', 'all'));
+    foreach ($files as $filename => $info) {
+      if ($info->basename == 'settings.php') {
+        $alias_record = drush_sitealias_build_record_from_settings_file($filename);
+        if (!empty($alias_record)) {
+          $site_list[drush_sitealias_uri_to_site_dir($alias_record['uri'])] = $alias_record;
+        }
       }
     }
   }
@@ -344,6 +347,16 @@ function _drush_sitealias_site_dir_to_uri($site_dir) {
   $uri = preg_replace("/([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)/", "$1.$2.$3.$4", $site_dir);
 
   return 'http://' . $uri;
+}
+
+/**
+ * Validation callback for drush site-set.
+ */
+function drush_sitealias_site_set_validate() {
+  if (!function_exists('posix_getppid')) {
+    $args = array('!command' => 'site-set', '!dependencies' => 'POSIX');
+    return drush_set_error('DRUSH_COMMAND_PHP_DEPENDENCY_ERROR', dt('Command !command needs the following PHP extensions installed/enabled to run: !dependencies.', $args));
+  }
 }
 
 /**

@@ -20,11 +20,11 @@ REQUIREMENTS
 
 * Drush commands that work with git require git 1.7 or greater.
 
-* Drush is designed for a Unix-like OS (Linux, OS X)
+* Drush is designed for a Unix-like OS (Linux, OS X).
 
 * Most Drush commands run on Windows.  See INSTALLING DRUSH ON WINDOWS, below.
 
-* Drush works with Drupal 6, Drupal 7, and usually Drupal 8.
+* This version of Drush works with Drupal 6 and Drupal 7.
 
 
 INSTALLATION
@@ -87,7 +87,7 @@ below.
    drush and bash. You may source this file directly into your shell by adding to
    your .bashrc (rr equivalent): source /path/to/drush/examples/example.bashrc
 
-7. Optional. If you didn't source it in Step 5 above, see top of
+7. Optional. If you didn't source it in Step 6 above, see top of
    drush.complete.sh file for instructions adding bash completion for drush
    command to your shell.  Once configured, completion works for site aliases,
    command names, shell aliases, global options, and command-specific options.
@@ -190,15 +190,36 @@ Alternately, if you only want to override a few values, copy example.drush.ini
 from the "examples" folder into $HOME/.drush or the folder /etc/drush and edit
 to suit.  See comments in example.drush.ini for more details.
 
+You may also use environment variables to control the php settings that Drush
+will use.  There are three options:
+
+    export PHP_INI='/path/to/php.ini'
+
+    export DRUSH_INI='/path/to/drush.ini'
+
+    export PHP_OPTIONS='-d memory_limit="128M"'
+
+In the case of PHP_INI and DRUSH_INI, these environment variables specify the
+full path to a php.ini or drush.ini file, should you wish to use one that is
+not in one of the standard locations described above.  The PHP_OPTIONS
+environment variable can be used to specify individual options that should
+be passed to php on the command line when Drush is executed.
+
 Drush requires a fairly unrestricted php environment to run in.  In particular,
 you should insure that safe_mode, open_basedir, disable_functions and
-disable_classes are empty.
+disable_classes are empty.  If you are using php 5.3.x, you may also need to
+add the following definitions to your php.ini file:
+
+magic_quotes_gpc = Off
+magic_quotes_runtime = Off
+magic_quotes_sybase = Off
+
 
 INSTALLING DRUSH ON WINDOWS:
 ----------------------------
 
-Windows support has improved, but is still lagging. Consider using on
-Linux/Unix/OSX using Virtualbox or other virtual machine.
+Windows support has improved, but is still lagging. For full functionality,
+consider using on Linux/Unix/OSX using Virtualbox or other virtual machine.
 
 There is a Windows msi installer for drush available at:
 
@@ -212,6 +233,16 @@ Whenever the documentation or the help text refers to 'drush [option]
 
 Additional Drush Windows installation documentation can be found at
 http://drupal.org/node/594744.
+
+Most Drush commands will run in a Windows CMD shell or PowerShell, but the
+Git Bash shell provided by the 'Git for Windows' installation is the preferred
+shell in which to run Drush commands. For more information on "Git for Windows'
+visit http://msysgit.github.com/.
+
+When creating aliases for Windows remote machines, pay particular attention to
+information presented in the example.aliases.drushrc.php file, especially when
+setting values for 'remote-host' and 'os', as these are very important when
+running Drush rsync and Drush sql-sync commands.
 
 
 USAGE
@@ -335,6 +366,10 @@ FAQ
   A: Some people pronounce the dru with a long u like Drupal. Fidelity points
      go to them, but they are in the minority. Most pronounce Drush so that it
      rhymes with hush, rush, flush, etc. This is the preferred pronunciation.
+
+  Q: Does Drush have unit tests?
+  A: Drush has an excellent suite of unit tests. See the README.txt file in the /tests subdirectory for
+     more information.
 
 
 CREDITS

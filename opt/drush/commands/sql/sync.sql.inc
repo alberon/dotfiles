@@ -54,8 +54,8 @@ function drush_sql_sync_init($source = NULL, $destination = NULL) {
 }
 
 /**
- * Sql sync sanitization function.  This hook function will sanitize usernames and
- * passwords in the user table when the --sanitize option is used.  It is
+ * Sql sync sanitization function.  This hook function will sanitize usernames,
+ * passwords, and sessions when the --sanitize option is used.  It is
  * also an example of how to write a database sanitizer for sql sync.
  *
  * To write your own sync hook function, define mymodule_drush_sql_sync_sanitize()
@@ -116,16 +116,22 @@ function sql_drush_sql_sync_sanitize($site) {
         $email_map = array('%uid' => "', uid, '", '%mail' => "', replace(mail, '@', '_'), '", '%name' => "', replace(name, ' ', '_'), '");
         $newmail =  "concat('" . str_replace(array_keys($email_map), array_values($email_map), $newemail) . "')";
       }
+      $user_table_updates[] = "mail = $newmail, init = $newmail";
     }
-    $user_table_updates[] = "mail = $newmail";
+    else {
+      $user_table_updates[] = "mail = '$newemail', init = '$newmail'";
+    }
     $message_list[] = 'email addresses';
   }
 
   if (!empty($user_table_updates)) {
-    $sanitize_query = "update users set " . implode(', ', $user_table_updates) . " where uid > 0;";
+    $sanitize_query = "UPDATE users SET " . implode(', ', $user_table_updates) . " WHERE uid > 0;";
     drush_sql_register_post_sync_op('user-email', dt('Reset !message in user table', array('!message' => implode(' and ', $message_list))), $sanitize_query);
   }
 
+  // Seems quite portable (SQLite?) - http://en.wikipedia.org/wiki/Truncate_(SQL)
+  $sql_sessions = 'TRUNCATE TABLE sessions;';
+  drush_sql_register_post_sync_op('sessions', dt('Truncate Drupal\'s sessions table'), $sql_sessions);
 }
 
 
@@ -280,7 +286,7 @@ function drush_sql_sync($source = NULL, $destination = NULL) {
         drush_print();
         $txt_source = (isset($source_db_url['remote-host']) ? $source_db_url['remote-host'] . '/' : '') . $source_db_url['database'];
         $txt_destination = (isset($target_db_url['remote-host']) ? $target_db_url['remote-host'] . '/' : '') . $target_db_url['database'];
-        drush_print(dt("You will destroy data from !target and replace with data from !source.", array('!source' => $txt_source, '!target' => $txt_destination)));
+        drush_print(dt("You will destroy data in !target and replace with data from !source.", array('!source' => $txt_source, '!target' => $txt_destination)));
       }
 
       // If any sanitization operations are to be done, then get the
@@ -323,7 +329,7 @@ function drush_sql_sync($source = NULL, $destination = NULL) {
         // from different users sharing the same dump file.
         if (!drush_is_windows($source_os) && (!$source_settings['dump-is-temp'])) {
           $source_intermediate = $source_dump . '-' . date("U");
-          $mv_intermediate = '; mv -f ' . $source_intermediate . ' ' . $source_dump;
+          $mv_intermediate = '&& mv -f ' . $source_intermediate . ' ' . $source_dump;
         }
         list($dump_exec, $dump_file) = drush_sql_build_dump_command($table_selection, $source_db_url, $source_intermediate);
         $dump_exec .= $mv_intermediate;
@@ -386,6 +392,17 @@ function drush_sql_sync($source = NULL, $destination = NULL) {
         $db_su_connect = _drush_sql_connect($create_db_su);
         $pre_import_sql = drush_sql_build_createdb_sql($target_db_url);
         $pre_import_commands = sprintf('echo "%s" | %s; ', $pre_import_sql, $db_su_connect);
+        // Linux requires quotes around echo statements. Windows generally supports
+        // quotes for echo statements, but will complain if they are present
+        // when piping echo statements as input to other commands. Also,
+        // Windows multi-commands normally work when separated by '&&', '&', or ';'
+        // but will not function with ';' in this case.(http://drupal.org/node/1957020)
+        if (drush_is_windows($target_os)) {
+          $pre_import_commands = sprintf('echo %s | %s && ', $pre_import_sql, $db_su_connect);
+        }
+        else {
+          $pre_import_commands = sprintf('echo "%s" | %s; ', $pre_import_sql, $db_su_connect);
+        }
       }
 
       // Generate the import command

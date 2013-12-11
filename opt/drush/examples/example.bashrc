@@ -40,7 +40,7 @@
 #       unin             - drush pm-uninstall
 #       up               - drush pm-update
 #       upc              - drush pm-updatecode
-#       updb             - drush uptatedb
+#       updb             - drush updatedb
 #       q                - drush sql-query
 #
 # Provides several common shell commands to work better with drush:
@@ -61,8 +61,8 @@
 # Note that the 'cpd' alias only works for local sites.  Use
 # `drush rsync` or gitd` to move files between remote sites.
 #
-# By default, aliases are also created for the following standard
-# commands:
+# Aliases are also possible for the following standard
+# commands. Uncomment their definitions below as desired.
 #
 #       cd                - cddl [*]
 #       ls                - lsd
@@ -97,7 +97,7 @@ alias rf='drush pm-refresh'
 alias unin='drush pm-uninstall'
 alias up='drush pm-update'
 alias upc='drush pm-updatecode'
-alias updb='drush uptatedb'
+alias updb='drush updatedb'
 alias q='drush sql-query'
 
 # Overrides for standard shell commands. Uncomment to enable.  Alias
@@ -131,16 +131,6 @@ d="${d%/*}"
 if [ -f "$d/drush.complete.sh" ] ; then
   . "$d/drush.complete.sh"
 fi
-
-# Create an alias for every drush site alias.  This allows
-# for commands such as `@live pml` to run `drush @live pm-list`
-for a in $(drush sa); do
-  alias $a="drush $a"
-  ## Register another completion function for every alias to drush.
-  if [ -n "`type _drush_completion 2>/dev/null`" ] ; then
-    complete -o nospace -F _drush_completion $a > /dev/null
-  fi
-done
 
 # We extend the cd command to allow convenient
 # shorthand notations, such as:
@@ -196,8 +186,8 @@ function cdd() {
       if [ -n "$d" ]
       then
         c="cd \"$d\" \; bash"
-        drush -s ssh ${s%%:*} --tty --escaped "$c"
-        drush ssh ${s%%:*} --tty --escaped "$c"
+        drush -s ${s%%:*} ssh --tty --escaped "$c"
+        drush ${s%%:*} ssh --tty --escaped "$c"
       else
         drush ssh ${s%%:*}
       fi
@@ -217,16 +207,16 @@ function gitd() {
     $(drush sa ${s%%:*} --component=remote-host > /dev/null 2>&1)
     if [ $? == 0 ]
     then
-      dssh ${s%%:*} cd "$d" \; git "${@:2}"
+      drush ${s%%:*} ssh "cd '$d' ; git ${@:2}"
     else
       echo cd "$d" \; git "${@:2}"
       (
         cd "$d"
-        "$(which git)" "${@:2}"
+        "git" "${@:2}"
       )
     fi
   else
-    "$(which git)" "$@"
+    "git" "$@"
   fi
 }
 
@@ -255,7 +245,7 @@ function lsd() {
   then
     ssh $r ls "${p[@]}"
   else
-    "$(which ls)" "${p[@]}"
+    "ls" "${p[@]}"
   fi
 }
 
@@ -271,7 +261,7 @@ function cpd() {
       p[${#p[@]}]="$a"
     fi
   done
-  "$(which cp)" "${p[@]}"
+  "cp" "${p[@]}"
 }
 
 # This alias allows `dssh @site` to work like `drush @site ssh`.
@@ -282,6 +272,6 @@ function dssh() {
   then
     drush "$d" ssh "${@:2}"
   else
-    "$(which ssh)" "$@"
+    "ssh" "$@"
   fi
 }

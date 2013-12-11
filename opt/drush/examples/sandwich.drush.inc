@@ -121,7 +121,7 @@ function sandwich_drush_help($section) {
  */
 function drush_sandwich_make_me_a_sandwich_validate() {
   if (drush_is_windows()) {
-    // $name = getenv('USERNAME');
+    // $name = drush_get_username();
     // TODO: implement check for elevated process using w32api
     // as sudo is not available for Windows
     // http://php.net/manual/en/book.w32api.php
@@ -164,7 +164,7 @@ function drush_sandwich_make_me_a_sandwich_validate() {
  */
 function drush_sandwich_make_me_a_sandwich($filling = 'ascii') {
   $str_spreads = '';
-  // Read options with drush_get_options. Note that the options _must_
+  // Read options with drush_get_option. Note that the options _must_
   // be documented in the $items structure for this command in the 'command' hook.
   // See `drush topic docs-commands` for more information.
   if ($spreads = drush_get_option('spreads')) {

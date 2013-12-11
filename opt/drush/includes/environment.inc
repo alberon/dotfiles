@@ -96,7 +96,7 @@ function _drush_environment_check_php_ini() {
     $ini_value = ini_get($prohibited_mode);
     $invalid_value = FALSE;
     if (empty($disallowed_value)) {
-      $invalid_value = !empty($ini_value);
+      $invalid_value = !empty($ini_value) && (strcasecmp($ini_value, 'off') != 0);
     }
     else {
       foreach ($disallowed_value as $test_value) {
@@ -403,8 +403,6 @@ function drush_valid_db_credentials() {
   }
   $type = $creds['driver'];
 
-  $type = ( $type=='oracle' ? 'oci' : $type);
-
   switch (drush_drupal_major_version()) {
     case 6:
       // Check availability of db extension in PHP and also Drupal support.
@@ -468,6 +466,7 @@ function drush_valid_db_credentials() {
       break;
     case 7:
     default:
+      $type = ( $type=='oracle' ? 'oci' : $type); // fix PDO driver name, should go away in Drupal 8
       // Drupal >=7 requires PDO and drush requires php 5.2, that ships with PDO
       // but it may be compiled with --disable-pdo.
       if (!class_exists('PDO')) {
@@ -645,14 +644,24 @@ function drush_is_mingw($os = NULL) {
  * Return tar executable name specific for the current OS
  */
 function drush_get_tar_executable() {
-  return drush_is_windows() ? "bsdtar.exe" : "tar";
+  return drush_is_windows() ? (drush_is_mingw() ? "tar.exe" : "bsdtar.exe") : "tar";
+}
+
+/**
+ * Check if the operating system is OS X.
+ * This will return TRUE for Mac OS X (Darwin).
+ */
+function drush_is_osx($os = NULL) {
+  return _drush_test_os($os, array("DARWIN"));
 }
 
 /**
  * Checks if the operating system has bash.
+ *
+ * MinGW has bash, but PHP isn't part of MinGW and hence doesn't run in bash.
  */
 function drush_has_bash($os = NULL) {
-  return drush_is_cygwin($os) || !drush_is_windows($os);
+  return (drush_is_cygwin($os) && !drush_is_mingw($os)) || !drush_is_windows($os);
 }
 
 /*
@@ -739,15 +748,22 @@ function drush_is_local_host($host) {
     return TRUE;
   }
 
-  // If uname -n returns an fqdn (that is, uname -n == hostname -f),
-  // then we will require that it exactly match the host in order
-  // to be considered local.  However, the usual convention is for
-  // uname -n to return only the node name (that is, uname -n == hostname -a).
-  // When this is the case, we will consider $host to be local if the
-  // machine portion of it (everything up to the first dot) matches the
-  // current value of uname -n.  We prefer uname -n to hostname as
-  // the output of uname is more regular than hostname.
+  // We'll start out by asking for uname -n via php_uname, since
+  // that is most portable.  On Linux, uname -n returns the contents of
+  // /etc/hostname, which, according to `man hostname`, should never
+  // contain the fqdn.  We will therefore also try `hostname -f`, and
+  // see if we can get the fqdn from that.
   $uname = php_uname('n');
+  if ((strpos($uname,'.') === FALSE) && (!drush_is_windows())) {
+    $hostname = exec('hostname -f');
+    if (!empty($hostname)) {
+      $uname = $hostname;
+    }
+  }
+  // We will require an exact match if we have the fqdn for this
+  // host; if we only have the short name, then we will consider it
+  // to be a match if it matches the first part of the remote-host
+  // item (up to the first dot).
   return (strpos($uname,'.') !== FALSE) ? ($host == $uname) : substr($host . '.',0,strlen($uname)+1) == $uname . '.';
 }
 
@@ -767,7 +783,14 @@ function drush_server_home() {
   return empty($home) ? NULL : $home;
 }
 
-/*
+/**
+ * Return the name of the user running drush.
+ */
+function drush_get_username() {
+  return drush_is_windows() ? getenv("username") : getenv("USER");
+}
+
+/**
  * The path to the global cache directory.
  *
  * @param subdir
@@ -783,7 +806,7 @@ function drush_directory_cache($subdir = '') {
   if ($home) {
     $cache_locations[$home] = '.drush/cache';
   }
-  $cache_locations[drush_find_tmp()] = 'drush/' . getenv('USER') . '/cache';
+  $cache_locations[drush_find_tmp()] = 'drush-' . drush_get_username() . '/cache';
   foreach ($cache_locations as $base => $dir) {
     if (!empty($base) && is_writable($base)) {
       $cache_dir = $base . '/' . $dir;
@@ -813,9 +836,9 @@ function drush_directory_cache($subdir = '') {
  * @return
  *   An array containing info for all available extensions.
  */
-function drush_get_extensions() {
+function drush_get_extensions($include_hidden = TRUE) {
   drush_include_engine('drupal', 'environment');
-  $extensions = array_merge(drush_get_modules(), drush_get_themes());
+  $extensions = array_merge(drush_get_modules($include_hidden), drush_get_themes($include_hidden));
   foreach ($extensions as $name => $extension) {
     $extensions[$name]->label = $extension->info['name'].' ('.$extension->name.')';
     if (empty($extension->info['package'])) {
@@ -829,15 +852,15 @@ function drush_get_extensions() {
  * Test compatibility of a extension with version of drupal core and php.
  *
  * @param $file Extension object as returned by system_rebuild_module_data().
- * @return TRUE if the extension is incompatible.
+ * @return FALSE if the extension is compatible.
  */
 function drush_extension_check_incompatibility($file) {
-  if (!isset($file->info['core'])
-       || $file->info['core'] != DRUPAL_CORE_COMPATIBILITY
-       || version_compare(phpversion(), $file->info['php']) < 0) {
-    return TRUE;
+  if (!isset($file->info['core']) || $file->info['core'] != DRUPAL_CORE_COMPATIBILITY) {
+    return 'Drupal';
   }
-
+  if (version_compare(phpversion(), $file->info['php']) < 0) {
+    return 'PHP';
+  }
   return FALSE;
 }
 

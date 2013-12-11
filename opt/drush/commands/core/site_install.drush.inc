@@ -87,7 +87,7 @@ function drush_core_pre_site_install($profile = NULL) {
   // to help drush find commandfiles earlier in the drush bootstrap.
   if (!empty($profile)) {
     $contents = file_get_contents($settingsfile);
-    if (strpos($contents, "\$conf['profile']") === FALSE) {
+    if (strpos($contents, "\$conf['install_profile']") === FALSE && is_writable($settingsfile)) {
       $install_profile_config = "\$conf['install_profile'] = '$profile';";
       $appended = file_put_contents($settingsfile, "\n" . $install_profile_config . "\n", FILE_APPEND);
     }
@@ -95,6 +95,7 @@ function drush_core_pre_site_install($profile = NULL) {
 
   // The Drupal 6 installer needs to bootstrap up to the specified site.
   // We need to be at least at DRUSH_BOOTSTRAP_DRUPAL_SITE to select the site uri to install to
+  define('MAINTENANCE_MODE', 'install');
   if (drush_drupal_major_version() == 6) {
     drush_bootstrap(DRUSH_BOOTSTRAP_DRUPAL_CONFIGURATION);
   }

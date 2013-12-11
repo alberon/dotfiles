@@ -11,9 +11,44 @@
 *  Advantages of this approach:
 *    - No network calls and thus more robust.
 *    - No network calls and thus faster.
+*
+*  @group base
 */
 
 class backendCase extends Drush_CommandTestCase {
+  // Test to insure that calling drush_invoke_process with 'dispatch-using-alias'
+  // will build a command string that uses the alias instead of --root and --uri.
+  function testDispatchUsingAlias() {
+    $aliasPath = UNISH_SANDBOX . '/aliases';
+    mkdir($aliasPath);
+    $aliasFile = $aliasPath . '/foo.aliases.drushrc.php';
+    $aliasContents = <<<EOD
+  <?php
+  // Writtne by Unish. This file is safe to delete.
+  \$aliases['dev'] = array('root' => '/fake/path/to/root', 'uri' => 'default');
+EOD;
+    file_put_contents($aliasFile, $aliasContents);
+    $options = array(
+      'alias-path' => $aliasPath,
+      'include' => dirname(__FILE__), // Find unit.drush.inc commandfile.
+      'backend' => TRUE,
+    );
+    $php = <<<EOD
+    \$valuesUsingAlias = drush_invoke_process("@dev", "unit-return-argv", array(), array(), array("dispatch-using-alias" => TRUE));
+    \$valuesWithoutAlias = drush_invoke_process("@dev", "unit-return-argv", array(), array(), array());
+    return array('with' => \$valuesUsingAlias['object'], 'without' => \$valuesWithoutAlias['object']);
+EOD;
+    $this->drush('php-eval', array($php), $options);
+    $parsed = parse_backend_output($this->getOutput());
+
+    // $parsed['with'] and $parsed['without'] now contain an array
+    // each with the original arguments passed in with and without
+    // 'dispatch-using-alias', respectively.
+    $argDifference = array_diff($parsed['object']['with'], $parsed['object']['without']);
+    $this->assertEquals(array_diff(array_values($argDifference), array('@foo.dev')), array());
+    $argDifference = array_diff($parsed['object']['without'], $parsed['object']['with']);
+    $this->assertEquals(array_diff(array_values($argDifference), array('--root=/fake/path/to/root', '--uri=default')), array());
+  }
 
   /*
    * Covers the following origin responsibilities.
@@ -25,7 +60,7 @@ class backendCase extends Drush_CommandTestCase {
   function testOrigin() {
     $exec = sprintf('%s %s version arg1 arg2 --simulate --ssh-options=%s | grep ssh', UNISH_DRUSH, self::escapeshellarg('user@server/path/to/drupal#sitename'), self::escapeshellarg('-i mysite_dsa'));
     $this->execute($exec);
-    $bash = $this->escapeshellarg('drush  --invoke --simulate --uri=sitename --root=/path/to/drupal version arg1 arg2 2>&1');
+    $bash = $this->escapeshellarg('drush  --invoke --simulate --uri=sitename --root=/path/to/drupal  version arg1 arg2 2>&1');
     $expected = "Simulating backend invoke: ssh -i mysite_dsa user@server $bash 2>&1";
     $output = $this->getOutput();
     $this->assertEquals($expected, $output, 'Expected ssh command was built');
@@ -103,7 +138,7 @@ class backendCase extends Drush_CommandTestCase {
     // assert that $parsed has 'foo' and not 'bar'
     $this->assertEquals("'foo'", var_export($parsed['object'], TRUE));
   }
-  
+
   /**
    * Covers the following target responsibilities.
    *   - Insures that the backend option 'invoke-multiple' will cause multiple commands to be executed.
@@ -151,7 +186,7 @@ class backendCase extends Drush_CommandTestCase {
   'x' => 'y',
 )", var_export($parsed['object'], TRUE));
   }
-  
+
   /**
    * Covers the following target responsibilities.
    *   - Insures that complex arrays can be passed through when using --backend mode's method POST
@@ -167,14 +202,51 @@ class backendCase extends Drush_CommandTestCase {
     $this->drush('php-eval', array($php), $options);
     $parsed = parse_backend_output($this->getOutput());
     // assert that $parsed has 'x' and 'data'
-    $this->assertEquals("array (
+    $this->assertEquals(array (
   'x' => 'y',
-  'data' => 
+  'data' =>
   array (
     'a' => 1,
     'b' => 2,
   ),
+), $parsed['object']);
+  }
+
+  /**
+   * Covers the following target responsibilities.
+   *   - Insures that backend invoke can properly re-assemble packets
+   *     that are split across process-read-size boundaries.
+   *
+   * This test works by repeating testBackendMethodGet(), while setting
+   * '#process-read-size' to a very small value, insuring that packets
+   * will be split.
+   */
+  function testBackendReassembleSplitPackets() {
+    $options = array(
+      'backend' => NULL,
+      'include' => dirname(__FILE__), // Find unit.drush.inc commandfile.
+    );
+    $read_sizes_to_test = array(4096, 128, 16);
+    foreach ($read_sizes_to_test as $read_size) {
+      $log_message="";
+      for ($i = 1; $i <= 16; $i++) {
+        $log_message .= "X";
+        $php = "\$values = drush_invoke_process('@none', 'unit-return-options', array('value'), array('log-message' => '$log_message', 'x' => 'y$read_size', 'data' => array('a' => 1, 'b' => 2)), array('method' => 'GET', '#process-read-size' => $read_size)); return array_key_exists('object', \$values) ? \$values['object'] : 'no result';";
+        $this->drush('php-eval', array($php), $options);
+        $parsed = parse_backend_output($this->getOutput());
+        // assert that $parsed has 'x' but not 'data'
+        $all_warnings=array();
+        foreach ($parsed['log'] as $log) {
+          if ($log['type'] == 'warning') {
+            $all_warnings[] = $log['message'];
+          }
+        }
+        $this->assertEquals("$log_message,done", implode(',', $all_warnings), 'Log reconstruction with read_size ' . $read_size);
+        $this->assertEquals("array (
+  'x' => 'y$read_size',
 )", var_export($parsed['object'], TRUE));
+      }
+    }
   }
 }
 

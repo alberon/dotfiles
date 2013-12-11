@@ -6,6 +6,8 @@
  *
  *   Installs Drupal and checks that the given URL by sql-connect is correct.
  *   @TODO: test Postgre-SQL and Sqlite.
+ *
+ * @group commands
  */
 class SqlConnectCase extends Drush_CommandTestCase {
 
@@ -16,6 +18,11 @@ class SqlConnectCase extends Drush_CommandTestCase {
       'root' => $this->webroot(),
       'uri' => key($sites),
     );
+
+    // @todo: extend to other DB platforms.
+    if (strpos(UNISH_DB_URL, 'mysql') === FALSE) {
+      $this->markTestSkipped('sql-connect tests need updating for non-mysql UNISH_DB_URL.');
+    }
 
     // Get the connection details with sql-connect and check its structure.
     $this->drush('sql-connect', array(), $options);

@@ -2,7 +2,7 @@
 
 /**
  * Examples of valid statements for a Drush runtime config (drushrc) file.
- * Use this file to cut down on typing out lenghty and repetetive command line
+ * Use this file to cut down on typing out lengthy and repetitive command line
  * options in the Drush commands you use and to avoid mistakes.
  *
  * Rename this file to drushrc.php and optionally copy it to one of the places
@@ -20,7 +20,7 @@
  *
  * If you have some configuration options that are specific to a particular
  * version of Drush, then you may place them in a file called drush5rc.php.
- * The version-specific file is loaded in addtion to, and after, the general-
+ * The version-specific file is loaded in addition to, and after, the general-
  * purpose drushrc file.  Version-specific configuration files can be placed
  * in any of the locations specified above.
  *
@@ -63,7 +63,7 @@
  */
 
 // Specify a particular multisite.
-# $options['l'] = 'http://example.com/subir';
+# $options['l'] = 'http://example.com/subdir';
 
 // Specify your Drupal core base directory (useful if you use symlinks).
 # $options['r'] = '/home/USER/workspace/drupal-6';
@@ -76,7 +76,7 @@
  * More information on shell aliases can be found via:
  * `drush topic docs-shell-aliases` on the command line.
  *
- * @see https://git.wiki.kernel.org/articles/a/l/i/Aliases.html#Advanced.
+ * @see https://git.wiki.kernel.org/index.php/Aliases#Advanced
  */
 # $options['shell-aliases']['pull'] = '!git pull'; // We've all done it.
 # $options['shell-aliases']['pulldb'] = '!git pull && drush updatedb';
@@ -85,7 +85,11 @@
 # $options['shell-aliases']['unsuck'] = 'pm-disable -y overlay,dashboard';
 # $options['shell-aliases']['offline'] = 'variable-set -y --always-set maintenance_mode 1';
 # $options['shell-aliases']['online'] = 'variable-delete -y --exact maintenance_mode';
-# $options['shell-aliases']['dis-all'] = '!drush -y dis $(drush pml --status=enabled --type=module --no-core --pipe)';
+# $options['shell-aliases']['dis-all'] = '!drush -y dis `drush pml --status=enabled --type=module --no-core --pipe`';
+# $options['shell-aliases']['self-alias'] = 'site-alias @self --with-db --alias-name=new';
+
+// Add a 'pm-clone' to simplify git cloning from drupal.org.
+# $options['shell-aliases']['pm-clone'] = 'pm-download --gitusername=YOURUSERNAME --package-handler=git_drupalorg';
 
 // You can create a local cache of all projects checked out using
 // --package-handler=git_drupalorg; this can be faster for repeated
@@ -117,15 +121,6 @@
 # $options['config'][] = '.';
 
 /**
- * Drush knows how to check for and download its own code updates with the
- * `drush pm-updatecode` and `drush version` commands.  Set this value to TRUE
- * (default) allows updates to latest stable release.  Set to FALSE to disable
- * self update checks completely.  Set to 'head' to allow bleeding-edge updates
- * from the code repository.
- */
-# $options['self-update'] = FALSE;
-
-/**
  * Enable logging and periodic upload of anonymized usage statistics. The Drush
  * maintainers use this data to learn which commands and options are most
  * See the usage-show and usage-send commands.
@@ -134,7 +129,7 @@
 # $options['drush_usage_send'] = TRUE;
 
 /**
- * By default, Drush will download projects compatibile with the current
+ * By default, Drush will download projects compatible with the current
  * version of Drupal, or, if no Drupal site is specified, then the Drupal-7
  * version of the project is downloaded.  Set default-major to select a
  * different default version.
@@ -225,7 +220,7 @@
  * message: "--remove-source-files: unknown option".  To fix this, set
  * $options['rsync-version'] = '2.6.8'; (replace with the lowest version of
  * rsync installed on any system you are using with Drush).  Note that this
- * option can also be set in a site alias, which is the prefered solution if
+ * option can also be set in a site alias, which is the preferred solution if
  * newer versions of rsync are available on some of the systems you use.
  * See: http://drupal.org/node/955092
  */
@@ -310,9 +305,6 @@
 // Ensure all rsync commands use verbose output.
 # $command_specific['rsync'] = array('verbose' => TRUE);
 
-// CVS credentials for module dowlnoads.
-# $command_specific['dl'] = array('cvscredentials' => 'user:pass');
-
 // Additional folders to search for scripts.
 // Separate by : (Unix-based systems) or ; (Windows).
 # $command_specific['script']['script-path'] = 'sites/all/scripts:profiles/myprofile/scripts';
@@ -342,10 +334,10 @@
  * git repository.  Example script below by grayside.  Customize as desired.
  * @see: http://grayside.org/node/93.
  */
-#exec('git rev-parse --git-dir 2> /dev/null', $output);
+#exec('git rev-parse --show-toplevel 2> /dev/null', $output);
 #if (!empty($output)) {
 #  $repo = $output[0];
-#  $options['config'] = $repo . '/../drush/drushrc.php';
-#  $options['include'] = $repo . '/../drush/commands';
-#  $options['alias-path'] = $repo . '/../drush/aliases';
+#  $options['config'] = $repo . '/drush/drushrc.php';
+#  $options['include'] = $repo . '/drush/commands';
+#  $options['alias-path'] = $repo . '/drush/aliases';
 #}

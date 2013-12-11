@@ -51,8 +51,9 @@
  *   expensive to generate. Arguments are also cached per-site.
  *
  * For argument completions, commandfiles can implement
- * COMMANDFILE_COMMAND_complete() returning an array of argument completions for
- * that command. For example, return array('aardvark', 'aardwolf') will offer
+ * COMMANDFILE_COMMAND_complete() returning an array containing a key 'values'
+ * containing an array of all possible argument completions for that command.
+ * For example, return array('values' => array('aardvark', 'aardwolf')) offers
  * the words 'aardvark' and 'aardwolf', or will complete to 'aardwolf' if the
  * letters 'aardw' are already present. Since command arguments are cached,
  * commandfiles can bootstrap a site or perform other somewhat time consuming
@@ -107,10 +108,9 @@ function drush_early_complete() {
   }
   // Set up as if we were running the command, and attempt to parse.
   $argv = drush_complete_process_argv();
-  $set_sitealias = drush_sitealias_get_record('@self');
-  $set_sitealias_name = NULL;
-  if (!empty($set_sitealias['#name'])) {
-    $set_sitealias_name = $set_sitealias['#name'];
+  if ($alias = drush_get_context('DRUSH_TARGET_SITE_ALIAS')) {
+    $set_sitealias_name = $alias;
+    $set_sitealias = drush_sitealias_get_record($alias);
   }
 
   // Arguments have now had site-aliases and options removed, so we take the
@@ -148,7 +148,7 @@ function drush_early_complete() {
       $completions += drush_hyphenate_options(drush_complete_match($last_word, drush_complete_get('options')));
     }
     else {
-      if (!$set_sitealias_name) {
+      if (empty($set_sitealias_name)) {
         // Include site alias completions.
         $completions += drush_complete_match($last_word, drush_complete_get('site-aliases'));
       }
@@ -450,11 +450,6 @@ function drush_complete_trailing_space(&$item, $key) {
 /**
  * Rebuild and cache completions for command arguments.
  *
- */
-
-/**
- * Rebuild and cache completions for command arguments.
- *
  * @param string $command
  *   A specific command to retrieve and cache arguments for.
  *
@@ -527,7 +522,12 @@ function drush_complete_cache_cid($type, $command = NULL) {
   // the possibility of cache misses/ but they should be rare, since sites are
   // normally referred to the same way (e.g. a site alias, or using the current
   // directory), at least within a single command completion session.
-  $root = drush_get_option(array('r', 'root'), drush_locate_root());
-  $site = drush_get_option(array('l', 'uri'), drush_site_path());
+  // We also static cache them, since we may get differing results after
+  // bootstrap, which prevents the caches from being found on the next call.
+  static $root, $site;
+  if (empty($root)) {
+    $root = drush_get_option(array('r', 'root'), drush_locate_root());
+    $site = drush_get_option(array('l', 'uri'), drush_site_path());
+  }
   return drush_get_cid('complete', array(), array($type, $command, $root, $site));
 }

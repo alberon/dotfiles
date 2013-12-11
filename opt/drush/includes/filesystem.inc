@@ -5,6 +5,13 @@
  * @{
  */
 
+/**
+ * Behavior for drush_copy_dir() and drush_move_dir() when destinations exist.
+ */
+define('FILE_EXISTS_ABORT', 0);
+define('FILE_EXISTS_OVERWRITE', 1);
+define('FILE_EXISTS_MERGE', 2);
+
  /**
   * Determines whether the provided path is absolute or not
   * on the specified O.S. -- starts with "/" on *nix, or starts
@@ -90,24 +97,31 @@ function drush_dir_md5($dir) {
     $hashes[] = trim(str_replace(array($dir), array(''), $sum[0]));
   }
   sort($hashes);
-  file_put_contents('flist.1', implode("\n", $hashes));
   return md5(implode("\n", $hashes));
 }
 
 /**
  * Deletes the provided file or folder and everything inside it.
+ *
  * Usually respects read-only files and folders. To do a forced delete use
  * drush_delete_tmp_dir() or set the parameter $forced.
  *
  * @param $dir
- *   The directory to delete
+ *   The file or directory to delete.
  * @param $force
  *   Try whatever possible to delete the directory - also read-only ones.
+ * @param $follow_symlinks
+ *   Do not delete symlinked files. Simply unlink symbolic links.
  * @return
- *   FALSE on failure, TRUE if everything was deleted
+ *   FALSE on failure, TRUE if everything was deleted.
  */
-function drush_delete_dir($dir, $force = FALSE) {
-  if (!file_exists($dir)) {
+function drush_delete_dir($dir, $force = FALSE, $follow_symlinks = FALSE) {
+  // Do not delete symlinked files, only unlink symbolic links
+  if (is_link($dir) && !$follow_symlinks) {
+    return unlink($dir);
+  }
+  // Allow to delete symlinks even if the target doesn't exist.
+  if (!is_link($dir) && !file_exists($dir)) {
     return TRUE;
   }
   if (!is_dir($dir)) {
@@ -159,18 +173,25 @@ function drush_delete_tmp_dir($dir) {
  *   $src = "/b/a" and $dest = "/c/a".  To copy "a" to "/c" and rename
  *   it to "d", then $dest = "/c/d".
  * @param $overwrite
- *   If TRUE, the destination will be deleted if it exists.
+ *   Action to take if destination already exists.
+ *     - FILE_EXISTS_OVERWRITE - completely removes existing directory.
+ *     - FILE_EXISTS_ABORT - aborts the operation.
+ *     - FILE_EXISTS_MERGE - Leaves existing files and directories in place.
  * @return
  *   TRUE on success, FALSE on failure.
  */
-function drush_copy_dir($src, $dest, $overwrite = FALSE) {
+function drush_copy_dir($src, $dest, $overwrite = FILE_EXISTS_ABORT) {
   // Preflight based on $overwrite if $dest exists.
   if (file_exists($dest)) {
-    if ($overwrite) {
+    if ($overwrite === FILE_EXISTS_OVERWRITE) {
       drush_op('drush_delete_dir', $dest, TRUE);
     }
-    else {
+    elseif ($overwrite === FILE_EXISTS_ABORT) {
       return drush_set_error('DRUSH_DESTINATION_EXISTS', dt('Destination directory !dest already exists.', array('!dest' => $dest)));
+    }
+    elseif ($overwrite === FILE_EXISTS_MERGE) {
+      // $overwrite flag may indicate we should merge instead.
+      drush_log(dt('Merging existing !dest directory', array('!dest' => $dest)));
     }
   }
   // $src readable?
@@ -208,13 +229,22 @@ function _drush_recursive_copy($src, $dest) {
     }
     closedir($dir_handle);
   }
-  elseif (copy($src, $dest) !== TRUE) {
+  elseif (is_link($src)) {
+    symlink(readlink($src), $dest);
+  }
+  elseif (!(copy($src, $dest) && touch($dest, filemtime($src)))) {
     return FALSE;
   }
 
-  // Preserve permissions
-  if (!drush_is_windows()) {
-    chmod($dest, intval(fileperms($src), 8));
+  // Preserve execute permission.
+  if (!is_link($src) && !drush_is_windows()) {
+    // Get execute bits of $src.
+    $execperms = fileperms($src) & 0111;
+    // Apply execute permissions if any.
+    if ($execperms > 0) {
+      $perms = fileperms($dest) | $execperms;
+      chmod($dest, $perms);
+    }
   }
 
   return TRUE;
@@ -294,6 +324,10 @@ function drush_mkdir($path, $required = TRUE) {
   if (!is_dir($path)) {
     if (drush_mkdir(dirname($path))) {
       if (@mkdir($path)) {
+        return TRUE;
+      }
+      elseif (is_dir($path) && is_writable($path)) {
+        // The directory was created by a concurrent process.
         return TRUE;
       }
       else {

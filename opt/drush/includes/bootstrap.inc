@@ -448,6 +448,9 @@ function _drush_bootstrap_drush() {
       if (!$columns_status && is_array($columns_output)) {
         $columns = (int)preg_replace('/\D/', '', $columns_output[4], -1, $columns_count);
       }
+      else {
+        drush_log(dt('Drush could not detect the console window width. Set a Windows Environment Variable of COLUMNS to the desired width.'), 'warning');
+      }
     }
 
     // Failling back to default columns value
@@ -681,15 +684,24 @@ function _drush_bootstrap_drupal_root() {
   define('DRUPAL_ROOT', $drupal_root);
 
   chdir($drupal_root);
-  require_once DRUPAL_ROOT . '/' . DRUSH_DRUPAL_SIGNATURE;
+  // Beware the poison pill: prefer drush_drupal_version() and
+  // drush_drupal_major_version() to 'DRUSH_DRUPAL_VERSION' and
+  // 'DRUSH_DRUPAL_MAJOR_VERSION', respectively. See http://drupal.org/node/1816192
   $version = drush_set_context('DRUSH_DRUPAL_VERSION', drush_drupal_version());
   $major_version = drush_set_context('DRUSH_DRUPAL_MAJOR_VERSION', drush_drupal_major_version());
 
-  // DRUSH_DRUPAL_CORE should point to the /core folder in Drupal 8+ or to DRUPAL_ROOT
-  // in prior versions.
-  $core = $major_version >= 8 ? DRUPAL_ROOT . '/core' : DRUPAL_ROOT;
-  drush_set_context('DRUSH_DRUPAL_CORE', $core);
-  define('DRUSH_DRUPAL_CORE', $core);
+  if (($major_version < 6) || ($major_version > 7)) {
+    if ($major_version < 6) {
+      $recommended_version = 4;
+    }
+    else {
+      $recommended_version = 6;
+    }
+    drush_set_error('DRUSH_DRUPAL_VERSION_UNSUPPORTED', dt('Drush !drush_version does not support Drupal !major_version. Use Drush !recommended_version instead.', array('!drush_version' => DRUSH_VERSION, '!major_version' => $major_version, '!recommended_version' => $recommended_version)));
+  }
+
+  drush_set_context('DRUSH_DRUPAL_CORE', DRUPAL_ROOT);
+  define('DRUSH_DRUPAL_CORE', DRUPAL_ROOT);
 
   _drush_bootstrap_global_options();
 
@@ -744,6 +756,10 @@ function _drush_bootstrap_drupal_site_validate() {
       'port' => NULL,
     );
     $_SERVER['HTTP_HOST'] = $drupal_base_url['host'];
+
+    if ($drupal_base_url['scheme'] == 'https') {
+      $_SERVER['HTTPS'] = 'on';
+    }
 
     if ($drupal_base_url['port']) {
       $_SERVER['HTTP_HOST'] .= ':' . $drupal_base_url['port'];
@@ -993,13 +1009,13 @@ function drush_bootstrap_prepare() {
 
   // Terminate immediately unless invoked as a command line script
   if (!drush_verify_cli()) {
-    die('drush is designed to run via the command line.');
+    return drush_set_error('DRUSH_REQUIREMENTS_ERROR', dt('Drush is designed to run via the command line.'));
   }
 
   // Check supported version of PHP.
   define('DRUSH_MINIMUM_PHP', '5.2.0');
   if (version_compare(phpversion(), DRUSH_MINIMUM_PHP) < 0) {
-    die('Your command line PHP installation is too old. Drush requires at least PHP ' . DRUSH_MINIMUM_PHP . "\n");
+    return drush_set_error('DRUSH_REQUIREMENTS_ERROR', dt('Your command line PHP installation is too old. Drush requires at least PHP !version.', array('!version' => DRUSH_MINIMUM_PHP)));
   }
 
   $drush_info = drush_read_drush_info();

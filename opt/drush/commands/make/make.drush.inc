@@ -38,7 +38,7 @@ function make_drush_command() {
     'options' => array(
       'version' => 'Print the make API version and exit.',
       'concurrency' => array(
-        'description' => 'Limits the number of concurrent projects that will be processed at the same time. The default is 4.',
+        'description' => 'Set the number of concurrent projects that will be processed at the same time. The default is 1.',
         'example-value' => '1',
       ),
       'contrib-destination' => 'Specify a path under which modules and themes should be placed. Defaults to sites/all.',
@@ -50,7 +50,7 @@ function make_drush_command() {
         'value' => 'optional',
       ),
       'make-update-default-url' => 'The default location to load the XML update information from.',
-      'no-cache' => 'Do not use the pm-download caching (defaults to using this).',
+      'no-cache' => 'Do not use the pm-download caching (defaults to cache enabled).',
       'no-clean' => 'Leave temporary build directories in place instead of cleaning up after completion.',
       'no-core' => 'Do not require a Drupal core project to be specified.',
       'no-patch-txt' => 'Do not write a PATCHES.txt file in the directory of each patched project.',
@@ -105,14 +105,14 @@ function make_drush_command() {
   );
 
   // Add docs topic.
-  $make_dir = dirname(__FILE__);
+  $docs_dir = drush_get_context('DOC_PREFIX', DRUSH_BASE_PATH);
   $items['docs-make'] = array(
     'description' => 'Drush Make overview with examples',
     'hidden' => TRUE,
     'topic' => TRUE,
     'bootstrap' => DRUSH_BOOTSTRAP_DRUSH,
     'callback' => 'drush_print_file',
-    'callback arguments' => array($make_dir . '/README.txt'),
+    'callback arguments' => array($docs_dir . '/docs/make.txt'),
   );
   $items['docs-make-example'] = array(
     'description' => 'Drush Make example makefile',
@@ -120,7 +120,7 @@ function make_drush_command() {
     'topic' => TRUE,
     'bootstrap' => DRUSH_BOOTSTRAP_DRUSH,
     'callback' => 'drush_print_file',
-    'callback arguments' => array($make_dir . '/EXAMPLE.make'),
+    'callback arguments' => array($docs_dir . '/examples/example.make'),
   );
   return $items;
 }
@@ -131,7 +131,7 @@ function make_drush_command() {
 function make_drush_help($section) {
   switch ($section) {
     case 'drush:make':
-      return 'Turns a makefile into a Drupal codebase. For a full description of options and makefile syntax, see the README.txt included with drush make.';
+      return 'Turns a makefile into a Drupal codebase. For a full description of options and makefile syntax, see docs/make.txt and examples/example.make.';
     case 'drush:make-generate':
       return 'Generate a makefile from the current Drupal site, specifying project version numbers unless not known or otherwise specified. Unversioned projects will be interpreted later by drush make as "most recent stable release"';
   }
@@ -185,6 +185,8 @@ function drush_make($makefile = NULL, $build_path = NULL) {
     return FALSE;
   }
 
+  drush_log(dt('Beginning to build !makefile.', array('!makefile' => $makefile)), 'ok');
+
   if (make_projects(FALSE, drush_get_option('contrib-destination', 'sites/all'), $info, $build_path)) {
     make_libraries(drush_get_option('contrib-destination', 'sites/all'), $info, $build_path);
 
@@ -192,6 +194,7 @@ function drush_make($makefile = NULL, $build_path = NULL) {
       make_prepare_install($build_path);
     }
   }
+  return $info;
 }
 
 /**
@@ -254,7 +257,7 @@ function make_projects($recursion, $contrib_destination, $info, $build_path) {
       return TRUE;
     }
     else {
-      drush_set_error(dt('No core project specified.'));
+      drush_set_error('MAKE_NO_CORE', dt('No core project specified.'));
       return FALSE;
     }
   }
@@ -286,7 +289,7 @@ function make_projects($recursion, $contrib_destination, $info, $build_path) {
     // If download components are specified, but not the download
     // type, default to git. Additionally, if the 'revision' parameter is
     // passed at the top level, this is short-hand for download revision.
-    if (isset($project['revision']) && !isset($project['download'])) {
+    if (isset($project['revision']) && !isset($project['download']['revision'])) {
       $project['download']['revision'] = $project['revision'];
     }
     if (isset($project['download']) && !isset($project['download']['type'])) {
@@ -328,14 +331,14 @@ function make_projects($recursion, $contrib_destination, $info, $build_path) {
     unset($projects['core']);
   }
   elseif ($cores == 0 && !$recursion) {
-    drush_set_error(dt('No core project specified.'));
+    drush_set_error('MAKE_NO_CORE', dt('No core project specified.'));
     return FALSE;
   }
   elseif ($cores == 1 && $recursion) {
     unset($projects['core']);
   }
   elseif ($cores > 1) {
-    drush_set_error(dt('More than one core project specified.'));
+    drush_set_error('MAKE_MULTIPLE_CORES', dt('More than one core project specified.'));
     return FALSE;
   }
 
@@ -355,13 +358,16 @@ function make_projects($recursion, $contrib_destination, $info, $build_path) {
         $release = release_info_fetch($request);
         // Restore the previous '--cache' option value.
         drush_set_option('cache', $cache_before);
-        // Translate release_info key for project_type to drush make.
-        $project['type'] = $request['project_type'];
+        if (!isset($project['type'])) {
+          // Translate release_info key for project_type to drush make.
+          $project['type'] = $request['project_type'];
+        }
         if (!isset($project['download'])) {
           $project['download'] = array(
             'type' => 'pm',
             'full_version' => $release['version'],
             'download_link' => $release['download_link'],
+            'status url' => $request['status url'],
           );
         }
       }
@@ -405,11 +411,13 @@ function make_projects($recursion, $contrib_destination, $info, $build_path) {
     if (!empty($invocations)) {
       // Backend options.
       $backend_options = array(
-        'concurrency' => drush_get_option('concurrency', 4),
+        'concurrency' => drush_get_option('concurrency', 1),
         'method' => 'POST',
       );
 
       $common_options = drush_redispatch_get_options();
+      // Merge in stdin options since we process makefiles recursively. See http://drupal.org/node/1510180.
+      $common_options = array_merge($common_options, drush_get_context('stdin'));
       // Package handler should use 'wget'.
       $common_options['package-handler'] = 'wget';
 
@@ -485,7 +493,7 @@ function make_build_path($build_path) {
     return drush_user_abort(dt('Build aborted.'));
   }
   if ($build_path != '.' && file_exists($build_path)) {
-    return drush_set_error(dt('Base path %path already exists', array('%path' => $build_path)));
+    return drush_set_error('MAKE_PATH_EXISTS', dt('Base path %path already exists', array('%path' => $build_path)));
   }
   $saved_path = $build_path;
   return $build_path;
@@ -498,7 +506,7 @@ function make_move_build($build_path) {
   $tmp_path = make_tmp();
   $ret = TRUE;
   if ($build_path == '.') {
-    $info = drush_scan_directory($tmp_path . DIRECTORY_SEPARATOR . '__build__', '/./', array('.', '..'), 0, FALSE);
+    $info = drush_scan_directory($tmp_path . DIRECTORY_SEPARATOR . '__build__', '/./', array('.', '..'), 0, FALSE, 'filename', 0, TRUE);
     foreach ($info as $file) {
       $destination = $build_path . DIRECTORY_SEPARATOR . $file->basename;
       if (file_exists($destination)) {
@@ -507,7 +515,7 @@ function make_move_build($build_path) {
         // TODO: This only protects one level of directories from being removed.
         $files = drush_scan_directory($file->filename, '/./', array('.', '..'), 0, FALSE);
         foreach ($files as $file) {
-          $ret = $ret && drush_copy_dir($file->filename, $destination . DIRECTORY_SEPARATOR . $file->basename, TRUE);
+          $ret = $ret && drush_copy_dir($file->filename, $destination . DIRECTORY_SEPARATOR . $file->basename, FILE_EXISTS_MERGE);
         }
       }
       else {
@@ -520,8 +528,16 @@ function make_move_build($build_path) {
     $ret = drush_move_dir($tmp_path . DIRECTORY_SEPARATOR . '__build__', $tmp_path . DIRECTORY_SEPARATOR . basename($build_path), TRUE);
     $ret = $ret && drush_copy_dir($tmp_path . DIRECTORY_SEPARATOR . basename($build_path), $build_path);
   }
+
+  // Copying to final destination resets write permissions. Re-apply.
+  if (drush_get_option('prepare-install')) {
+    $default = $build_path . '/sites/default';
+    chmod($default . '/settings.php', 0666);
+    chmod($default . '/files', 0777);
+  }
+
   if (!$ret) {
-    drush_set_error(dt("Cannot move build into place"));
+    drush_set_error('MAKE_CANNOT_MOVE_BUILD', dt("Cannot move build into place"));
   }
   return $ret;
 }
@@ -561,7 +577,7 @@ function make_prepare_request($project, $type = 'contrib') {
  * @see make_projects()
  */
 function make_project_needs_release_info($project) {
-  return $project['location'] == RELEASE_INFO_DEFAULT_URL
+  return isset($project['location'])
     // Only fetch release info if the project type is unknown OR if
     // download attributes are unspecified.
     && (!isset($project['type']) || !isset($project['download']));

@@ -171,12 +171,99 @@ class makeMakefileCase extends Drush_CommandTestCase {
     $this->runMakefileTest('contrib-destination');
   }
 
+  function testMakeDefaults() {
+    $this->runMakefileTest('defaults');
+  }
+
   function testMakeFile() {
     $this->runMakefileTest('file');
   }
 
+  function testMakeBZ2() {
+    // Silently skip bz2 test if bz2 is not installed.
+    exec('which bzip2', $output, $whichBzip2ErrorCode);
+    if (!$whichBzip2ErrorCode) {
+      $this->runMakefileTest('bz2');
+    }
+    else {
+      $this->markTestSkipped('bzip2 command not available.');
+    }
+  }
+
+  function testMakeBZ2SingleFile() {
+    // Silently skip bz2 test if bz2 is not installed.
+    exec('which bzip2', $output, $whichBzip2ErrorCode);
+    if (!$whichBzip2ErrorCode) {
+      $this->runMakefileTest('bz2-singlefile');
+    }
+    else {
+      $this->markTestSkipped('bzip2 command not available.');
+    }
+  }
+
+  function testMakeGZip() {
+    // Silently skip gzip test if gzip is not installed.
+    exec('which gzip', $output, $whichGzipErrorCode);
+    if (!$whichGzipErrorCode) {
+      $this->runMakefileTest('gzip');
+    }
+    else {
+      $this->markTestSkipped('gzip command not available.');
+    }
+  }
+
   function testMakeSubtree() {
-    $this->runMakefileTest('subtree');
+    $config = $this->getMakefile('subtree');
+
+    $makefile = $this->makefile_path . DIRECTORY_SEPARATOR . $config['makefile'];
+    $install_directory = UNISH_SANDBOX . DIRECTORY_SEPARATOR . 'subtree';
+    $this->drush('make', array('--no-core', $makefile, $install_directory));
+
+    $files['nivo-slider'] = array(
+      'exists' => array(
+        'jquery.nivo.slider.js',
+        'jquery.nivo.slider.pack.js',
+        'license.txt',
+        'nivo-slider.css',
+        'README',
+      ),
+      'notexists' => array(
+        '__MACOSX',
+        'nivo-slider',
+      ),
+    );
+    $files['fullcalendar'] = array(
+      'exists' => array(
+        'fullcalendar.css',
+        'fullcalendar.js',
+        'fullcalendar.min.js',
+        'fullcalendar.print.css',
+        'gcal.js',
+      ),
+      'notexists' => array(
+        'changelog.txt',
+        'demos',
+        'fullcalendar',
+        'GPL-LICENSE.txt',
+        'jquery',
+        'MIT-LICENSE.txt',
+      ),
+    );
+    $basedir = $install_directory . DIRECTORY_SEPARATOR . 'sites' . DIRECTORY_SEPARATOR . 'all' . DIRECTORY_SEPARATOR . 'libraries';
+    foreach ($files as $lib => $details) {
+      $dir =  $basedir . DIRECTORY_SEPARATOR . $lib;
+      if (!empty($details['exists'])) {
+        foreach ($details['exists'] as $file) {
+          $this->assertFileExists($dir . DIRECTORY_SEPARATOR . $file);
+        }
+      }
+
+      if (!empty($details['notexists'])) {
+        foreach ($details['notexists'] as $file) {
+          $this->assertFileNotExists($dir . DIRECTORY_SEPARATOR . $file);
+        }
+      }
+    }
   }
 
   function testMakeMd5Succeed() {
@@ -223,6 +310,13 @@ class makeMakefileCase extends Drush_CommandTestCase {
 
     // Verify git reference cache exists.
     $this->assertFileExists($cache_dir . '/git/context_admin-' . md5('http://git.drupal.org/project/context_admin.git'));
+
+    // Text caption_filter .info rewrite.
+    $this->assertFileExists(UNISH_SANDBOX . '/test-build/sites/all/modules/contrib/caption_filter/caption_filter.info');
+    $contents = file_get_contents(UNISH_SANDBOX . '/test-build/sites/all/modules/contrib/caption_filter/caption_filter.info');
+    $this->assertContains('; Information added by drush on ' . date('Y-m-d'), $contents);
+    $this->assertContains('version = "7.x-1.2+0-dev"', $contents);
+    $this->assertContains('project = "caption_filter"', $contents);
   }
 
   function testMakeFileExtract() {
@@ -244,7 +338,7 @@ class makeMakefileCase extends Drush_CommandTestCase {
    */
   function testMakeMoveBuild() {
     // Manually download a module.
-    $this->drush('pm-download', array('cck_signup'), array('destination' => UNISH_SANDBOX . '/modules', 'yes' => NULL));
+    $this->drush('pm-download', array('cck_signup'), array('destination' => UNISH_SANDBOX . '/sites/all/modules/contrib', 'yes' => NULL));
 
     // Build a make file.
     $config = $this->getMakefile('contrib-destination');
@@ -252,7 +346,14 @@ class makeMakefileCase extends Drush_CommandTestCase {
     $this->drush('make', array($makefile, '.'), $config['options']);
 
     // Verify that the manually downloaded module still exists.
-    $this->assertFileExists(UNISH_SANDBOX . '/modules/cck_signup/README.txt');
+    $this->assertFileExists(UNISH_SANDBOX . '/sites/all/modules/contrib/cck_signup/README.txt');
+  }
+
+  /**
+   * Test that a distribution can be used as a "core" project.
+   */
+  function testMakeUseDistributionAsCore() {
+    $this->runMakefileTest('use-distribution-as-core');
   }
 
   function getMakefile($key) {
@@ -275,7 +376,7 @@ class makeMakefileCase extends Drush_CommandTestCase {
         'name' => 'Simple git integration',
         'makefile' => 'git-simple.make',
         'build' => TRUE,
-        'md5' => '6754a6814d4213326513ea750e6d5b65',
+        'md5' => '0147681209adef163a8ac2c0cff2a07e',
         'options'  => array('no-core' => NULL, 'no-gitinfofile' => NULL),
       ),
       'no-patch-txt' => array(
@@ -289,7 +390,7 @@ class makeMakefileCase extends Drush_CommandTestCase {
         'name'     => 'Test patching and writing of PATCHES.txt file',
         'makefile' => 'patches.make',
         'build'    => TRUE,
-        'md5' => '27403b34b599af1cbdb50417e6ea626f',
+        'md5' => '56f1613fc8b6a9f03ab62cfa0300df4c',
         'options'  => array('no-core' => NULL),
       ),
       'include' => array(
@@ -304,7 +405,10 @@ class makeMakefileCase extends Drush_CommandTestCase {
         'makefile' => 'recursion.make',
         'build'    => TRUE,
         'md5' => 'cd095bd6dadb2f0d3e81f85f13685372',
-        'options'  => array('no-core' => NULL),
+        'options'  => array(
+          'no-core' => NULL,
+          'contrib-destination' => 'profiles/drupal_forum',
+        ),
       ),
       'svn' => array(
         'name'     => 'SVN',
@@ -347,14 +451,42 @@ class makeMakefileCase extends Drush_CommandTestCase {
         'name'     => 'File extraction',
         'makefile' => 'file.make',
         'build'    => TRUE,
-        'md5' => 'c7cab3930f644961a576d78769498172',
+        'md5' => '4e9883d6f9f6572af287635689c2545d',
+        'options'  => array('no-core' => NULL),
+      ),
+      'defaults' => array(
+        'name'     => 'Test defaults array.',
+        'makefile' => 'defaults.make',
+        'build'    => TRUE,
+        'md5' => 'e6c0d6b37cd8573cbd188742b95a274e',
+        'options'  => array('no-core' => NULL, 'contrib-destination' => '.'),
+      ),
+      'bz2' => array(
+        'name'     => 'bzip2',
+        'makefile' => 'bz2.make',
+        'build'    => TRUE,
+        'md5'      => '5ec081203131a1a3277c8b23f9ddb995',
+        'options'  => array('no-core' => NULL),
+      ),
+      'bz2-singlefile' => array(
+        'name'     => 'bzip2 single file',
+        'makefile' => 'bz2-singlefile.make',
+        'build'    => TRUE,
+        'md5'      => '4f9d57f6caaf6ece0526d867327621cc',
+        'options'  => array('no-core' => NULL),
+      ),
+      'gzip' => array(
+        'name'     => 'gzip',
+        'makefile' => 'gzip.make',
+        'build'    => TRUE,
+        'md5'      => '615975484966c36f4c9186601afd61e0',
         'options'  => array('no-core' => NULL),
       ),
       'subtree' => array(
         'name'     => 'Use subtree from downloaded archive',
         'makefile' => 'subtree.make',
         'build'    => TRUE,
-        'md5' => '840ece0ec28834182054c49c4b7a204a',
+        'md5' => 'db3770d8b4c9ce77510cbbcc566da9b8',
         'options'  => array('no-core' => NULL),
       ),
       'md5-succeed' => array(
@@ -383,7 +515,7 @@ class makeMakefileCase extends Drush_CommandTestCase {
         'name'     => 'Extract archives',
         'makefile' => 'file-extract.make',
         'build'    => TRUE,
-        'md5' => 'a7d0c50e7fb166ab717507e3797f5cbf',
+        'md5' => 'f92471fb7979e45d2554c61314ac6236',
         // @todo This test often fails with concurrency set to more than one.
         'options'  => array('no-core' => NULL, 'concurrency' => 1),
       ),
@@ -414,6 +546,13 @@ class makeMakefileCase extends Drush_CommandTestCase {
         'build'    => TRUE,
         'md5' => '7c10e6fc65728a77a2b0aed4ec2a29cd',
         'options'  => array('no-core' => NULL, 'libraries' => 'drush_make,token'),
+      ),
+      'use-distribution-as-core' => array(
+        'name'     => 'Use distribution as core',
+        'makefile' => 'use-distribution-as-core.make',
+        'build'    => TRUE,
+        'md5' => '643a603025a20d498eb583a1e7970bad',
+        'options'  => array(),
       ),
     );
     return $tests[$key];

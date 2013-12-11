@@ -140,7 +140,8 @@ function drush_pm_updatecode() {
 
   // If specific project updates were requested then remove releases for all
   // others.
-  if (!empty($requests)) {
+  $requested = func_get_args();
+  if (!empty($requested)) {
     foreach ($updateable as $name => $project) {
       if (!isset($requests[$name])) {
         unset($updateable[$name]);
@@ -161,12 +162,6 @@ function drush_pm_updatecode() {
         unset($updateable[$name]);
       }
     }
-  }
-
-  // First check to see if there is a newer drush.
-  $drush_update_available = NULL;
-  if (drush_get_option('self-update', TRUE)) {
-    $drush_update_available = drush_check_self_update();
   }
 
   // Do no updates in simulated mode.
@@ -201,12 +196,8 @@ function drush_pm_updatecode() {
   }
 
   // If there are no releases to update, then print a final
-  // exit message.  Supress the message if we already printed
-  // a message about a drush update being available.
+  // exit message.
   if (empty($updateable)) {
-    if ($drush_update_available === TRUE) {
-      return FALSE;
-    }
     if ($security_only) {
       return drush_log(dt('No security updates available.'), 'ok');
     }
@@ -538,15 +529,6 @@ function pm_project_filter(&$update_info, &$rows, $security_only) {
         break;
     }
 
-    // Special checking:  if drush decides that the candidate version is older
-    // than the installed version, then we will set the candidate version to
-    // the installed version.
-    if (isset($project['candidate_version'], $project['releases'][$project['candidate_version']], $project['releases'][$project['existing_version']])) {
-      if ($project['releases'][$project['candidate_version']]['date'] < $project['releases'][$project['existing_version']]['date']) {
-        $project['candidate_version'] = $project['existing_version'];
-      }
-    }
-
     if (isset($project['locked'])) {
       $status = $project['locked'] . " ($status)";
     }
@@ -577,6 +559,17 @@ function pm_release_recommended(&$project) {
   if (isset($project['recommended'])) {
     $project['candidate_version'] = $project['recommended'];
     $project['updateable'] = TRUE;
+  }
+  // If installed version is dev and the candidate version is older, choose
+  // latest dev as candidate.
+  if (($project['install_type'] == 'dev') && isset($project['candidate_version'])) {
+    if ($project['releases'][$project['candidate_version']]['date'] < $project['info']['datestamp']) {
+      $project['candidate_version'] = $project['latest_dev'];
+      if ($project['releases'][$project['candidate_version']]['date'] <= $project['info']['datestamp']) {
+        $project['candidate_version'] = $project['existing_version'];
+        $project['updateable'] = FALSE;
+      }
+    }
   }
 }
 
