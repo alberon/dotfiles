@@ -36,6 +36,7 @@
     cp = cherry-pick
     d = diff            #--find-copies --irreversible-delete
     dc = diff --cached  #--find-copies --irreversible-delete
+    edit = commit --amend
     fe = fetch
     g = grep --untracked
     glog = log --graph
