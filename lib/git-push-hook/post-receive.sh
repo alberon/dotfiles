@@ -36,7 +36,7 @@ done
 
 # Check out the latest code into the working copy
 echo "Updating working copy..."
-umask 002
+umask 022
 git reset --hard
 
 git submodule init >/dev/null &&
