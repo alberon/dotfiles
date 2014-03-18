@@ -34,8 +34,10 @@
     cim = commit -m
     co = checkout
     cp = cherry-pick
-    d = diff            #--find-copies --irreversible-delete
-    dc = diff --cached  #--find-copies --irreversible-delete
+    d = diff                               #--find-copies --irreversible-delete
+    dc = diff --cached                     #--find-copies --irreversible-delete
+    dcw = diff --cached --ignore-all-space #--find-copies --irreversible-delete
+    dw = diff --ignore-all-space           #--find-copies --irreversible-delete
     edit = commit --amend
     fe = fetch
     g = grep --untracked
