@@ -11,8 +11,8 @@
 # (but easier to type)
 
 if [ -z "$1" ]; then
-    echo "Usage: git grep <class name>" >&2
+    echo "Usage: git cls <class name>" >&2
     exit 1
 fi
 
-exec git grep "class $1"
+exec git g "class $1"

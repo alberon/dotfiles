@@ -40,7 +40,7 @@
     dw = diff --ignore-all-space           #--find-copies --irreversible-delete
     edit = commit --amend
     fe = fetch
-    g = grep --untracked
+    g = grep --untracked --line-number
     glog = log --graph
     id = log --pretty=format:'ID:    %h%nDate:  %aD%nRefs:%d' --abbrev-commit --date=short -1
     ignored = ls-files --others -i --exclude-standard --directory
@@ -60,7 +60,7 @@
     sub = submodule
     sync = !git submodule sync && git submodule update --init
     tags = tag
-    todo = grep --untracked 'TODO\\|XXX\\|FIXME'
+    todo = grep --untracked --line-number 'TODO\\|XXX\\|FIXME'
     web = instaweb
 
 [github]

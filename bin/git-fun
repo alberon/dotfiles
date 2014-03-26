@@ -11,8 +11,8 @@
 # (but easier to type)
 
 if [ -z "$1" ]; then
-    echo "Usage: git grep <function name>" >&2
+    echo "Usage: git fun <function name>" >&2
     exit 1
 fi
 
-exec git grep "function $1"
+exec git g "function $1"
