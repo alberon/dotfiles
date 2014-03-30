@@ -1,2 +1,19 @@
 #!/bin/bash
-curl http://defunkt.io/hub/standalone -sLo ~/bin/hub
+set -eu
+cd
+export PATH="$(ruby -e 'puts Gem.user_dir')/bin:$PATH"
+echo "Current version:"
+~/bin/hub version
+echo
+echo "Installing 'hub' gem..."
+gem install --user-install --no-rdoc --no-ri hub
+echo
+echo "Generating standalone version of 'hub'..."
+hub hub standalone > ~/bin/hub
+chmod 755 ~/bin/hub
+echo
+echo "Removing 'hub' gem..."
+gem uninstall --user-install --executables hub
+echo
+echo "New version:"
+~/bin/hub version
