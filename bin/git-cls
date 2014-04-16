@@ -15,4 +15,4 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-exec git g "class $1"
+exec git g -i "class\s\+$1\b"
