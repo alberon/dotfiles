@@ -30,11 +30,21 @@ if $HAS_TERMINAL; then
     alias acsh='apt-cache show'
 
     # These commands require sudo
+    alias a2dismod='sudo a2dismod'
+    alias a2enmod='sudo a2enmod'
+    alias addgroup='sudo addgroup'
+    alias adduser='sudo adduser'
+    alias groupadd='sudo groupadd'
+    alias groupdel='sudo groupdel'
+    alias groupmod='sudo groupmod'
+    alias pow='sudo poweroff'
+    alias poweroff='sudo poweroff'
+    alias reboot='sudo reboot'
     alias service='sudo service'
-    alias poweroff='sudo poweroff && exit'
-    alias pow='sudo poweroff && exit'
-    alias shutdown='sudo poweroff && exit'
-    alias reboot='sudo reboot && exit'
+    alias shutdown='sudo poweroff'
+    alias useradd='sudo useradd'
+    alias userdel='sudo userdel'
+    alias usermod='sudo usermod'
 
     # Add sbin folder to my path so they can be auto-completed
     PATH="$PATH:/usr/local/sbin:/usr/sbin:/sbin"
