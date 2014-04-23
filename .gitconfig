@@ -42,12 +42,12 @@
     f = fetch -v
     fe = fetch -v
     g = grep --untracked --line-number
-    glog = log --graph
+    glog = log --decorate --graph
     id = log --pretty=format:'ID:    %h%nDate:  %aD%nRefs:%d' --abbrev-commit --date=short -1
     ignored = ls-files --others -i --exclude-standard --directory
     in = incoming
     io = inout
-    l = log
+    l = log --decorate
     l1 = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
     mt = mergetool
     out = outgoing
