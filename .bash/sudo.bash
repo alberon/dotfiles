@@ -34,6 +34,7 @@ if $HAS_TERMINAL; then
     alias a2enmod='sudo a2enmod'
     alias addgroup='sudo addgroup'
     alias adduser='sudo adduser'
+    alias dpkg-reconfigure='sudo dpkg-reconfigure'
     alias groupadd='sudo groupadd'
     alias groupdel='sudo groupdel'
     alias groupmod='sudo groupmod'
