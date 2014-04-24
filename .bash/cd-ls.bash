@@ -21,6 +21,16 @@ if $HAS_TERMINAL; then
     # Detect typos in the cd command
     shopt -s cdspell
 
+    # Need some different options for ls on Mac
+    if $MAC; then
+        ls_opts='-G'
+        # Use the same color scheme as Debian
+        # http://geoff.greer.fm/lscolors/
+        export LSCOLORS=ExGxFxDaCaDaDahbaDacec
+    else
+        ls_opts='--color=always --hide=*.pyc'
+    fi
+
     # c = cd; ls
     c() {
 
@@ -41,16 +51,6 @@ if $HAS_TERMINAL; then
         ls -hF $ls_opts
 
     }
-
-    # Need some different options for Mac
-    if $MAC; then
-        ls_opts='-G'
-        # Use the same color scheme as Debian
-        # http://geoff.greer.fm/lscolors/
-        export LSCOLORS=ExGxFxDaCaDaDahbaDacec
-    else
-        ls_opts='--color=always'
-    fi
 
     # Various shortcuts for `ls`
     # ls, lsa   = short format
