@@ -9,13 +9,10 @@ if $HAS_TERMINAL; then
         command cd "$@" && record_bash_lastdirectory
     }
 
-    # Go to home directory by default
-    command cd
-
-    # Then go to the last visited directory, if possible
-    if [ -f ~/.bash_lastdirectory ]; then
+    # Change to the last visited directory, unless we're already in a different directory
+    if [ "$PWD" = "$HOME" -a -f ~/.bash_lastdirectory ]; then
         # Throw away errors about that directory not existing (any more)
-        command cd "`cat ~/.bash_lastdirectory`" 2>/dev/null
+        command cd "$(cat ~/.bash_lastdirectory)" 2>/dev/null
     fi
 
     # Detect typos in the cd command
