@@ -11,4 +11,5 @@ else
     message="WIP"
 fi
 
+git add -A
 git commit -m "$message"
