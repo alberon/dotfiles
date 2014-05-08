@@ -1,0 +1,83 @@
+#!/bin/bash
+set -eu
+
+# Help
+if [ $# -gt 2 ]; then
+    echo "Usage: git squash [parent-commit] [log-message]" >&2
+    exit 1
+fi
+
+# Check there are no local changes
+if [ -n "$(git status --porcelain)" ]; then
+    echo "fatal: There are uncommitted changes." >&2
+    exit 2
+fi
+
+# Determine the first commit to be kept (usually a branch, e.g. master)
+commit="${1:-master}"
+
+# Determine log message
+log="${2:-}"
+
+if [ -z "$log" ]; then
+    log="$(git log --format="%s" -1)"
+fi
+
+# Check the list of commits to be squashed
+commits=$(git log --pretty=format:"%C(red)%h %C(yellow)%s %C(green)(%cr) %C(bold blue)<%an>%C(reset)" "$commit..HEAD")
+
+if [ -z "$commits" ]; then
+    echo "No commits specified" >&2
+    exit 3
+fi
+
+# Confirmation
+function ask {
+    # http://djm.me/ask
+    while true; do
+
+        if [ "${2:-}" = "Y" ]; then
+            prompt="Y/n"
+            default=Y
+        elif [ "${2:-}" = "N" ]; then
+            prompt="y/N"
+            default=N
+        else
+            prompt="y/n"
+            default=
+        fi
+
+        # Ask the question
+        read -p "$1 [$prompt] " REPLY
+
+        # Default?
+        if [ -z "$REPLY" ]; then
+            REPLY=$default
+        fi
+
+        # Check if the reply is valid
+        case "$REPLY" in
+            Y*|y*) return 0 ;;
+            N*|n*) return 1 ;;
+        esac
+
+    done
+}
+
+echo
+echo "The following commits will be squashed:"
+echo "$commits" | sed "s/^/    /"
+echo
+echo "The new log message will be:"
+echo -en "\e[33m" # Yellow text
+echo "    $log"
+echo -en "\e[0m" # Reset
+echo
+ask "Continue?" || exit
+echo
+
+# Reset to the specified commit and keep all changes in the stage
+git reset --soft "$commit"
+
+# Re-commit the staged changes
+git commit -m "$log"

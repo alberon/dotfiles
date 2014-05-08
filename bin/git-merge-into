@@ -1,0 +1,45 @@
+#!/bin/bash
+set -eu
+
+# Help
+if [ $# -ne 1 ]; then
+    echo "Usage: git merge-info <branch>" >&2
+    exit 1
+fi
+
+# Determine source and destination branches
+src="$(git rev-parse --abbrev-ref HEAD)"
+dst="$1"
+
+# Check a branch is checked out, not a specific commit
+if [ -z "$src" -o "$src" = "HEAD" ]; then
+    echo "fatal: No branch is checked out." >&2
+    exit 2
+fi
+
+# Check the source and dest are different
+if [ "$src" = "$dst" ]; then
+    echo "fatal: Not possible to merge into the current branch." >&2
+    exit 3
+fi
+
+# Check there are no local changes
+if [ -n "$(git status --porcelain)" ]; then
+    echo "fatal: There are uncommitted changes." >&2
+    exit 4
+fi
+
+# Check no commits have been added to the destination branch
+if [ -n "$(git log "$src..$dst")" ]; then
+    echo "fatal: Not possible to fast-forward, aborting." >&2
+    exit 5
+fi
+
+# Switch branch
+git checkout "$dst"
+
+# Merge the changes
+git merge --ff-only "$src"
+
+# Delete the branch
+git branch -d "$src"

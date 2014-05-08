@@ -49,6 +49,8 @@
     io = inout
     l = log --decorate
     l1 = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
+    m = merge
+    mi = merge-into
     mt = mergetool
     out = outgoing
     p = push
@@ -57,6 +59,7 @@
     s = status
     serve = instaweb
     sh = repl
+    sq = squash
     st = status
     sub = submodule
     sync = !git submodule sync && git submodule update --init
