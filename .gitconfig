@@ -76,3 +76,6 @@
 [instaweb]
     httpd = apache2
     browser = none
+
+[merge]
+    conflictstyle = diff3
