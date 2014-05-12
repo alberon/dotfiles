@@ -20,12 +20,17 @@ if $HAS_TERMINAL; then
 
     # Need some different options for ls on Mac
     if $MAC; then
+        # Mac
         ls_opts='-G'
         # Use the same color scheme as Debian
         # http://geoff.greer.fm/lscolors/
         export LSCOLORS=ExGxFxDaCaDaDahbaDacec
-    else
+    elif ls --hide=*.pyc >/dev/null 2>&1; then
+        # Recent Linux
         ls_opts='--color=always --hide=*.pyc'
+    else
+        # Old Linux (without --hide support)
+        ls_opts='--color=always'
     fi
 
     # c = cd; ls
