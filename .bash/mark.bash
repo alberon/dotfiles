@@ -10,7 +10,7 @@ jump() {
 mark() {
     mkdir -p $MARKPATH
     mark=${1:-$(basename $PWD)}
-    ln -s $(pwd) $MARKPATH/$mark && alias $mark="jump $mark"
+    ln -sn $(pwd) $MARKPATH/$mark && alias $mark="jump $mark"
 }
 
 unmark() {
