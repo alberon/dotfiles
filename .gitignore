@@ -11,8 +11,10 @@
 !/.vim
 !/bin
 !/gnome
+!/Gruntfile.coffee
 !/lib
 !/opt
+!/package.json
 !/README.md
 !/.gitconfig
 !/.gitignore
@@ -21,6 +23,7 @@
 !/.railsrc
 !/.railsrc-x
 !/.rdebugrc
+!/.tmux.conf
 
 # Don't ignore the RVM after_cd hook
 !/.rvm/

@@ -21,8 +21,6 @@ if [ ! -f ~/.bashrc_config ]; then
     esac
 
     # Generate .bashrc_config
-    echo "auto_screen=0" >> ~/.bashrc_config
-
     echo "enable_sudo=0" >> ~/.bashrc_config
 
     echo "#prompt_default=''" >> ~/.bashrc_config

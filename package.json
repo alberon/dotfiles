@@ -1,0 +1,12 @@
+{
+  "name": "dotfiles",
+  "version": "1.0.0",
+  "private": true,
+  "repository": {},
+  "dependencies": {
+    "grunt": "^0.4.4",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-shell": "^0.7.0",
+    "jit-grunt": "^0.7.0"
+  }
+}
