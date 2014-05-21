@@ -23,6 +23,7 @@
 !/.railsrc
 !/.railsrc-x
 !/.rdebugrc
+!/.tmux_cheatsheet
 !/.tmux.conf
 
 # Don't ignore the RVM after_cd hook
