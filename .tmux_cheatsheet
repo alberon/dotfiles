@@ -1,21 +1,26 @@
 SESSIONS
-
+ 
+Ctrl+A, shift+C     New session (prompts for name)
 Ctrl+A, )           Next session
 Ctrl+A, (           Previous session
+Ctrl+A, $           Rename session
 Ctrl+A, s           List sessions
 Ctrl+A, Shift+X     Kill session
-
-
+ 
+ 
 WINDOWS
-
-Ctrl+A, c           Create new window
+ 
+Ctrl+A, c           New window
 Ctrl+A, n           Next window
 Ctrl+A, p           Previous window
+Ctrl+A, 1-9         Jump to window 1-9
+Ctrl+A, l           Toggle between last two windows
+Ctrl+A, , (comma)   Rename window
 Ctrl+A, w           List windows
-
-
+ 
+ 
 PANES
-
+ 
 Ctrl+A, |           Split horizontal
 Ctrl+A, -           Split vertical
 Alt+Arrow           Switch pane in direction
@@ -23,15 +28,15 @@ Ctrl+A, Space       Automatic layout
 Ctrl+A, {           Swap with previous pane
 Ctrl+A, }           Swap with next pane
 Ctrl+A, x           Close pane (or exit the shell)
-
-
+ 
+ 
 MISCELLANEOUS
-
+ 
 Ctrl+A, PageUp/Dn   Scroll (or use mouse wheel; Esc to return)
 Ctrl+A, d           Disconnect
-
-
+ 
+ 
 HELP
-
+ 
 Ctrl+A, h           Display this cheat sheet (Esc to return)
 Ctrl+A, ?           Display all key bindings (Esc to return)
