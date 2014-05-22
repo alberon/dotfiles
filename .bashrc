@@ -17,7 +17,11 @@ fi
 
 # Immediately switch to tmux if possible
 if $HAS_TERMINAL && [[ ! $TERM =~ screen ]] && which tmux >/dev/null 2>&1; then
-    exec tmux attach
+    if tmux has-session 2>/dev/null; then
+        exec tmux attach
+    else
+        exec tmux new -s $(hostname -s)
+    fi
 fi
 
 # Standard config files, nicely split up
