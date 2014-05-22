@@ -9,7 +9,6 @@ Ctrl+A, Shift+X     Kill session
 WINDOWS
 
 Ctrl+A, c           Create new window
-Ctrl+A, Ctrl+A      Next window
 Ctrl+A, n           Next window
 Ctrl+A, p           Previous window
 Ctrl+A, w           List windows
