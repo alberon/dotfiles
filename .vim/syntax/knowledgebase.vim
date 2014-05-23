@@ -73,3 +73,6 @@ syn match kbVimModeline "^ vim:.*$"
 hi kbVimModeline guifg=#222222
 
 let b:current_syntax = "knowledgebase"
+
+" To make Vim ignore the modeline above:
+" vim:
