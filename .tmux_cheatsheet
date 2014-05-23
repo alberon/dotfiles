@@ -61,3 +61,9 @@
 │ List key bindings       │ Ctrl-A, ?                                                                           │
 │                         │ Ctrl-A, :list-keys -t vi-copy                                                       │
 └─────────────────────────┴─────────────────────────────────────────────────────────────────────────────────────┘
+
+
+To upgrade to tmux 1.9 on Debian:
+
+    agi -t wheezy-backports tmux
+    killall tmux
