@@ -5,7 +5,7 @@ if $HAS_TERMINAL && [[ ! $TERM =~ screen ]] && which tmux >/dev/null 2>&1; then
     if tmux has-session 2>/dev/null; then
         exec tmux attach
     else
-        exec tmux new -s $(hostname -s)
+        exec tmux new -s default
     fi
 fi
 
