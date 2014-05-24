@@ -71,3 +71,13 @@ To upgrade to tmux 1.9 on Debian:
 
     agi -t wheezy-backports tmux
     killall tmux
+
+To install & configure tmuxinator:
+
+    s gem install tmuxinator
+    tmuxinator new <name>
+    mux <name>
+
+To get the layout string for use in tmuxinator:
+
+    Ctrl-A, :list-windows
