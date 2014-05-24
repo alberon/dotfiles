@@ -5,7 +5,7 @@ module.exports = (grunt) ->
     # Run reload tmux configuration
     shell:
       tmux:
-        command: 'tmux source-file ~/.tmux.conf \\; display-message "Reloaded ~/.tmux.conf"'
+        command: 'tmux source ~/.tmux.conf \\; display "Reloaded ~/.tmux.conf"'
 
     # Watch
     watch:
