@@ -17,7 +17,10 @@ export SSH_AUTH_SOCK="$HOME/.ssh/ssh_auth_sock"
 # This is better than changing the shell to tmux because it can be set to attach
 # to a running session if there is one
 if $HAS_TERMINAL && [[ ! $TERM =~ screen ]] && which tmux >/dev/null 2>&1; then
-    if tmux has-session 2>/dev/null; then
+    if [ -f ~/.no_tmux ]; then
+        # This gives me a way to prevent tmux loading - see ~/bin/tmux-detach
+        rm -f $HOME/.no_tmux
+    elif tmux has-session 2>/dev/null; then
         exec tmux attach
     else
         exec tmux new -s default

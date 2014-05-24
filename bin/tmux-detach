@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Since I have tmux running automatically, there's no way to exit it and get a
+# regular Bash shell. I don't need that often, but sometimes it's useful for
+# debugging or when upgrading tmux. Run this to detach tmux and prevent it
+# loading on the next login. (An alternate would be to not use exec - see
+# http://unix.stackexchange.com/a/67269 - but I'd rather not have the extra
+# processes running.)
+touch $HOME/.no_tmux
+tmux detach
