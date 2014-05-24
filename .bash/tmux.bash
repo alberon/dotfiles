@@ -16,9 +16,9 @@ fi
 export SSH_AUTH_SOCK="$HOME/.ssh/ssh_auth_sock"
 
 # tmux attach
-alias tm='tmux attach'
+alias tm='tmux attach || tmux new -s default'
 
 # ssh + tmux
 sshtm() {
-    ssh -t "$@" "tmux attach"
+    ssh -t "$@" "tmux attach || tmux new -s default || bash -l"
 }
