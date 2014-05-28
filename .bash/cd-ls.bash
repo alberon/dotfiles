@@ -27,7 +27,7 @@ if $HAS_TERMINAL; then
         export LSCOLORS=ExGxFxDaCaDaDahbaDacec
     elif ls --hide=*.pyc >/dev/null 2>&1; then
         # Recent Linux
-        ls_opts='--color=always --hide=*.pyc'
+        ls_opts='--color=always --hide=*.pyc --hide=*.sublime-workspace'
     else
         # Old Linux (without --hide support)
         ls_opts='--color=always'
@@ -65,8 +65,8 @@ if $HAS_TERMINAL; then
     alias la="ls -hFlA $ls_opts"
 
     # Old aliases
-    alias ll='echo -e "\n\033[31mREMINDER: Use \`l\` instead of \`ll\`\033[0m\n"; l'
-    alias lla='echo -e "\n\033[31mREMINDER: Use \`la\` instead of \`lla\`\033[0m\n"; la'
+    alias ll='l'
+    alias lla='la'
 
     # Unset the colours that are sometimes set (e.g. Joshua)
     export LS_COLORS=
