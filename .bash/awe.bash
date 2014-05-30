@@ -1,1 +1,1 @@
-alias a='AWE_NAME=a awe'
+alias a=awe
