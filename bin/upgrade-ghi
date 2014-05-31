@@ -1,0 +1,6 @@
+#!/bin/bash
+set -eu
+cd
+
+curl -sL https://raw.githubusercontent.com/stephencelis/ghi/master/ghi > bin/ghi
+chmod 755 bin/ghi
