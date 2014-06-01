@@ -141,6 +141,10 @@ nmap <silent> <Leader>ff :call <SID>Browser()<CR>
 " Toggle search highlight
 nmap <silent> <Leader>h :set hlsearch!<CR>
 
+" Remove DOS line endings
+" I would just use ,m - but the Align plugin using ,m= which slows it down
+nmap <silent> <Leader>mm :call PreserveCursor('%s/\r$//')<CR>
+
 " Find current file in NERDtree
 nmap <silent> <Leader>n :NERDTreeFind<CR>
 
