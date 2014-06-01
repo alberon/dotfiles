@@ -10,6 +10,7 @@
 !/.windows-config
 !/.vim
 !/bin
+!/Dotfiles.sublime-project
 !/gnome
 !/Gruntfile.coffee
 !/lib
