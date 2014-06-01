@@ -58,5 +58,10 @@ git submodule init >/dev/null
 git submodule update
 cd
 
+# Update Node.js packages
+if which npm >/dev/null 2>&1; then
+    npm install
+fi
+
 # Ignore doc/tags in vim-reload submodule
 echo -e "/.gitignore\ndoc/tags" > .vim/bundle/vim-reload/.gitignore
