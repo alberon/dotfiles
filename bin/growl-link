@@ -1,0 +1,86 @@
+#!/usr/bin/env coffee
+
+###=============================================================================
+# Pushes links to a remote Growl client when using SSH. This allows URLs to be
+# opened on the local PC from programs like GitHub Issues (ghi -
+# https://github.com/stephencelis/ghi).
+#===============================================================================
+# Usage: growl-link <url>
+#===============================================================================
+# If the client needs a password (recommended), create $HOME/.growler.yaml with
+# this content:
+#===============================================================================
+security:
+    encryptionAlgorithm: 'AES'
+    password: '<your password>'
+#===============================================================================
+# Also remember to allow Growl access through the firewall. Tested against Growl
+# for Windows v2.0.9.1.
+#===============================================================================
+# Copyright (c) Dave James Miller 2014. MIT license.
+# Icon copyright (c) Stephen Hutchings (http://typicons.com/). CC-BY-SA license.
+#============================================================================###
+
+_       = require('lodash')
+fs      = require('fs')
+growler = require('growler')
+os      = require('os')
+path    = require('path')
+yaml    = require('js-yaml')
+
+# App settings
+appName = 'Link'
+
+# Source: https://www.iconfinder.com/icons/216273/link_outline_icon#size=64 (CC BY-SA)
+icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABmJLR0QA/wD/AP+gvaeTAAAFJUlEQVR4nO2aa4xdUxTHf9e0vaNaStGZKhKSalOdTqKqEoQSmngEoQmJSAQfhHqkPog0SoIIiYjxKhMfEFQ1Q4XQNh4fKmKiMaYPqVL0g2dbihsdvceHdU/uuefu57nnnnvC+SU7nTnde6/1n3vu3mutvaGgoKCgoKCgoOD/SVenHUjARGA+cBowHfgb2NdRjzKiH1gN/AUEkVYFPgWuBg7qmHdt5i5EaGBp64ApHfLRmZnAbcA7wDbgD+qf5NfAEHAjcCRQAp7ALjzahoGDM1PjwULgPdyFVJBX20d82J7JSJMTZWCQZEKStn+AOVmIs9EDbCRdcTuAS5DdoA9Yq+n3YAb6jPQi3/E0xW8GpsXsjAdGFH0/dnFyXEJxNnqB94GTDH02IZ/eDuT7PgVYAFxMs0iALcAi4MfY8zFgFTA39vwYb69TwvbJfwacbRhfBpYCv0fGbEH9Rwm5X2FnZ3IJyekFtiqcCdsLQLfjXLOA7djFTwK+Udj60N/91rCJfw7/SK0XWUh1lIG3NPbu9rTVEu0Qb2MC+h2gAhybsj0tNvGDtEf8mwabK1K2p6VV8bOB9cCXwABuIewE4A2DzbVklOW2Kr4P+Dk25kkHuwMGm++SUR7QQ2viFwB7Y2NGgKMdbM8AvtPYvdlfij+tild98jsxr/ZxTkEKIXHbWz3mSMRhyL6sE/84ksLq6AN+Uoy7MoEvj2h8iEeEqVECXtMYdf3ko+IrkZ9naMaUa03F8Ro/bnIV5Ms1GoMu4ufSKP4V4IHI74sUY8Ig523D3KMKXwY8NDlTRh1uBsDzBgehWfwqJAk7J/LsE2ByZMyhNEZ4SzRzDyn8edVXnAvXKQwFwAbMGWVc/OpI/xKSsob/twt4qtZ2xews08z/ksKnNQn0WVHF239iTjnj4tcguXuU45A6oO6rFa4VMzU21iv6u8QSXhxCcyk6AB41jImL/wo4E3WENhVYSWP6G7b9wKUaG+OBPYoxy52VOdKvMBIgglScjHqrC4Bv0Qsah6wnLuIBLtLYWOwmy53FGkOTFH27sJfBqkhZPM59NIq/zOBTF1JRis+9D/22mRjV9lfR9D0h1u9XRNi1wIvUDzcOAPMi41bgLh7gYYVPAbIops4ShaEq6spON/UwdzOSMEW5ITLHYO3ZcvzE36rwJ0Bqg7PcZblzlsbgPE3/C5HXU1XGKgHf18ZvQ6o2vuJ1R2TPugry5QiNUdNqawqMhqm/RWmJH6UxkEod1YLzA+qF0MR0GnMAV/FL0Yv/BTjR0w9voq9qtD3tMUc3zWeDrYrfjaTGbecoZJFROXGHw/jJwEexcRXse3YuxJeAxzROBEglx1brP4PGAsZ+4HLLmFyIB7hX40QAfIFbGQvkePzlWlto6Zsb8RcYHBnFXbwPuRFfQn3qGgY5puOqpNxCTsSD3MRSOWI7qysjiYovNvHzE8zZEssUjowhtT0dYRmrCtyDuUAaUqr1zZV4kHw/7swmQ3/VQeU6zFdV5qAuamQm3lTOOqB4ptvuysDrSB4Q5Tzgc6T0tYH65YZpwLnA6eiPsfYC5yOhc0dQZV1Vmi83mI6ok7Y9dOi1jzIb/Wt5O7KXX4Hc+EhT/HZycsMLmsPXdrch4PBMlDlyKuozOFvbiN8lx2FkTcgl1+N2Tze68k+sje0HHgI+QNLn3bV/R5B1405y9LqbuAo5B7CJX4lcYPhP0oMUI+MHGb8hx1G2BCeXuERqKqYiR+UVpCIzlppHBQUFBRnyL7adjsrN18tvAAAAAElFTkSuQmCC'
+
+# Default options
+options =
+    timeout: 5000
+
+security = {}
+
+# Load user configuration
+homeDir = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE
+configFile = path.join(homeDir, '/.growler.yaml')
+
+try
+    configYaml = fs.readFileSync(configFile, 'utf8')
+catch
+    configYaml = false
+
+if configYaml
+    config = yaml.safeLoad(configYaml)
+else
+    config = {}
+
+# Extended options
+options = _.extend(options, config.options)
+security = _.extend(security, config.security)
+
+# Determine the IP address from the SSH environment variable, unless it was set in config
+# SSH_CLIENT format: '<RemoteIP> <RemotePort> <LocalPort>'
+unless 'hostname' of options
+    client = process.env.SSH_CLIENT
+    if client
+        options.hostname = client.split(' ')[0]
+
+# Initialise application
+app = new growler.GrowlApplication(appName, options, security)
+
+app.setNotifications
+    'Default': {}
+
+app.register()
+
+# Send notification
+args =
+    title: process.argv[2]
+    # text: process.argv[2]
+    url: process.argv[2]
+    icon: icon
+
+app.sendNotification 'Default', args, (err) ->
+    if err
+        console.error("Failed to send notification (#{err.message})")
+        process.exit(2)
