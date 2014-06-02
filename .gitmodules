@@ -58,3 +58,6 @@
 [submodule "opt/boris"]
 	path = opt/boris
 	url = git://github.com/d11wtq/boris.git
+[submodule ".vim/bundle/file-line"]
+	path = .vim/bundle/file-line
+	url = git://github.com/bogado/file-line.git
