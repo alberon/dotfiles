@@ -24,7 +24,8 @@
 [alias]
     a = add -A
     addremove = add -A
-    amend = commit --amend -C HEAD
+    #amend = !git commit --amend -C HEAD --date=\"$(date -R)\"
+    amend = commit --amend -C HEAD --reset-author
     ar = add -A
     b = branch
     ba = branch -a
