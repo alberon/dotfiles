@@ -25,7 +25,7 @@
     a = add -A
     addremove = add -A
     #amend = !git commit --amend -C HEAD --date=\"$(date -R)\"
-    amend = commit --amend -C HEAD --reset-author
+    amend = commit --amend --no-edit --reset-author
     ar = add -A
     b = branch
     ba = branch -a
@@ -39,7 +39,7 @@
     dc = diff --cached                     #--find-copies --irreversible-delete
     dcw = diff --cached --ignore-all-space #--find-copies --irreversible-delete
     dw = diff --ignore-all-space           #--find-copies --irreversible-delete
-    edit = commit --amend
+    edit = commit --amend --reset-author
     f = fetch -v
     fe = fetch -v
     g = grep --untracked --line-number
