@@ -1,0 +1,4 @@
+#!/bin/bash
+
+sudo apt-get install -t wheezy-backports tmux
+sudo gem install tmuxinator
