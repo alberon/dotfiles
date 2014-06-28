@@ -1,0 +1,10 @@
+#!/bin/bash
+
+host=$(hostname -s)
+port=1080
+
+echo "Host:   $host:$port"
+echo "Chrome: chrome --proxy-server=\"socks5://$host:$port\""
+
+ssh -N -o ControlMaster=no -D 0.0.0.0:$port wopr
+
