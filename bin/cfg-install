@@ -40,7 +40,9 @@ if [ ! -f ~/.bashrc_config ]; then
     echo "umask_root=022" >> ~/.bashrc_config
 
     if [ $cpanel -eq 1 ]; then
-        echo "www_dir=~/public_html" >> ~/.bashrc_config
+        echo "www_dir=~/repo" >> ~/.bashrc_config
+    elif [ -d /vagrant ]; then
+        echo "www_dir=/vagrant" >> ~/.bashrc_config
     else
         echo "www_dir=" >> ~/.bashrc_config
     fi
