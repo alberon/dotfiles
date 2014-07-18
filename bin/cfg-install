@@ -41,6 +41,8 @@ if [ ! -f ~/.bashrc_config ]; then
 
     if [ $cpanel -eq 1 ]; then
         echo "www_dir=~/repo" >> ~/.bashrc_config
+    elif [ -d ~/repo ]; then
+        echo "www_dir=~/repo" >> ~/.bashrc_config
     elif [ -d /vagrant ]; then
         echo "www_dir=/vagrant" >> ~/.bashrc_config
     else
