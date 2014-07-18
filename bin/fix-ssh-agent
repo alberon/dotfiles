@@ -26,8 +26,7 @@ if [ -S "$link" ]; then
     echo
     echo "Current SSH keys:"
     echo
-    echo -n "    "
-    SSH_AUTH_SOCK="$link" ssh-add -l
+    SSH_AUTH_SOCK="$link" ssh-add -l | sed 's/^/    /'
     exit
 fi
 
@@ -43,8 +42,7 @@ for filename in $(find /tmp -user $(id -u) -iregex /tmp/ssh-[a-z0-9]+/agent.[0-9
         echo
         echo "Current SSH keys:"
         echo
-        echo -n "    "
-        SSH_AUTH_SOCK="$link" ssh-add -l
+        SSH_AUTH_SOCK="$link" ssh-add -l | sed 's/^/    /'
         exit
 
     fi
