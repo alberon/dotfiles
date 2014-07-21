@@ -1,19 +1,19 @@
 if $HAS_TERMINAL; then
 
     # Remember the last directory visited
-    #record_bash_lastdirectory() {
-    #    pwd > ~/.bash_lastdirectory
-    #}
+    record_bash_lastdirectory() {
+        pwd > ~/.bash_lastdirectory
+    }
 
-    #cd() {
-    #    command cd "$@" && record_bash_lastdirectory
-    #}
+    cd() {
+        command cd "$@" && record_bash_lastdirectory
+    }
 
     # Change to the last visited directory, unless we're already in a different directory
-    #if [ "$PWD" = "$HOME" -a -f ~/.bash_lastdirectory ]; then
-    #    # Throw away errors about that directory not existing (any more)
-    #    command cd "$(cat ~/.bash_lastdirectory)" 2>/dev/null
-    #fi
+    if [ "$PWD" = "$HOME" -a -f ~/.bash_lastdirectory ]; then
+        # Throw away errors about that directory not existing (any more)
+        command cd "$(cat ~/.bash_lastdirectory)" 2>/dev/null
+    fi
 
     # Detect typos in the cd command
     shopt -s cdspell
