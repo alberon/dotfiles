@@ -27,9 +27,10 @@
 !/.tmux_cheatsheet
 !/.tmux.conf
 
-# Don't ignore Grip config, but do ignore cache
+# Don't ignore Grip config, but do ignore cache & access token
 !/.grip
 /.grip/cache
+/.grip/settings-local.py
 
 # Don't ignore the RVM after_cd hook
 !/.rvm/
