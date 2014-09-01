@@ -43,6 +43,7 @@
 !/.ssh
 /.ssh/*
 !/.ssh/config
+!/.ssh/davejamesmiller.pub
 
 # Ignore Vim history
 /.vim/.netrwhist
