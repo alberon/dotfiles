@@ -43,9 +43,13 @@
     f = fetch -v
     fe = fetch -v
     g = grep --untracked --line-number
-    g3 = grep --untracked --line-number -C3
-    g6 = grep --untracked --line-number -C6
-    g9 = grep --untracked --line-number -C9
+    g3 = grep --untracked --line-number --context=3
+    g6 = grep --untracked --line-number --context=6
+    g9 = grep --untracked --line-number --context=9
+    gi = grep --untracked --line-number --ignore-case
+    gi3 = grep --untracked --line-number --ignore-case --context=3
+    gi6 = grep --untracked --line-number --ignore-case --context=6
+    gi9 = grep --untracked --line-number --ignore-case --context=9
     glog = log --decorate --graph
     id = log --pretty=format:'ID:    %h%nDate:  %aD%nRefs:%d' --abbrev-commit --date=short -1
     ignored = ls-files --others -i --exclude-standard --directory
