@@ -81,3 +81,7 @@ To install & configure tmuxinator:
 To get the layout string for use in tmuxinator:
 
     Ctrl-A, :list-windows
+
+To reload the configuration (e.g. after updating dotfiles):
+
+    Ctrl-A, Shift+R
