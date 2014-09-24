@@ -40,8 +40,8 @@
     dcw = diff --cached --ignore-all-space #--find-copies --irreversible-delete
     dw = diff --ignore-all-space           #--find-copies --irreversible-delete
     edit = commit --amend --reset-author
-    f = fetch -v
-    fe = fetch -v
+    f = fetch -v --prune
+    fe = fetch -v --prune
     g = grep --untracked --line-number
     g3 = grep --untracked --line-number --context=3
     g6 = grep --untracked --line-number --context=6
