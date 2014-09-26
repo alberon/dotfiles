@@ -4,6 +4,7 @@
 
 [core]
     excludesfile = ~/.gitignore-global
+    attributesfile = ~/.gitattributes-global
 
 [color]
     branch = auto

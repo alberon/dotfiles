@@ -1,0 +1,4 @@
+*.html diff=html
+*.inc diff=php
+*.php diff=php
+*.phtml diff=php
