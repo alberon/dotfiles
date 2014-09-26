@@ -55,9 +55,10 @@
     ignored = ls-files --others -i --exclude-standard --directory
     in = incoming
     io = inout
-    l = log --decorate
+    l = log --decorate --name-status
     l1 = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
     lf = log --decorate --name-status
+    ll = log --decorate
     lp = log --decorate --patch
     m = merge
     mi = merge-into
