@@ -57,6 +57,7 @@
     io = inout
     l = log --decorate
     l1 = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
+    lf = log --decorate --name-status
     lp = log --decorate --patch
     m = merge
     mi = merge-into
