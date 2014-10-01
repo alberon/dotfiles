@@ -56,9 +56,10 @@
     in = incoming
     io = inout
     l = log --decorate --name-status
-    l1 = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
+    l1 = log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
     lf = log --decorate --name-status
     lg = log --decorate --graph
+    lg1 = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
     ll = log --decorate
     lp = log --decorate --patch
     m = merge
