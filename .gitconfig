@@ -65,6 +65,7 @@
     lg1 = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
     ll = log --decorate
     lp = log --decorate --patch
+    lpw = log --decorate --patch --ignore-all-space
     m = merge
     mi = merge-into
     mt = mergetool
