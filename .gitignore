@@ -3,7 +3,6 @@
 !/.bash
 !/.bazaar
 !/.devilspie
-!/.drush
 !/.elinks
 !/.fluxbox
 !/.hgextensions
@@ -28,45 +27,46 @@
 !/.tmux_cheatsheet
 !/.tmux.conf
 
-# Don't ignore Composer config
+# Composer - config only, not cache files
 !/.composer
 /.composer/*
 !/.composer/composer.json
 !/.composer/composer.lock
 
-# Don't ignore Grip config, but do ignore cache & access token
+# Drush - config, not cache
+!/.drush
+/.drush/cache
+
+# Elinks
+/.elinks/bookmarks
+/.elinks/cookies
+/.elinks/globhist
+
+# Grip - config only, not cache & access token
 !/.grip
 /.grip/cache*
 /.grip/settings-local.py
 
-# Don't ignore the RVM after_cd hook
+# RVM - after_cd hook only
 !/.rvm/
 /.rvm/*
 !/.rvm/hooks/
 /.rvm/hooks/*
 !/.rvm/hooks/after_cd_record_bash_lastdirectory
 
-# Don't ignore .ssh/config
+# SSH - config & public key onlya
 !/.ssh
 /.ssh/*
 !/.ssh/config
 !/.ssh/davejamesmiller.pub
 
-# Ignore Vim history
+# Vim - ignore history
 /.vim/.netrwhist
 
-# Ignore Elinks local files
-/.elinks/bookmarks
-/.elinks/cookies
-/.elinks/globhist
-
-# Ignore Python compiled files
+# Python compiled files
 *.pyc
 
-# Ignore gitolite files
+# gitolite executables
 /bin/gitolite*
 /bin/gl-*
 /bin/sshkeys-lint
-
-# Ignore Drush cache
-/.drush/cache
