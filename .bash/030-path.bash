@@ -7,23 +7,21 @@ $MAC && PATH="/opt/local/bin:/opt/local/sbin:$PATH"
 # RVM
 PATH="$HOME/.rvm/bin:$PATH"
 
-# WP-CLI - note: should go before ~/opt/boris/bin to use my version not theirs
-PATH="$HOME/.composer/bin:$PATH"
+# Composer packages (Boris, Drush, etc.)
+PATH="$HOME/.composer/vendor/bin:$PATH"
 
-# My packages
+# Manually installed packages
 for bin in $HOME/opt/*/bin; do
     PATH="$bin:$PATH"
 done
 
-PATH="$HOME/opt/drush:$PATH"
-
-# My scripts
+# Custom scripts
 PATH="$HOME/bin:$PATH"
 
-# My Mac-specific scripts
+# Custom Mac-specific scripts
 $MAC && PATH="$HOME/bin/osx:$PATH"
 
-# My local scripts
+# Custom local scripts (specific to a machine so not in Git)
 PATH="$HOME/local/bin:$PATH"
 
 # Export the path so subprocesses can use it

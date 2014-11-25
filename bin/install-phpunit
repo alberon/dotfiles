@@ -1,8 +1,0 @@
-#!/bin/bash
-set -eu
-
-mkdir -p ~/local/bin 2>/dev/null
-cd ~/local/bin
-
-curl https://phar.phpunit.de/phpunit.phar > phpunit
-chmod +x phpunit

@@ -1,2 +1,0 @@
-#!/bin/bash
-drush dl drush --destination=$HOME/opt/

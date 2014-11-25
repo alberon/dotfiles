@@ -31,7 +31,7 @@ if [ -f .git/hooks/post-checkout ]; then
 fi
 
 # Delete old submodules
-for i in .vim/bundle/nerdtree-tabs .vim/bundle/slime .vim/bundle/gemfile; do
+for i in .vim/bundle/nerdtree-tabs .vim/bundle/slime .vim/bundle/gemfile opt/boris; do
     if [ -d "$i" ]; then
         rm -rf "$i"
     fi
@@ -61,6 +61,11 @@ cd
 # Update Node.js packages
 if which npm >/dev/null 2>&1; then
     npm install
+fi
+
+# Update Composer packages
+if which composer >/dev/null 2>&1; then
+    composer global install
 fi
 
 # Ignore doc/tags in vim-reload submodule

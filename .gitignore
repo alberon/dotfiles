@@ -28,6 +28,12 @@
 !/.tmux_cheatsheet
 !/.tmux.conf
 
+# Don't ignore Composer config
+!/.composer
+/.composer/*
+!/.composer/composer.json
+!/.composer/composer.lock
+
 # Don't ignore Grip config, but do ignore cache & access token
 !/.grip
 /.grip/cache*

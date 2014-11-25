@@ -1,2 +1,0 @@
-#!/bin/bash
-curl http://wp-cli.org/installer.sh | sh
