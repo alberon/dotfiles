@@ -58,3 +58,6 @@
 [submodule ".vim/bundle/file-line"]
 	path = .vim/bundle/file-line
 	url = git://github.com/bogado/file-line.git
+[submodule "opt/icdiff/bin"]
+	path = opt/icdiff/bin
+	url = git://github.com/jeffkaufman/icdiff.git
