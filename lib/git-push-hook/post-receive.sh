@@ -39,8 +39,23 @@ echo "Updating working copy..."
 umask 022
 git reset --hard
 
+# Update submodules
 git submodule init >/dev/null &&
 git submodule sync >/dev/null &&
 git submodule update
+
+# Update Composer packages
+if [ -f "composer.json" ]; then
+    composer=$(which composer)
+    phpcli=$(which php-cli)
+    if [ -n "$composer" ]; then
+        if [ -n "$phpcli" ]; then
+            # On CentOS 5 the CGI version is the default not CLI
+            php-cli $composer install
+        else
+            php $composer install
+        fi
+    fi
+fi
 
 echo "========================================================================"
