@@ -71,6 +71,7 @@
     mt = mergetool
     out = outgoing
     p = push
+    pt = push --tags
     remotes = remote -v
     root = rev-parse --show-toplevel
     s = status
