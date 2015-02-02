@@ -38,6 +38,8 @@ if $HAS_TERMINAL; then
     alias groupadd='sudo groupadd'
     alias groupdel='sudo groupdel'
     alias groupmod='sudo groupmod'
+    alias php5dismod='sudo php5dismod'
+    alias php5enmod='sudo php5enmod'
     alias pow='sudo poweroff'
     alias poweroff='sudo poweroff'
     alias reboot='sudo reboot'
