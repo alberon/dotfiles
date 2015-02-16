@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# If we're in repo/ use repo/www/ as the root automatically
+# Can be overridden by passing another --path to it
+if [ ! -f index.php -a -f www/index.php ]; then
+    opt="--path=www/"
+else
+    opt=
+fi
+
+exec $HOME/.composer/vendor/bin/wp $opt "$@"
