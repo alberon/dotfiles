@@ -46,6 +46,7 @@
     edit = commit --amend --reset-author
     f = fetch -v --prune
     fe = fetch -v --prune
+    friday = log --decorate --patch --since='last friday'
     g = grep --untracked --line-number
     g3 = grep --untracked --line-number --context=3
     g6 = grep --untracked --line-number --context=6
@@ -84,6 +85,7 @@
     tags = tag
     todo = grep --untracked --line-number 'TODO\\|XXX\\|FIXME'
     web = instaweb
+    yesterday = log --decorate --patch --since=yesterday
 
 [github]
     user = davejamesmiller
