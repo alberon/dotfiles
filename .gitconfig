@@ -38,6 +38,7 @@
     ci = commit
     cim = commit -m
     co = checkout
+    conf = config --global --edit
     cp = cherry-pick
     d = diff                               #--find-copies --irreversible-delete
     dc = diff --cached                     #--find-copies --irreversible-delete
