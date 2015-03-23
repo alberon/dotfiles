@@ -33,11 +33,14 @@
     ar = add -A
     b = branch
     ba = branch -a
+    bclean = "!f() { git branch --merged ${1-master} | grep -v " ${1-master}$" | xargs -r git branch -d; }; f"
     branches = branch -avv
     c = commit -m
+    ca = !git add -A && git commit -m
     ci = commit
     cim = commit -m
     co = checkout
+    cob = checkout -b
     conf = config --global --edit
     cp = cherry-pick
     d = diff                               #--find-copies --irreversible-delete
@@ -85,7 +88,9 @@
     sync = !git submodule sync && git submodule update --init
     tags = tag
     todo = grep --untracked --line-number 'TODO\\|XXX\\|FIXME'
+    up = !git pull --rebase --prune $@ && git submodule update --init --recursive
     web = instaweb
+    wipe = !git add -A && git commit -qm 'WIPE SAVEPOINT' && git reset HEAD~1 --hard
     yesterday = log --decorate --patch --since=yesterday
 
 [github]
