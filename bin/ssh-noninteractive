@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Workaround for SSH holding open stderr when using ControlMaster, which breaks
+# some scripts including Composer
+# This is the same issue as noted in https://github.com/puppetlabs/r10k/issues/169
+
+exec ssh "$@" 2>/dev/tty

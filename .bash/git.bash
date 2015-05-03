@@ -52,3 +52,6 @@ fi
 cg() {
     cd "$(git rev-parse --show-toplevel)"
 }
+
+# Workaround for Git hanging when using Composer
+export GIT_SSH='ssh-noninteractive'
