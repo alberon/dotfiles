@@ -3,12 +3,11 @@ if $HAS_TERMINAL; then
     prompthostname() {
         if [ -f ~/.hostname ]; then
             cat ~/.hostname
+        elif $WINDOWS; then
+            # Titlecase
+            hostname | sed 's/\(.\)\(.*\)/\u\1\L\2/'
         elif [ "$1" = "init" ]; then
-            if $WINDOWS; then
-                hostname
-            else
-                hostname -s
-            fi
+            hostname -s
         else
             echo '\h'
         fi
