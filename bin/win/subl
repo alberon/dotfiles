@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Default to the current directory
+path="${1:-.}"
+
+# Convert path to Windows format
+# TODO - Support both absolute and relative paths to both filenames and directories, without the use of "readlink"!
+# if [ "${path:0:1}" != "/" ]; then
+#     path="$PWD/$path"
+# fi
+
+# http://stackoverflow.com/questions/12015348/msys-path-conversion-or-cygpath-for-msys
+path=$(echo "$path" | sed 's|^/\([a-z]\)/|\1:/|' | sed 's|/|\\|g')
+#echo "$path"
+
+exec "$PROGRAMW6432\Sublime Text 2\sublime_text.exe" "$path"

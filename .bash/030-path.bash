@@ -18,8 +18,12 @@ done
 # Custom scripts
 PATH="$HOME/bin:$PATH"
 
-# Custom Mac-specific scripts
-$MAC && PATH="$HOME/bin/osx:$PATH"
+# Custom OS-specific scripts
+if $MAC; then
+    PATH="$HOME/bin/osx:$PATH"
+elif $WINDOWS; then
+    PATH="$HOME/bin/win:$PATH"
+fi
 
 # Custom local scripts (specific to a machine so not in Git)
 PATH="$HOME/local/bin:$PATH"
