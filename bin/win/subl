@@ -13,4 +13,4 @@ path="${1:-.}"
 path=$(echo "$path" | sed 's|^/\([a-z]\)/|\1:/|' | sed 's|/|\\|g')
 #echo "$path"
 
-exec "$PROGRAMW6432\Sublime Text 2\sublime_text.exe" "$path"
+exec "$PROGRAMW6432\Sublime Text 2\sublime_text.exe" "$path" &
