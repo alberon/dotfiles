@@ -1,8 +1,24 @@
 #!/bin/bash
 
+# Update Apt repositories
+sudo apt-get -y update
+
 # Install Git
 if ! which git >/dev/null 2>&1; then
     sudo DEBIAN_FRONTEND=noninteractive apt-get install -y git
+fi
+
+# Install tmux
+if ! which tmux >/dev/null 2>&1; then
+    if [ -f /etc/lsb-release ]; then
+        source /etc/lsb-release
+        if [ "$DISTRIB_RELEASE" = "12.04" ]; then
+            # Ubuntu 12.04 Precise has an old version of tmux installed by default
+            sudo apt-get install -y python-software-properties
+            sudo add-apt-repository -y ppa:pi-rho/dev
+        fi
+    fi
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y tmux
 fi
 
 # Based on https://djm.me/cfg but non-interactive
