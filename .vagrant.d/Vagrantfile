@@ -1,0 +1,8 @@
+if Vagrant::Util::Platform.windows? then
+    # Need to use ssh.bat to modify the config file to support the old version
+    # of SSH installed by MSysGit
+    winpath = Dir.home + '/bin/win'
+    if not ENV['PATH'].include?(winpath) then
+        ENV['PATH'] = winpath + ';' + ENV['PATH']
+    end
+end

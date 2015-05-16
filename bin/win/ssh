@@ -8,7 +8,6 @@ else
 fi
 
 # Note: Can't use process substitution in MSysGit, so we need a temp file
-touch ~/tmp/ssh-config-windows
-chmod 700 ~/tmp/ssh-config-windows
 grep -v 'ControlPersist\|ControlPath' ~/.ssh/config > ~/tmp/ssh-config-windows
-exec $ssh -F ~/tmp/ssh-config-windows "$@"
+chmod 700 ~/tmp/ssh-config-windows
+exec "$ssh" -F ~/tmp/ssh-config-windows "$@"

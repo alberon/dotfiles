@@ -60,6 +60,11 @@
 !/.ssh/config
 !/.ssh/davejamesmiller.pub
 
+# Vagrant
+!/.vagrant.d
+/.vagrant.d/*
+!/.vagrant.d/Vagrantfile
+
 # Vim - ignore history
 /.vim/.netrwhist
 
