@@ -63,6 +63,7 @@
 # Vagrant
 !/.vagrant.d
 /.vagrant.d/*
+!/.vagrant.d/install-dotfiles.sh
 !/.vagrant.d/Vagrantfile
 
 # Vim - ignore history
