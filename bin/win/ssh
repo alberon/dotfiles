@@ -1,13 +1,71 @@
 #!/bin/bash
 
-if [ -x /bin/ssh ]; then
-    ssh=/bin/ssh
+if [ -x "/c/Program Files/VanDyke Software/SecureCRT/SecureCRT.exe" ]; then
+
+    # SecureCRT
+
+    # If there are no arguments do nothing - Vagrant does that to check for Plink
+    # https://github.com/mitchellh/vagrant/blob/b421af58e8b34411b1fe06d2976c0d2dc68dd704/lib/vagrant/util/ssh.rb#L85
+    if [ $# -eq 0 ]; then
+        exit
+    fi
+
+    # Parse parameters from OpenSSH format into SecureCRT format
+    # http://en.helpdoc-online.com/securecrt_6/source/table_of_protocol-specific_.htm
+    # Note: The double // is because MSysGit treats any parameter starting with / as a filename
+    args=("//ssh2")
+    host=
+
+    while [ $# -gt 0 ]; do
+        if [ "$1" = "-p" ]; then
+
+            # Port
+            args+=("//P" "$2")
+            shift
+
+        elif [ "$1" = "-i" ]; then
+
+            # Identity (private key)
+            args+=("//I" "$2")
+            shift
+
+        elif [ "$1" = "-o" ]; then
+
+            # Option (ignored)
+            #echo "Ignored option: $1"
+            shift
+
+        elif [ "${1::1}" != "-" -a -z "$host" ]; then
+
+            # Hostname (or Username@Hostname)
+            host="$1"
+
+        else
+
+            # Unknown
+            echo "Unknown parameter: $1" >&2
+
+        fi
+
+        shift
+    done
+
+    exec "/c/Program Files/VanDyke Software/SecureCRT/SecureCRT.exe" "${args[@]}" "$host" &
+
+elif [ -x /bin/ssh ]; then
+
+    # Standard OpenSSH
+    # Need to remove these options because the version of SSH in MSysGit is quite old
+    # Note: Can't use process substitution in MSysGit, so we need a temp file
+    echo "ssh - /bin/ssh"
+    grep -v 'ControlPersist\|ControlPath' ~/.ssh/config > ~/tmp/ssh-config-windows
+    chmod 700 ~/tmp/ssh-config-windows
+    exec /bin/ssh -F ~/tmp/ssh-config-windows "$@"
+
 else
+
+    # Not found
     echo "Cannot find 'ssh' executable" >&2
     exit 250
-fi
 
-# Note: Can't use process substitution in MSysGit, so we need a temp file
-grep -v 'ControlPersist\|ControlPath' ~/.ssh/config > ~/tmp/ssh-config-windows
-chmod 700 ~/tmp/ssh-config-windows
-exec "$ssh" -F ~/tmp/ssh-config-windows "$@"
+fi
