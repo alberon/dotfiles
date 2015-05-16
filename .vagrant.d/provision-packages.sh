@@ -2,11 +2,9 @@
 
 export DEBIAN_FRONTEND=noninteractive
 
-# Update Apt repositories
-apt-get -y update
-
 # Install Git
 if ! which git >/dev/null 2>&1; then
+    apt-get -y update
     apt-get install -y git
 fi
 
