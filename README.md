@@ -46,6 +46,9 @@ I'm lazy so I have a lot of Bash aliases and short commands - here are the most 
 | `e`      | `vim`                                         | Short for "editor"                                       |
 | `xe`     | `vim && chmod +x`                             | Create new executable file and edit it                   |
 | `v`      | `vagrant`                                     |                                                          |
+| `art`    | `php artisan`                                 | For Laravel (searches parent directories too)            |
+| `sf`     | `./symfony`                                   | For Symfony (searches parent directories too)            |
+| `t`      | `vendor/bin/phpunit` or `phpunit` (global)    | Searches parent directories too                          |
 | `redis`  | `redis-cli`                                   |                                                          |
 | `s`      | `sudo`                                        |                                                          |
 | `se`     | `sudo vim`                                    |                                                          |
@@ -56,11 +59,9 @@ I'm lazy so I have a lot of Bash aliases and short commands - here are the most 
 | `agu`    | `sudo apt-get update && sudo apt-get upgrade` |                                                          |
 | `acs`    | `apt-cache search`                            |                                                          |
 | `acsh`   | `apt-cache show`                              |                                                          |
-| `reload` | `exec bash -l`                                | Run this after modifying any Bash config file            |
-| `art`    | `php artisan`                                 | For Laravel (searches parent directories too)            |
-| `sf`     | `./symfony`                                   | For Symfony (searches parent directories too)            |
-| `t`      | `vendor/bin/phpunit` or `phpunit` (global)    | Searches parent directories too                          |
 | `dus`    | `du -sh`                                      | Also sorts files/directories by size                     |
+| `pow`    | `sudo poweroff`                               |                                                          |
+| `reload` | `exec bash -l`                                | Run this after modifying any Bash config file            |
 
 ## Git aliases
 
@@ -120,7 +121,6 @@ These commands will automatically be prefixed with `sudo`:
 - `groupmod`
 - `php5dismod`
 - `php5enmod`
-- `pow`
 - `poweroff`
 - `reboot`
 - `service`
