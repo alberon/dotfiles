@@ -24,7 +24,7 @@ That's it. (See http://djm.me/cfg for the script source - don't execute scripts 
 
 ## Bash aliases
 
-I'm lazy so I have a lot of Bash aliases - here are the most useful ones:
+I'm lazy so I have a lot of Bash aliases and short commands - here are the most useful ones:
 
 | Alias    | Expansion                                     | Comments                                                 |
 |----------|-----------------------------------------------|----------------------------------------------------------|
@@ -44,6 +44,7 @@ I'm lazy so I have a lot of Bash aliases - here are the most useful ones:
 | `md`     | `mkdir && cd`                                 |                                                          |
 | `g`      | `git`                                         | See .gitconfig for a list of Git aliases                 |
 | `e`      | `vim`                                         | Short for "editor"                                       |
+| `xe`     | `vim && chmod +x`                             | Create new executable file and edit it                   |
 | `v`      | `vagrant`                                     |                                                          |
 | `redis`  | `redis-cli`                                   |                                                          |
 | `s`      | `sudo`                                        |                                                          |
@@ -56,6 +57,10 @@ I'm lazy so I have a lot of Bash aliases - here are the most useful ones:
 | `acs`    | `apt-cache search`                            |                                                          |
 | `acsh`   | `apt-cache show`                              |                                                          |
 | `reload` | `exec bash -l`                                | Run this after modifying any Bash config file            |
+| `art`    | `php artisan`                                 | For Laravel (searches parent directories too)            |
+| `sf`     | `./symfony`                                   | For Symfony (searches parent directories too)            |
+| `t`      | `vendor/bin/phpunit` or `phpunit` (global)    | Searches parent directories too                          |
+| `dus`    | `du -sh`                                      | Also sorts files/directories by size                     |
 
 ## Git aliases
 
@@ -63,24 +68,13 @@ Combined with the `g` alias above, these make easy to type Git commands, e.g. `g
 
 | Alias    | Expansion                                     | Comments                                                 |
 |----------|-----------------------------------------------|----------------------------------------------------------|
+| `s`      | `status`                                      |                                                          |
 | `a`      | `add -A`                                      | Adds *and* removes files                                 |
-| `amend`  | `commit --amend --no-edit --reset-author`     | Modify the previous commit, keep the same message        |
-| `b`      | `branch`                                      |                                                          |
-| `ba`     | `branch -a`                                   |                                                          |
-| `c`      | `commit -m`                                   | e.g. `g c "Commit message"                               |
-| `co`     | `checkout`                                    |                                                          |
-| `cp`     | `cherry-pick`                                 |                                                          |
 | `d`      | `diff`                                        |                                                          |
 | `dc`     | `diff --cached`                               |                                                          |
+| `c`      | `commit -m`                                   | e.g. `g c "Commit message"                               |
+| `amend`  | `commit --amend --no-edit --reset-author`     | Modify the previous commit, keep the same message        |
 | `edit`   | `commit --amend --reset-author`               | Modify the previous commit, edit the message             |
-| `f`      | `fetch`                                       |                                                          |
-| `g`      | `grep`                                        |                                                          |
-| `g3`     | `grep --context=3`                            | Also `g6` and `g9`                                       |
-| `gi`     | `grep --ignore-case`                          |                                                          |
-| `gi3`    | `grep --ignore-case --context=3`              | Also `gi6` and `gi9`                                     |
-| `in`     | `log origin/master..`                         | Lists commits incoming from the default remote           |
-| `io`     | `log --left-right origin/master..HEAD`        | Lists commits incoming & outgoing to the default remote  |
-| `out`    | `log ..origin/master`                         | Lists commits outgoing to the default remote             |
 | `l`      | `log --name-status`                           | Includes list of modified files                          |
 | `l1`     | `log --name-status --pretty=...`              | Single-line format                                       |
 | `lg`     | `log --graph`                                 |                                                          |
@@ -88,14 +82,29 @@ Combined with the `g` alias above, these make easy to type Git commands, e.g. `g
 | `ll`     | `log`                                         | Without list of modified files                           |
 | `lp`     | `log --patch`                                 | Displays diff with each log entry                        |
 | `lpw`    | `log --patch --ignore-all-space`              | Displays diff excluding whitespace changes               |
-| `m`      | `merge`                                       |                                                          |
-| `mt`     | `mergetool`                                   |                                                          |
+| `in`     | `log origin/master..`                         | Lists commits incoming from the default remote           |
+| `io`     | `log --left-right origin/master..HEAD`        | Lists commits incoming & outgoing to the default remote  |
+| `out`    | `log ..origin/master`                         | Lists commits outgoing to the default remote             |
+| `f`      | `fetch`                                       |                                                          |
 | `p`      | `push`                                        |                                                          |
 | `pt`     | `push --tags`                                 |                                                          |
-| `s`      | `status`                                      |                                                          |
+| `pu`     | `push -u origin HEAD`                         | Push and set upstream                                    |
+| `b`      | `branch`                                      |                                                          |
+| `ba`     | `branch -a`                                   |                                                          |
+| `co`     | `checkout`                                    |                                                          |
+| `g`      | `grep`                                        |                                                          |
+| `g3`     | `grep --context=3`                            | Also `g6` and `g9`                                       |
+| `gi`     | `grep --ignore-case`                          |                                                          |
+| `gi3`    | `grep --ignore-case --context=3`              | Also `gi6` and `gi9`                                     |
+| `todo`   | `grep 'TODO\|XXX\|FIXME'                      |                                                          |
+| `cls`    | `grep -i "class\s\+$1\b"`                     | Search for class definition                              |
+| `fun`    | `grep -i "function\s\+$1\b"`                  | Search for function definition                           |
+| `cp`     | `cherry-pick`                                 |                                                          |
+| `m`      | `merge`                                       |                                                          |
+| `mt`     | `mergetool`                                   |                                                          |
 | `sub`    | `submodule`                                   |                                                          |
 | `sync`   | `submodule sync; submodule update --init`     |                                                          |
-| `todo`   | `grep 'TODO\|XXX\|FIXME'                      |                                                          |
+| `files`  | `ls-files | grep`                             | Find file by name                                        |
 
 ## Automatic sudo
 
