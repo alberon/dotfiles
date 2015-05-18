@@ -75,8 +75,27 @@ Combined with the `g` alias above, these make easy to type Git commands, e.g. `g
 | `edit`   | `commit --amend --reset-author`               | Modify the previous commit, edit the message             |
 | `f`      | `fetch`                                       |                                                          |
 | `g`      | `grep`                                        |                                                          |
-
-TODO: More... (See .gitconfig)
+| `g3`     | `grep --context=3`                            | Also `g6` and `g9`                                       |
+| `gi`     | `grep --ignore-case`                          |                                                          |
+| `gi3`    | `grep --ignore-case --context=3`              | Also `gi6` and `gi9`                                     |
+| `in`     | `log origin/master..`                         | Lists commits incoming from the default remote           |
+| `io`     | `log --left-right origin/master..HEAD`        | Lists commits incoming & outgoing to the default remote  |
+| `out`    | `log ..origin/master`                         | Lists commits outgoing to the default remote             |
+| `l`      | `log --name-status`                           | Includes list of modified files                          |
+| `l1`     | `log --name-status --pretty=...`              | Single-line format                                       |
+| `lg`     | `log --graph`                                 |                                                          |
+| `lg1`    | `log --graph --pretty=...`                    | Single-line format                                       |
+| `ll`     | `log`                                         | Without list of modified files                           |
+| `lp`     | `log --patch`                                 | Displays diff with each log entry                        |
+| `lpw`    | `log --patch --ignore-all-space`              | Displays diff excluding whitespace changes               |
+| `m`      | `merge`                                       |                                                          |
+| `mt`     | `mergetool`                                   |                                                          |
+| `p`      | `push`                                        |                                                          |
+| `pt`     | `push --tags`                                 |                                                          |
+| `s`      | `status`                                      |                                                          |
+| `sub`    | `submodule`                                   |                                                          |
+| `sync`   | `submodule sync; submodule update --init`     |                                                          |
+| `todo`   | `grep 'TODO\|XXX\|FIXME'                      |                                                          |
 
 ## Automatic sudo
 
