@@ -33,7 +33,7 @@ I'm lazy so I have a lot of Bash aliases and short commands - here are the most 
 | `uu`     | `cd ../..`                                    | Repeat "u" up to 6 times                                 |
 | `b`      | `cd -`                                        |                                                          |
 | `cg`     | `cd <git root>`                               |                                                          |
-| `cw`     | `cd $www_dir`                                 | Set in ~/.bashrc_config (e.g. /home/www)                 |
+| `cw`     | `cd $www_dir`                                 | Set in `~/.bashrc_config` (e.g. `www_dir=/home/www`)     |
 | `cwc`    | `cd wp-content/`                              | Searches for it if necessary                             |
 | `cwp`    | `cd wp-content/plugins/`                      |                                                          |
 | `cwt`    | `cd wp-content/themes/<theme>/`               | If there's only one theme - else uses wp-content/themes/ |
@@ -73,7 +73,7 @@ Combined with the `g` alias above, these make easy to type Git commands, e.g. `g
 | `a`      | `add -A`                                      | Adds *and* removes files                                 |
 | `d`      | `diff`                                        |                                                          |
 | `dc`     | `diff --cached`                               |                                                          |
-| `c`      | `commit -m`                                   | e.g. `g c "Commit message"                               |
+| `c`      | `commit -m`                                   | e.g. `g c "Commit message"`                              |
 | `amend`  | `commit --amend --no-edit --reset-author`     | Modify the previous commit, keep the same message        |
 | `edit`   | `commit --amend --reset-author`               | Modify the previous commit, edit the message             |
 | `l`      | `log --name-status`                           | Includes list of modified files                          |
