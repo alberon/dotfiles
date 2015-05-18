@@ -97,7 +97,7 @@ Combined with the `g` alias above, these make easy to type Git commands, e.g. `g
 | `g3`     | `grep --context=3`                            | Also `g6` and `g9`                                       |
 | `gi`     | `grep --ignore-case`                          |                                                          |
 | `gi3`    | `grep --ignore-case --context=3`              | Also `gi6` and `gi9`                                     |
-| `todo`   | `grep 'TODO\|XXX\|FIXME'                      |                                                          |
+| `todo`   | `grep 'TODO\|XXX\|FIXME'`                     |                                                          |
 | `cls`    | `grep -i "class\s\+$1\b"`                     | Search for class definition                              |
 | `fun`    | `grep -i "function\s\+$1\b"`                  | Search for function definition                           |
 | `cp`     | `cherry-pick`                                 |                                                          |
