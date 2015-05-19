@@ -29,7 +29,9 @@ elif $CYGWIN; then
     # Use the complete version of Vim on Windows instead of the cut down version
     # that's included with Git Bash
     for vimpath in \
-        "/c/Program Files \(x86\)/Vim/vim73" \
+        "/c/Program Files (x86)/Vim/vim74" \
+        "/c/Program Files/Vim/vim74" \
+        "/c/Program Files (x86)/Vim/vim73" \
         "/c/Program Files/Vim/vim73";
     do
         if [ -f "$vimpath/vim.exe" ]; then
