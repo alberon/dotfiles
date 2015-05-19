@@ -28,22 +28,21 @@ I'm lazy so I have a lot of Bash aliases and short commands - here are the most 
 
 | Alias    | Expansion                                     | Comments                                                 |
 |----------|-----------------------------------------------|----------------------------------------------------------|
-| `c`      | `cd && ls`                                    |                                                          |
-| `u`      | `cd ..`                                       |                                                          |
-| `uu`     | `cd ../..`                                    | Repeat "u" up to 6 times                                 |
-| `b`      | `cd -`                                        |                                                          |
-| `cg`     | `cd <git root>`                               |                                                          |
-| `cw`     | `cd $www_dir`                                 | Set in `~/.bashrc_config` (e.g. `www_dir=/home/www`)     |
-| `cwc`    | `cd wp-content/`                              | Searches for it if necessary                             |
-| `cwp`    | `cd wp-content/plugins/`                      |                                                          |
-| `cwt`    | `cd wp-content/themes/<theme>/`               | If there's only one theme - else uses wp-content/themes/ |
-| `l`      | `ls -hFl`                                     | Also hides *.pyc and *.sublime-workspace files           |
-| `ls`     | `ls -hF`                                      |                                                          |
-| `la`     | `ls -hFal`                                    |                                                          |
-| `lsa`    | `ls -hFa`                                     |                                                          |
+| `c`      | `cd && ls`                                    | Change directory then list files                         |
+| `u`      | `cd ..`                                       | Go Up                                                    |
+| `uu`     | `cd ../..`                                    | Repeat `u` up to 6 times to go up 6 levels               |
+| `b`      | `cd -`                                        | Go Back                                                  |
+| `cg`     | `cd <git root>`                               | Go to Git repository root                                |
+| `cw`     | `cd $www_dir`                                 | Go to WWW root - set in `~/.bashrc_config`               |
+| `cwc`    | `cd wp-content/`                              | Go to WordPress content directory                        |
+| `cwp`    | `cd wp-content/plugins/`                      | Go to WordPress plugins directory                        |
+| `cwt`    | `cd wp-content/themes/<theme>/`               | Go to WordPress theme directory                          |
+| `l`      | `ls -l`                                       |                                                          |
+| `la`     | `ls -lA`                                      | List with hidden files (except `.` and `..`)             |
+| `lsa`    | `ls -A`                                       |                                                          |
 | `md`     | `mkdir && cd`                                 |                                                          |
-| `g`      | `git`                                         | See .gitconfig for a list of Git aliases                 |
-| `e`      | `vim`                                         | Short for "editor"                                       |
+| `g`      | `git`                                         | See below for a list of Git aliases                      |
+| `e`      | `vim`                                         | Editor                                                   |
 | `xe`     | `vim && chmod +x`                             | Create new executable file and edit it                   |
 | `v`      | `vagrant`                                     |                                                          |
 | `art`    | `php artisan`                                 | For Laravel (searches parent directories too)            |
@@ -63,6 +62,8 @@ I'm lazy so I have a lot of Bash aliases and short commands - here are the most 
 | `pow`    | `sudo poweroff`                               |                                                          |
 | `reload` | `exec bash -l`                                | Run this after modifying any Bash config file            |
 
+**Note:** Expansions may be simplified in the list above - e.g. `l` is actually aliased to `ls -hFl --color=always --hide=*.pyc --hide=*.sublime-workspace` on Linux or `LSCOLORS=ExGxFxDaCaDaDahbaDacec ls -hFlG` on Mac.
+
 ## Git aliases
 
 Combined with the `g` alias above, these make easy to type Git commands, e.g. `g s` instead of `git status`:
@@ -72,10 +73,10 @@ Combined with the `g` alias above, these make easy to type Git commands, e.g. `g
 | `s`      | `status`                                      |                                                          |
 | `a`      | `add -A`                                      | Adds *and* removes files                                 |
 | `d`      | `diff`                                        |                                                          |
-| `dc`     | `diff --cached`                               |                                                          |
+| `dc`     | `diff --cached`                               | Shows diff for staged files                              |
 | `c`      | `commit -m`                                   | e.g. `g c "Commit message"`                              |
-| `amend`  | `commit --amend --no-edit --reset-author`     | Modify the previous commit, keep the same message        |
-| `edit`   | `commit --amend --reset-author`               | Modify the previous commit, edit the message             |
+| `amend`  | `commit --amend --no-edit`                    | Modify the previous commit, keep the same message        |
+| `edit`   | `commit --amend`                              | Modify the previous commit, edit the message             |
 | `l`      | `log --name-status`                           | Includes list of modified files                          |
 | `l1`     | `log --name-status --pretty=...`              | Single-line format                                       |
 | `lg`     | `log --graph`                                 |                                                          |
