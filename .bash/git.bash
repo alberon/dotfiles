@@ -19,7 +19,7 @@ END
 
 git() {
     # Alias to hub if available
-    if which ruby >/dev/null 2>&1; then
+    if [ -x /usr/bin/ruby ]; then
         git=hub
         init_hub
     else
