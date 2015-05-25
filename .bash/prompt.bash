@@ -15,10 +15,10 @@ if $HAS_TERMINAL; then
 
     # Set the titlebar & prompt to "[user@host:/full/path]\n$"
     case "$TERM" in
-        xterm*|screen*)
+        xterm*|screen*|cygwin*)
             Titlebar="\u@$(prompthostname):\$PWD"
             # Set titlebar now, before SSH key is requested, for KeePass
-            echo -ne "\033]2;$USER@$(prompthostname init):$PWD\a"
+            echo -ne "\033]2;${USER:-$USERNAME}@$(prompthostname init):$PWD\a"
             ;;
         *)
             Titlebar=""
@@ -144,17 +144,17 @@ if $HAS_TERMINAL; then
         # Set the prompt
         PS1="${TitlebarCode}\n"                     # Titlebar (see above)
         PS1="${PS1}${MessageCode}"                  # Message (see above)
-        PS1="${PS1}\[\033[30;1m\]["                   # [                             Grey
-        PS1="${PS1}\[\033[31;1m\]\u"                  # Username                      Red
-        PS1="${PS1}\[\033[30;1m\]@"                   # @                             Grey
-        PS1="${PS1}\[\033[32;1m\]$(prompthostname)"   # Hostname                      Green
-        PS1="${PS1}\[\033[30;1m\]:"                   # :                             Grey
-        PS1="${PS1}\[\033[33;1m\]\$(vcsprompt)"       # Working directory / Git / Hg  Yellow
-        PS1="${PS1}\[\033[30;1m\]\$(venvprompt)"      # Python virtual env            Grey
-        PS1="${PS1}\[\033[30;1m\]]"                   # ]                             Grey
-        PS1="${PS1}\[\033[1;35m\]\$KeyStatus"         # SSH key status                Pink
+        PS1="${PS1}\[\033[30;1m\]["                 # [                             Grey
+        PS1="${PS1}\[\033[31;1m\]\u"                # Username                      Red
+        PS1="${PS1}\[\033[30;1m\]@"                 # @                             Grey
+        PS1="${PS1}\[\033[32;1m\]$(prompthostname)" # Hostname                      Green
+        PS1="${PS1}\[\033[30;1m\]:"                 # :                             Grey
+        PS1="${PS1}\[\033[33;1m\]\$(vcsprompt)"     # Working directory / Git / Hg  Yellow
+        PS1="${PS1}\[\033[30;1m\]\$(venvprompt)"    # Python virtual env            Grey
+        PS1="${PS1}\[\033[30;1m\]]"                 # ]                             Grey
+        PS1="${PS1}\[\033[1;35m\]\$KeyStatus"       # SSH key status                Pink
         PS1="${PS1}\n"                              # (New line)
-        PS1="${PS1}\[\033[31;1m\]\\\$"                # $                             Red
+        PS1="${PS1}\[\033[31;1m\]\\\$"              # $                             Red
         PS1="${PS1}\[\033[0m\] "
     }
 
