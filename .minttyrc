@@ -1,3 +1,5 @@
 BoldAsFont=no
 Font=Fixedsys
 CursorType=block
+RightClickAction=paste
+Term=xterm-256color
