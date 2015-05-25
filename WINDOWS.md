@@ -16,7 +16,21 @@
 
 **Tip:** Click the "View" button in the top-right corner to select "Full" mode, then use the search box.
 
-When it's installed, follow the regular [installation instructions](README.md).
+When it's installed, run Cygwin Terminal and run this to set the same home directory in Cygwin and Windows (e.g. for gVim config files) - adjust paths as appropriate:
+
+```bash
+cd
+cd ..
+mv Dave Dave.bak && ln -s /cygdrive/c/Users/Dave
+```
+
+Then install dotfiles as normal:
+
+```
+cd
+wget djm.me/cfg
+. cfg
+```
 
 ## ConEmu
 
