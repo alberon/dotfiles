@@ -15,9 +15,9 @@ if [ ! -f ~/.bashrc_config ]; then
     fi
 
     # Check for Windows server
-    case `uname` in
-       MINGW*) windows=1 ;;
-       *)      windows=0 ;;
+    case "$(uname)" in
+       MINGW|CYGWIN*) windows=1 ;;
+       *)             windows=0 ;;
     esac
 
     # Generate .bashrc_config
