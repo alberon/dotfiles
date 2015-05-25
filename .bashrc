@@ -1,9 +1,12 @@
 # Detect operating system
 WINDOWS=false
+CYGWIN=false
+MSYSGIT=false
 MAC=false
 
-case "`uname`" in
-    MINGW32*) WINDOWS=true  ;;
+case "$(uname)" in
+    CYGWIN*)  WINDOWS=true; CYGWIN=true ;;
+    MINGW32*) WINDOWS=true; MSYSGIT=true ;;
     Darwin)   MAC=true ;;
 esac
 
