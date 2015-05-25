@@ -21,6 +21,7 @@
 !/.gitignore
 !/.gitignore-global
 !/.irbrc
+!/.minttyrc
 !/.railsrc
 !/.railsrc-x
 !/.rdebugrc
