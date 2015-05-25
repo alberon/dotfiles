@@ -24,7 +24,7 @@ if $MAC; then
         fi
     fi
 
-elif $CYGWIN; then
+elif $MSYSGIT; then
 
     # Use the complete version of Vim on Windows instead of the cut down version
     # that's included with Git Bash
