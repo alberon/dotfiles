@@ -40,7 +40,7 @@ elif $MSYSGIT; then
             alias vim=vim.exe
             alias gvim=gvim.exe
             export EDITOR=vim.exe
-            export GEDITOR=gvim.exe
+            export GEDITOR=vim.exe
             break
         fi
     done
