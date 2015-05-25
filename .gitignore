@@ -16,6 +16,7 @@
 !/opt
 !/package.json
 !/README.md
+!/WINDOWS.md
 !/.gitattributes-global
 !/.gitconfig
 !/.gitignore
