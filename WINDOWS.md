@@ -2,7 +2,7 @@
 
 ## Cygwin
 
-[Install Cygwin](https://cygwin.com/install.html) - when prompted add these packages:
+[Install Cygwin](https://cygwin.com/install.html) - select [any nearby mirror](https://cygwin.com/mirrors.html) and when prompted add these packages:
 
 - bash-completion
 - curl
