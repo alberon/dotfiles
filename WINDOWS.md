@@ -32,6 +32,8 @@ wget djm.me/cfg
 . cfg
 ```
 
+Finally, close and re-open Cygwin *twice* to reload the configuration.
+
 ## ConEmu
 
 [Install ConEmu](https://github.com/Maximus5/ConEmu).
