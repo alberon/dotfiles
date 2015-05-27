@@ -40,4 +40,10 @@ if $WINDOWS; then
         > /etc/motd
     fi
 
+    # Emulate apt-get with apt-cyg
+    alias agi='apt-cyg install'
+    alias agr='apt-cyg remove'
+    alias agu='apt-cyg update'
+    alias acs='apt-cyg searchall'
+
 fi

@@ -5,6 +5,7 @@
 [Install Cygwin](https://cygwin.com/install.html) - select [any nearby mirror](https://cygwin.com/mirrors.html) and when prompted add these packages:
 
 - bash-completion
+- bind-utils (includes `dig`, `host` and `nslookup`)
 - curl
 - git
 - git-completion
@@ -47,3 +48,7 @@ C:\cygwin64\bin\mintty -e /bin/bash -c "/bin/tmux -2 attach || /bin/tmux -2 new 
 Set it as the default task, and in Startup make it the startup task as well.
 
 **Note:** I customised a lot of other options too - but I can't remember which ones!
+
+## Apt-Cyg
+
+Install [apt-cyg](https://github.com/transcode-open/apt-cyg) by running `install-apt-cyg` (or follow their instructions).
