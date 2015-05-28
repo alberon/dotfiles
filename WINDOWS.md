@@ -14,6 +14,7 @@
 - tmux
 - vim
 - wget
+- whois
 
 **Tip:** Click the "View" button in the top-right corner to select "Full" mode, then use the search box.
 
