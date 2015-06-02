@@ -141,14 +141,8 @@ if $HAS_TERMINAL; then
             TitlebarCode=
         fi
 
-        # Set Tmux tab title to username@hostname
-        # TODO: There is currently no way to override this manually
-        TmuxCode="\[\033k\]\u@$(prompthostname)\[\033m\]"
-
         # Set the prompt
-        PS1="${TitlebarCode}"                       # Titlebar (see above)
-        PS1="${PS1}${TmuxCode}"                     # Tmux tab title (see above)
-        PS1="${PS1}\n"                              # Line break to better space output
+        PS1="${TitlebarCode}\n"                     # Titlebar (see above)
         PS1="${PS1}${MessageCode}"                  # Message (see above)
         PS1="${PS1}\[\033[30;1m\]["                 # [                             Grey
         PS1="${PS1}\[\033[31;1m\]\u"                # Username                      Red
