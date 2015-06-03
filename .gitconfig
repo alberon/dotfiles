@@ -50,7 +50,7 @@
     edit = commit --amend --reset-author
     f = fetch -v --prune
     fe = fetch -v --prune
-    friday = log --decorate --patch --since='last friday'
+    friday = log --decorate -p --since='last friday'
     g = grep --untracked --line-number
     g3 = grep --untracked --line-number --context=3
     g6 = grep --untracked --line-number --context=6
@@ -69,8 +69,8 @@
     lg = log --decorate --graph
     lg1 = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
     ll = log --decorate
-    lp = log --decorate --patch
-    lpw = log --decorate --patch --ignore-all-space
+    lp = log --decorate -p
+    lpw = log --decorate -p --ignore-all-space
     m = merge
     mi = merge-into
     mt = mergetool
@@ -91,7 +91,7 @@
     up = !git pull --rebase --prune $@ && git submodule update --init --recursive
     web = instaweb
     wipe = !git add -A && git commit -qm 'WIPE SAVEPOINT' && git reset HEAD~1 --hard
-    yesterday = log --decorate --patch --since=yesterday
+    yesterday = log --decorate -p --since=yesterday
 
 [github]
     user = davejamesmiller
