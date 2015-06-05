@@ -9,6 +9,7 @@ vagrant() {
         echo "     u    up"
         echo "     p    provision"
         echo "     s    ssh"
+        echo "     st   status"
         echo "     d    suspend (down)"
         return
     fi
@@ -18,10 +19,11 @@ vagrant() {
     shift
 
     case "$cmd" in
-        u) cmd=up        ;;
-        p) cmd=provision ;;
-        s) cmd=ssh       ;;
-        d) cmd=suspend   ;;
+        u)  cmd=up        ;;
+        p)  cmd=provision ;;
+        s)  cmd=ssh       ;;
+        st) cmd=status    ;;
+        d)  cmd=suspend   ;;
     esac
 
     # Special case for the 'ssh' command
