@@ -26,8 +26,8 @@ vagrant() {
         d)  cmd=suspend   ;;
     esac
 
-    # Special case for the 'ssh' command
-    if [ "$cmd" = "ssh" ]; then
+    # Special case for the 'ssh' command with no parameters
+    if [ "$cmd" = "ssh" -a $# -eq 0 ]; then
         if [ -z "$TMUX" ]; then
             # Run tmux inside Vagrant (if available)
             command vagrant ssh -- -t 'which tmux >/dev/null 2>&1 && { tmux attach || tmux new -s default; } || bash -l'
@@ -39,7 +39,7 @@ vagrant() {
             ssh -F /tmp/vagrant-ssh-config default
         else
             # Run as normal
-            command vagrant "$@"
+            command vagrant ssh
         fi
         return
     fi
