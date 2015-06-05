@@ -1,7 +1,6 @@
 # Install my config files
 Vagrant.configure('2') do |config|
-    config.vm.provision 'packages', run: 'always', type: 'shell', path: '~/.vagrant.d/provision-packages.sh', privileged: true
-    config.vm.provision 'dotfiles', run: 'always', type: 'shell', path: '~/.vagrant.d/provision-dotfiles.sh', privileged: false
+    config.vm.provision 'dotfiles', type: 'shell', path: '~/.vagrant.d/provision-dotfiles.sh', privileged: false
 end
 
 # Need to use ssh.bat to modify the config file to support the old version
