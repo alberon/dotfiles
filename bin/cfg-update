@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd
+cd $(dirname "$0")/..
 
 # Delete old .hg directory if necessary
 # Note: This is because Mercurial writes to the .hg/dirstate after it is
@@ -70,11 +70,11 @@ git submodule init #>/dev/null
 git submodule update
 
 # Update sub-submodules!
-cd ~/opt/git-extras
+cd opt/git-extras
 git submodule sync #>/dev/null
 git submodule init #>/dev/null
 git submodule update
-cd
+cd ../..
 
 # Update Node.js packages
 if which npm >/dev/null 2>&1; then
