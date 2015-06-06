@@ -49,8 +49,10 @@ if [ ! -f ~/.bashrc_config ]; then
         echo "www_dir=" >> ~/.bashrc_config
     fi
 
-    # Open in editor
-    vim ~/.bashrc_config
+    # Open in editor (if running interactively, not in a Vagrant provisioner)
+    if [ -t 0 ]; then
+        vim ~/.bashrc_config
+    fi
 
 fi
 
