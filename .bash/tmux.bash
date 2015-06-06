@@ -15,10 +15,13 @@ fi
 # Now that's done we can use the symlink for every session
 export SSH_AUTH_SOCK="$HOME/.ssh/ssh_auth_sock"
 
-# tmux attach
+# tmux attach (local)
 alias tm='tmux -2 attach || tmux -2 new -s default'
 
-# ssh + tmux
-sshtm() {
+# ssh + tmux ('h' because 's' and 't' are in use)
+h() {
     ssh -t "$@" "tmux -2 attach || tmux -2 new -s default || bash -l"
 }
+
+complete -o bashdefault -o default -o nospace -F _ssh h 2>/dev/null ||
+complete -o default -o nospace -F _ssh h
