@@ -9,7 +9,7 @@ if $HAS_TERMINAL; then
         elif [ "$1" = "init" ]; then
             hostname -s
         else
-            echo '\h'
+            echo '\H'
         fi
     }
 
