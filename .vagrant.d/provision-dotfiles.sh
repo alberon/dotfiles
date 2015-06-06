@@ -56,3 +56,18 @@ if [ ! -d .git ]; then
     echo "/vagrant" > ~/.bash_lastdirectory
 
 fi
+
+# Install root dotfiles
+sudo -s <<END
+    if [ ! -d ~root/.git ]; then
+        cd
+        git init
+        git remote add origin git://github.com/davejamesmiller/dotfiles.git
+        git remote set-url --push origin git@github.com:davejamesmiller/dotfiles.git
+        git fetch origin 2>&1
+        rm .bashrc
+        git checkout origin/master -b master 2>&1
+        ~/bin/cfg-install
+        ~/bin/cfg-update
+    fi
+END
