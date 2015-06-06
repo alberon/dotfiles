@@ -6,11 +6,12 @@ vagrant() {
         command vagrant
         echo
         echo "Shortcuts:"
-        echo "     u    up"
-        echo "     p    provision"
-        echo "     s    ssh"
-        echo "     st   status"
-        echo "     d    suspend (down)"
+        echo "     u       up"
+        echo "     p       provision"
+        echo "     s       ssh"
+        echo "     st      status"
+        echo "     d       suspend (down)"
+        echo "     hosts   update /etc/hosts (hostmanager)"
         return
     fi
 
@@ -19,13 +20,14 @@ vagrant() {
     shift
 
     case "$cmd" in
-        u)    cmd=up        ;;
-        p)    cmd=provision ;;
-        s)    cmd=ssh       ;;
-        st)   cmd=status    ;;
-        d)    cmd=suspend   ;;
-        down) cmd=suspend   ;;
-        stop) cmd=halt      ;;
+        u)     cmd=up          ;;
+        p)     cmd=provision   ;;
+        s)     cmd=ssh         ;;
+        st)    cmd=status      ;;
+        d)     cmd=suspend     ;;
+        down)  cmd=suspend     ;;
+        stop)  cmd=halt        ;;
+        hosts) cmd=hostmanager ;;
     esac
 
     # Special case for the 'ssh' command with no parameters
