@@ -4,21 +4,27 @@ set -eu
 apt_updated=false
 apt_update() {
     if ! $apt_updated; then
-        sudo apt-get update -y
+        echo "Updating APT sources..."
+        sudo apt-get update -qqy
         apt_updated=true
     fi
 }
 
+apt_install() {
+    apt_update
+    echo "Installing $1..."
+    # Note: apt-get install -qq doesn't actually make it silent!
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y $1 >/dev/null
+}
+
 # Install Git - required to install dotfiles
 if ! which git &>/dev/null; then
-    apt_update
-    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y git
+    apt_install git
 fi
 
 # Install Vim - because I like it better than any other editor
 if ! which vim &>/dev/null; then
-    apt_update
-    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y vim
+    apt_install vim
 fi
 
 # Install tmux
@@ -28,27 +34,29 @@ if ! which tmux &>/dev/null; then
     if [ -f /etc/lsb-release ]; then
         source /etc/lsb-release
         if [ "$DISTRIB_RELEASE" = "12.04" ]; then
-            sudo DEBIAN_FRONTEND=noninteractive apt-get install -y python-software-properties
-            sudo add-apt-repository -y ppa:pi-rho/dev 2>&1
+            echo "Adding ppa:pi-rho/dev repository..."
+            sudo DEBIAN_FRONTEND=noninteractive apt-get install -qqy python-software-properties
+            sudo add-apt-repository -y ppa:pi-rho/dev
             # http://askubuntu.com/a/197532
-            sudo apt-get update -y -o Dir::Etc::sourcelist="sources.list.d/pi-rho-dev-precise.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0"
+            sudo apt-get update -qqy -o Dir::Etc::sourcelist="sources.list.d/pi-rho-dev-precise.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0"
         fi
     fi
 
-    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y tmux
+    apt_install tmux
 
 fi
 
 # Install dotfiles
 if [ ! -d .git ]; then
 
-    # Based on https://djm.me/cfg but non-interactive
-    git init
+    # Based on https://djm.me/cfg but quiet and non-interactive
+    echo "Installing dotfiles in $HOME..."
+    git init -q
     git remote add origin git://github.com/davejamesmiller/dotfiles.git
     git remote set-url --push origin git@github.com:davejamesmiller/dotfiles.git
-    git fetch origin 2>&1
+    git fetch -q origin
     rm .bashrc
-    git checkout origin/master -b master 2>&1
+    git checkout origin/master -b master >/dev/null 2>&1
     ~/bin/cfg-install
     ~/bin/cfg-update
 
@@ -60,13 +68,14 @@ fi
 # Install root dotfiles
 sudo -s <<END
     if [ ! -d ~root/.git ]; then
+        echo "Installing dotfiles in $(echo ~root)..."
         cd
-        git init
+        git init -q
         git remote add origin git://github.com/davejamesmiller/dotfiles.git
         git remote set-url --push origin git@github.com:davejamesmiller/dotfiles.git
-        git fetch origin 2>&1
+        git fetch -q origin
         rm .bashrc
-        git checkout origin/master -b master 2>&1
+        git checkout origin/master -b master >/dev/null 2>&1
         ~/bin/cfg-install
         ~/bin/cfg-update
     fi
