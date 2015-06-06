@@ -64,17 +64,10 @@ fi
 git remote add alberon git://github.com/alberon/dotfiles.git 2>/dev/null
 git remote remove dd 2>/dev/null
 
-# Update submodules
-git submodule sync #>/dev/null
-git submodule init #>/dev/null
-git submodule update
-
-# Update sub-submodules!
-cd opt/git-extras
-git submodule sync #>/dev/null
-git submodule init #>/dev/null
-git submodule update
-cd ../..
+# Update submodules (no longer in use because they're slow)
+# git submodule sync #>/dev/null
+# git submodule init #>/dev/null
+# git submodule update
 
 # Update Node.js packages
 if which npm >/dev/null 2>&1; then

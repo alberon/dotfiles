@@ -1,0 +1,9 @@
+#!/bin/sh
+
+branch=$1
+
+test -z $branch && echo "branch required." 1>&2 && exit 1
+
+git symbolic-ref HEAD refs/heads/$branch
+rm .git/index
+git clean -fdx
