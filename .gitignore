@@ -71,6 +71,9 @@
 # Vim - ignore history
 /.vim/.netrwhist
 
+# Vim plugins - ignore tags files
+/.vim/bundle/*/doc/tags
+
 # Python compiled files
 *.pyc
 
