@@ -19,11 +19,12 @@ vagrant() {
     shift
 
     case "$cmd" in
-        u)  cmd=up        ;;
-        p)  cmd=provision ;;
-        s)  cmd=ssh       ;;
-        st) cmd=status    ;;
-        d)  cmd=suspend   ;;
+        u)    cmd=up        ;;
+        p)    cmd=provision ;;
+        s)    cmd=ssh       ;;
+        st)   cmd=status    ;;
+        d)    cmd=suspend   ;;
+        down) cmd=suspend   ;;
     esac
 
     # Special case for the 'ssh' command with no parameters
