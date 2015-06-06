@@ -27,6 +27,8 @@ if [ ! -f ~/.bashrc_config ]; then
 
     if [ $cpanel -eq 1 ]; then
         echo "prompt_type=live #live/staging/dev/special" >> ~/.bashrc_config
+    elif [ -d /vagrant ]; then
+        echo "prompt_type=dev #live/staging/dev/special" >> ~/.bashrc_config
     else
         echo "prompt_type= #live/staging/dev/special" >> ~/.bashrc_config
     fi
