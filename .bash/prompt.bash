@@ -2,14 +2,18 @@ if $HAS_TERMINAL; then
 
     prompthostname() {
         if [ -f ~/.hostname ]; then
+            # Custom hostname
             cat ~/.hostname
         elif $WINDOWS; then
-            # Titlecase
+            # Titlecase hostname on Windows
             hostname | sed 's/\(.\)\(.*\)/\u\1\L\2/'
-        elif [ "$1" = "init" ]; then
-            hostname -s
         else
-            echo '\H'
+            # FQDN hostname on Linux
+            hostname -f
+        #elif [ "$1" = "init" ]; then
+        #    hostname -s
+        #else
+        #    echo '\H'
         fi
     }
 
