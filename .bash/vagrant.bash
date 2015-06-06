@@ -25,6 +25,7 @@ vagrant() {
         st)   cmd=status    ;;
         d)    cmd=suspend   ;;
         down) cmd=suspend   ;;
+        stop) cmd=halt      ;;
     esac
 
     # Special case for the 'ssh' command with no parameters
