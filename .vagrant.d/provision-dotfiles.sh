@@ -80,3 +80,6 @@ sudo -s <<END
         ~/bin/cfg-update
     fi
 END
+
+# Allow access to the root user
+sudo cp -f ~/.ssh/davejamesmiller.pub ~root/.ssh/authorized_keys
