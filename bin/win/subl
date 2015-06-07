@@ -4,13 +4,9 @@
 path="${1:-.}"
 
 # Convert path to Windows format
-# TODO - Support both absolute and relative paths to both filenames and directories, without the use of "readlink"!
-# if [ "${path:0:1}" != "/" ]; then
-#     path="$PWD/$path"
-# fi
+path="$(cygpath -aw "$path")"
 
-# http://stackoverflow.com/questions/12015348/msys-path-conversion-or-cygpath-for-msys
-path=$(echo "$path" | sed 's|^/\([a-z]\)/|\1:/|' | sed 's|/|\\|g')
-#echo "$path"
+# Convert Sublime Text path to Linux format
+exe="$(cygpath "$ProgramW6432\\Sublime Text 2\\sublime_text.exe")"
 
-exec "$PROGRAMW6432\Sublime Text 2\sublime_text.exe" "$path" &
+exec "$exe" "$path" &
