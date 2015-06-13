@@ -31,7 +31,9 @@ if $HAS_TERMINAL && ! $WINDOWS; then
 
     # These commands require sudo
     alias a2dismod='sudo a2dismod'
+    alias a2dissite='sudo a2dissite'
     alias a2enmod='sudo a2enmod'
+    alias a2ensite='sudo a2ensite'
     alias addgroup='sudo addgroup'
     alias adduser='sudo adduser'
     alias dpkg-reconfigure='sudo dpkg-reconfigure'
