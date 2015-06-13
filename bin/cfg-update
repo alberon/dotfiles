@@ -18,10 +18,23 @@ if [ ! -e .hgrc_local ]; then
     chmod 600 .hgrc_local
 fi
 
+# Rename any old custom MySQL config files
+# Note: I removed .my.cnf from dotfiles because (a) cPanel overwrites .my.cnf,
+# and (b) Ansible fails when .my.cnf contains "!include"
+if [ -e .my_local.cnf ]; then
+    if [ -z "$(cat .my_local.cnf)" ]; then
+        # Empty file - just delete it
+        rm .my_local.cnf
+    elif [ ! -e .my.cnf ]; then
+        # Not empty - rename it to .my.cnf
+        mv .my_local.cnf .my.cnf
+    fi
+fi
+
 # Create local MySQL settings file, and chmod to ensure any passwords are protected
-if [ ! -e .my_local.cnf ]; then
-    touch .my_local.cnf
-    chmod 600 .my_local.cnf
+if [ ! -e .my.cnf ]; then
+    echo -e "[client]\n;user=\n;password=\n\n[mysql]\ndatabase=" > .my.cnf
+    chmod 600 .my.cnf
 fi
 
 # Check permissions on .ssh/ directory
