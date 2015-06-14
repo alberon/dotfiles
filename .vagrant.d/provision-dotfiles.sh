@@ -42,7 +42,23 @@ apt_install() {
 # Yum
 #----------------------------------------
 
+yum_gpg_keys_installed=false
+
+yum_gpg_keys() {
+    if ! $yum_gpg_keys_installed; then
+        if [ -f /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6 ]; then
+            echo "Importing GPG keys..."
+            # CentOS
+            sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+            # Tmux
+            sudo rpm --import https://copr-be.cloud.fedoraproject.org/results/maxamillion/epel6-tmux/pubkey.gpg
+        fi
+        yum_gpg_keys_installed=true
+    fi
+}
+
 yum_install() {
+    yum_gpg_keys
     echo "Installing $1..."
     sudo yum install -q -y "$1"
 }
@@ -89,6 +105,7 @@ if ! is_installed tmux; then
 
             # CentOS 6 doesn't even have anything newer than 1.6 in the repos (main or EPEL)
             echo "Installing tmux..."
+            yum_gpg_keys
             sudo rpm -i http://copr-be.cloud.fedoraproject.org/results/maxamillion/epel6-tmux/epel-6-x86_64/tmux-1.9a-2.fc20/tmux-1.9a-2.el6.x86_64.rpm
 
         else
