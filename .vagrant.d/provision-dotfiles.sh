@@ -89,8 +89,7 @@ if ! is_installed tmux; then
 
             # CentOS 6 doesn't even have anything newer than 1.6 in the repos (main or EPEL)
             echo "Installing tmux..."
-            curl -s http://copr-be.cloud.fedoraproject.org/results/maxamillion/epel6-tmux/epel-6-x86_64/tmux-1.9a-2.fc20/tmux-1.9a-2.el6.x86_64.rpm > /tmp/tmux-1.9a-2.el6.x86_64.rpm
-            sudo rpm -i /tmp/tmux-1.9a-2.el6.x86_64.rpm
+            sudo rpm -i http://copr-be.cloud.fedoraproject.org/results/maxamillion/epel6-tmux/epel-6-x86_64/tmux-1.9a-2.fc20/tmux-1.9a-2.el6.x86_64.rpm
 
         else
 
