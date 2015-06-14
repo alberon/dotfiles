@@ -1,48 +1,19 @@
 # g = git
 alias g='git'
 
-# Make sure hub username is configured
-# https://github.com/defunkt/hub/issues/225
-init_hub() {
-    if [ ! -f ~/.config/hub ]; then
-        if [ ! -d ~/.config ]; then
-            mkdir ~/.config
-        fi
-
-        cat >~/.config/hub <<END
----
-github.com:
-- user: davejamesmiller
-END
-    fi
-}
-
+# 'git' with no parameters loads interactive REPL
 git() {
-    # Alias to hub if available
-    if [ -x /usr/bin/ruby ]; then
-        git=hub
-        init_hub
-    else
-        git=git
-    fi
-
-    # 'git' with no parameters loads interactive REPL
     if [ $# -gt 0 ]; then
-        command $git "$@"
+        command git "$@"
     else
-        command $git status &&
-        command $git repl
+        command git status &&
+        command git repl
     fi
 }
 
-hub() {
-    init_hub
-    git "$@"
-}
-
-# Auto-complete git commands for git aliases (g, cfg, hub)
+# Auto-complete git commands for git aliases (g, cfg)
 if type _git >/dev/null 2>&1; then
-    for cmd in g cfg hub; do
+    for cmd in g cfg; do
         complete -o bashdefault -o default -o nospace -F _git $cmd 2>/dev/null ||
         complete -o default -o nospace -F _git $cmd
     done
