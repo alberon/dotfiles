@@ -50,6 +50,7 @@ if $HAS_TERMINAL && ! $WINDOWS; then
     alias useradd='sudo useradd'
     alias userdel='sudo userdel'
     alias usermod='sudo usermod'
+    alias yum='sudo yum'
 
     # Add sbin folder to my path so they can be auto-completed
     PATH="$PATH:/usr/local/sbin:/usr/sbin:/sbin"
