@@ -1,7 +1,28 @@
 #!/bin/bash
 set -eu
 
+#===============================================================================
+# Helpers
+#===============================================================================
+
+is_installed() {
+    which "$1" &>/dev/null
+}
+
+install() {
+    if is_installed apt-get; then
+        apt_install "$1"
+    elif is_installed yum; then
+        yum_install "$1"
+    fi
+}
+
+#----------------------------------------
+# APT
+#----------------------------------------
+
 apt_updated=false
+
 apt_update() {
     if ! $apt_updated; then
         echo "Updating APT sources..."
@@ -14,35 +35,70 @@ apt_install() {
     apt_update
     echo "Installing $1..."
     # Note: apt-get install -qq doesn't actually make it silent!
-    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y $1 >/dev/null
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y "$1" >/dev/null
 }
 
+#----------------------------------------
+# Yum
+#----------------------------------------
+
+yum_install() {
+    echo "Installing $1..."
+    sudo yum install -q -y "$1"
+}
+
+#===============================================================================
+# Main
+#===============================================================================
+
 # Install Git - required to install dotfiles
-if ! which git &>/dev/null; then
-    apt_install git
+if ! is_installed git; then
+    install git
 fi
 
 # Install Vim - because I like it better than any other editor
-if ! which vim &>/dev/null; then
-    apt_install vim
+if ! is_installed vim; then
+    install vim
 fi
 
 # Install tmux
-if ! which tmux &>/dev/null; then
+if ! is_installed tmux; then
 
-    # Ubuntu 12.04 Precise has an old version of tmux installed by default
-    if [ -f /etc/lsb-release ]; then
-        source /etc/lsb-release
-        if [ "$DISTRIB_RELEASE" = "12.04" ]; then
-            echo "Adding ppa:pi-rho/dev repository..."
-            sudo DEBIAN_FRONTEND=noninteractive apt-get install -qqy python-software-properties
-            sudo add-apt-repository -y ppa:pi-rho/dev
-            # http://askubuntu.com/a/197532
-            sudo apt-get update -qqy -o Dir::Etc::sourcelist="sources.list.d/pi-rho-dev-precise.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0"
+    if is_installed apt-get; then
+
+        # Ubuntu 12.04 Precise has an old version of tmux installed by default
+        if [ -f /etc/lsb-release ]; then
+            source /etc/lsb-release
+            if [ "$DISTRIB_RELEASE" = "12.04" ]; then
+                echo "Adding ppa:pi-rho/dev repository..."
+                sudo DEBIAN_FRONTEND=noninteractive apt-get install -qqy python-software-properties
+                sudo add-apt-repository -y ppa:pi-rho/dev
+                # http://askubuntu.com/a/197532
+                sudo apt-get update -qqy -o Dir::Etc::sourcelist="sources.list.d/pi-rho-dev-precise.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0"
+            fi
         fi
-    fi
 
-    apt_install tmux
+        # So does Debian 7
+        # TODO
+
+        apt_install tmux
+
+    elif is_installed yum; then
+
+        if [ -f /etc/centos-release ] && grep -q '\s6\.[0-6]' /etc/centos-release; then
+
+            # CentOS 6 doesn't even have anything newer than 1.6 in the repos (main or EPEL)
+            echo "Installing tmux..."
+            curl -s http://copr-be.cloud.fedoraproject.org/results/maxamillion/epel6-tmux/epel-6-x86_64/tmux-1.9a-2.fc20/tmux-1.9a-2.el6.x86_64.rpm > /tmp/tmux-1.9a-2.el6.x86_64.rpm
+            sudo rpm -i /tmp/tmux-1.9a-2.el6.x86_64.rpm
+
+        else
+
+            yum_install tmux
+
+        fi
+
+    fi
 
 fi
 
@@ -55,7 +111,7 @@ if [ ! -d .git ]; then
     git remote add origin git://github.com/davejamesmiller/dotfiles.git
     git remote set-url --push origin git@github.com:davejamesmiller/dotfiles.git
     git fetch -q origin
-    rm .bashrc
+    rm -f .bashrc .bash_profile
     git checkout origin/master -b master >/dev/null 2>&1
     ~/bin/cfg-install
     ~/bin/cfg-update
@@ -74,7 +130,7 @@ sudo -s <<END
         git remote add origin git://github.com/davejamesmiller/dotfiles.git
         git remote set-url --push origin git@github.com:davejamesmiller/dotfiles.git
         git fetch -q origin
-        rm .bashrc
+        rm -f .bashrc .bash_profile
         git checkout origin/master -b master >/dev/null 2>&1
         ~/bin/cfg-install
         ~/bin/cfg-update
