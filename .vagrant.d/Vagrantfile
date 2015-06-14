@@ -2,12 +2,3 @@
 Vagrant.configure('2') do |config|
     config.vm.provision 'dotfiles', type: 'shell', path: '~/.vagrant.d/provision-dotfiles.sh', privileged: false
 end
-
-# Need to use ssh.bat to modify the config file to support the old version
-# of SSH installed by MSysGit, or run SecureCRT if available
-if Vagrant::Util::Platform.windows? then
-    winpath = Dir.home + '/bin/win'
-    if not ENV['PATH'].include?(winpath) then
-        ENV['PATH'] = winpath + ';' + ENV['PATH']
-    end
-end
