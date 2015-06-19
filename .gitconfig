@@ -51,14 +51,14 @@
     f = fetch -v --prune
     fe = fetch -v --prune
     friday = log --decorate -p --since='last friday'
-    g = grep --untracked --line-number
-    g3 = grep --untracked --line-number --context=3
-    g6 = grep --untracked --line-number --context=6
-    g9 = grep --untracked --line-number --context=9
-    gi = grep --untracked --line-number --ignore-case
-    gi3 = grep --untracked --line-number --ignore-case --context=3
-    gi6 = grep --untracked --line-number --ignore-case --context=6
-    gi9 = grep --untracked --line-number --ignore-case --context=9
+    g = grep --untracked --break --heading --line-number
+    g3 = grep --untracked --break --heading --line-number --context=3
+    g6 = grep --untracked --break --heading --line-number --context=6
+    g9 = grep --untracked --break --heading --line-number --context=9
+    gi = grep --untracked --break --heading --line-number --ignore-case
+    gi3 = grep --untracked --break --heading --line-number --ignore-case --context=3
+    gi6 = grep --untracked --break --heading --line-number --ignore-case --context=6
+    gi9 = grep --untracked --break --heading --line-number --ignore-case --context=9
     id = log --pretty=format:'ID:    %h%nDate:  %aD%nRefs:%d' --abbrev-commit --date=short -1
     ignored = ls-files --others -i --exclude-standard --directory
     in = incoming
