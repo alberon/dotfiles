@@ -86,6 +86,7 @@
     st = status
     sub = submodule
     sync = !git submodule sync && git submodule update --init
+    t = tag
     tags = tag
     todo = grep --untracked --line-number 'TODO\\|XXX\\|FIXME'
     up = !git pull --rebase --prune $@ && git submodule update --init --recursive
