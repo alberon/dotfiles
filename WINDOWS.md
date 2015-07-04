@@ -7,6 +7,7 @@
 - bash-completion
 - bind-utils (includes `dig`, `host` and `nslookup`)
 - curl
+- dos2unix
 - git
 - git-completion
 - less
