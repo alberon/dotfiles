@@ -35,7 +35,7 @@ apt_install() {
     apt_update
     echo "Installing $1..."
     # Note: apt-get install -qq doesn't actually make it silent!
-    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y "$1" >/dev/null
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y "$@" >/dev/null
 }
 
 #----------------------------------------
@@ -95,9 +95,15 @@ if ! is_installed tmux; then
         fi
 
         # So does Debian 7
-        # TODO
+        if [ -f /etc/debian_version -a "$(cat /etc/debian_version)" = "7.8" ]; then
+            echo "Adding Backports repository..."
+            echo "deb http://mirrors.kernel.org/debian wheezy-backports main" | sudo tee /etc/apt/sources.list.d/wheezy-backports.list >/dev/null
+            sudo apt-get update -qqy -o Dir::Etc::sourcelist="sources.list.d/wheezy-backports.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0"
+            apt_install tmux -t wheezy-backports
+        else
+            apt_install tmux
+        fi
 
-        apt_install tmux
 
     elif is_installed yum; then
 
