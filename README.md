@@ -2,7 +2,7 @@
 
 These dotfiles are a fork of [Dave's](https://github.com/davejamesmiller/dotfiles), suitable for use on shared accounts.
 
-To create your own, fork the repo on GitHub, install as normal, then use "git grep alberon" to find all the places to replace with your own name / email address.
+To create your own, fork the repo on GitHub, install as normal, then use `g gi alberon` (`git grep -i alberon`) to find all the places to replace with your own name / email address.
 
 ## Installing
 
