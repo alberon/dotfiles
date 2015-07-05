@@ -90,7 +90,7 @@ if ! is_installed tmux; then
                 sudo DEBIAN_FRONTEND=noninteractive apt-get install -qqy python-software-properties
                 sudo add-apt-repository -y ppa:pi-rho/dev
                 # http://askubuntu.com/a/197532
-                sudo apt-get update -qqy -o Dir::Etc::sourcelist="sources.list.d/pi-rho-dev-precise.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0"
+                sudo apt-get update -qqy -o Dir::Etc::sourcelist="sources.list.d/pi-rho-dev-$DISTRIB_CODENAME.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0"
             fi
         fi
 
@@ -147,7 +147,7 @@ fi
 sudo -s <<END
     if [ ! -d ~root/.git ]; then
         echo "Installing dotfiles in $(echo ~root)..."
-        cd
+        cd ~root
         git init -q
         git remote add origin git://github.com/davejamesmiller/dotfiles.git
         git remote set-url --push origin git@github.com:davejamesmiller/dotfiles.git
