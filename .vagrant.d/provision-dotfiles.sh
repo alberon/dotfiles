@@ -160,4 +160,6 @@ sudo -s <<END
 END
 
 # Allow access to the root user
-sudo cp -f ~/.ssh/davejamesmiller.pub ~root/.ssh/authorized_keys
+if [ -f ~/.ssh/davejamesmiller.pub ]; then
+    sudo cp -f ~/.ssh/davejamesmiller.pub ~root/.ssh/authorized_keys
+fi
