@@ -56,11 +56,11 @@
 /.rvm/hooks/*
 !/.rvm/hooks/after_cd_record_bash_lastdirectory
 
-# SSH - config & public key onlya
+# SSH - config & public key only
 !/.ssh
 /.ssh/*
 !/.ssh/config
-!/.ssh/davejamesmiller.pub
+!/.ssh/*.pub
 
 # Vagrant
 !/.vagrant.d
