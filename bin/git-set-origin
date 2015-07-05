@@ -5,4 +5,5 @@ if [ $# -ge 1 ]; then
     git remote add -f origin "$1"
 fi
 
+git fetch origin
 git branch --set-upstream master origin/master

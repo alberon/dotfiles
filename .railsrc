@@ -1,0 +1,1 @@
+--skip-bundle --database mysql --template ~/lib/rails-template.rb

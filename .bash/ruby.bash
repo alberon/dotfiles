@@ -1,11 +1,8 @@
 if $HAS_TERMINAL; then
 
     # rvm
-    [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+    rvm_project_rvmrc=0 # RVM 1.22.1 breaks my 'cd' alias, and I don't need this
 
-    # Use bundle exec to run these Rails commands
-    alias guard="bundle exec guard"
-    alias capify="bundle exec capify"
-    alias cap="bundle exec cap"
+    [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 
 fi

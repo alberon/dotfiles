@@ -1,0 +1,8 @@
+#!/bin/bash
+set -eu
+
+# https://github.com/github/markup
+gem install github-markup
+gem install redcarpet       # .markdown
+gem install RedCloth        # .textile
+gem install wikicloth       # .mediawiki

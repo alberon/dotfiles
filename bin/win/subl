@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Default to the current directory
+path="${1:-.}"
+
+# Convert path to Windows format
+path="$(cygpath -aw "$path")"
+
+# Convert Sublime Text path to Linux format
+exe="$(cygpath "$ProgramW6432\\Sublime Text 2\\sublime_text.exe")"
+
+exec "$exe" "$path" &

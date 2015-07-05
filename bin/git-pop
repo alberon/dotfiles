@@ -1,0 +1,11 @@
+#!/bin/bash
+
+commit=$(git log -1 --pretty="format:%s")
+
+if [ "$1" != "-f" -a "${commit:0:3}" != "WIP" ]; then
+    echo "The latest commit is not a WIP commit:" >&2
+    echo "  $commit" >&2
+    exit 1
+fi
+
+git reset --soft HEAD^

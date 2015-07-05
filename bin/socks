@@ -1,0 +1,13 @@
+#!/bin/bash
+
+host=$(hostname -s)
+port=1080
+server=${1:-wopr}
+
+echo "Remote: $server"
+echo "Local:  $host:$port"
+echo
+echo "Chrome: chrome --proxy-server=\"socks5://$host:$port\" \"http://mxtoolbox.com/WhatIsMyIP/\""
+
+ssh -N -o ControlMaster=no -D 0.0.0.0:$port $server
+

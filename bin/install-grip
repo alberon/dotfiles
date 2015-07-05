@@ -1,0 +1,2 @@
+#!/bin/bash
+sudo pip install git+git://github.com/joeyespo/grip@master --upgrade

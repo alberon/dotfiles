@@ -1,0 +1,36 @@
+#!/bin/bash
+set -eu
+
+count=`ls -A1 | wc -l`
+
+if [ $count != 0 ]; then
+    echo "Current directory is not empty ($count files found)" >&2
+    exit 1
+fi
+
+function header {
+    echo
+    echo "================================================================================"
+    echo " $1"
+    echo "================================================================================"
+    echo
+}
+
+header "Installing Laravel..."
+git init
+git remote add upstream git://github.com/laravel/laravel.git
+git pull upstream develop
+
+header "Installing Composer..."
+install-composer
+
+header "Installing dependencies..."
+composer install
+
+header "Generating encryption key..."
+art key:generate
+
+echo
+echo "================================================================================"
+echo
+echo "All done."

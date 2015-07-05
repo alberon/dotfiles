@@ -1,5 +1,11 @@
 snippet $
-	$('${1}')${2}
+	$('${1}')
+snippet $(f
+	$(function() {
+
+		${1}
+
+	});
 snippet (f
 	(function(${1:$}) {
 
@@ -31,11 +37,21 @@ snippet @par
 snippet @ret
 	@return {${1:type}} ${2:description}
 snippet add
-	add('${1:selector}')${2}
+	add('${1:selector}')
+snippet add;
+	add('${1:selector}');
+snippet addclass
+	addClass('${1:class name}')
+snippet addclass;
+	addClass('${1:class name}');
 snippet addcls
-	addClass('${1:class name}')${2}
+	addClass('${1:class name}')
+snippet addcls;
+	addClass('${1:class name}');
 snippet after
-	after('${1:HTML}')${2}
+	after('${1:HTML}')
+snippet after;
+	after('${1:HTML}');
 snippet ajax
 	$.ajax({
 		url: "${1:/url}",
@@ -57,9 +73,12 @@ snippet ajax
 	});
 snippet ajaxerror
 	ajaxError(function(${1:request, settings}) {
-		${2://stuff to do when an AJAX call returns an error};
+		${2://stuff to do when an AJAX call returns an error}
+	})
+snippet ajaxerror;
+	ajaxError(function(${1:request, settings}) {
+		${2://stuff to do when an AJAX call returns an error}
 	});
-	${3}
 snippet ajaxget
 	$.get('${1:/path/to/file.xml}', function(xml) {
 		${2}
@@ -77,7 +96,7 @@ snippet ajaxpost
 	    ${3://stuff to do after event occurs}
 	});
 snippet ajaxscr
-	$.getScript('${1:/path/to/script.js}');${2}
+	$.getScript('${1:/path/to/script.js}');
 snippet ajaxscrf
 	$.getScript('${1:/path/to/script.js}', function() {
 		${2}
@@ -85,8 +104,11 @@ snippet ajaxscrf
 snippet ajaxsend
 	ajaxSend(function(${1:request, settings}) {
 		${2://stuff to do when an AJAX call returns an error}
+	})
+snippet ajaxsend
+	ajaxSend(function(${1:request, settings}) {
+		${2://stuff to do when an AJAX call returns an error}
 	});
-	${3}
 snippet ajaxsetup
 	$.ajaxSetup({
 		url: "${1:/url}",
@@ -109,7 +131,7 @@ snippet ajaxsetup
 snippet ajaxstart
 	$.ajaxStart(function() {
 		${1}
-	});
+	})
 snippet ajaxstop
 	$.ajaxStop(function() {
 		${1}
@@ -119,22 +141,42 @@ snippet ajaxsuccess
 		${1}
 	});
 snippet anim
-	animate({${1:param1: value1, param2: value2}}, ${2:speed})${3}
+	animate({${1:param1: value1, param2: value2}}, ${2:speed})
+snippet anim;
+	animate({${1:param1: value1, param2: value2}}, ${2:speed});
 snippet append
-	append(${1:'HTML'})${2}
+	append(${1:'HTML'})
+snippet append;
+	append(${1:'HTML'});
 snippet appendto
-	appendTo(${1:'selector'})${2}
+	appendTo(${1:'selector'})
+snippet appendto;
+	appendTo(${1:'selector'});
 snippet attr
-	attr('${1:attribute}'${2:, }${3:'value'})${4}
+	attr('${1:attribute}'${2:, }${3:'value'})
+snippet attr;
+	attr('${1:attribute}'${2:, }${3:'value'});
 snippet attrm
-	attr({'${1:attr1}': '${2:value1}', '${3:attr2}': '${4:value2}'})${5}
+	attr({'${1:attr1}': '${2:value1}', '${3:attr2}': '${4:value2}'})
+snippet attrm;
+	attr({'${1:attr1}': '${2:value1}', '${3:attr2}': '${4:value2}'});
 snippet before
-	before(${1:'HTML'})${2}
+	before(${1:'HTML'})
+snippet before;
+	before(${1:'HTML'});
 snippet bind
+	bind('${1:eventname}', function(${2:event}) {
+		${3}
+	})
+snippet bind;
 	bind('${1:eventname}', function(${2:event}) {
 		${3}
 	});
 snippet blur
+	blur(function() {
+		${1}
+	})
+snippet blur;
 	blur(function() {
 		${1}
 	});
@@ -142,28 +184,49 @@ snippet case
 	case '${1:case}':
 		${2:// code}
 		break;
-	${3}
 snippet change
+	change(function() {
+		${1}
+	})
+snippet change;
 	change(function() {
 		${1}
 	});
 snippet children
-	children('${1:selector}')${3}
+	children('${1:selector}')
+snippet children;
+	children('${1:selector}');
 snippet cl
 	console.log(${1});
 snippet click
 	click(function() {
 		${1}
+	})
+snippet click;
+	click(function() {
+		${1}
 	});
 snippet clone
 	clone()
+snippet clone;
+	clone();
 snippet contains
-	contains('${1:text to find}')${2}
+	contains('${1:text to find}')
+snippet contains;
+	contains('${1:text to find}');
 snippet css
-	css('${1:attribute}', '${2:value}')${3}
+	css('${1:attribute}', '${2:value}')
+snippet css;
+	css('${1:attribute}', '${2:value}');
 snippet cssm
-	css({${1:attribute1}: '${2:value1}', ${3:attribute2}: '${4:value2}'})${5}
+	css({${1:attribute1}: '${2:value1}', ${3:attribute2}: '${4:value2}'})
+snippet cssm;
+	css({${1:attribute1}: '${2:value1}', ${3:attribute2}: '${4:value2}'});
 snippet dblclick
+	dblclick(function() {
+		${1}
+	})
+snippet dblclick;
 	dblclick(function() {
 		${1}
 	});
@@ -172,87 +235,167 @@ snippet debug
 snippet do
 	do {
 		${2:/* code */}
-	} while (${1:/* condition */});
+	} while (${1:/* condition */})
 snippet dump
 	console.debug(${1});
 snippet each
-	each(function(index) {
-		${1:$(this)}
+	each(function() {
+		var $${1:this} = $(this);${2}
+	})
+snippet each;
+	each(function() {
+		var $${1:this} = $(this);${2}
 	});
 snippet end
 	end()
+snippet end;
+	end();
 snippet else
-	else {
+	} else {
 		${1}
-	}
+snippet elif
+	} else if (${1}) {
+		${2}
+snippet elsif
+	} else if (${1}) {
+		${2}
+snippet elseif
+	} else if (${1}) {
+		${2}
+snippet else
+	} else {
+		${1}
 snippet error
 	error(function() {
-		${2}
+		${1}
+	})
+snippet error;
+	error(function() {
+		${1}
 	});
 snippet f
 	function(${1}) {
-		${3}
-	}${2:;}
+		${1}
+	}
+snippet f;
+	function(${1}) {
+		${1}
+	};
 snippet fadein
-	fadeIn(${1:'fast'})${2}
+	fadeIn(${1:'fast'})
+snippet fadein;
+	fadeIn(${1:'fast'});
 snippet fadeinf
+	fadeIn(${1:'fast'}, function() {
+		${2}
+	})
+snippet fadeinf;
 	fadeIn(${1:'fast'}, function() {
 		${2}
 	});
 snippet fadeout
-	fadeOut(${1:'fast'})${2}
+	fadeOut(${1:'fast'})
+snippet fadeout;
+	fadeOut(${1:'fast'});
 snippet fadeoutf
+	fadeOut(${1:'fast'}, function() {
+		${2}
+	})
+snippet fadeoutf;
 	fadeOut(${1:'fast'}, function() {
 		${2}
 	});
 snippet fadeto
-	fadeTo(${1:'fast'}, ${2:0.5})${3}
+	fadeTo(${1:'fast'}, ${2:0.5})
+snippet fadeto;
+	fadeTo(${1:'fast'}, ${2:0.5});
 snippet fadetof
+	fadeTo(${1:'fast'}, ${2:0.5}, function() {
+		${3}
+	})
+snippet fadetof;
 	fadeTo(${1:'fast'}, ${2:0.5}, function() {
 		${3}
 	});
 snippet filter
-	filter('${1:selector}')${2}
+	filter('${1:selector}')
+snippet filter;
+	filter('${1:selector}');
 snippet find
-	find('${1:selector}')${2}
+	find('${1:selector}')
+snippet find;
+	find('${1:selector}');
 snippet fn
 	function(${1}) {
 		${2}
 	}
+snippet fn;
+	function(${1}) {
+		${2}
+	};
+snippet fn,
+	function(${1}) {
+		${2}
+	},
 snippet focus
+	focus(function() {
+		${1}
+	})
+snippet focus;
 	focus(function() {
 		${1}
 	});
 snippet for
 	for (var ${2:i} = 0; $2 < ${1:Things}.length; $2${3: += 1}) {
 		${4:$1[$2]}
-	};
+	}
 snippet fori
 	for (var ${1:prop} in ${2:Things}) {
 		${3:$2[$1]}
-	};
+	}
 snippet forr
 	for (var ${2:i} = ${1:Things}.length - 1; $2 >= 0; $2${3: -= 1}) {
 		${4:$1[$2]}
-	};
+	}
 snippet fun
 	function ${1:function_name}(${2})
 	{
 		${3}
 	}
+snippet fun;
+	function ${1:function_name}(${2})
+	{
+		${3}
+	};
 snippet get
-	get(${1:index})${2}
+	get(${1:index})
+snippet get;
+	get(${1:index});
 snippet getid
-	getElementById('${1}')${2}
+	getElementById('${1}')
+snippet getid;
+	getElementById('${1}');
 snippet gettag
-	getElementsByTagName('${1}')${2}
+	getElementsByTagName('${1}')
+snippet gettag;
+	getElementsByTagName('${1}');
 snippet has
 	hasOwnProperty(${1})
+snippet has;
+	hasOwnProperty(${1});
 snippet height
-	height(${1})${2}
+	height(${1})
+snippet height;
+	height(${1});
 snippet hide
-	hide(${1:'fast'})${2}
+	hide(${1:'fast'})
+snippet hide;
+	hide(${1:'fast'});
 snippet hidef
+	hide(${1:'fast'}, function() {
+		${2}
+	})
+snippet hidef;
 	hide(${1:'fast'}, function() {
 		${2}
 	});
@@ -264,9 +407,20 @@ snippet hover
 		function() {
 
 		}
+	)
+snippet hover;
+	hover(
+		function() { // mouseover
+			${1}
+		},
+		function() { // mouseout
+
+		}
 	);
 snippet html
-	html(${1:'html'})${2}
+	html(${1:'html'})
+snippet html;
+	html(${1:'html'});
 snippet if
 	if (${1:true}) {
 		${2}
@@ -278,97 +432,189 @@ snippet ife
 		${3}
 	}
 snippet insaft
-	insertAfter('${1:selector}')${2}
+	insertAfter('${1:selector}')
+snippet insaft;
+	insertAfter('${1:selector}');
 snippet insbef
-	insertBefore('${1:selector}')${2}
+	insertBefore('${1:selector}')
+snippet insbef;
+	insertBefore('${1:selector}');
 snippet is
-	is('${1:selector}')${2}
+	is('${1:selector}')
+snippet is;
+	is('${1:selector}');
 snippet jquery
 	(function($){
 		${1}
 	})(jQuery);
 snippet jsonp
+	JSON.parse(${1:jstr})
+snippet jsonp;
 	JSON.parse(${1:jstr});
 snippet jsons
+	JSON.stringify(${1:object})
+snippet jsons;
 	JSON.stringify(${1:object});
 snippet keydown
+	keydown(function(event) {
+		${1}
+	})
+snippet keydown;
 	keydown(function(event) {
 		${1}
 	});
 snippet keypress
 	keypress(function(event) {
 		${1}
+	})
+snippet keypress;
+	keypress(function(event) {
+		${1}
 	});
 snippet keyup
+	keyup(function(event) {
+		${1}
+	})
+snippet keyup;
 	keyup(function(event) {
 		${1}
 	});
 snippet load
 	load('${1:/path/to/file.cgi}')
+snippet load;
+	load('${1:/path/to/file.cgi}');
 snippet loadf
+	load('${1:/path/to/file.cgi}', function(responseText, textStatus, xhr) {
+		${2}
+	})
+snippet loadf;
 	load('${1:/path/to/file.cgi}', function(responseText, textStatus, xhr) {
 		${2}
 	});
 snippet loadfp
 	load('${1:/path/to/file.cgi}', {${2:/*params*/}}, function(responseText, textStatus, xhr) {
 		${2}
+	})
+snippet loadfp;
+	load('${1:/path/to/file.cgi}', {${2:/*params*/}}, function(responseText, textStatus, xhr) {
+		${2}
 	});
 snippet loadif
 	loadIfModified('${1:/path/to/file.cgi}')
+snippet loadif;
+	loadIfModified('${1:/path/to/file.cgi}');
 snippet loadp
 	load('${1:/path/to/file.cgi}', {${2:/*params*/}})
+snippet loadp;
+	load('${1:/path/to/file.cgi}', {${2:/*params*/}});
 snippet loadpf
+	load('${1:/path/to/file.cgi}', {${2:/*params*/}}, function(responseText, textStatus, xhr) {
+		${2}
+	})
+snippet loadpf;
 	load('${1:/path/to/file.cgi}', {${2:/*params*/}}, function(responseText, textStatus, xhr) {
 		${2}
 	});
 snippet log
+	console.log(${1})
+snippet log;
 	console.log(${1});
 snippet mdown
+	mousedown(function() {
+		${1}
+	})
+snippet mdown;
 	mousedown(function() {
 		${1}
 	});
 snippet mmove
 	mousemove(function() {
 		${1}
+	})
+snippet mmove;
+	mousemove(function() {
+		${1}
 	});
 snippet mout
+	mouseout(function() {
+		${1}
+	})
+snippet mout;
 	mouseout(function() {
 		${1}
 	});
 snippet mover
 	mouseover(function() {
 		${1}
+	})
+snippet mover;
+	mouseover(function() {
+		${1}
 	});
 snippet mup
 	mouseup(function() {
 		${1}
+	})
+snippet mup;
+	mouseup(function() {
+		${1}
 	});
 snippet next
-	next('${1:selector}')${2}
+	next('${1:selector}')
+snippet next;
+	next('${1:selector}');
 snippet not
-	not('${1:selector}')${2}
+	not('${1:selector}')
+snippet not;
+	not('${1:selector}');
+snippet on
+	on('${1:eventname}',${2} function() {
+		${3}
+	})
+snippet on;
+	on('${1:eventname}',${2} function() {
+		${3}
+	});
 snippet once
+	once('${1:eventname}', function() {
+		${2}
+	})
+snippet once;
 	once('${1:eventname}', function() {
 		${2}
 	});
 snippet one
 	one('${1:eventname}', function() {
 		${2}
+	})
+snippet one;
+	one('${1:eventname}', function() {
+		${2}
 	});
 snippet parent
-	parent(${1:[selector]})${2}
+	parent(${1:[selector]})
+snippet parent;
+	parent(${1:[selector]});
 snippet parents
-	parents(${1:[selector]})${2}
+	parents(${1:[selector]})
+snippet parents;
+	parents(${1:[selector]});
 snippet prepend
-	prepend(${1:'HTML'})${2}
+	prepend(${1:'HTML'})
+snippet prepend;
+	prepend(${1:'HTML'});
 snippet prependto
-	prependTo(${1:'selector'})${2}
+	prependTo(${1:'selector'})
+snippet prependto;
+	prependTo(${1:'selector'});
 snippet prev
-	prev(${1:[selector]'})${2}
+	prev(${1:[selector]'})
+snippet prev;
+	prev(${1:[selector]'});
 snippet proto
 	${1:class_name}.prototype.${2:method_name} = function(${3:first_argument}) {
 		${4:// body...}
-	};
+	}
 snippet ready
 	$(document).ready(function()
 	{
@@ -376,25 +622,47 @@ snippet ready
 	});
 snippet remove
 	remove()
+snippet remove;
+	remove();
 snippet removeatt
-	removeAttr('${1}')${2}
+	removeAttr('${1}')
+snippet removeatt;
+	removeAttr('${1}');
 snippet removeattr
-	removeAttr('${1}')${2}
+	removeAttr('${1}')
+snippet removeattr;
+	removeAttr('${1}');
 snippet removeclass
-	removeClass('${1}')${2}
+	removeClass('${1}')
+snippet removeclass;
+	removeClass('${1}');
 snippet removecls
-	removeClass('${1}')${2}
+	removeClass('${1}')
+snippet removecls;
+	removeClass('${1}');
 snippet reset
+	reset(function() {
+		${1}
+	})
+snippet reset;
 	reset(function() {
 		${1}
 	});
 snippet resize
 	resize(function() {
 		${1}
+	})
+snippet resize;
+	resize(function() {
+		${1}
 	});
 snippet ret
-	return ${1:result}
+	return ${1:result};
 snippet scroll
+	scroll(function() {
+		${1}
+	})
+snippet scroll;
 	scroll(function() {
 		${1}
 	});
@@ -404,26 +672,44 @@ snippet sdf
 
 		$1 = function ($2) {
 			${4:// main code}
-		};
+		}
 	}
 snippet sdown
-	slideDown(${1:'fast'})${2}
+	slideDown(${1:'fast'})
+snippet sdown;
+	slideDown(${1:'fast'});
 snippet sdownf
+	slideDown(${1:'fast'}, function() {
+		${2}
+	})
+snippet sdownf;
 	slideDown(${1:'fast'}, function() {
 		${2}
 	});
 snippet select
 	select(function() {
 		${1}
+	})
+snippet select;
+	select(function() {
+		${1}
 	});
 snippet show
-	show(${1:'fast'})${2}
+	show(${1:'fast'})
+snippet show;
+	show(${1:'fast'});
 snippet showf
+	show(${1:'fast'}, function() {
+		${2}
+	})
+snippet showf;
 	show(${1:'fast'}, function() {
 		${2}
 	});
 snippet sibl
-	siblings('${1:selector}')${2}
+	siblings('${1:selector}')
+snippet sibl;
+	siblings('${1:selector}');
 snippet sing
 	function ${1:Singleton} (${2:argument}) {
 		// the cached instance
@@ -432,7 +718,7 @@ snippet sing
 		// rewrite the constructor
 		$1 = function $1($2) {
 			return instance;
-		};
+		}
 		
 		// carry over the prototype properties
 		$1.prototype = this;
@@ -449,19 +735,37 @@ snippet sing
 	}
 snippet size
 	size()
+snippet size;
+	size();
 snippet stoggle
-	slideToggle(${1:'fast'})${2}
+	slideToggle(${1:'fast'})
+snippet stoggle;
+	slideToggle(${1:'fast'});
 snippet stogglef
+	slideToggle(${1:'fast'}, function() {
+		${2}
+	})
+snippet stogglef;
 	slideToggle(${1:'fast'}, function() {
 		${2}
 	});
 snippet submit
 	submit(function() {
 		${1}
+	})
+snippet submit;
+	submit(function() {
+		${1}
 	});
 snippet sup
-	slideUp(${1:'fast'})${2}
+	slideUp(${1:'fast'})
+snippet sup;
+	slideUp(${1:'fast'});
 snippet supf
+	slideUp(${1:'fast'}, function() {
+		${2}
+	})
+snippet supf;
 	slideUp(${1:'fast'}, function() {
 		${2}
 	});
@@ -477,25 +781,43 @@ snippet switch
 snippet t
 	${1:/* condition */} ? ${2:a} : ${3:b}
 snippet text
-	text(${1:'text'})${2}
+	text(${1:'text'})
+snippet text;
+	text(${1:'text'});
 snippet this
 	$(this)
 snippet timeout
-	setTimeout(function() {${3}}${2}, ${1:10});
+	setTimeout(function() {${2}}, ${1:10});
+snippet timeout;
+	setTimeout(function() {${2}}, ${1:10});
 snippet togclass
-	toggleClass('${1:classname}')${2}
+	toggleClass('${1:classname}')
+snippet togclass;
+	toggleClass('${1:classname}');
 snippet togcls
-	toggleClass('${1:classname}')${2}
+	toggleClass('${1:classname}')
+snippet togcls;
+	toggleClass('${1:classname}');
 snippet toggle
-	toggle(${1:'fast'})${2}
+	toggle(${1:'fast'})
+snippet toggle;
+	toggle(${1:'fast'});
 snippet togglef
+	toggle(${1:'fast'}, function() {
+		${2}
+	})
+snippet togglef;
 	toggle(${1:'fast'}, function() {
 		${2}
 	});
 snippet trig
-	trigger('${1:eventname}')${2}
+	trigger('${1:eventname}')
+snippet trig;
+	trigger('${1:eventname}');
 snippet trim
-	$.trim('${1:string}')${2}
+	$.trim('${1:string}')
+snippet trim;
+	$.trim('${1:string}');
 snippet try
 	try {
 		${1:/* code */}
@@ -503,17 +825,25 @@ snippet try
 		${3:/* handle error */}
 	}
 snippet unbind
-	unbind('${1:eventname}')${2}
+	unbind('${1:eventname}')
+snippet unbind;
+	unbind('${1:eventname}');
 snippet val
-	val(${1:[text]})${2}
+	val(${1:[text]})
+snippet val;
+	val(${1:[text]});
 snippet wh
 	while (${1:/* condition */}) {
 		${2:/* code */}
 	}
 snippet width
-	width(${1})${2}
+	width(${1})
+snippet width;
+	width(${1});
 snippet wrap
-	wrap(${1:'<div></div>'})${2}
+	wrap(${1:'<div></div>'})
+snippet wrap;
+	wrap(${1:'<div></div>'});
 snippet {
 	{
 		${1}

@@ -3,41 +3,81 @@
 !/.bash
 !/.bazaar
 !/.devilspie
-!/.drush
 !/.elinks
 !/.fluxbox
 !/.hgextensions
 !/.windows-config
 !/.vim
 !/bin
+!/Dotfiles.sublime-project
 !/gnome
+!/Gruntfile.coffee
 !/lib
 !/opt
+!/package.json
 !/README.md
+!/WINDOWS.md
+!/.gitattributes-global
 !/.gitconfig
 !/.gitignore
 !/.gitignore-global
+!/.irbrc
+!/.minttyrc
+!/.railsrc
+!/.railsrc-x
 !/.rdebugrc
+!/.tmux_cheatsheet
+!/.tmux.conf
 
-# Don't ignore the RVM after_cd hook
+# Composer - config only, not cache files
+!/.composer
+/.composer/*
+!/.composer/composer.json
+!/.composer/composer.lock
+
+# Drush - config, not cache
+!/.drush
+/.drush/cache
+
+# Elinks
+/.elinks/bookmarks
+/.elinks/cookies
+/.elinks/globhist
+
+# Grip - config only, not cache & access token
+!/.grip
+/.grip/cache*
+/.grip/settings-local.py
+
+# RVM - after_cd hook only
 !/.rvm/
 /.rvm/*
 !/.rvm/hooks/
 /.rvm/hooks/*
 !/.rvm/hooks/after_cd_record_bash_lastdirectory
 
-# Ignore Vim history
+# SSH - config & public key onlya
+!/.ssh
+/.ssh/*
+!/.ssh/config
+!/.ssh/davejamesmiller.pub
+
+# Vagrant
+!/.vagrant.d
+/.vagrant.d/*
+!/.vagrant.d/provision-*.sh
+!/.vagrant.d/Vagrantfile
+
+# Vim - ignore history
 /.vim/.netrwhist
 
-# Ignore Elinks local files
-/.elinks/bookmarks
-/.elinks/cookies
-/.elinks/globhist
+# Vim plugins - ignore tags files
+/.vim/bundle/*/doc/tags
 
-# Ignore Python compiled files
+# Python compiled files
 *.pyc
 
-# Ignore gitolite files
+# gitolite executables
 /bin/gitolite*
 /bin/gl-*
 /bin/sshkeys-lint

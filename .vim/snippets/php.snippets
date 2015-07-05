@@ -15,17 +15,17 @@ snippet /* /*
 	 */
 snippet /** /**
 	/**
-	 * ${1:Description...}
+	 * ${1}
 	 */
 snippet /**# /**#
 	/**#@+
-	 * ${1:Description...}
+	 * ${1}
 	 */
 	${2}
 	/**#@-*/
 snippet /**#@+ /**#@+
 	/**#@+
-	 * ${1:Description...}
+	 * ${1}
 	 */
 	${2}
 	/**#@-*/
@@ -40,23 +40,23 @@ snippet '
 snippet ?
 	(${1:condition} ? ${2:true} : ${3:false})
 snippet $_C
-	$_COOKIE['${1:variable}']${2}
+	$_COOKIE['${1:variable}']
 snippet $_E
-	$_ENV['${1:variable}']${2}
+	$_ENV['${1:variable}']
 snippet $_F
-	$_FILES['${1:variable}']${2}
+	$_FILES['${1:variable}']
 snippet $_G
-	$_GET['${1:variable}']${2}
+	$_GET['${1:variable}']
 snippet $_P
-	$_POST['${1:variable}']${2}
+	$_POST['${1:variable}']
 snippet $_R
-	$_REQUEST['${1:variable}']${2}
+	$_REQUEST['${1:variable}']
 snippet $_S
-	$_SERVER['${1:variable}']${2}
+	$_SERVER['${1:variable}']
 snippet $_SS
-	$_SESSION['${1:variable}']${2}
+	$_SESSION['${1:variable}']
 snippet $GLOB
-	$GLOBALS['${1:variable}']${2}
+	$GLOBALS['${1:variable}']
 snippet <?
 	<?php
 
@@ -68,425 +68,402 @@ snippet <?pi
 snippet <<<
 	<<<${1:HEREDOC}
 	${2}
-	$1;${3}
+	$1;
 snippet abs
-	abs(${1:number})${2}
+	abs(${1:number})
 snippet abstract
-	/**
-	 * ${2:Description...}
-	 *${3}
-	 * @author `g:snips_author`
-	 */
 	abstract class ${1:`snipMateCustom#AutoClassName()`}
 	{
 
-		${4}
+		${2}
 
 	}
 snippet abstracte
-	/**
-	 * ${3:Description...}
-	 *${4}
-	 * @author `g:snips_author`
-	 */
 	abstract class ${1:`snipMateCustom#AutoClassName()`} extends ${2}
 	{
 
-		${5}
+		${3}
 
 	}
 snippet addcslashes
-	addcslashes(${1:string}, ${2:charlist})${3}
+	addcslashes(${1:string}, ${2:charlist})
 snippet addslashes
-	addslashes(${1:string})${2}
+	addslashes(${1:string})
+snippet a
+	array(${1})
+snippet a,
+	array(${1}),
+snippet a;
+	array(${1});
 snippet arr
-	array(${1})${2}
+	array(${1})
+snippet arr,
+	array(${1}),
+snippet arr;
+	array(${1});
 snippet array
-	array(${1})${2}
+	array(${1})
+snippet array,
+	array(${1}),
+snippet array;
+	array(${1});
+snippet array( (Press tab again after any of the above to change to multi-line)
+	array(
+		${1}
+	
 snippet array_change_key_case
-	array_change_key_case(${1:input}${2:, }${3:CASE_LOWER})${4}
+	array_change_key_case(${1:input}${2:, }${3:CASE_LOWER})
 snippet array_chunk
-	array_chunk(${1:input}, ${2:size}${3:, }${4:[preserve_keys=false]})${5}
+	array_chunk(${1:input}, ${2:size}${3:, }${4:[preserve_keys=false]})
 snippet array_combine
-	array_combine(${1:keys}, ${2:values})${3}
+	array_combine(${1:keys}, ${2:values})
 snippet array_count_values
-	array_count_values(${1:input})${2}
+	array_count_values(${1:input})
 snippet array_diff
-	array_diff(${1:array1}, ${2:array2...})${3}
+	array_diff(${1:array1}, ${2:array2...})
 snippet array_diff_assoc
-	array_diff_assoc(${1:array1}, ${2:array2...})${3}
+	array_diff_assoc(${1:array1}, ${2:array2...})
 snippet array_diff_key
-	array_diff_key(${1:array1}, ${2:array2...})${3}
+	array_diff_key(${1:array1}, ${2:array2...})
 snippet array_diff_uassoc
-	array_diff_uassoc(${1:array1}, ${2:array2...}, ${3:callback})${4}
+	array_diff_uassoc(${1:array1}, ${2:array2...}, ${3:callback})
 snippet array_diff_ukey
-	array_diff_ukey(${1:array1}, ${2:array2...}, ${3:callback})${4}
+	array_diff_ukey(${1:array1}, ${2:array2...}, ${3:callback})
 snippet array_fill
-	array_fill(${1:start_index}, ${2:num_elements}, ${3:value})${4}
+	array_fill(${1:start_index}, ${2:num_elements}, ${3:value})
 snippet array_fill_keys
-	array_fill_keys(${1:keys_array}, ${2:value})${3}
+	array_fill_keys(${1:keys_array}, ${2:value})
 snippet array_filter
-	array_filter(${1:input}${2:, }${3:[callback]})${4}
+	array_filter(${1:input}${2:, }${3:[callback]})
 snippet array_flip
-	array_flip(${1:input})${2}
+	array_flip(${1:input})
 snippet array_intersect
-	array_intersect(${1:array1}, ${2:array2...})${3}
+	array_intersect(${1:array1}, ${2:array2...})
 snippet array_intersect_assoc
-	array_intersect_assoc(${1:array1}, ${2:array2...})${3}
+	array_intersect_assoc(${1:array1}, ${2:array2...})
 snippet array_intersect_key
-	array_intersect_key(${1:array1}, ${2:array2...})${3}
+	array_intersect_key(${1:array1}, ${2:array2...})
 snippet array_intersect_uassoc
-	array_intersect_uassoc(${1:array1}, ${2:array2...}, ${3:callback})${4}
+	array_intersect_uassoc(${1:array1}, ${2:array2...}, ${3:callback})
 snippet array_intersect_ukey
-	array_intersect_ukey(${1:array1}, ${2:array2...}, ${3:callback})${4}
+	array_intersect_ukey(${1:array1}, ${2:array2...}, ${3:callback})
 snippet array_key_exists
-	array_key_exists(${1:key}, ${2:array})${3}
+	array_key_exists(${1:key}, ${2:array})
 snippet array_keys
-	array_keys(${1:array}${2:, }${3:[search_value]}${4:, }${5:[strict_compare=false]})${6}
+	array_keys(${1:array}${2:, }${3:[search_value]}${4:, }${5:[strict_compare=false]})
 snippet array_map
-	array_map(${1:callback}, ${2:array1...})${3}
+	array_map(${1:callback}, ${2:array1...})
 snippet array_merge
-	array_merge(${1:array1}, ${2:array2...})${3}
+	array_merge(${1:array1}, ${2:array2...})
 snippet array_merge_recursive
-	array_merge_recursive(${1:array1}, ${2:array2...})${3}
+	array_merge_recursive(${1:array1}, ${2:array2...})
 snippet array_multisort
-	array_multisort(${1:&array1}, ${2:&array2...})${3}
+	array_multisort(${1:&array1}, ${2:&array2...})
 snippet array_pad
-	array_pad(${1:array}, ${2:size}, ${3:value})${4}
+	array_pad(${1:array}, ${2:size}, ${3:value})
 snippet array_pop
-	array_pop(${1:array})${2}
+	array_pop(${1:array})
 snippet array_product
-	array_product(${1:array})${2}
+	array_product(${1:array})
 snippet array_push
-	array_push(${1:array}, ${2:var1...})${3}
+	array_push(${1:array}, ${2:var1...})
 snippet array_rand
-	array_rand(${1:array}${2:, }${3:[count=1]})${4}
+	array_rand(${1:array}${2:, }${3:[count=1]})
 snippet array_reduce
-	array_reduce(${1:array}, ${2:callback}${3:, }${4:[initial]})${5}
+	array_reduce(${1:array}, ${2:callback}${3:, }${4:[initial]})
 snippet array_replace
-	array_replace(${1:array}, ${2:replacement_array1...})${3}
+	array_replace(${1:array}, ${2:replacement_array1...})
 snippet array_replace_recursive
-	array_replace_recursive(${1:array}, ${2:replacement_array1...})${3}
+	array_replace_recursive(${1:array}, ${2:replacement_array1...})
 snippet array_reverse
-	array_reverse(${1:array}${2:, }${3:[preserve_keys=false]})${4}
+	array_reverse(${1:array}${2:, }${3:[preserve_keys=false]})
 snippet array_search
-	array_search(${1:needle}, ${2:haystack}${3:, }${4:[strict_compare=false]})${5}
+	array_search(${1:needle}, ${2:haystack}${3:, }${4:[strict_compare=false]})
 snippet array_shift
-	array_shift(${1:array})${2}
+	array_shift(${1:array})
 snippet array_slice
-	array_slice(${1:array}, ${2:offset}${3:, }${4:[length]}${5:, }${6:[preserve_keys=false]})${7}
+	array_slice(${1:array}, ${2:offset}${3:, }${4:[length]}${5:, }${6:[preserve_keys=false]})
 snippet array_splice
-	array_splice(${1:array}, ${2:offset}${3:, }${4:[length]}${5:, }${6:[replacement]})${7}
+	array_splice(${1:array}, ${2:offset}${3:, }${4:[length]}${5:, }${6:[replacement]})
 snippet array_sum
-	array_sum(${1:array})${2}
+	array_sum(${1:array})
 snippet array_udiff
-	array_udiff(${1:array1}, ${2:array2...}, ${3:callback})${4}
+	array_udiff(${1:array1}, ${2:array2...}, ${3:callback})
 snippet array_udiff_assoc
-	array_udiff_assoc(${1:array1}, ${2:array2...}, ${3:callback})${4}
+	array_udiff_assoc(${1:array1}, ${2:array2...}, ${3:callback})
 snippet array_udiff_uassoc
-	array_udiff_uassoc(${1:array1}, ${2:array2...}, ${3:data_callback}, ${4:key_callback})${5}
+	array_udiff_uassoc(${1:array1}, ${2:array2...}, ${3:data_callback}, ${4:key_callback})
 snippet array_uintersect
-	array_uintersect(${1:array1}, ${2:array2...}, ${3:callback})${4}
+	array_uintersect(${1:array1}, ${2:array2...}, ${3:callback})
 snippet array_uintersect_assoc
-	array_uintersect_assoc(${1:array1}, ${2:array2...}, ${3:callback})${4}
+	array_uintersect_assoc(${1:array1}, ${2:array2...}, ${3:callback})
 snippet array_uintersect_uassoc
-	array_uintersect_uassoc(${1:array1}, ${2:array2...}, ${3:data_callback}, ${4:key_callback})${5}
+	array_uintersect_uassoc(${1:array1}, ${2:array2...}, ${3:data_callback}, ${4:key_callback})
 snippet array_unique
-	array_unique(${1:array}${2:, }${3:[sort_flags=SORT_STRING]})${4}
+	array_unique(${1:array}${2:, }${3:[sort_flags=SORT_STRING]})
 snippet array_unshift
-	array_unshift(${1:array}, ${2:var1...})${3}
+	array_unshift(${1:array}, ${2:var1...})
 snippet array_values
-	array_values(${1:array})${2}
+	array_values(${1:array})
 snippet array_walk
-	array_walk(${1:array}, ${2:callback}${3:, }${4:[userdata]})${5}
+	array_walk(${1:array}, ${2:callback}${3:, }${4:[userdata]})
 snippet array_walk_recursive
-	array_walk_recursive(${1:array}, ${2:callback}${3:, }${4:[userdata]})${5}
+	array_walk_recursive(${1:array}, ${2:callback}${3:, }${4:[userdata]})
 snippet arsort
-	arsort(${1:&array}${2:, }${3:[flags=SORT_REGULAR]})${4}
+	arsort(${1:&array}${2:, }${3:[flags=SORT_REGULAR]})
 snippet assert
-	assert(${1:assertion})${2}
+	assert(${1:assertion})
 snippet assert_options ASSERT_ACTIVE		  Enable assert() evaluation
-	assert_options(ASSERT_ACTIVE, ${1:true})${2}
+	assert_options(ASSERT_ACTIVE, ${1:true})
 snippet assert_options ASSERT_WARNING     Issue a PHP warning for each failed assertion
-	assert_options(ASSERT_WARNING, ${1:true})${2}
+	assert_options(ASSERT_WARNING, ${1:true})
 snippet assert_options ASSERT_BAIL        Terminate execution on failed assertions
-	assert_options(ASSERT_BAIL, ${1:false})${2}
+	assert_options(ASSERT_BAIL, ${1:false})
 snippet assert_options ASSERT_QUIET_EVAL  Disable error_reporting during assertion expression evaluation
-	assert_options(ASSERT_QUIET_EVAL, ${1:false})${2}
+	assert_options(ASSERT_QUIET_EVAL, ${1:false})
 snippet assert_options ASSERT_CALLBACK    Callback to call on failed assertions
-	assert_options(ASSERT_CALLBACK, ${1:callback})${2}
+	assert_options(ASSERT_CALLBACK, ${1:callback})
 snippet asort
-	asort(${1:&array}${2:, }${3:[flags=SORT_REGULAR]})${4}
+	asort(${1:&array}${2:, }${3:[flags=SORT_REGULAR]})
 snippet backtrace
 	debug_print_backtrace()
 snippet base_convert
-	base_convert(${1:number}, ${2:from_base}, ${3:to_base})${4}
+	base_convert(${1:number}, ${2:from_base}, ${3:to_base})
 snippet base64_decode
-	base64_decode(${1:string}${2:, }${3:[strict=false]})${4}
+	base64_decode(${1:string}${2:, }${3:[strict=false]})
 snippet base64_encode
-	base64_encode(${1:string})${2}
+	base64_encode(${1:string})
 snippet basename
-	basename(${1:path}${2:, }${3:[suffix_to_remove]})${4}
+	basename(${1:path}${2:, }${3:[suffix_to_remove]})
 snippet bin2dec
-	bindec(${1:string})${2}
+	bindec(${1:string})
 snippet bin2hex
-	bin2hex(${1:string})${2}
+	bin2hex(${1:string})
 snippet bindec
-	bindec(${1:string})${2}
+	bindec(${1:string})
 snippet binhex
-	bin2hex(${1:string})${2}
+	bin2hex(${1:string})
 snippet bintodec
-	bindec(${1:string})${2}
+	bindec(${1:string})
 snippet bintohex
-	bin2hex(${1:string})${2}
+	bin2hex(${1:string})
 snippet break
 		break;
 
 	case ${1:value}:
 		${2}
 snippet call_user_func
-	call_user_func(${1:callback}${2:, }${3:var1...})${4}
+	call_user_func(${1:callback}${2:, }${3:var1...})
 snippet call_user_func_array
-	call_user_func_array(${1:callback}, ${2:array})${3}
+	call_user_func_array(${1:callback}, ${2:array})
 snippet case
 	case ${1:value}:
 		${2}
-		break;${3}
+		break;
 snippet ceil
-	ceil(${1:number})${2}
+	ceil(${1:number})
 snippet chdir
-	chdir(${1:directory})${2}
+	chdir(${1:directory})
 snippet checkdate
-	checkdate(${1:month}, ${2:day}, ${3:year})${4}
+	checkdate(${1:month}, ${2:day}, ${3:year})
 snippet checkdnsrr
-	dns_check_record(${1:host}${2:, }${3:[type=MX]})${4}
+	dns_check_record(${1:host}${2:, }${3:[type=MX]})
 snippet chgrp
-	chgrp(${1:filename}, ${2:group})${3}
+	chgrp(${1:filename}, ${2:group})
 snippet chmod
-	chmod(${1:filename}, ${2:0777})${3}
+	chmod(${1:filename}, ${2:0777})
 snippet chown
-	chown(${1:filename}, ${2:user})${3}
+	chown(${1:filename}, ${2:user})
 snippet chr
-	chr(${1:ascii_code})${2}
+	chr(${1:ascii_code})
 snippet class
-	/**
-	 * ${2:Description...}
-	 *${3}
-	 * @author `g:snips_author`
-	 */
 	class ${1:`snipMateCustom#AutoClassName()`}
 	{
 
-		${4}
+		${2}
 
 	}
 snippet classe
-	/**
-	 * ${3:Description...}
-	 *${4}
-	 * @author `g:snips_author`
-	 */
 	class ${1:`snipMateCustom#AutoClassName()`} extends ${2}
 	{
 
-		${5}
+		${3}
 
 	}
 snippet class_exists
-	class_exists(${1:class_name}${2:, }${3:[autoload=true]})${4}
+	class_exists(${1:class_name}${2:, }${3:[autoload=true]})
 snippet class_implements
-	class_implements(${1:class/object}${2:, }${3:[autoload=true]})${4}
+	class_implements(${1:class/object}${2:, }${3:[autoload=true]})
 snippet class_parents
-	class_parents(${1:class/object}${2:, }${3:[autoload=true]})${4}
+	class_parents(${1:class/object}${2:, }${3:[autoload=true]})
 snippet clearstatcache
-	clearstatcache(${1:[clear_realpath_cache=false]}${2:, }${3:[filename]})${4}
+	clearstatcache(${1:[clear_realpath_cache=false]}${2:, }${3:[filename]})
 snippet closedir
-	closedir(${1:handle})${2}
+	closedir(${1:handle})
 snippet cls
 	<?php
 
-	/**
-	 * ${2:Description...}
-	 *${4}
-	 * @author `g:snips_author`
-	 */
 	class ${1:`snipMateCustom#AutoClassName()`}
 	{
 
-		${4}
+		${2}
 
 	}
 snippet clse
 	<?php
 
-	/**
-	 * ${3:Description...}
-	 *${4}
-	 * @author `g:snips_author`
-	 */
 	class ${1:`snipMateCustom#AutoClassName()`} extends ${2}
 	{
 
-		${5}
+		${3}
 
 	}
 snippet common
 	require_once $_SERVER['DOCUMENT_ROOT'] . '/../includes/common.php';
 snippet compact
-	compact(${1:var1.../array})${4}
+	compact(${1:var1.../array})
 snippet const
-	/**
-	 * ${3:Description...}
-	 */
-	const ${1:NAME} = ${2:'value'};${4}
+	const ${1:NAME} = ${2:'value'};
 snippet constant
-	constant(${1:string})${2}
+	constant(${1:string})
 snippet construct
-	/**
-	 * ${2:Constructor.}
-	 *${3}
-	 * @return void
-	 * @author `g:snips_author`
-	 */
 	public function __construct(${1})
 	{
-		${4}
+		${2}
 	}
 snippet cookie
-	$_COOKIE['${1:variable}']${2}
+	$_COOKIE['${1:variable}']
 snippet copy
-	copy(${1:source}, ${2:dest})${3}
+	copy(${1:source}, ${2:dest})
 snippet count
-	count(${1:var})${2}
+	count(${1:var})
 snippet crc32
-	crc32(${1:string})${2}
+	crc32(${1:string})
 snippet ctype_alnum
-	ctype_alnum(${1:string})${2}
+	ctype_alnum(${1:string})
 snippet ctype_alpha
-	ctype_alpha(${1:string})${2}
+	ctype_alpha(${1:string})
 snippet ctype_cntrl
-	ctype_cntrl(${1:string})${2}
+	ctype_cntrl(${1:string})
 snippet ctype_digit
-	ctype_digit(${1:string})${2}
+	ctype_digit(${1:string})
 snippet ctype_graph
-	ctype_graph(${1:string})${2}
+	ctype_graph(${1:string})
 snippet ctype_lower
-	ctype_lower(${1:string})${2}
+	ctype_lower(${1:string})
 snippet ctype_print
-	ctype_print(${1:string})${2}
+	ctype_print(${1:string})
 snippet ctype_punct
-	ctype_punct(${1:string})${2}
+	ctype_punct(${1:string})
 snippet ctype_space
-	ctype_space(${1:string})${2}
+	ctype_space(${1:string})
 snippet ctype_upper
-	ctype_upper(${1:string})${2}
+	ctype_upper(${1:string})
 snippet ctype_xdigit
-	ctype_xdigit(${1:string})${2}
+	ctype_xdigit(${1:string})
 snippet current
-	current(${1:&array})${2}
+	current(${1:&array})
 snippet date Custom...
-	date(${1:format}${2:, }${3:[timestamp=time()]})${4}
+	date(${1:format}${2:, }${3:[timestamp=time()]})
 snippet date 2001-02-03                   YYYY-MM-DD
-	date('${1:Y-m-d}'${2:, }${3:[timestamp=time()]})${4}
+	date('${1:Y-m-d}'${2:, }${3:[timestamp=time()]})
 snippet date Saturday 3rd February 2001   DDDD Dth MMMM YYYY
-	date('${1:l jS F Y}'${2:, }${3:[timestamp=time()]})${4}
+	date('${1:l jS F Y}'${2:, }${3:[timestamp=time()]})
 snippet date 4:05am                       h:mmtt
-	date('${1:g:ia}'${2:, }${3:[timestamp=time()]})${4}
+	date('${1:g:ia}'${2:, }${3:[timestamp=time()]})
 snippet debug_backtrace
-	debug_backtrace(${1:[provide_object=true]})${2}
+	debug_backtrace(${1:[provide_object=true]})
 snippet debug_print_backtrace
 	debug_print_backtrace()
 snippet dec2bin
-	decbin(${1:number})${2}
+	decbin(${1:number})
 snippet dec2hex
-	dechex(${1:number})${2}
+	dechex(${1:number})
 snippet dec2oct
-	decoct(${1:number})${2}
+	decoct(${1:number})
 snippet decbin
-	decbin(${1:number})${2}
+	decbin(${1:number})
 snippet dechex
-	dechex(${1:number})${2}
+	dechex(${1:number})
 snippet decoct
-	decoct(${1:number})${2}
+	decoct(${1:number})
 snippet dectobin
-	decbin(${1:number})${2}
+	decbin(${1:number})
 snippet dectohex
-	dechex(${1:number})${2}
+	dechex(${1:number})
 snippet dectooct
-	decoct(${1:number})${2}
+	decoct(${1:number})
 snippet def
-	/**
-	 * ${3:Description...}
-	 */
-	define('${1}', ${2});${4}
+	define('${1}', ${2});
 snippet def?
-	defined('${1}')${2}
+	defined('${1}')
+snippet default
+	default:
+		${1}
+		break;
 snippet define
-	/**
-	 * ${3:Description...}
-	 */
-	define('${1}', ${2});${4}
+	define('${1}', ${2});
 snippet defined
-	defined('${1}')${2}
+	defined('${1}')
 snippet deftpl
 	djmSmarty::defaultTemplate()
 snippet delete
-	unlink(${1:filename})${2}
+	unlink(${1:filename})
 snippet die
-	die(${1:status})${2}
+	die(${1:status})
 snippet dir
-	dir(${1:path})${2}
+	dir(${1:path})
 snippet dirname
-	dirname(${1:path})${2}
+	dirname(${1:path})
 snippet disp
 	$app->tpl->assign(compact('${1}'))
 	         ->display(${2:djmSmarty::defaultTemplate()});
 snippet dns_check_record
-	dns_check_record(${1:host}${2:, }${3:[type=MX]})${4}
+	dns_check_record(${1:host}${2:, }${3:[type=MX]})
 snippet dns_get_mx
-	dns_get_mx(${1:hostname}, ${2:&hosts_array}${3:, }${4:[&weights_array]})${5}
+	dns_get_mx(${1:hostname}, ${2:&hosts_array}${3:, }${4:[&weights_array]})
 snippet dns_get_record
-	dns_get_record(${1:hostname}${2:, }${3:[type=DNS_ANY]}${4:, }${5:[&authns_array]}${6:, }${7:[&additional_array]})${8}
+	dns_get_record(${1:hostname}${2:, }${3:[type=DNS_ANY]}${4:, }${5:[&authns_array]}${6:, }${7:[&additional_array]})
 snippet do
 	do {
 		${2}
-	} while (${1:/* condition */});
+	} while (${1});
 snippet dump
-	var_dump(${1:var});exit;
+	var_dump(${1});exit;
 snippet each
-	each(${1:array})${2}
+	each(${1})
 snippet ec
 	echo ${1}
 snippet echo
 	echo ${1}
-snippet elif
-	elseif (${1:/* condition */}) {
-		${2}
-	}
 snippet else
-	else {
+	} else {
 		${1}
-	}
-snippet elseif
-	elseif (${1:/* condition */}) {
+snippet elif
+	} elseif (${1}) {
 		${2}
-	}
+snippet elsif
+	} elseif (${1}) {
+		${2}
+snippet elseif
+	} elseif (${1}) {
+		${2}
 snippet empty
-	empty(${1:var})${2}
+	empty(${1})
 snippet end
-	end(${1:&array})${2}
+	end(${1})
 snippet env
-	$_ENV['${1:variable}']${2}
+	$_ENV['${1:variable}']
 snippet error_log To PHP's system logger
-	error_log(${1:message})${2}
+	error_log(${1:message})
 snippet error_log By email
-	error_log(${1:message}, 1, ${2:email}${3:, }${4:[extra_headers]})${5}
+	error_log(${1:message}, 1, ${2:email}${3:, }${4:[extra_headers]})
 snippet error_log To file
-	error_log(${1:message}, 3, ${2:filename})${3}
+	error_log(${1:message}, 3, ${2:filename})
 snippet error_log To SAPI logging handler
-	error_log(${1:message}, 4)${2}
+	error_log(${1:message}, 4)
 snippet error_reporting Custom...
-	error_reporting(${1:level})${2}
+	error_reporting(${1:level})
 snippet error_reporting E_ALL
 	error_reporting(E_ALL)
 snippet error_reporting E_ALL | E_STRICT
@@ -494,67 +471,75 @@ snippet error_reporting E_ALL | E_STRICT
 snippet error_reporting E_ALL ^ E_NOTICE
 	error_reporting(E_ALL ^ E_NOTICE)
 snippet escapeshellarg
-	escapeshellarg(${1:arg})${2}
+	escapeshellarg(${1:arg})
 snippet escapeshellcmd
-	escapeshellcmd(${1:command})${2}
+	escapeshellcmd(${1:command})
 snippet eval
-	eval(${1:string})${2}
+	eval(${1:string})
 snippet exec
-	exec(${1:command}${2:, }${3:[&output]}${4:, }${5:[&return_val]})${6}
+	exec(${1:command}${2:, }${3:[&output]}${4:, }${5:[&return_val]})
 snippet exit
-	exit(${1:status})${2}
+	exit(${1:status})
 snippet exp
-	exp(${1:number})${2}
+	exp(${1:number})
 snippet explode
-	explode(${1:delimiter}, ${2:string}${3:, }${4:[limit]})${5}
+	explode(${1:delimiter}, ${2:string}${3:, }${4:[limit]})
 snippet extract
-	extract(${1:array}${2:, }${3:[type=EXTR_OVERWRITE]}${4:, }${5:[prefix]})${6}
+	extract(${1:array}${2:, }${3:[type=EXTR_OVERWRITE]}${4:, }${5:[prefix]})
 snippet fclose
-	fclose(${1:handle})${2}
+	fclose(${1:handle})
 snippet feof
-	feof(${1:handle})${2}
+	feof(${1:handle})
 snippet fflush
-	fflush(${1:handle})${2}
+	fflush(${1:handle})
 snippet fgetc
-	fgetc(${1:handle})${2}
+	fgetc(${1:handle})
 snippet fgetcsv
-	fgetcsv(${1:handle}${2:, }${3:[length]}${4:, }${5:[delimiter=,]}${6:, }${7:[enclosure]}${8:, }${9:[escape=\]})${10}
+	fgetcsv(${1:handle}${2:, }${3:[length]}${4:, }${5:[delimiter=,]}${6:, }${7:[enclosure]}${8:, }${9:[escape=\]})
 snippet fgets
-	fgets(${1:handle}${2:, }${3:[length]})${4}
+	fgets(${1:handle}${2:, }${3:[length]})
 snippet file
-	file(${1:filename})${2}
+	file(${1:filename})
 snippet file_exists
-	file_exists(${1:filename})${2}
+	file_exists(${1:filename})
 snippet file_get_contents
-	file_get_contents(${1:filename})${2}
+	file_get_contents(${1:filename})
 snippet	file_put_contents
-	file_put_contents(${1:filename}, ${2:data})${3}
+	file_put_contents(${1:filename}, ${2:data})
 snippet fileatime
-	fileatime(${1:filename})${2}
+	fileatime(${1:filename})
 snippet filectime
-	filectime(${1:filename})${2}
+	filectime(${1:filename})
 snippet filegroup
-	filegroup(${1:filename})${2}
+	filegroup(${1:filename})
 snippet filemtime
-	filemtime(${1:filename})${2}
+	filemtime(${1:filename})
 snippet fileowner
-	fileowner(${1:filename})${2}
+	fileowner(${1:filename})
 snippet fileperms
-	fileperms(${1:filename})${2}
+	fileperms(${1:filename})
 snippet files
-	$_FILES['${1:variable}']${2}
+	$_FILES['${1:variable}']
 snippet filesize
-	filesize(${1:filename})${2}
+	filesize(${1:filename})
 snippet filetype
-	filetype(${1:filename})${2}
+	filetype(${1:filename})
 snippet floor
-	floor(${1:number})${2}
+	floor(${1:number})
 snippet flush
 	flush()
 snippet fmod
-	fmod(${1:x}, ${2:y})${3}
+	fmod(${1:x}, ${2:y})
+snippet fn
+	function(${1}) {
+		${2}
+	}
+snippet fnu
+	function(${1}) uses (${2}) {
+		${3}
+	}
 snippet fopen
-	fopen(${1:filename}, ${2:mode})${3}
+	fopen(${1:filename}, ${2:mode})
 snippet for
 	for (${1:$i} = ${2:0}; $1 < ${3:count}; ${3:$1++}) {
 		${4}
@@ -564,60 +549,54 @@ snippet foreach
 		${3}
 	}
 snippet forward_static_call
-	forward_static_call(${1:callback}${2:, }${3:var1...})${4}
+	forward_static_call(${1:callback}${2:, }${3:var1...})
 snippet forward_static_call_array
-	forward_static_call_array(${1:callback}, ${2:array})${3}
+	forward_static_call_array(${1:callback}, ${2:array})
 snippet fpassthru
-	fpassthru(${1:handle})${2}
+	fpassthru(${1:handle})
 snippet fputcsv
-	fputcsv(${1:handle}, ${2:array}${3:, }${4:[delimiter=,]}${5:, }${6:[enclosure=]})${7}
+	fputcsv(${1:handle}, ${2:array}${3:, }${4:[delimiter=,]}${5:, }${6:[enclosure=]})
 snippet fread
-	fread(${1:handle}, ${2:length})${3}
+	fread(${1:handle}, ${2:length})
 snippet fseek
-	fseek(${1:handle}, ${2:offset}${3:, }${4:[whence=SEEK_SET]})${5}
+	fseek(${1:handle}, ${2:offset}${3:, }${4:[whence=SEEK_SET]})
 snippet fsockopen
-	fsockopen(${1:hostname}${2:, }${3:[port]}${4:, }${5:[&errno]}${6:, }${7:[&errstr]}${8:, }${9:[timeout]})${10}
+	fsockopen(${1:hostname}${2:, }${3:[port]}${4:, }${5:[&errno]}${6:, }${7:[&errstr]}${8:, }${9:[timeout]})
 snippet fstat
-	fstat(${1:handle})${2}
+	fstat(${1:handle})
 snippet ftell
-	ftell(${1:handle})${2}
+	ftell(${1:handle})
 snippet ftruncate
-	ftruncate(${1:handle}, ${2:size})${3}
+	ftruncate(${1:handle}, ${2:size})
 snippet fun
-	/**
-	 * ${3:Description...}
-	 *${5}
-	 * @return ${4:void}
-	 * @author `g:snips_author`
-	 */
 	public function ${1:functionName}(${2})
 	{
-		${6}
+		${3}
 	}
 snippet func_get_arg
-	func_get_arg(${1:0})${2}
+	func_get_arg(${1:0})
 snippet func_get_args
 	func_get_args()
 snippet func_num_args
 	func_num_args()
 snippet function_exists
-	function_exists(${1:function})${2}
+	function_exists(${1:function})
 snippet fwrite
-	fwrite(${1:handle}, ${2:string}${3:, }${4:[length]})${5}
+	fwrite(${1:handle}, ${2:string}${3:, }${4:[length]})
 snippet fputs
-	fwrite(${1:handle}, ${2:string}${3:, }${4:[length]})${5}
+	fwrite(${1:handle}, ${2:string}${3:, }${4:[length]})
 snippet gapp
 	global $app;
 snippet get
-	$_GET['${1:variable}']${2}
+	$_GET['${1:variable}']
 snippet get_called_class
 	get_called_class()
 snippet get_class
-	get_class(${1:[object]})${2}
+	get_class(${1:[object]})
 snippet get_class_methods
-	get_class_methods(${1:class/object})${2}
+	get_class_methods(${1:class/object})
 snippet get_class_vars
-	get_class_vars(${1:class})${2}
+	get_class_vars(${1:class})
 snippet get_declared_classes
 	get_declared_classes()
 snippet get_declared_interfaces
@@ -627,90 +606,84 @@ snippet get_defined_functions
 snippet get_defined_vars
 	get_defined_vars()
 snippet get_headers
-	get_headers(${1:url}${2:, }${3:[assoc=false]})${4}
+	get_headers(${1:url}${2:, }${3:[assoc=false]})
 snippet get_meta_tags
-	get_meta_tags(${1:filename})${2}
+	get_meta_tags(${1:filename})
 snippet get_object_vars
-	get_object_vars(${1:object})${2}
+	get_object_vars(${1:object})
 snippet get_parent_class
-	get_parent_class(${1:class/object})${2}
+	get_parent_class(${1:class/object})
 snippet getcwd
 	getcwd()
 snippet gethostbyaddr
-	gethostbyaddr(${1:ipaddress}}${2}
+	gethostbyaddr(${1:ipaddress})
 snippet gethostbyname
-	gethostbyname(${1:hostname})${2}
+	gethostbyname(${1:hostname})
 snippet gethostbynamel
-	gethostbynamel(${1:hostname})${2}
+	gethostbynamel(${1:hostname})
 snippet gethostname
 	gethostname()
 snippet getimagesize
-	getimagesize(${1:filename})${2}
+	getimagesize(${1:filename})
 snippet getips
-	gethostbynamel(${1:hostname})${2}
+	gethostbynamel(${1:hostname})
 snippet getmxrr
-	dns_get_mx(${1:hostname}, ${2:&hosts_array}${3:, }${4:[&weights_array]})${5}
+	dns_get_mx(${1:hostname}, ${2:&hosts_array}${3:, }${4:[&weights_array]})
 snippet getprotobyname
-	getprotobyname(${1:name})${2}
+	getprotobyname(${1:name})
 snippet getprotobynumber
-	getprotobynumber(${1:number})${2}
+	getprotobynumber(${1:number})
 snippet getrandmax
 	getrandmax()
 snippet getservbyname
-	getservbyname(${1:service}, ${2:'tcp'})${3}
+	getservbyname(${1:service}, ${2:'tcp'})
 snippet getservbyport
-	getservbyport(${1:port}, ${2:'tcp'})${3}
+	getservbyport(${1:port}, ${2:'tcp'})
 snippet gfun
-	/**
-	 * ${3:Description...}
-	 *${5}
-	 * @return ${4:void}
-	 * @author `g:snips_author`
-	 */
 	function ${1:function_name}(${2})
 	{
-		${6}
+		${3}
 	}
 snippet glob
-	glob(${1:pattern}${2:, }${3:[flags]})${4}
+	glob(${1:pattern}${2:, }${3:[flags]})
 snippet global
-	global ${1:var_name};${2}
+	global ${1:var_name};
 snippet globals
-	$GLOBALS['${1:variable}']${2}
+	$GLOBALS['${1:variable}']
 snippet gmdate Custom...
-	gmdate(${1:format}${2:, }${3:[timestamp=time()]})${4}
+	gmdate(${1:format}${2:, }${3:[timestamp=time()]})
 snippet gmdate 2001-02-03                   YYYY-MM-DD
-	gmdate('${1:Y-m-d}'${2:, }${3:[timestamp=time()]})${4}
+	gmdate('${1:Y-m-d}'${2:, }${3:[timestamp=time()]})
 snippet gmdate Saturday 3rd February 2001   DDDD Dth MMMM YYYY
-	gmdate('${1:l jS F Y}'${2:, }${3:[timestamp=time()]})${4}
+	gmdate('${1:l jS F Y}'${2:, }${3:[timestamp=time()]})
 snippet gmdate 4:05am                       h:mmtt
-	gmdate('${1:g:ia}'${2:, }${3:[timestamp=time()]})${4}
+	gmdate('${1:g:ia}'${2:, }${3:[timestamp=time()]})
 snippet gmmktime
-	gmmktime(${1:[hour]}${2:, }${3:[minute]}${4:, }${5:[second]}${6:, }${7:[month]}${8:, }${9:[day]}${10:, }${11:[year]})${12}
+	gmmktime(${1:[hour]}${2:, }${3:[minute]}${4:, }${5:[second]}${6:, }${7:[month]}${8:, }${9:[day]}${10:, }${11:[year]})
 snippet gmstrftime
-	gmstrftime(${1:format}${2:, }${3:[timestamp=time()]})${4}
+	gmstrftime(${1:format}${2:, }${3:[timestamp=time()]})
 snippet header
-	header(${1:header}${2:, }${3:[replace=true]}${4:, }${5:[code]})${6}
+	header(${1:header}${2:, }${3:[replace=true]}${4:, }${5:[code]})
 snippet header_remove
-	header_remove(${1:[key]})${2}
+	header_remove(${1:[key]})
 snippet headers_list
 	headers_list()
 snippet headers_sent
-	headers_sent(${1:[&file]}${2:, }${3:[&line]})${4}
+	headers_sent(${1:[&file]}${2:, }${3:[&line]})
 snippet hex2dec
-	hexdec(${1:string})${2}
+	hexdec(${1:string})
 snippet hexdec
-	hexdec(${1:string})${2}
+	hexdec(${1:string})
 snippet hextodec
-	hexdec(${1:string})${2}
+	hexdec(${1:string})
 snippet highlight_file
-	highlight_file(${1:filename}${2:, }${3:[return=false]})${4}
+	highlight_file(${1:filename}${2:, }${3:[return=false]})
 snippet highlight_string
-	highlight_string(${1:string}${2:, }${3:[return=false]})${4}
+	highlight_string(${1:string}${2:, }${3:[return=false]})
 snippet html_entity_decode
-	html_entity_decode(${1:string}${2:, }${3:ENT_COMPAT}${4:, }${5:'UTF-8'})${6}
+	html_entity_decode(${1:string}${2:, }${3:ENT_COMPAT}${4:, }${5:'UTF-8'})
 snippet hostnametoip
-	gethostbyname(${1:hostname})${2}
+	gethostbyname(${1:hostname})
 snippet html
 	<?php
 	header('Content-Type: text/html; charset=utf-8');
@@ -718,237 +691,232 @@ snippet html
 	?>
 	`snipMateCustom#HTML()`
 snippet htmlentities
-	htmlentities(${1:string}${2:, }${3:ENT_COMPAT}${4:, }${5:'UTF-8'}${6:, }${7:[double_encode]})${8}
+	htmlentities(${1:string}${2:, }${3:ENT_COMPAT}${4:, }${5:'UTF-8'}${6:, }${7:[double_encode]})
 snippet htmlspecialchars
-	htmlspecialchars(${1:string}${2:, }${3:ENT_COMPAT}${4:, }${5:'UTF-8'}${6:, }${7:[double_encode]})${8}
+	htmlspecialchars(${1:string}${2:, }${3:ENT_COMPAT}${4:, }${5:'UTF-8'}${6:, }${7:[double_encode]})
 snippet htmlspecialchars_decode
-	htmlspecialchars_decode(${1:string}${2:, }${3:[quote_style=ENT_COMPAT]})${4}
+	htmlspecialchars_decode(${1:string}${2:, }${3:[quote_style=ENT_COMPAT]})
 snippet http_build_query
-	http_build_query(${1:array}
+	http_build_query(${1:array})
 snippet iconv
-	iconv(${1:in_charset}, ${2:out_charset}, ${3:string})${4}
+	iconv(${1:in_charset}, ${2:out_charset}, ${3:string})
 snippet idate Custom...
-	idate(${1:format}${2:, }${3:[timestamp]})${4}
+	idate(${1:format}${2:, }${3:[timestamp]})
 snippet idate b - Swatch Beat/Internet Time
-	idate('b'${1:, }${2:[timestamp]})${3}
+	idate('b'${1:, }${2:[timestamp]})
 snippet idate d - Day of the month
-	idate('d'${1:, }${2:[timestamp]})${3}
+	idate('d'${1:, }${2:[timestamp]})
 snippet idate h - Hour (12 hour format)
-	idate('h'${1:, }${2:[timestamp]})${3}
+	idate('h'${1:, }${2:[timestamp]})
 snippet idate H - Hour (24 hour format)
-	idate('H'${1:, }${2:[timestamp]})${3}
+	idate('H'${1:, }${2:[timestamp]})
 snippet idate i - Minutes
-	idate('i'${1:, }${2:[timestamp]})${3}
+	idate('i'${1:, }${2:[timestamp]})
 snippet idate I - 1 if DST is activated, 0 otherwise
-	idate('I'${1:, }${2:[timestamp]})${3}
+	idate('I'${1:, }${2:[timestamp]})
 snippet idate L - 1 for leap year, 0 otherwise
-	idate('L'${1:, }${2:[timestamp]})${3}
+	idate('L'${1:, }${2:[timestamp]})
 snippet idate m - Month number
-	idate('m'${1:, }${2:[timestamp]})${3}
+	idate('m'${1:, }${2:[timestamp]})
 snippet idate s - Seconds
-	idate('s'${1:, }${2:[timestamp]})${3}
+	idate('s'${1:, }${2:[timestamp]})
 snippet idate t - Days in current month
-	idate('t'${1:, }${2:[timestamp]})${3}
+	idate('t'${1:, }${2:[timestamp]})
 snippet idate U - Seconds since the Unix Epoch
-	idate('U'${1:, }${2:[timestamp]})${3}
+	idate('U'${1:, }${2:[timestamp]})
 snippet idate w - Day of the week (0 on Sunday)
-	idate('w'${1:, }${2:[timestamp]})${3}
+	idate('w'${1:, }${2:[timestamp]})
 snippet idate W - ISO-8601 week number of year, weeks starting on Monday
-	idate('W'${1:, }${2:[timestamp]})${3}
+	idate('W'${1:, }${2:[timestamp]})
 snippet idate y - Year (1 or 2 digits)
-	idate('y'${1:, }${2:[timestamp]})${3}
+	idate('y'${1:, }${2:[timestamp]})
 snippet idate Y - Year (4 digits)
-	idate('Y'${1:, }${2:[timestamp]})${3}
+	idate('Y'${1:, }${2:[timestamp]})
 snippet idate z - Day of the year
-	idate('z'${1:, }${2:[timestamp]})${3}
+	idate('z'${1:, }${2:[timestamp]})
 snippet idate Z - Timezone offset in seconds
-	idate('Z'${1:, }${2:[timestamp]})${3}
+	idate('Z'${1:, }${2:[timestamp]})
 snippet if
-	if (${1:/* condition */}) {
+	if (${1}) {
 		${2}
-	}${3}
+	}
 snippet ife
-	if (${1:/* condition */}) {
+	if (${1}) {
 		${2}
 	} else {
-		${3}
-	}${4}
+		
+	}
 snippet ignore_user_abort
-	ignore_user_abort(${1:true})${2}
+	ignore_user_abort(${1:true})
 snippet image_type_to_extension
-	image_type_to_extension(${1:imagetype}${2:, }${3:[includedot=true]})${4}
+	image_type_to_extension(${1:imagetype}${2:, }${3:[includedot=true]})
 snippet image_type_to_mime_type
-	image_type_to_mime_type(${1:imagetype})${2}
+	image_type_to_mime_type(${1:imagetype})
 snippet imagecopy
-	imagecopy(${1:dst_image}, ${2:src_image}, ${3:dst_x}, ${4:dst_y}, ${5:src_x}, ${6:src_y}, ${7:width}, ${8:height})${9}
+	imagecopy(${1:dst_image}, ${2:src_image}, ${3:dst_x}, ${4:dst_y}, ${5:src_x}, ${6:src_y}, ${7:width}, ${8:height})
 snippet imagecopyresampled
-	imagecopyresampled(${1:dst_image}, ${2:src_image}, ${3:dst_x}, ${4:dst_y}, ${5:src_x}, ${6:src_y}, ${7:dst_w}, ${8:dst_h}, ${9:src_w}, ${10:src_h})${11}
+	imagecopyresampled(${1:dst_image}, ${2:src_image}, ${3:dst_x}, ${4:dst_y}, ${5:src_x}, ${6:src_y}, ${7:dst_w}, ${8:dst_h}, ${9:src_w}, ${10:src_h})
 snippet imagecreate
-	imagecreate(${1:width}, ${2:height})${3}
+	imagecreate(${1:width}, ${2:height})
 snippet imagecreatefromgif
-	imagecreatefromgif(${1:filename})${2}
+	imagecreatefromgif(${1:filename})
 snippet imagecreatefromjpeg
-	imagecreatefromjpeg(${1:filename})${2}
+	imagecreatefromjpeg(${1:filename})
 snippet imagecreatefrompng
-	imagecreatefrompng(${1:filename})${2}
+	imagecreatefrompng(${1:filename})
 snippet imagecreatetruecolor
-	imagecreatetruecolor(${1:width}, ${2:height})${3}
+	imagecreatetruecolor(${1:width}, ${2:height})
 snippet imagegif
-	imagegif(${1:image}${2:, }${3:[filename=null]})${4}
+	imagegif(${1:image}${2:, }${3:[filename=null]})
 snippet imagejpeg
-	imagejpeg(${1:image}${2:, }${3:[filename=null]}${4:, }${5:[quality=75]})${6}
+	imagejpeg(${1:image}${2:, }${3:[filename=null]}${4:, }${5:[quality=75]})
 snippet imagepng
-	imagepng(${1:image}${2:, }${3:[filename=null]}${4:, }${5:[quality=75]}${6:, }${7:[filters]})${8}
+	imagepng(${1:image}${2:, }${3:[filename=null]}${4:, }${5:[quality=75]}${6:, }${7:[filters]})
 snippet implode
-	implode(${1:glue}, ${2:array})${3}
+	implode(${1:glue}, ${2:array})
 snippet in_array
-	in_array(${1:needle}, ${2:haystack}${3:, }${4:strict_compare=false})${5}
+	in_array(${1:needle}, ${2:haystack}${3:, }${4:strict_compare=false})
 snippet inc
-	include '${1:file}';${2}
+	include '${1:file}';
 snippet inc1
-	include_once '${1:file}';${2}
+	include_once '${1:file}';
 snippet inet_ntop
-	inet_ntop(${1:packed_ip})${2}
+	inet_ntop(${1:packed_ip})
 snippet inet_pton
-	inet_pton(${1:ip_address})${2}
+	inet_pton(${1:ip_address})
 snippet ini_get
-	ini_get(${1:var_name})${2}
+	ini_get(${1:var_name})
 snippet ini_set
-	ini_set(${1:var_name}, ${2:value})${3}
+	ini_set(${1:var_name}, ${2:value})
 snippet interface
-	/**
-	 * ${2:Description...}
-	 *${3}
-	 * @author `g:snips_author`
-	 */
 	interface ${1:`snipMateCustom#AutoClassName()`}
 	{
 
-		${4}
+		${2}
 
 	}
 snippet interface_exists
-	interface_exists(${1:interface}${2:, }${3:[autoload=true]})${4}
+	interface_exists(${1:interface}${2:, }${3:[autoload=true]})
 snippet intval
-	intval(${1:var}${2:, }${3:[base=10]})${4}
+	intval(${1:var}${2:, }${3:[base=10]})
 snippet ip2long
-	ip2long(${1:ip_address})${2}
+	ip2long(${1:ip_address})
 snippet iptohostname
-	gethostbyaddr(${1:ipaddress}}${2}
+	gethostbyaddr(${1:ipaddress})
 snippet is_a
-	is_a(${1:object}, ${2:class})${3}
+	is_a(${1:object}, ${2:class})
 snippet is_array
-	is_array(${1:var})${2}
+	is_array(${1:var})
 snippet is_bool
-	is_bool(${1:var})${2}
+	is_bool(${1:var})
 snippet is_callable
-	is_callable(${1:var}${2:, }${3:[syntax_only=false])${4}
+	is_callable(${1:var}${2:, }${3:[syntax_only=false])
 snippet is_dir
-	is_dir(${1:filename})${2}
+	is_dir(${1:filename})
 snippet is_executable
-	is_executable(${1:filename})${2}
+	is_executable(${1:filename})
 snippet is_file
-	is_file(${1:filename})${2}
+	is_file(${1:filename})
 snippet is_float
-	is_float(${1:var})${2}
+	is_float(${1:var})
 snippet is_finite
-	is_finite(${1:number})${2}
+	is_finite(${1:number})
 snippet is_infinite
-	is_infinite(${1:number})${2}
+	is_infinite(${1:number})
 snippet is_int
-	is_int(${1:var})${2}
+	is_int(${1:var})
 snippet is_link
-	is_link(${1:filename})${2}
+	is_link(${1:filename})
 snippet is_nan
-	is_nan(${1:number})${2}
+	is_nan(${1:number})
 snippet is_null
-	is_null(${1:var})${2}
+	is_null(${1:var})
 snippet is_numeric
-	is_numeric(${1:var})${2}
+	is_numeric(${1:var})
 snippet is_object
-	is_object(${1:var})${2}
+	is_object(${1:var})
 snippet is_readable
-	is_readable(${1:filename})${2}
+	is_readable(${1:filename})
 snippet is_resource
-	is_resource(${1:var})${2}
+	is_resource(${1:var})
 snippet is_scalar
-	is_scalar(${1:var})${2}
+	is_scalar(${1:var})
 snippet is_string
-	is_string(${1:var})${2}
+	is_string(${1:var})
 snippet is_subclass_of
-	is_subclass_of(${1:class/object}, ${2:parent_class})${3}
+	is_subclass_of(${1:class/object}, ${2:parent_class})
 snippet is_uploaded_file
-	is_uploaded_file(${1:filename})${2}
+	is_uploaded_file(${1:filename})
 snippet is_writable
-	is_writable(${1:filename})${2}
+	is_writable(${1:filename})
 snippet is_writeable
-	is_writable(${1:filename})${2}
+	is_writable(${1:filename})
 snippet isset
-	isset(${1:var})${2}
+	isset(${1:var})
 snippet iterator_count
-	iterator_count(${1:iterator})${2}
+	iterator_count(${1:iterator})
 snippet iterator_to_array
-	iterator_to_array(${1:iterator})${2}
+	iterator_to_array(${1:iterator})
 snippet json_decode
-	json_decode(${1:string}${2:, }${3:[associative=false]}${4:, }${5:[depth=512]})${6}
+	json_decode(${1:string}${2:, }${3:[associative=false]}${4:, }${5:[depth=512]})
 snippet json_encode
-	json_encode(${1:var})${2}
+	json_encode(${1:var})
 snippet key
-	key(${1:&array})${2}
+	key(${1:&array})
 snippet krsort
-	krsort(${1:&array}${2:, }${3:[flags=SORT_REGULAR]})${4}
+	krsort(${1:&array}${2:, }${3:[flags=SORT_REGULAR]})
 snippet ksort
-	ksort(${1:&array}${2:, }${3:[flags=SORT_REGULAR]})${4}
+	ksort(${1:&array}${2:, }${3:[flags=SORT_REGULAR]})
 snippet lcase
-	strtolower(${1:string})${2}
+	strtolower(${1:string})
 snippet list
-	list(${1:var1...})${2}
+	list(${1:var1...})
 snippet log
-	error_log(var_export(${1}, true));${2}
+	error_log(var_export(${1}, true));
 snippet long2ip
-	long2ip(${1:address})${2}
+	long2ip(${1:address})
 snippet lower
-	strtolower(${1:string})${2}
+	strtolower(${1:string})
 snippet ltrim
-	ltrim(${1:string}${2:, }${3:[char_list]})${4}
+	ltrim(${1:string}${2:, }${3:[char_list]})
 snippet max
-	max(${1:var1.../array})${2}
+	max(${1:var1.../array})
 snippet md5
-	md5(${1:string})${2}
+	md5(${1:string})
 snippet md5_file
-	md5_file(${1:filename})${2}
+	md5_file(${1:filename})
 snippet memory_get_peak_usage
-	memory_get_peak_usage(${1:[real_usage=false]})${2}
+	memory_get_peak_usage(${1:[real_usage=false]})
 snippet memory_get_usage
-	memory_get_usage(${1:[real_usage=false]})${2}
+	memory_get_usage(${1:[real_usage=false]})
 snippet method_exists
-	method_exists(${1:class/object}, ${2:method})${3}
+	method_exists(${1:class/object}, ${2:method})
 snippet mkdir
-	mkdir(${1:path}${2:, }${3:[mode=0777]}${4:, }${5:[recursive=false]})${6}
+	mkdir(${1:path}${2:, }${3:[mode=0777]}${4:, }${5:[recursive=false]})
 snippet mktime
-	mktime(${1:[hour]}${2:, }${3:[minute]}${4:, }${5:[second]}${6:, }${7:[month]}${8:, }${9:[day]}${10:, }${11:[year]}${12:, }${13:[is_dst=auto]})${14}
+	mktime(${1:[hour]}${2:, }${3:[minute]}${4:, }${5:[second]}${6:, }${7:[month]}${8:, }${9:[day]}${10:, }${11:[year]}${12:, }${13:[is_dst=auto]})
 snippet microtime
-	microtime(${1:[as_float=false]})${2}
+	microtime(${1:[as_float=false]})
 snippet min
-	min(${1:var1.../array})${2}
+	min(${1:var1.../array})
 snippet move
-	rename(${1:old_name}, ${2:new_name})${3}
+	rename(${1:old_name}, ${2:new_name})
 snippet move_uploaded_file
-	move_uploaded_file(${1:filename}, ${2:destination})${3}
+	move_uploaded_file(${1:filename}, ${2:destination})
 snippet mt_rand
-	mt_rand(${1:min}, ${2:max})${3}
+	mt_rand(${1:min}, ${2:max})
 snippet mysqli
-	new MySQLi(${1:[host]}${2:, }${3:[username]}${4:, }${5:[password]}${6:, }${7:[dbname]}${8:, }${9:[port]}${10:, }${11:[socket]})${12}
+	new MySQLi(${1:[host]}${2:, }${3:[username]}${4:, }${5:[password]}${6:, }${7:[dbname]}${8:, }${9:[port]}${10:, }${11:[socket]})
 snippet natcasesort
-	natcasesort(${1:&array})${2}
+	natcasesort(${1:&array})
 snippet natsort
-	natsort(${1:&array})${2}
+	natsort(${1:&array})
 snippet next
-	next(${1:&array})${2}
+	next(${1:&array})
 snippet nl2br
 	nl2br(${1:string})
 snippet number_format
-	number_format(${1:number}${2:, }${3:[decimals=0]})${4}
+	number_format(${1:number}${2:, }${3:[decimals=0]})
 snippet ob_clean
 	ob_clean()
 snippet ob_end_clean
@@ -968,52 +936,46 @@ snippet ob_get_length
 snippet ob_get_level
 	ob_get_level()
 snippet ob_get_status
-	ob_get_status(${1:[full_status=false]})${2}
+	ob_get_status(${1:[full_status=false]})
 snippet ob_implicit_flush
-	ob_implicit_flush(${1:[setting=true]})${2}
+	ob_implicit_flush(${1:[setting=true]})
 snippet ob_list_handlers
 	ob_list_handlers()
 snippet ob_start
-	ob_start(${1:[callback]}${2:, }${3:[chunk_size=0]}${4:, }${5:[erase=true]})${6}
+	ob_start(${1:[callback]}${2:, }${3:[chunk_size=0]}${4:, }${5:[erase=true]})
 snippet oct2dec
-	octdec(${1:string})${2}
+	octdec(${1:string})
 snippet octdec
-	octdec(${1:string})${2}
+	octdec(${1:string})
 snippet octtodec
-	octdec(${1:string})${2}
+	octdec(${1:string})
 snippet opendir
-	opendir(${1:path})${2}
+	opendir(${1:path})
 snippet ord
-	ord(${1:char})${2}
+	ord(${1:char})
 snippet pack
-	pack(${1:format}, ${2:args...})${3}
+	pack(${1:format}, ${2:args...})
 snippet parse_str
-	parse_str(${1:string}${2:, }${3:[&array]})${4}
+	parse_str(${1:string}${2:, }${3:[&array]})
 snippet parse_url
-	parse_url(${1:url}${2:, }${3:[component]})${4}
+	parse_url(${1:url}${2:, }${3:[component]})
 snippet passthru
-	passthru(${1:command}${2:, }${3:[&return_val]})${4}
+	passthru(${1:command}${2:, }${3:[&return_val]})
 snippet pathinfo
-	pathinfo(${1:path}${2:, }${3:[elements]})${4}
+	pathinfo(${1:path}${2:, }${3:[elements]})
 snippet pclose
-	pclose(${1:handle})${2}
+	pclose(${1:handle})
 snippet pfun
-	/**
-	 * ${3:Description...}
-	 *${5}
-	 * @return ${4:void}
-	 * @author `g:snips_author`
-	 */
-	protected function _${1:functionName}(${2})
+	protected function ${1:functionName}(${2})
 	{
-		${6}
+		${3}
 	}
 snippet popen
-	popen(${1:command}, ${2:mode})${3}
+	popen(${1:command}, ${2:mode})
 snippet post
-	$_POST['${1:variable}']${2}
+	$_POST['${1:variable}']
 snippet pow
-	pow(${1:base}, ${2:exp})${3}
+	pow(${1:base}, ${2:exp})
 snippet php
 	<?php
 	${1}
@@ -1021,138 +983,110 @@ snippet php
 snippet phpinfo
 	<?php phpinfo() ?>
 snippet ppfun
-	/**
-	 * ${3:Description...}
-	 *${5}
-	 * @return ${4:void}
-	 * @author `g:snips_author`
-	 */
-	private function _${1:functionName}(${2})
+	private function ${1:functionName}(${2})
 	{
-		${6}
+		${3}
 	}
 snippet ppsfun
-	/**
-	 * ${3:Description...}
-	 *${5}
-	 * @return ${4:void}
-	 * @author `g:snips_author`
-	 */
-	private static function _${1:functionName}(${2})
+	private static function ${1:functionName}(${2})
 	{
-		${6}
+		${3}
 	}
 snippet ppvar
-	/**
-	 * ${2:Description...}
-	 *${4}
-	 * @var ${3:bool}
-	 */
 	private $_${1:varName};
 snippet preg_filter
-	preg_filter('${1:/}${3:pattern}$1${2:imsuUX}', ${4:replacement}, ${5:subject}${6:, }${7:[limit]}${8:, }${9:[&count]})${10}
+	preg_filter('${1:/}${3:pattern}$1${2:imsuUX}', ${4:replacement}, ${5:subject}${6:, }${7:[limit]}${8:, }${9:[&count]})
 snippet preg_grep
-	preg_grep('${1:/}${3:pattern}$1${2:imsuUX}', ${4:input_array}${5:, }${6:[flags]})${7}
+	preg_grep('${1:/}${3:pattern}$1${2:imsuUX}', ${4:input_array}${5:, }${6:[flags]})
 snippet preg_last_error
 	preg_last_error()
 snippet preg_match
-	preg_match('${1:/}${3:pattern}$1${2:imsuUX}', ${4:subject}${5:, }${6:[&matches]}${7:, }${8:[flags]}${9:, }${10:[offset]})${11}
+	preg_match('${1:/}${3:pattern}$1${2:imsuUX}', ${4:subject}${5:, }${6:[&matches]}${7:, }${8:[flags]}${9:, }${10:[offset]})
 snippet preg_match_all
-	preg_match_all('${1:/}${3:pattern}$1${2:imsuUX}', ${4:subject}, ${5:&matches}${6:, }${7:[flags]}${8:, }${9:[offset]})${10}
+	preg_match_all('${1:/}${3:pattern}$1${2:imsuUX}', ${4:subject}, ${5:&matches}${6:, }${7:[flags]}${8:, }${9:[offset]})
 snippet preg_quote
-	preg_quote(${1:string}${2:, }${3:[delimiter]})${4}
+	preg_quote(${1:string}${2:, }${3:[delimiter]})
 snippet preg_replace
-	preg_replace('${1:/}${3:pattern}$1${2:imsuUX}', ${4:replacement}, ${5:subject}${6:, }${7:[limit]}${8:, }${9:[&count]})${10}
+	preg_replace('${1:/}${3:pattern}$1${2:imsuUX}', ${4:replacement}, ${5:subject}${6:, }${7:[limit]}${8:, }${9:[&count]})
 snippet preg_replace_callback
-	preg_replace_callback('${1:/}${3:pattern}$1${2:imsuUX}', ${4:callback}, ${5:subject}${6:, }${7:[limit]}${8:, }${9:[&count]})${10}
+	preg_replace_callback('${1:/}${3:pattern}$1${2:imsuUX}', ${4:callback}, ${5:subject}${6:, }${7:[limit]}${8:, }${9:[&count]})
 snippet preg_split
-	preg_split('${1:/}${3:pattern}$1${2:imsuUX}', ${4:subject}${5:, }${6:[limit]}${7:, }${8:[flags]})${9}
+	preg_split('${1:/}${3:pattern}$1${2:imsuUX}', ${4:subject}${5:, }${6:[limit]}${7:, }${8:[flags]})
 snippet prev
-	prev(${1:&array})${2}
+	prev(${1:&array})
 snippet print
 	print ${1}
 snippet print_r
-	print_r(${1:var}${2:, }${3:[return=false]})${4}
+	print_r(${1:var}${2:, }${3:[return=false]})
 snippet printf
-	printf(${1:format}, ${2:args...})${3}
+	printf(${1:format}, ${2:args...})
 snippet property_exists
-	property_exists(${1:class}, ${2:property})${3}
+	property_exists(${1:class}, ${2:property})
 snippet psfun
-	/**
-	 * ${3:Description...}
-	 *${5}
-	 * @return ${4:void}
-	 * @author `g:snips_author`
-	 */
-	protected static function _${1:functionName}(${2})
+	protected static function ${1:functionName}(${2})
 	{
-		${6}
+		${3}
 	}
 snippet pvar
-	/**
-	 * ${2:Description...}
-	 *${4}
-	 * @var ${3:bool}
-	 */
 	protected $_${1:varName};
 snippet rand
-	rand(${1:min}, ${2:max})${3}
+	rand(${1:min}, ${2:max})
 snippet range
-	range(${1:low}, ${2:high}${3:, }${4:[step=1]})${5}
+	range(${1:low}, ${2:high}${3:, }${4:[step=1]})
 snippet rawurldecode
-	rawurldecode(${1:string})${2}
+	rawurldecode(${1:string})
 snippet rawurlencode
-	rawurlencode(${1:string})${2}
+	rawurlencode(${1:string})
 snippet readdir
-	readdir(${1:[handle]})${2}
+	readdir(${1:[handle]})
 snippet readfile
-	readfile(${1:filename})${2}
+	readfile(${1:filename})
 snippet realpath
-	realpath(${1:path})${2}
+	realpath(${1:path})
 snippet rename
-	rename(${1:old_name}, ${2:new_name})${3}
+	rename(${1:old_name}, ${2:new_name})
 snippet req
-	require '${1:file}';${2}
+	require '${1:file}';
 snippet req1
-	require_once '${1:file}';${2}
+	require_once '${1:file}';
 snippet requ
-	$_REQUEST['${1:variable}']${2}
+	$_REQUEST['${1:variable}']
 snippet reset
-	reset(${1:&array})${2}
+	reset(${1:&array})
 snippet restore_error_handler
 	restore_error_handler()
 snippet restore_exception_handler
 	restore_exception_handler()
 snippet rewind
-	rewind(${1:handle})${2}
+	rewind(${1:handle})
 snippet rewinddir
-	rewinddir(${1:[handle]})${2}
+	rewinddir(${1:[handle]})
 snippet rmdir
-	rmdir(${1:dirname})${2}
+	rmdir(${1:dirname})
 snippet rot13
-	str_rot13(${1:string})${2}
+	str_rot13(${1:string})
 snippet round
-	round(${1:number}${2:, }${3:[precision=0]})${4}
+	round(${1:number}${2:, }${3:[precision=0]})
 snippet rsort
-	rsort(${1:&array}${2:, }${3:[flags=SORT_REGULAR]})${4}
+	rsort(${1:&array}${2:, }${3:[flags=SORT_REGULAR]})
 snippet rtrim
-	rtrim(${1:string}${2:, }${3:[char_list]})${4}
+	rtrim(${1:string}${2:, }${3:[char_list]})
 snippet scandir
-	scandir(${1:directory}${2:, }${3:[sort_desc=false]})${4}
+	scandir(${1:directory}${2:, }${3:[sort_desc=false]})
 snippet serialize
-	serialize(${1:value})${2}
+	serialize(${1:value})
 snippet server
-	$_SERVER['${1:variable}']${2}
+	$_SERVER['${1:variable}']
 snippet sess
-	$_SESSION['${1:variable}']${2}
+	$_SESSION['${1:variable}']
 snippet session
-	$_SESSION['${1:variable}']${2}
+	$_SESSION['${1:variable}']
 snippet session_cache_expire
-	session_cache_expire(${1:minutes})${2}
+	session_cache_expire(${1:minutes})
 snippet session_cache_limiter
-	session_cache_limiter(${1:cache_limiter})${2}
+	session_cache_limiter(${1:cache_limiter})
 snippet session_decode
-	session_decode(${1:string})${2}
+	session_decode(${1:string})
 snippet session_destroy
 	session_destroy()
 snippet session_encode
@@ -1160,219 +1094,189 @@ snippet session_encode
 snippet session_get_cookie_params
 	session_get_cookie_params()
 snippet session_id
-	session_id(${1:[new_id]})${2}
+	session_id(${1:[new_id]})
 snippet session_is_registered
-	session_is_registered(${1:var_name})${2}
+	session_is_registered(${1:var_name})
 snippet session_module_name
-	session_module_name(${1:new_module})${2}
+	session_module_name(${1:new_module})
 snippet session_name
-	session_name(${1:[new_name]})${2}
+	session_name(${1:[new_name]})
 snippet session_regenerate_id
-	session_regenerate_id(${1:[delete_old_session=false]})${2}
+	session_regenerate_id(${1:[delete_old_session=false]})
 snippet session_register
-	session_register(${1:var1...})${2}
+	session_register(${1:var1...})
 snippet session_save_path
-	session_save_path(${1:[new_path]})${2}
+	session_save_path(${1:[new_path]})
 snippet session_set_cookie_params
-	session_set_cookie_params(${1:lifetime}${2:, }${3:[path]}${4:, }${5:[domain]}${6:, }${7:[secure=false]}${8:, }${9:[httponly=false]})${10}
+	session_set_cookie_params(${1:lifetime}${2:, }${3:[path]}${4:, }${5:[domain]}${6:, }${7:[secure=false]}${8:, }${9:[httponly=false]})
 snippet session_set_save_handler
-	session_set_save_handler(${1:open_callback}${2:, }${3:close_callback}${4:, }${5:read_callback}${6:, }${7:write_callback}${8:, }${9:destroy_callback}${10:, }${11:gc_callback})${12}
+	session_set_save_handler(${1:open_callback}${2:, }${3:close_callback}${4:, }${5:read_callback}${6:, }${7:write_callback}${8:, }${9:destroy_callback}${10:, }${11:gc_callback})
 snippet session_start
 	session_start()
 snippet session_unregister
-	session_unregister(${1:var_name})${2}
+	session_unregister(${1:var_name})
 snippet session_unset
 	session_unset()
 snippet session_write_close
 	session_write_close()
 snippet set_error_handler
-	set_error_handler(${1:callback}${2:, }${3:[error_types=E_ALL|E_STRICT]})${4}
+	set_error_handler(${1:callback}${2:, }${3:[error_types=E_ALL|E_STRICT]})
 snippet set_exception_handler
-	set_exception_handler(${1:callback})${2}
+	set_exception_handler(${1:callback})
 snippet set_time_limit
-	set_time_limit(${1:seconds})${2}
+	set_time_limit(${1:seconds})
 snippet setcookie
 	setcookie(${1:name}${2:, }${3:[value]}${4:, }${5:[time() + expire]}${6:, }${7:[path]}${8:, }${9:[domain]}${10:, }${11:[secure=false]}${12:, }${13:[httponly=false]})
 snippet setrawcookie
 	setrawcookie(${1:name}${2:, }${3:[value]}${4:, }${5:[time() + expire]}${6:, }${7:[path]}${8:, }${9:[domain]}${10:, }${11:[secure=false]}${12:, }${13:[httponly=false]})
 snippet sfun
-	/**
-	 * ${3:Description...}
-	 *${5}
-	 * @return ${4:void}
-	 * @author `g:snips_author`
-	 */
 	public static function ${1:functionName}(${2})
 	{
-		${6}
+		${3}
 	}
 snippet sha1
-	sha1(${1:string})${2}
+	sha1(${1:string})
 snippet sha1_file
-	sha1_file(${1:filename})${2}
+	sha1_file(${1:filename})
 snippet shell_exec
-	shell_exec(${1:command})${2}
+	shell_exec(${1:command})
 snippet shuffle
-	shuffle(${1:&array})${2}
+	shuffle(${1:&array})
 snippet simplexml_load_file
-	simplexml_load_file(${1:filename})${2}
+	simplexml_load_file(${1:filename})
 snippet simplexml_load_string
-	simplexml_load_string(${1:string})${2}
+	simplexml_load_string(${1:string})
 snippet sinc
 	return $app->tpl->callInclude(${1:djmSmarty::defaultTemplate()}, ${2:$params});
 snippet sleep
-	sleep(${1:seconds})${2}
+	sleep(${1:seconds})
 snippet smf
 	<?php
 
-	/**
-	 * ${1:Description...}
-	 *${3}
-	 * @return ${2:string}
-	 * @author `g:snips_author`
-	 */
 	function smarty_function_`substitute(Filename('', 'NAME'), '^function\.', '', '')`($params, &$smarty)
 	{
-		global $app;
+		${1}
 
-		${4}
-
-		return $app->tpl->callInclude(djmSmarty::defaultTemplate(), $params);
+		return djmSmarty::doInclude($params, $smarty);
 	}
 snippet smb
 	<?php
 
-	/**
-	 * ${1:Description...}
-	 *${3}
-	 * @return ${2:string}
-	 * @author `g:snips_author`
-	 */
 	function smarty_block_`substitute(Filename('', 'NAME'), '^block\.', '', '')`($params, $content, &$smarty)
 	{
 		if ($content === null) {
 			return;
 		}
 
-		${4}
+		${1}
 	}
 snippet smm
 	<?php
 
-	/**
-	 * ${1:Description...}
-	 *${3}
-	 * @return ${2:string}
-	 * @author `g:snips_author`
-	 */
 	function smarty_modifier_`substitute(Filename('', 'NAME'), '^modifier\.', '', '')`($text)
 	{
-		${4}
+		${1}
 	}
 snippet sort
-	sort(${1:&array}${2:, }${3:[flags=SORT_REGULAR]})${4}
+	sort(${1:&array}${2:, }${3:[flags=SORT_REGULAR]})
 snippet spl_autoload_register
-	spl_autoload_register(${1:callback})${2}
+	spl_autoload_register(${1:callback})
 snippet spl_object_hash
-	spl_object_hash(${1:object})${2}
+	spl_object_hash(${1:object})
 snippet sprintf
-	sprintf(${1:format}, ${2:args...})${3}
+	sprintf(${1:format}, ${2:args...})
 snippet str_ireplace
-	str_ireplace(${1:search}, ${2:replace}, ${3:subject}${4:, }${5:[&count]})${6}
+	str_ireplace(${1:search}, ${2:replace}, ${3:subject}${4:, }${5:[&count]})
 snippet str_pad
-	str_pad(${1:input}, ${2:length}${3:, }${4:[pad_string=' ']}${5:, }${6:[pad_type=STR_PAD_RIGHT]})${7}
+	str_pad(${1:input}, ${2:length}${3:, }${4:[pad_string=' ']}${5:, }${6:[pad_type=STR_PAD_RIGHT]})
 snippet str_repeat
-	str_repeat(${1:string}, ${2:multiplier})${3}
+	str_repeat(${1:string}, ${2:multiplier})
 snippet str_replace
-	str_replace(${1:search}, ${2:replace}, ${3:subject}${4:, }${5:[&count]})${6}
+	str_replace(${1:search}, ${2:replace}, ${3:subject}${4:, }${5:[&count]})
 snippet str_rot13
-	str_rot13(${1:string})${2}
+	str_rot13(${1:string})
 snippet str_shuffle
-	str_shuffle(${1:string})${2}
+	str_shuffle(${1:string})
 snippet	str_split
-	str_split(${1:string}${2:, }${3:length})${4}
+	str_split(${1:string}${2:, }${3:length})
 snippet str_word_count Return number of words
-	str_word_count(${1:string})${2}
+	str_word_count(${1:string})
 snippet str_word_count Return array of words
-	str_word_count(${1:string}, 1)${2}
+	str_word_count(${1:string}, 1)
 snippet str_word_count Return associative array of words (position => word)
-	str_word_count(${1:string}, 2)${2}
+	str_word_count(${1:string}, 2)
 snippet strcasecmp
-	strcasecmp(${1:string1}, ${2:string2})${3}
+	strcasecmp(${1:string1}, ${2:string2})
 snippet strchr
-	strstr(${1:haystack}, ${2:chars}${3:, }${4:[return_before_needle=false]})${5}
+	strstr(${1:haystack}, ${2:chars}${3:, }${4:[return_before_needle=false]})
 snippet strcmp
-	strcmp(${1:string1}, ${2:string2})${3}
+	strcmp(${1:string1}, ${2:string2})
 snippet strftime
-	strftime(${1:format}${2:, }${3:[timestamp=time()]})${4}
+	strftime(${1:format}${2:, }${3:[timestamp=time()]})
 snippet strip_tags
-	strip_tags(${1:string})${2}
+	strip_tags(${1:string})
 snippet stripcslashes
-	stripcslashes(${1:string})${2}
+	stripcslashes(${1:string})
 snippet stripos
-	stripos(${1:haystack}, ${2:needle}${3:, }${4:[offset=0]})${5}
+	stripos(${1:haystack}, ${2:needle}${3:, }${4:[offset=0]})
 snippet stripslashes
-	stripslashes(${1:string})${2}
+	stripslashes(${1:string})
 snippet stristr
-	stristr(${1:haystack}, ${2:needle}${3:, }${4:[return_before_needle=false]})${5}
+	stristr(${1:haystack}, ${2:needle}${3:, }${4:[return_before_needle=false]})
 snippet strlen
-	strlen(${1:string})${2}
+	strlen(${1:string})
 snippet strnatcasecmp
-	strnatcasecmp(${1:string1}, ${2:string2})${3}
+	strnatcasecmp(${1:string1}, ${2:string2})
 snippet strnatcmp
-	strnatcmp(${1:string1}, ${2:string2})${3}
+	strnatcmp(${1:string1}, ${2:string2})
 snippet strncasecmp
-	strncasecmp(${1:string1}, ${2:string2}, ${3:length})${4}
+	strncasecmp(${1:string1}, ${2:string2}, ${3:length})
 snippet strncmp
-	strncmp(${1:string1}, ${2:string2}, ${3:length})${4}
+	strncmp(${1:string1}, ${2:string2}, ${3:length})
 snippet strpbrk
-	strpbrk(${1:haystack}, ${2:chars})${3}
+	strpbrk(${1:haystack}, ${2:chars})
 snippet strpos
-	strpos(${1:haystack}, ${2:needle}${3:, }${4:[offset=0]})${5}
+	strpos(${1:haystack}, ${2:needle}${3:, }${4:[offset=0]})
 snippet strptime
-	strptime(${1:date}, ${2:format})${3}
+	strptime(${1:date}, ${2:format})
 snippet strrchr
-	strrchr(${1:haystack}, ${2:needle})${3}
+	strrchr(${1:haystack}, ${2:needle})
 snippet strrev
-	strrev(${1:string})${2}
+	strrev(${1:string})
 snippet strripos
-	strripos(${1:haystack}, ${2:needle}${3:, }${4:[offset=0]})${5}
+	strripos(${1:haystack}, ${2:needle}${3:, }${4:[offset=0]})
 snippet strrpos
-	strrpos(${1:haystack}, ${2:needle}${3:, }${4:[offset=0]})${5}
+	strrpos(${1:haystack}, ${2:needle}${3:, }${4:[offset=0]})
 snippet strstr
-	strstr(${1:haystack}, ${2:chars}${3:, }${4:[return_before_needle=false]})${5}
+	strstr(${1:haystack}, ${2:chars}${3:, }${4:[return_before_needle=false]})
 snippet strtolower
-	strtolower(${1:string})${2}
+	strtolower(${1:string})
 snippet strtotime
-	strtotime(${1:string}${2:, }${3:[now]})${4}
+	strtotime(${1:string}${2:, }${3:[now]})
 snippet strtoupper
-	strtoupper(${1:string})${2}
+	strtoupper(${1:string})
 snippet strtr
-	strtr(${1:subject}, ${2:from_str}, ${3:to_str})${4}
+	strtr(${1:subject}, ${2:from_str}, ${3:to_str})
 snippet substr
-	substr(${1:string}, ${2:start}${3:, }${4:[length]})${5}
+	substr(${1:string}, ${2:start}${3:, }${4:[length]})
 snippet substr_count
-	substr_count(${1:haystack}, ${2:needle}${3:, }${4:[offset]}${5:, }${6:[length]})${7}
+	substr_count(${1:haystack}, ${2:needle}${3:, }${4:[offset]}${5:, }${6:[length]})
 snippet substr_replace
-	substr_replace(${1:string}, ${2:replacement}, ${3:start}${4:, }${5:[length]})${6}
+	substr_replace(${1:string}, ${2:replacement}, ${3:start}${4:, }${5:[length]})
 snippet switch
 	switch (${1:$varName}) {
 		case ${2:value}:
 			${3}
 			break;
-		${5}
-		default:
-			${4}
-			break;
 	}
 snippet symlink
-	symlink(${1:target}, ${2:link})${3}
+	symlink(${1:target}, ${2:link})
 snippet system
-	system(${1:command}${2:, }${3:&return_val})${4}
+	system(${1:command}${2:, }${3:&return_val})
 snippet t
 	(${1:condition} ? ${2:true} : ${3:false})
 snippet tempnam
-	tempnam(${1:dir}, ${2:prefix})${3}
+	tempnam(${1:dir}, ${2:prefix})
 snippet tempfile
 	tmpfile()
 snippet time
@@ -1380,66 +1284,61 @@ snippet time
 snippet tmpfile
 	tmpfile()
 snippet touch
-	touch(${1:filename}${2:, }${3:[timestamp=time()]}${4:, }${5:[access_timestamp=timestamp]})${6}
+	touch(${1:filename}${2:, }${3:[timestamp=time()]}${4:, }${5:[access_timestamp=timestamp]})
 snippet trigger_error
-	trigger_error(${1:error_msg}${2:, }${3:[error_type=E_USER_NOTICE]})${4}
+	trigger_error(${1:error_msg}${2:, }${3:[error_type=E_USER_NOTICE]})
 snippet trim
-	trim(${1:string}${2:, }${3:[char_list]})${4}
+	trim(${1:string}${2:, }${3:[char_list]})
 snippet uasort
-	uasort(${1:&array}, ${2:callback})${3}
+	uasort(${1:&array}, ${2:callback})
 snippet ucase
-	strtoupper(${1:string})${2}
+	strtoupper(${1:string})
 snippet ucfirst
-	ucfirst(${1:string})${2}
+	ucfirst(${1:string})
 snippet ucwords
-	ucwords(${1:string})${2}
+	ucwords(${1:string})
 snippet uksort
-	uksort(${1:&array}, ${2:callback})${3}
+	uksort(${1:&array}, ${2:callback})
 snippet umask
-	umask(${1:0777})${2}
+	umask(${1:0777})
 snippet unhtmlentities
-	html_entity_decode(${1:string}${2:, }${3:ENT_COMPAT}${4:, }${5:'UTF-8'})${6}
+	html_entity_decode(${1:string}${2:, }${3:ENT_COMPAT}${4:, }${5:'UTF-8'})
 snippet unhtmlspecialchars
-	htmlspecialchars_decode(${1:string}${2:, }${3:[quote_style=ENT_COMPAT]})${4}
+	htmlspecialchars_decode(${1:string}${2:, }${3:[quote_style=ENT_COMPAT]})
 snippet uniqid
-	uniqid(${1:''}${2:, }${3:true})${4}
+	uniqid(${1:''}${2:, }${3:true})
 snippet unlink
-	unlink(${1:filename})${2}
+	unlink(${1:filename})
 snippet unpack
-	unpack(${1:format}, ${2:data})${3}
+	unpack(${1:format}, ${2:data})
 snippet unserialize
-	unserialize(${1:string})${2}
+	unserialize(${1:string})
 snippet unset
-	unset(${1:var})${2}
+	unset(${1:var})
 snippet upper
-	strtoupper(${1:string})${2}
+	strtoupper(${1:string})
 snippet urldecode
-	urldecode(${1:string})${2}
+	urldecode(${1:string})
 snippet urlencode
-	urlencode(${1:string})${2}
+	urlencode(${1:string})
 snippet user_error
-	trigger_error(${1:error_msg}${2:, }${3:[error_type=E_USER_NOTICE]})${4}
+	trigger_error(${1:error_msg}${2:, }${3:[error_type=E_USER_NOTICE]})
 snippet usleep
-	usleep(${1:microseconds})${2}
+	usleep(${1:microseconds})
 snippet usort
-	usort(${1:&array}, ${2:callback})${3}
+	usort(${1:&array}, ${2:callback})
 snippet var
-	/**
-	 * ${2:Description...}
-	 *${4}
-	 * @var ${3:bool}
-	 */
 	public $${1:varName};
 snippet var_dump
-	var_dump(${1:var})${2}
+	var_dump(${1:var})
 snippet var_export
-	var_export(${1:var}${2:, }${3:[return=false]})${4}
+	var_export(${1:var}${2:, }${3:[return=false]})
 snippet version_compare
-	version_compare(${1:version1}, ${2:version2}${3:, }${4:[operator]})${5}
+	version_compare(${1:version1}, ${2:version2}${3:, }${4:[operator]})
 snippet vprintf
-	vprintf(${1:format}, ${2:args_array})${3}
+	vprintf(${1:format}, ${2:args_array})
 snippet vsprintf
-	vsprintf(${1:format}, ${2:args_array})${3}
+	vsprintf(${1:format}, ${2:args_array})
 snippet wh
 	while (${1:/* condition */}) {
 		${2}
@@ -1449,4 +1348,4 @@ snippet while
 		${2}
 	}
 snippet wordwrap
-	wordwrap(${1:string}, ${2:width}${3:, }${4:[break_char="\n"]}${5:, }${6:[cut_long_words=false]})${7}
+	wordwrap(${1:string}, ${2:width}${3:, }${4:[break_char="\n"]}${5:, }${6:[cut_long_words=false]})

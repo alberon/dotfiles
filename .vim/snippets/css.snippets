@@ -1,3 +1,5 @@
+snippet !
+	!important
 snippet {
 	{
 		${1}
@@ -22,6 +24,8 @@ snippet --
 	------------------------------------------------------------------------------*/
 snippet :
 	: ${1};
+snippet a:h
+	a:hover
 snippet absolute
 	position: absolute;
 snippet background
@@ -92,6 +96,10 @@ snippet bordert
 	border-top: ${1:1px solid #000};${2}
 snippet bottom
 	bottom: ${1};${2}
+snippet box-sizing
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 snippet cboth
 	clear: both;
 snippet charset
@@ -158,6 +166,8 @@ snippet div
 	div {
 		${1}
 	}
+snippet em
+	font-style: italic;
 snippet fleft
 	float: left;
 snippet float
@@ -363,6 +373,10 @@ snippet span
 	}
 snippet static
 	position: static;
+snippet strike
+	text-decoration: line-through;
+snippet strong
+	font-weight: bold;
 snippet style
 	font-style: ${1:italic};
 snippet t

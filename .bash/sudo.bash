@@ -1,7 +1,13 @@
-if $HAS_TERMINAL; then
+if $HAS_TERMINAL && ! $WINDOWS; then
 
     # s=sudo
-    alias s='sudo'
+    s() {
+        if [[ $# == 0 ]]; then
+            sudo $(history -p '!!')
+        else
+            sudo "$@"
+        fi
+    }
 
     # se. = se . (sudoedit - browse current directory)
     alias se.="se ."
@@ -18,21 +24,39 @@ if $HAS_TERMINAL; then
     alias agr='sudo apt-get remove'
     alias agar='sudo apt-get autoremove'
     alias agu='sudo apt-get update && sudo apt-get upgrade'
-    alias agup='sudo apt-get upgrade'
+    alias agupdate='sudo apt-get update'
+    alias agupgrade='sudo apt-get upgrade'
     alias acs='apt-cache search'
     alias acsh='apt-cache show'
 
-    # Poweroff and reboot need sudo
-    alias poweroff='sudo poweroff; exit'
-    alias pow='sudo poweroff; exit'
-    alias shutdown='sudo poweroff; exit'
-    alias reboot='sudo reboot; exit'
+    # These commands require sudo
+    alias a2dismod='sudo a2dismod'
+    alias a2dissite='sudo a2dissite'
+    alias a2enmod='sudo a2enmod'
+    alias a2ensite='sudo a2ensite'
+    alias addgroup='sudo addgroup'
+    alias adduser='sudo adduser'
+    alias dpkg-reconfigure='sudo dpkg-reconfigure'
+    alias groupadd='sudo groupadd'
+    alias groupdel='sudo groupdel'
+    alias groupmod='sudo groupmod'
+    alias php5dismod='sudo php5dismod'
+    alias php5enmod='sudo php5enmod'
+    alias pow='sudo poweroff'
+    alias poweroff='sudo poweroff'
+    alias reboot='sudo reboot'
+    alias service='sudo service'
+    alias shutdown='sudo poweroff'
+    alias useradd='sudo useradd'
+    alias userdel='sudo userdel'
+    alias usermod='sudo usermod'
+    alias yum='sudo yum'
 
     # Add sbin folder to my path so they can be auto-completed
     PATH="$PATH:/usr/local/sbin:/usr/sbin:/sbin"
 
     # Add additional safety checks for cp, mv, rm
-    function sudo {
+    sudo() {
         if [ "$1" = "cp" -o "$1" = "mv" -o "$1" = "rm" ]; then
             exe="$1"
             shift

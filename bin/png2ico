@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Remind me to use icotool instead of png2ico, since that's what's provided by Debian
+exec >&2
+
+echo "Not installed - try this instead:"
+echo
+
+if ! which icotool >/dev/null 2>&1; then
+    echo "  sudo apt-get install icoutils"
+fi
+
+echo "  icotool -c favicon.png > favicon.ico"
+exit 1

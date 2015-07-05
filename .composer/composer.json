@@ -1,0 +1,8 @@
+{
+    "require": {
+        "drush/drush": "@stable",
+        "wp-cli/wp-cli": "@stable",
+        "psy/psysh": "@stable",
+        "phpunit/phpunit": "@stable"
+    }
+}

@@ -1,47 +1,15 @@
 #!/bin/bash
 
+# Get full path to the editor in case it's not in the path after running sudo
+editor=`which "$GEDITOR"`
+
+[ -z "$editor" ] && editor="$GEDITOR"
+[ -z "$editor" ] && editor="$VISUAL"
+[ -z "$editor" ] && editor="$EDITOR"
+
 # 'e' or 'se'?
-if [ "$1" = "--sudo" ]; then
-    prefix=sudo
-    shift
+if [ "`basename $0`" = "se" ]; then
+    sudo "$editor" "$@"
 else
-    prefix=
-
-    # If
-    # (a) there is at least one file given,
-    # (b) the first file exists,
-    # (c) it's not writable,
-    # (d) we are not already root
-    # then offer to to use sudo instead
-    #if [ -f "$1" -a ! -w "$1" -a `id -u` != 0 ]; then
-    #    read -p "File is write protected. Use sudo? [Y/n] " reply
-    #    case "$reply" in
-    #        N*|n*)
-    #            ;;
-    #        *)
-    #            prefix=sudo
-    #            ;;
-    #    esac
-    #fi
-fi
-
-# Find path to gvim
-gvim=`which gvim 2>/dev/null`
-
-if [ -n "$gvim" -a -n "$DISPLAY" ]; then
-
-    # Use gVim
-    $prefix "$gvim" "$@"
-
-else
-
-    # Over SSH or gVim not installed
-
-    # Get full path to the editor in case it's not in the path after running sudo
-    editor=`which $EDITOR`
-    if [ -z "$editor" ]; then
-        editor="$EDITOR"
-    fi
-    $prefix "$EDITOR" "$@"
-
+    "$editor" "$@"
 fi

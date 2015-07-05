@@ -7,18 +7,18 @@ fi
 
 for i in $dir; do
     if [ -d "$i" ]; then
-        
+
         cd "$i"
-        
+
         res=$(git status -q 2>/dev/null)
         if [ $? -ne 128 ]; then
             echo
-            #echo -e "\e[32;1m$i\e[0m"
-            echo -e "\e[37;4;1m$(pwd)\e[0m"
+            #echo -e "\033[32;1m$i\e[0m"
+            echo -e "\033[37;4;1m$(pwd)\e[0m"
             echo "$res"
         fi
-        
+
         cd - >/dev/null
-        
+
     fi
 done

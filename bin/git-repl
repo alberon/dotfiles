@@ -1,4 +1,0 @@
-#!/bin/sh
-
-# This script uses /bin/sh but that doesn't work on Debian so force it to use Bash
-/bin/bash $HOME/opt/git-extras/bin/git-repl

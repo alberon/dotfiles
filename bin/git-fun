@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Grep for a given function definition in the source code
+#
+# e.g.
+#   git fun my_function
+#
+# is equivalent to:
+#   git grep 'function my_function'
+#
+# (but easier to type)
+
+if [ -z "$1" ]; then
+    echo "Usage: git fun <function name>" >&2
+    exit 1
+fi
+
+exec git g -i "function\s\+$1\b"

@@ -1,11 +1,11 @@
 if $HAS_TERMINAL; then
 
     # Remember the last directory visited
-    function record_bash_lastdirectory {
+    record_bash_lastdirectory() {
         pwd > ~/.bash_lastdirectory
     }
 
-    function cd {
+    cd() {
         command cd "$@" && record_bash_lastdirectory
     }
 
@@ -18,51 +18,55 @@ if $HAS_TERMINAL; then
     # Detect typos in the cd command
     shopt -s cdspell
 
-    # c = cd; ls
-    function c {
+    # Need some different options for ls on Mac
+    if $MAC; then
+        # Mac
+        ls_opts='-G'
+        # Use the same color scheme as Debian
+        # http://geoff.greer.fm/lscolors/
+        export LSCOLORS=ExGxFxDaCaDaDahbaDacec
+    elif ls --hide=*.pyc >/dev/null 2>&1; then
+        # Recent Linux
+        ls_opts='--color=always --hide=*.pyc --hide=*.sublime-workspace'
+    else
+        # Old Linux (without --hide support)
+        ls_opts='--color=always'
+    fi
 
-        # cd to the first argument
-        if [ "$1" = "" ]; then
-            # If none then go to ~ like cd does
-            cd || return
-        elif [ "$1" != "." ]; then
+    # c = cd; ls
+    c() {
+
+        # cd to the given directory
+        if [[ "$@" != "." ]]; then
             # If "." don't do anything, so that "cd -" still works
             # Don't output the path as I'm going to anyway (done by "cd -" and cdspell)
-            cd "$1" >/dev/null || return
+            cd "$@" >/dev/null || return
         fi
-
-        # Remove that argument
-        shift
 
         # Output the path
         echo
-        echo -en "\e[4;1m"
+        echo -en "\033[4;1m"
         echo $PWD
-        echo -en "\e[0m"
+        echo -en "\033[0m"
 
-        # Then pass the rest to ls (just in case we have any use for that!)
-        ls -h --color=always "$@"
+        # List the directory contents
+        ls -hF $ls_opts
 
     }
-
-    #export -f c
 
     # Various shortcuts for `ls`
-    alias ls='ls -hF --color=always'
-    alias ll='ls -hFl --color=always'
-    alias la='ls -hFA --color=always'
-    alias lla='ls -hFlA --color=always'
+    # ls, lsa   = short format
+    # l,  la    = long format
+    # ll, lla   = long format (deprecated)
+    alias ls="ls -hF $ls_opts"
+    alias lsa="ls -hFA $ls_opts"
 
-    function l {
-        if [ -z "$*" ]; then
-            # Show current directory name above the listing
-            c .
-        else
-            # If there's any other options I can't be bothered to parse them
-            # so just pass them to ls
-            ls "$@"
-        fi
-    }
+    alias l="ls -hFl $ls_opts"
+    alias la="ls -hFlA $ls_opts"
+
+    # Old aliases
+    alias ll='l'
+    alias lla='la'
 
     # Unset the colours that are sometimes set (e.g. Joshua)
     export LS_COLORS=

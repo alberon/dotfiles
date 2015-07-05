@@ -1,6 +1,6 @@
 if v:version >= 700
 
-    let snips_author = 'Dave James Miller'
+    let snips_author = 'Alberon Ltd.'
 
     if !exists('g:snipMate')
       let g:snipMate = {}
@@ -12,6 +12,7 @@ if v:version >= 700
         \   'eco':      'html',
         \   'eruby':    'html',
         \   'html':     'htmlonly',
+        \   'less':     'css',
         \   'mxml':     'actionscript',
         \   'objc':     'c',
         \   'php':      'html',

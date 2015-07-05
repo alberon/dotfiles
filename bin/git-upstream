@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+    echo "Usage: git upstream <remote>/<branch>"
+    exit
+fi
+
+branch=`git branch --no-color 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
+if [ -z "$branch" ]; then
+    echo "Not currently on any branch." >&2
+    exit 1
+fi
+
+git branch --set-upstream "$branch" "$1"

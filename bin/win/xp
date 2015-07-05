@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Default to the current directory
+path="${1:-.}"
+
+# Convert path to Windows format
+# http://stackoverflow.com/questions/12015348/msys-path-conversion-or-cygpath-for-msys
+path=$(cd "$path" && pwd -W | sed 's|/|\\|g')
+#echo "$path"
+
+exec explorer "$path"

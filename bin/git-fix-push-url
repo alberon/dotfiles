@@ -1,0 +1,38 @@
+#!/bin/bash
+
+remote="${1:-origin}"
+
+url="$(git config --get "remote.$remote.url")"
+
+if [ -z "$url" ]; then
+    echo "Could not get remote.$remote.url" >&2
+    exit 1
+fi
+
+if [ "${url:0:17}" = "git://github.com/" ]; then
+
+    pushurl="git@github.com:${url:17}"
+    echo "Pull: $url"
+    echo "Push: $pushurl"
+    git config "remote.$remote.url" "$pushurl"
+
+elif [ "${url:0:19}" = "https://github.com/" ]; then
+
+    pushurl="git@github.com:${url:19}"
+    echo "Pull: $url"
+    echo "Push: $pushurl"
+    git config "remote.$remote.url" "$pushurl"
+
+elif [ "${url:0:18}" = "http://github.com/" ]; then
+
+    pushurl="git@github.com:${url:18}"
+    echo "Pull: $url"
+    echo "Push: $pushurl"
+    git config "remote.$remote.url" "$pushurl"
+
+else
+
+    echo "Don't know how to fix '$url'" >&2
+    exit 2
+
+fi
