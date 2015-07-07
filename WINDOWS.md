@@ -37,20 +37,6 @@ wget djm.me/cfg
 
 Finally, close and re-open Cygwin *twice* to reload the configuration.
 
-## ConEmu
-
-[Install ConEmu](https://github.com/Maximus5/ConEmu).
-
-In the settings, go to Startup > Tasks, add a new task and enter this command:
-
-```
-C:\cygwin64\bin\mintty -e /bin/bash -c "/bin/tmux -2 attach || /bin/tmux -2 new -s default"
-```
-
-Set it as the default task, and in Startup make it the startup task as well.
-
-**Note:** I customised a lot of other options too - but I can't remember which ones!
-
 ## Apt-Cyg
 
-Install [apt-cyg](https://github.com/transcode-open/apt-cyg) by running `install-apt-cyg` (or follow their instructions).
+To make it easier to install additional packages, install [apt-cyg](https://github.com/transcode-open/apt-cyg) by running `install-apt-cyg` (or follow the instructions on the apt-cyg website to install it manually).
