@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [ $# -gt 1 ]; then
+    echo "Usage: git wip [message]" >&2
+    exit 1
+fi
+
+if [ -n "$1" ]; then
+    message="WIP: $1"
+else
+    message="WIP"
+fi
+
+git add -A
+git commit -m "$message"

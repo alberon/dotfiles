@@ -1,23 +1,25 @@
 #!/bin/bash
 
-# Usage: git compare [branch1] [branch2]
+# Usage: git inout [branch1] [branch2]
 #
 # branch1 defaults to origin/master
 # branch2 defaults to HEAD
 
-function help {
-    echo -e "\e[36m$1\e[0m"
+help() {
+    echo -e "\033[36m$1\033[0m"
 }
 
-if [ $# -lt 2 ]; then
-    left="${1:-origin/master}"
-    help "Lines beginning with a < are incoming (added to $left)"
-    help "Lines beginning with a > are outgoing (added to HEAD)"
-    echo
-    git log --left-right --cherry-pick "$left..."
-else
-    help "Lines beginning with a < are only in $1"
-    help "Lines beginning with a > are only in $2"
-    echo
-    git log --left-right --cherry-pick "$1...$2"
+left="$1"
+if [ -z "$left" ]; then
+    left=$(git for-each-ref --format='%(upstream:short)' $(git symbolic-ref -q HEAD))
 fi
+
+right="$2"
+if [ -z "$right" ]; then
+    right=HEAD
+fi
+
+help "Lines beginning with a < are only in $left"
+help "Lines beginning with a > are only in $right"
+echo
+git log --left-right --cherry-pick "$left...$right"

@@ -1,4 +1,4 @@
 # md = mkdir; cd
-function md {
-    mkdir "$1" && cd "$1"
+md() {
+    mkdir -p "$1" && cd "$1"
 }

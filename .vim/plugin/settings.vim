@@ -66,7 +66,7 @@ set ruler
 " Show selection size
 set showcmd
 
-" Show a menu when autocompleting commands
+" Show list of matches when tab-completing commands
 set wildmenu
 
 " Don't redraw the screen while executing macros, etc.
@@ -78,13 +78,18 @@ set modeline
 " Allow hidden buffers, so I can move between buffers without having to save first
 set hidden
 
+" Use existing window/tab if possible when switching buffers
+set switchbuf=useopen,usetab
+
 " Show the filename in the titlebar when using console vim
 set title
 
 " Keep 5 lines/columns of text on screen around the cursor
-set scrolloff=5
-set sidescroll=1
-set sidescrolloff=5
+" Removed 2012-08-13 because it makes double-clicking near the edge of the
+" screen impossible
+"set scrolloff=5
+"set sidescroll=1
+"set sidescrolloff=5
 
 " Enable mouse support in all modes
 if has("mouse")
@@ -111,7 +116,7 @@ endif
 
 " Show tabs and trailing spaces...
 set list
-set listchars=tab:>\ ,trail:.
+set listchars=tab:-\ ,trail:.
 
 " Except in snippet files because they have to use tabs
 au FileType snippet,snippets setl listchars+=tab:\ \ 
@@ -142,6 +147,3 @@ set guioptions-=T
 " Keep scrollbars on the right - the left scrollbar doesn't work with my
 " gaming mouse software
 set guioptions-=L
-
-" Make ~ behave like an operator
-set tildeop

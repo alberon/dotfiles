@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Grep for a given class definition in the source code
+#
+# e.g.
+#   git cls MyClass
+#
+# is equivalent to:
+#   git grep 'class MyClass'
+#
+# (but easier to type)
+
+if [ -z "$1" ]; then
+    echo "Usage: git cls <class name>" >&2
+    exit 1
+fi
+
+exec git g -i "class\s\+$1\b"

@@ -1,5 +1,6 @@
-# Start with the defaults from /etc/inputrc
-# (since that's no longer parsed when this file exists!)
+#===============================================================================
+# Defaults from /etc/inputrc
+#===============================================================================
 
 # Be 8 bit clean.
 set input-meta on
@@ -8,31 +9,33 @@ set output-meta on
 # some defaults / modifications for the emacs mode
 $if mode=emacs
 
-# allow the use of the Home/End keys
-"\e[1~": beginning-of-line
-"\e[4~": end-of-line
+    # allow the use of the Home/End keys
+    "\e[1~": beginning-of-line
+    "\e[4~": end-of-line
 
-# allow the use of the Delete/Insert keys
-"\e[3~": delete-char
-"\e[2~": quoted-insert
+    # allow the use of the Delete/Insert keys
+    "\e[3~": delete-char
+    "\e[2~": quoted-insert
 
-# mappings for Ctrl-left-arrow and Ctrl-right-arrow for word moving
-"\e[1;5C": forward-word
-"\e[1;5D": backward-word
-"\e[5C": forward-word
-"\e[5D": backward-word
-"\e\e[C": forward-word
-"\e\e[D": backward-word
+    # mappings for Ctrl-left-arrow and Ctrl-right-arrow for word moving
+    "\e[1;5C": forward-word
+    "\e[1;5D": backward-word
+    "\e[5C": forward-word
+    "\e[5D": backward-word
+    "\e\e[C": forward-word
+    "\e\e[D": backward-word
 
-$if term=rxvt
-"\e[8~": end-of-line
-"\eOc": forward-word
-"\eOd": backward-word
+    $if term=rxvt
+        "\e[8~": end-of-line
+        "\eOc": forward-word
+        "\eOd": backward-word
+    $endif
+
 $endif
 
-$endif
-
-################################################################################
+#===============================================================================
+# Custom settings
+#===============================================================================
 
 # Turn off the annoying and pointless beeping
 set bell-style none
@@ -53,3 +56,8 @@ set match-hidden-files off
 
 # Add the / to completed symlinks to directories
 set mark-symlinked-directories on
+
+# Expand history immediately (press space)
+$if Bash
+    Space: magic-space
+$endif

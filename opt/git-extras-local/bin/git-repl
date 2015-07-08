@@ -1,0 +1,24 @@
+#!/bin/bash
+
+while true; do
+  # Readline
+  read -e -r -p "git> " cmd
+
+  # EOF
+  test $? -ne 0 && break
+
+  # History
+  history -s "$cmd"
+
+  # Built-in commands
+  case $cmd in
+    ls) cmd=ls-files;;
+    "") continue;;
+    quit) break;;
+  esac
+
+  # Execute
+  eval git "$cmd"
+done
+
+echo

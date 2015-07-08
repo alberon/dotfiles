@@ -1,126 +1,128 @@
-snippet {*
-	{* ${1} *}
-snippet $
-	{$${1}}
 snippet "
 	"${1}"${2}
+snippet $
+	{$${1}}
 snippet '
 	'${1}'${2}
+snippet dump
+	{$${1}|var_dump}
+snippet html
+	`snipMateCustom#HTML()`
+snippet {*
+	{* ${1} *}
 snippet {
-	{ldelim}
-snippet }
-	{rdelim}
-snippet alternator
+	{
+		${1}
+	}
+snippet {alternator
 	{alternator name=${1:name} 1=${2:value}}${3}
-snippet assign
+snippet {assign
 	{assign var=${1:var_name} value=${2:value}}
-snippet capture
+snippet {capture
 	{capture assign=${1:var_name}}
 		${2}
 	{/capture}
-snippet checkbox
+snippet {checkbox
 	{checkbox name=${1:name} id=${2:$1} value=${3:1} checked=${4:checked}}${5}
-snippet checked
+snippet {checked
 	{checked if=${1:var}${2: equals=}${3:[value]}}${4}
-snippet counter
+snippet {counter
 	{counter start=${1:1}}
-snippet cycle
+snippet {cycle
 	{cycle values="${1}"}${2}
-snippet debug
+snippet {debug
 	{debug}
-snippet elif
+snippet {elif
 	{elseif ${1}}
 		${2}
-snippet else
+snippet {else
 	{else}
 		${1}
-snippet elseif
+snippet {elseif
 	{elseif ${1}}
 		${2}
-snippet eval
+snippet {eval
 	{eval var=${1:var}}
-snippet fetch
+snippet {fetch
 	{fetch file=${1:file}}
-snippet file_input
+snippet {file_input
 	{file_input name=${1:name} id=${2:$1}}${3}
-snippet foreach
-	{foreach from=${1:$var} item=${2:item}}
+snippet {foreach
+	{foreach ${1:$array} as ${2:$item}}
 		${3}
 	{/foreach}
-snippet foreachelse
+snippet {foreachelse
 	{foreachelse}
 		${1}
-snippet form
+snippet {form
 	{form data=${1:$form}}
 		${2}
 	{/form}
-snippet head
+snippet {head
 	{head ${1}}${2}
-snippet head_misc
+snippet {head_misc
 	{head_misc}
 		${1}
 	{/head_misc}
-snippet head_script
+snippet {head_script
 	{head_script}
 		${1}
 	{/head_script}
-snippet head_style
+snippet {head_style
 	{head_style}
 		${1}
 	{/head_style}
-snippet html
-	`snipMateCustom#HTML()`
-snippet if
+snippet {if
 	{if ${1}}
 		${2}
 	{/if}
-snippet ife
+snippet {ife
 	{if ${1}}
 		${2}
 	{else}
 		${3}
 	{/if}
-snippet include
+snippet {include
 	{include file=${1:filename}}${2}
-snippet input
+snippet {input
 	{input name=${1:name} id=${2:$1} value=${3:value}}${4}
-snippet insert
+snippet {insert
 	{insert name=${1:func_name})${2}
-snippet literal
+snippet {literal
 	{literal}
 		${1}
 	{/literal}
-snippet mailto
+snippet {mailto
 	{mailto address=${1:address}${2: text=}${3:text}${4: encode=}${5:javascript}}
-snippet math
+snippet {math
 	{math equation="${1:x + y}" ${2:x=1 y=2}}
-snippet options
+snippet {options
 	{options options=${1:options} value=${2:value}}${3}
-snippet password
+snippet {password
 	{password_input name=${1:name} id=${2:$1} value=${3:value}}${4}
-snippet password_input
+snippet {password_input
 	{password_input name=${1:name} id=${2:$1} value=${3:value}}${4}
-snippet radio
+snippet {radio
 	{radio name=${1:name} id=${2:$1} value=${3:1} checked=${4:checked}}${5}
-snippet select
+snippet {select
 	{select name=${1:name} id=${2:$1} ${3: blank=}${4:[true]} options=${5:options} value=${6:value}}${7}
-snippet select_country
+snippet {select_country
 	{select_country name=${1:name} id=${2:$1}${3: blank=}${4:[true]} value=${5:value}}${6}
-snippet setdefault
+snippet {setdefault
 	{setdefault ${1}}${2}
-snippet strip
+snippet {strip
 	{strip}
 		${1}
 	{/strip}
-snippet submit
+snippet {submit
 	{submit value="${1:Submit}"}${2}
-snippet textarea
+snippet {textarea
 	{textarea name=${1:name} id=${2:$1} value=${3:value}}${4}
-snippet wrap
+snippet {var
+	{var ${1}}${2}
+snippet {wrap
 	{wrap file=${1:filename}}
 		${2}
 	{/wrap}
-snippet var
-	{var ${1}}${2}
-snippet year_range
+snippet {year_range
 	{year_range start=${1:start}${2: end=}${3:[end]}}

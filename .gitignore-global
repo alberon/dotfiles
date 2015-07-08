@@ -1,1 +1,11 @@
+# Operating system files
 Thumbs.db
+
+# Fabric
+.fab_tasks~
+
+# Vim
+/doc/tags
+
+# phpStorm
+.idea

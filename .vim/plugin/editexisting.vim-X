@@ -39,7 +39,7 @@ if argc() == 1 && !&modified
         endif
         call remote_expr(servername, "foreground()")
 
-        " Open the buffer in the rmeote (whether existing or addding a new one)
+        " Open the buffer in the remote (whether existing or adding a new one)
         if remote_expr(servername, "exists('*OpenBuffer')")
             call remote_expr(servername, "OpenBuffer('" . fname_esc . "')")
             quit

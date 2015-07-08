@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# git pu = Push Upstream (push current branch and set as upstream)
+remote=${1:-origin}
+branch=$2
+
+if [ -n "$branch" ]; then
+    git push -u "$remote" "HEAD:$branch"
+else
+    git push -u "$remote" HEAD
+fi

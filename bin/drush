@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# If we're in repo/ use repo/www/ as the root automatically
+# Can be overridden by passing another -r to it
+if [ ! -f index.php -a -f www/index.php ]; then
+    # Seems to require absolute path
+    opt="-r $(pwd)/www/"
+else
+    opt=
+fi
+
+exec $HOME/.composer/vendor/bin/drush $opt "$@"

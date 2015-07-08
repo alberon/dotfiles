@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# This script fixes the symlink to the SSH agent in case I connect and then
+# disconnect a second SSH session
+
+link="$HOME/.ssh/ssh_auth_sock"
+
+# Check if $SSH_AUTH_SOCK is set correctly
+if [ "$SSH_AUTH_SOCK" != "$link" ]; then
+    echo 'WARNING: Your $SSH_AUTH_SOCK is currently set to:' >&2
+    echo >&2
+    echo "    $SSH_AUTH_SOCK" >&2
+    echo >&2
+    echo "Check your Bash config. Or to fix it manually, run:" >&2
+    echo >&2
+    echo "    export SSH_AUTH_SOCK='$link'" >&2
+    echo >&2
+fi
+
+# Check if the agent is already valid
+if [ -S "$link" ]; then
+    echo "$link appears to be a valid symlink to a socket:"
+    echo
+    echo -n "    "
+    readlink "$link"
+    echo
+    echo "Current SSH keys:"
+    echo
+    SSH_AUTH_SOCK="$link" ssh-add -l | sed 's/^/    /'
+    exit
+fi
+
+# If it's not valid, see if we can find an agent socket from another terminal
+for filename in $(find /tmp -user $(id -u) -iregex /tmp/ssh-[a-z0-9]+/agent.[0-9]+ -type s 2>/dev/null); do
+    if SSH_AUTH_SOCK="$filename" ssh-add -l >/dev/null 2>&1; then
+
+        # Found a valid socket - update the symlink
+        ln -nsf "$filename" "$HOME/.ssh/ssh_auth_sock"
+        echo "Updated $link to point to:"
+        echo
+        echo "    $filename"
+        echo
+        echo "Current SSH keys:"
+        echo
+        SSH_AUTH_SOCK="$link" ssh-add -l | sed 's/^/    /'
+        exit
+
+    fi
+done
+
+# Not found
+echo "Couldn't find any SSH agent sockets" >&2
+exit 1

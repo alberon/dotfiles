@@ -15,15 +15,23 @@ if [ ! -f ~/.bashrc_config ]; then
     fi
 
     # Check for Windows server
-    case `uname` in
-       MINGW*) windows=1 ;;
-       *)      windows=0 ;;
+    case "$(uname)" in
+       MINGW|CYGWIN*) windows=1 ;;
+       *)             windows=0 ;;
     esac
 
     # Generate .bashrc_config
-    echo "auto_screen=0" >> ~/.bashrc_config
-
     echo "enable_sudo=0" >> ~/.bashrc_config
+
+    echo "#prompt_default=''" >> ~/.bashrc_config
+
+    if [ $cpanel -eq 1 ]; then
+        echo "prompt_type=live #live/staging/dev/special" >> ~/.bashrc_config
+    elif [ -d /vagrant ]; then
+        echo "prompt_type=dev #live/staging/dev/special" >> ~/.bashrc_config
+    else
+        echo "prompt_type= #live/staging/dev/special" >> ~/.bashrc_config
+    fi
 
     if [ $cpanel -eq 1 -o $windows -eq 1 ]; then
         echo "umask_user=022" >> ~/.bashrc_config
@@ -34,12 +42,21 @@ if [ ! -f ~/.bashrc_config ]; then
     echo "umask_root=022" >> ~/.bashrc_config
 
     if [ $cpanel -eq 1 ]; then
-        echo "www_dir=~/public_html" >> ~/.bashrc_config
+        echo "www_dir=~/repo" >> ~/.bashrc_config
+    elif [ -d ~/repo ]; then
+        echo "www_dir=~/repo" >> ~/.bashrc_config
+    elif [ -d /vagrant ]; then
+        echo "www_dir=/vagrant" >> ~/.bashrc_config
     else
         echo "www_dir=" >> ~/.bashrc_config
     fi
 
-    # Open in editor
-    vim ~/.bashrc_config
+    # Open in editor (if running interactively, not in a Vagrant provisioner)
+    if [ -t 0 ]; then
+        vim ~/.bashrc_config
+    fi
 
 fi
+
+# No need to check for updates
+echo "$(date +%Y%m%d)" > ~/.cfg_last_update

@@ -1,0 +1,9 @@
+# Install my config files
+Vagrant.configure(2) do |config|
+
+    config.vm.provision 'dotfiles',
+        type:       :shell,
+        path:       '~/.vagrant.d/provision-dotfiles.sh',
+        privileged: false
+
+end

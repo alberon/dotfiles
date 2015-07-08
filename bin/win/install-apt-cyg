@@ -1,0 +1,5 @@
+#!/bin/bash
+
+lynx -source rawgit.com/transcode-open/apt-cyg/master/apt-cyg > /tmp/apt-cyg
+install /tmp/apt-cyg /bin
+rm /tmp/apt-cyg
