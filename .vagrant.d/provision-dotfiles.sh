@@ -130,8 +130,8 @@ if [ ! -d .git ]; then
     # Based on https://djm.me/cfg but quiet and non-interactive
     echo "Installing dotfiles in $HOME..."
     git init -q
-    git remote add origin git://github.com/alberon/dotfiles.git
-    git remote set-url --push origin git@github.com:alberon/dotfiles.git
+    git remote add origin git://github.com/jagfiend/dotfiles.git
+    git remote set-url --push origin git@github.com:jagfiend/dotfiles.git
     git fetch -q origin
     rm -f .bashrc .bash_profile
     git checkout origin/master -b master >/dev/null 2>&1
@@ -149,8 +149,8 @@ sudo -s <<END
         echo "Installing dotfiles in $(echo ~root)..."
         cd ~root
         git init -q
-        git remote add origin git://github.com/alberon/dotfiles.git
-        git remote set-url --push origin git@github.com:alberon/dotfiles.git
+        git remote add origin git://github.com/jagfiend/dotfiles.git
+        git remote set-url --push origin git@github.com:jagfiend/dotfiles.git
         git fetch -q origin
         rm -f .bashrc .bash_profile
         git checkout origin/master -b master >/dev/null 2>&1
@@ -160,6 +160,6 @@ sudo -s <<END
 END
 
 # Allow access to the root user
-if [ -f ~/.ssh/alberon.pub ]; then
-    sudo cp -f ~/.ssh/alberon.pub ~root/.ssh/authorized_keys
+if [ -f ~/.ssh/pete.pub ]; then
+    sudo cp -f ~/.ssh/pete.pub ~root/.ssh/authorized_keys
 fi

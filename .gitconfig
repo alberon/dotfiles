@@ -95,7 +95,7 @@
     yesterday = log --decorate -p --since=yesterday
 
 [github]
-    user = alberon
+    user = jagfiend
 
 [browser "none"]
     cmd = git-web-browser
