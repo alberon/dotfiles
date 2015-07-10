@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# npm doesn't support Cygwin so we have to work around it
+# https://github.com/npm/npm/issues/7456
+if [ -f '/cygdrive/c/Program Files (x86)/nodejs/npm' ]; then
+    if [ -f '/cygdrive/c/Program Files (x86)/Git/bin/git.exe' ]; then
+        # Part 1: Use Git for Windows not the Cygwin version, to support Windows style paths
+        export PATH="/cygdrive/c/Program Files (x86)/Git/bin:$PATH"
+        # Part 2: Use 'cmd /c' to run it outside Cygwin
+        exec cmd /c "$(cygpath -w '/cygdrive/c/Program Files (x86)/nodejs/npm')" "$@"
+    else
+        echo "npm: Git for Windows installation not found" >&2
+    fi
+else
+    echo "'npm' installation not found" >&2
+    exit 127
+fi
