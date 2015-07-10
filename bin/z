@@ -1,0 +1,62 @@
+#!/bin/bash
+set -o nounset -o pipefail -o errexit
+shopt -s nullglob
+
+# 'z' is a short, easy to type alias
+# 's' would be a better name (short for 'scripts'), but that is used for 'sudo'
+
+exe="$(basename "$0")"
+
+# Locate the scripts directory
+if ! root="$(findup -d scripts)"; then
+    echo "'scripts' directory not found" >&2
+    exit 1
+fi
+
+# Subdirectory?
+scripts="$root/scripts"
+prefix=
+
+while [ $# -gt 0 -a -d "$scripts/${1:-}" ]; do
+    scripts="$scripts/$1"
+    prefix="$prefix$1 "
+    shift
+done
+
+# Script?
+if [ $# -gt 0 ]; then
+    cmd="$1"
+
+    for script in "$scripts/$cmd"{,*}; do
+        if [ -x "$script" ]; then
+            shift
+            exec "$script" "$@"
+        fi
+    done
+
+    echo "Script '$prefix$cmd' not found" >&2
+    exit 1
+fi
+
+# Display list of scripts
+list_scripts() {
+    local cmd="$1"
+    local dir="$2"
+
+    for file in "$dir/"*; do
+        name="$(basename "$file")" # Remove path
+        name="${name%%.*}"         # Remove extension
+        if [ -d "$file" ]; then
+            list_scripts "$cmd$name " "$file"
+        elif [ "${name^^}" = "README" ]; then
+            : # Skip readme files
+        elif [[ "$name" == *" "* ]]; then
+            # Spaces in the name
+            echo "$cmd'$name'"
+        else
+            echo "$cmd$name"
+        fi
+    done
+}
+
+list_scripts "$exe $prefix" "$scripts"
