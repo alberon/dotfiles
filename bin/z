@@ -69,4 +69,10 @@ list_scripts() {
     done
 }
 
-list_scripts "$exe $prefix" "$scripts"
+if [ -n "$prefix" ]; then
+    echo -e "\e[37;1mMatching Scripts:\e[0m"
+    list_scripts "$exe $prefix" "$scripts"
+else
+    echo -e "\e[37;1mAvailable Scripts:\e[0m"
+    list_scripts "$exe " "$scripts"
+fi
