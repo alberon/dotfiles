@@ -31,11 +31,11 @@ while [ $# -gt 0 -a -d "$scripts/${1:-}" ]; do
     shift
 done
 
-# Script?
+# Run script?
 if [ $# -gt 0 ]; then
     cmd="$1"
 
-    for script in "$scripts/$cmd"{,*}; do
+    for script in "$scripts/$cmd"{,.*}; do
         if [ -x "$script" ]; then
             shift
             exec "$script" "$@"
