@@ -2,8 +2,16 @@
 set -o nounset -o pipefail -o errexit
 shopt -s nullglob
 
-# 'z' is a short, easy to type alias
+#================================================================================
+# ScriptZ! - (c) Dave James Miller 2015 - MIT License
+#================================================================================
+# 'z' is a short, easy to type alias for running scripts in a scripts/ directory
 # 's' would be a better name (short for 'scripts'), but that is used for 'sudo'
+# Type 'z' alone to list all the scripts available
+# Type 'z <name> [args...]' to run a script
+# It will automatically search up the directory tree, if you are in a subdir
+# Tab completion is available too (complete -C "z --bash-completion" z)
+#================================================================================
 
 exe="$(basename "$0")"
 
@@ -48,6 +56,8 @@ list_scripts() {
         name="${name%%.*}"         # Remove extension
         if [ -d "$file" ]; then
             list_scripts "$cmd$name " "$file"
+        elif [ ! -x "$file" ]; then
+            : # Skip non-executable files
         elif [ "${name^^}" = "README" ]; then
             : # Skip readme files
         elif [[ "$name" == *" "* ]]; then
