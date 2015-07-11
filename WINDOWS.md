@@ -12,6 +12,7 @@
 - git-completion
 - less
 - links
+- ncurses
 - tmux
 - vim
 - wget

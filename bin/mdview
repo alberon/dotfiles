@@ -1,0 +1,17 @@
+#!/usr/bin/env node
+
+// Display a Markdown file on the terminal
+// https://github.com/trabus/markdown-it-terminal
+var fs       = require('fs');
+var markdown = require('markdown-it');
+var terminal = require('markdown-it-terminal');
+
+var md = (new markdown).use(terminal);
+
+var content = fs.readFileSync(process.argv[2], 'utf8');
+content = md.render(content);
+
+// Trim excess trailing lines
+content = content.replace(/[\r\n]+$/, '') + '\n';
+
+process.stdout.write(content);

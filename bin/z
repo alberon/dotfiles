@@ -31,6 +31,16 @@ while [ $# -gt 0 -a -d "$scripts/${1:-}" ]; do
     shift
 done
 
+# Display help?
+if [ "${1:-}" = "-h" -o "${1:-}" = "--help" ]; then
+    if [ -f "$scripts/README.md" ]; then
+        exec mdview "$scripts/README.md"
+    else
+        echo "No help file found ($scripts/README.md)" >&2
+        exit 1
+    fi
+fi
+
 # Run script?
 if [ $# -gt 0 ]; then
     cmd="$1"
@@ -71,8 +81,13 @@ list_scripts() {
 
 if [ -n "$prefix" ]; then
     echo -e "\e[37;1mMatching Scripts:\e[0m"
-    list_scripts "$exe $prefix" "$scripts"
 else
     echo -e "\e[37;1mAvailable Scripts:\e[0m"
-    list_scripts "$exe " "$scripts"
+fi
+
+list_scripts "$exe $prefix" "$scripts"
+
+if [ -f "$scripts/README.md" ]; then
+    echo
+    echo -e "\e[36;1mRun 'z -h' to view the readme file\e[0m"
 fi
