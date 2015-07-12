@@ -89,5 +89,5 @@ list_scripts "$exe $prefix" "$scripts"
 
 if [ -f "$scripts/README.md" ]; then
     echo
-    echo -e "\e[36;1mRun 'z -h' to view the readme file\e[0m"
+    echo -e "\e[36;1mRun '$exe $prefix-h' to view the readme file\e[0m"
 fi
