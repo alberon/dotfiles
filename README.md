@@ -1,8 +1,26 @@
 # Dotfiles
 
-These dotfiles are a fork of [Dave's](https://github.com/davejamesmiller/dotfiles), suitable for use on shared accounts.
+[These dotfiles](https://github.com/alberon/dotfiles) are a fork of [Dave's](https://github.com/davejamesmiller/dotfiles), suitable for use on shared accounts.
 
-To create your own, fork the repo on GitHub, install as normal, then use `g gi alberon` (`git grep -i alberon`) to find all the places to replace with your own name / email address.
+## How to fork it
+
+- Fork the repo on GitHub
+- Ask Dave to add you to the [`djm.me/cfg`](https://djm.me/cfg) script
+- Install as normal
+- Put your public key in `~/.ssh/<name>.pub` (e.g. `~/.ssh/dave.pub`)
+- Uncomment `IdentityFile` and `IdentitiesOnly` in `~/.ssh/config`
+- Use `g gi alberon` (i.e. `git grep -i alberon`) to find all the places to replace with your own name / email address
+- Commit those changes
+
+## How to update your fork
+
+To update your fork with the latest changes:
+
+```bash
+git pull alberon master
+```
+
+If there are any conficts, fix them any conflicts, add the files (`g a <filename>`) and commit (`g ci`).
 
 ## Installing
 
