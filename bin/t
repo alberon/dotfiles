@@ -31,11 +31,13 @@ done
 
 # Display help?
 if [ "${1:-}" = "-h" -o "${1:-}" = "--help" ]; then
-    if [ -f "$scripts/README.md" ]; then
-        exec mdview "$scripts/README.md"
-    else
+    if [ ! -f "$scripts/README.md" ]; then
         echo "No help file found ($scripts/README.md)" >&2
         exit 1
+    elif which node >/dev/null 2>&1; then
+        exec mdview "$scripts/README.md"
+    else
+        exec awk '/^#/ { print "\033[33;1m"$0"\033[0m"; next } { print }' "$scripts/README.md"
     fi
 fi
 
