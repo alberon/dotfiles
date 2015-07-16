@@ -1,4 +1,4 @@
-_z_completion() {
+_t_completion() {
     # Locate the scripts directory
     if ! root="$(findup -d scripts)"; then
         return
@@ -34,4 +34,4 @@ _z_completion() {
     done
 }
 
-complete -F _z_completion z
+complete -F _t_completion t
