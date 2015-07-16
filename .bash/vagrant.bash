@@ -22,7 +22,6 @@ vagrant() {
     case "$cmd" in
         u)     cmd=up          ;;
         p)     cmd=provision   ;;
-        s)     cmd=ssh         ;;
         st)    cmd=status      ;;
         d)     cmd=suspend     ;;
         down)  cmd=suspend     ;;
@@ -30,19 +29,24 @@ vagrant() {
         hosts) cmd=hostmanager ;;
     esac
 
-    # Special case for the 'ssh' command with no parameters
-    if [ "$cmd" = "ssh" -a $# -eq 0 ]; then
-        if [ -z "$TMUX" ]; then
-            # Run tmux inside Vagrant (if available)
+    # Special case for the 's' command
+    if [ "$cmd" = "s" ]; then
+        if [ $# -gt 0 ]; then
+            # 'v s <cmd>' => Treat the extra parameters as a command
+            command vagrant ssh -c "$*"
+            return
+        elif [ -z "$TMUX" ]; then
+            # Not running tmux - Run tmux inside Vagrant (if available)
             command vagrant ssh -- -t 'which tmux >/dev/null 2>&1 && { tmux attach || tmux new -s default; } || bash -l'
         elif $CYGWIN; then
-            # We're running tmux already
+            # We're running tmux already - on Cygwin
             # For some reason Cygwin -> tmux -> vagrant (ruby) -> ssh is *really* slow
             # But if we skip ruby it's fine!
+            # Note: The Vagrant setup may still be slow... So I don't use tmux in Cygwin much
             (umask 077 && command vagrant ssh-config > /tmp/vagrant-ssh-config)
             ssh -F /tmp/vagrant-ssh-config default
         else
-            # Run as normal
+            # We're running tmux on another platform - just connect as normal
             command vagrant ssh
         fi
         return
