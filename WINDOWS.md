@@ -14,6 +14,7 @@
 - links
 - ncurses
 - tmux
+- tree
 - vim
 - wget
 - whois
