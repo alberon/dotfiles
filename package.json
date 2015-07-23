@@ -10,6 +10,8 @@
     "grunt-shell": "^0.7.0",
     "jit-grunt": "^0.7.0",
     "js-yaml": "^3.0.2",
-    "lodash": "^2.4.1"
+    "lodash": "^2.4.1",
+    "markdown-it": "^4.3.0",
+    "markdown-it-terminal": "0.0.2"
   }
 }

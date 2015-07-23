@@ -1,16 +1,93 @@
 #!/bin/bash
+set -o nounset -o pipefail -o errexit
+shopt -s nullglob
 
-start="$PWD"
+#================================================================================
+# Script runner - (c) Dave James Miller 2015 - MIT License
+#================================================================================
+# Type 't' alone to list all the scripts available
+# Type 't -h' to display the README.md file
+# Type 't <name> [args...]' to run a script
+# It will automatically search up the directory tree, if you are in a subdir
+#================================================================================
 
-# Search for a locally installed version of PHP Unit, to make sure it's the
-# right version and to avoid conflicts
-while [ ! -x vendor/bin/phpunit ]; do
-    if [ "`pwd`" = "/" ]; then
-        # Run the globally installed version as a fallback if not found
-        cd "$start"
-        exec phpunit "$@"
-    fi
-    cd ..
+exe="$(basename "$0")"
+
+# Locate the scripts directory
+if ! root="$(findup -d scripts)"; then
+    echo "'scripts' directory not found" >&2
+    exit 1
+fi
+
+# Subdirectory?
+scripts="$root/scripts"
+prefix=
+
+while [ $# -gt 0 -a -d "$scripts/${1:-}" ]; do
+    scripts="$scripts/$1"
+    prefix="$prefix$1 "
+    shift
 done
 
-exec vendor/bin/phpunit "$@"
+# Display help?
+if [ "${1:-}" = "-h" -o "${1:-}" = "--help" ]; then
+    if [ ! -f "$scripts/README.md" ]; then
+        echo "No help file found ($scripts/README.md)" >&2
+        exit 1
+    elif which node >/dev/null 2>&1; then
+        exec mdview "$scripts/README.md"
+    else
+        exec awk '/^#/ { print "\033[33;1m"$0"\033[0m"; next } { print }' "$scripts/README.md"
+    fi
+fi
+
+# Run script?
+if [ $# -gt 0 ]; then
+    cmd="$1"
+
+    for script in "$scripts/$cmd"{,.*}; do
+        if [ -x "$script" ]; then
+            shift
+            exec "$script" "$@"
+        fi
+    done
+
+    echo "Script '$prefix$cmd' not found" >&2
+    exit 1
+fi
+
+# Display list of scripts
+list_scripts() {
+    local cmd="$1"
+    local dir="$2"
+
+    for file in "$dir/"*; do
+        name="$(basename "$file")" # Remove path
+        name="${name%%.*}"         # Remove extension
+        if [ -d "$file" ]; then
+            list_scripts "$cmd$name " "$file"
+        elif [ ! -x "$file" ]; then
+            : # Skip non-executable files
+        elif [ "${name^^}" = "README" ]; then
+            : # Skip readme files
+        elif [[ "$name" == *" "* ]]; then
+            # Spaces in the name
+            echo "$cmd'$name'"
+        else
+            echo "$cmd$name"
+        fi
+    done
+}
+
+if [ -n "$prefix" ]; then
+    echo -e "\e[37;1mMatching Scripts:\e[0m"
+else
+    echo -e "\e[37;1mAvailable Scripts:\e[0m"
+fi
+
+list_scripts "$exe $prefix" "$scripts"
+
+if [ -f "$scripts/README.md" ]; then
+    echo
+    echo -e "\e[36;1mRun '$exe $prefix-h' to view the readme file\e[0m"
+fi

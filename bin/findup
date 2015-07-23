@@ -1,0 +1,10 @@
+#!/bin/bash
+
+while ! test "$@"; do
+    if [ "$PWD" = "/" ]; then
+        exit 1
+    fi
+    cd ..
+done
+
+echo "$PWD"

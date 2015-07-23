@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# Locate npm
+npm=
+for path in '/cygdrive/c/Program Files/nodejs/npm' '/cygdrive/c/Program Files (x86)/nodejs/npm'; do
+    if [ -f "$path" ]; then
+        npm="$path"
+        break
+    fi
+done
+
+if [ -z "$npm" ]; then
+    echo "'npm' installation not found" >&2
+    exit 127
+fi
+
+# Locate Git for Windows
+git_path=
+for path in '/cygdrive/c/Program Files/Git/bin' '/cygdrive/c/Program Files (x86)/Git/bin'; do
+    if [ -f "$path/git.exe" ]; then
+        git_path="$path"
+        break
+    fi
+done
+
+if [ -z "$git_path" ]; then
+    echo "npm: Git for Windows installation not found" >&2
+    exit 127
+fi
+
+# npm doesn't support Cygwin so we have to work around it
+# https://github.com/npm/npm/issues/7456
+
+# Part 1: Use Git for Windows not the Cygwin version, to support Windows style paths
+export PATH="$git_path:$PATH"
+
+# Part 2: Use 'cmd /c' to run it outside Cygwin
+exec cmd /c "$(cygpath -w "$npm")" "$@"

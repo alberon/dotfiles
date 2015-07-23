@@ -1,0 +1,10 @@
+#!/bin/bash
+set -o nounset -o pipefail -o errexit
+
+if ! which node >/dev/null 2>&1; then
+    echo 'mdview: Node.js is not installed' >&2
+    exit 127
+fi
+
+# Convert the paths to Windows format because Node doesn't understand Cygwin
+exec node "$(cygpath -w "$HOME/bin/mdview")" "$(cygpath -w "$1")"

@@ -37,3 +37,9 @@ if which manpath >/dev/null 2>&1; then
     MANPATH="$HOME/opt/git-extras-man:$MANPATH"
     export MANPATH
 fi
+
+# Tool to debug the path
+debug_path()
+{
+    echo -e "${PATH//:/\\n}"
+}
