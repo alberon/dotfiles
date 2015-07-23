@@ -1,8 +1,0 @@
-#!/bin/bash
-
-while [ $# -gt 0 ]; do
-    echo "$1"
-    chmod +x "$1"
-    git update-index --add --chmod=+x "$1"
-    shift
-done

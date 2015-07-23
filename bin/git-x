@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Mark a file (or all files in a directory) executable on Windows (where
+# core.filemode = false)
+
+# I wanted to name this command "git +x", but it causes an error message if you
+# type "git +x s<tab>" because the completion tries to run
+# "git config --get 'alias.+x'" which is an invalid alias
+
+while [ $# -gt 0 ]; do
+    echo "$1"
+
+    if [ -d "$1" ]; then
+        for file in "${1%/}/"*; do
+            git x "$file"
+        done
+    else
+        chmod +x "$1"
+        git update-index --add --chmod=+x "$1"
+    fi
+
+    shift
+done
