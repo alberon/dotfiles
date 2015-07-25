@@ -4,11 +4,7 @@ shopt -s nullglob
 
 #================================================================================
 # Script runner - (c) Dave James Miller 2015 - MIT License
-#================================================================================
-# Type 't' alone to list all the scripts available
-# Type 't -h' to display the README.md file
-# Type 't <name> [args...]' to run a script
-# It will automatically search up the directory tree, if you are in a subdir
+# See README.md for details of how it works
 #================================================================================
 
 exe="$(basename "$0")"
