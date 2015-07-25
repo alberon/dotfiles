@@ -9,7 +9,16 @@
 - Install as normal
 - Put your public key in `~/.ssh/<name>.pub` (e.g. `~/.ssh/dave.pub`)
 - Uncomment `IdentityFile` and `IdentitiesOnly` in `~/.ssh/config`
-- Use `g gi alberon` (i.e. `git grep -i alberon`) to find all the places to replace with your own name / email address
+- Use `g gi alberon` (i.e. `git grep -i alberon`) to find all the places to replace with your own name / email address - currently this includes:
+    - `.bash/userinfo.bash`
+    - `.bazaar/bazaar.conf`
+    - `.gitconfig`
+    - `.grip/settings.py`
+    - `.vagrant.d/provision-dotfiles.sh`
+    - `bin/bzr-install`
+- And optionally change the name in:
+    - `.vim/plugin/snipmate-config.vim`
+    - `bin/generate-mit-license`
 - Commit those changes
 
 ## How to update your fork
