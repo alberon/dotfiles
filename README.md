@@ -24,7 +24,9 @@ If there are any conficts, fix them any conflicts, add the files (`g a <filename
 
 ## Installing
 
-On Linux:
+### On Linux:
+
+You need to have `git` and `wget` installed - e.g. `sudo apt-get install git wget` or `sudo yum install git wget`.
 
 ```bash
 cd
@@ -32,15 +34,50 @@ wget djm.me/cfg
 . cfg
 ```
 
-On Windows mSysGit (Git Bash) or a system without `wget` installed:
+That's it. (See https://djm.me/cfg for the script source - don't execute scripts from the internet without knowing what they do!)
+
+### On Windows:
+
+[Install Cygwin](https://cygwin.com/install.html) - select [any local mirror](https://cygwin.com/mirrors.html) (e.g. `mirrorservice.org` for UK), and when prompted add these packages:
+
+- git
+- vim
+- wget
+
+**Tip:** Click the "View" button in the top-right corner to select "Full" mode, then use the search box.
+
+Once it's installed, run Cygwin Terminal and run this to set the same home directory in Cygwin and Windows:
+
+```bash
+cd /
+mv $HOME $HOME.bak && ln -s "$(cygpath "$USERPROFILE")" $HOME
+```
+
+Then install dotfiles as above:
+
+```bash
+cd
+wget djm.me/cfg
+. cfg
+```
+
+Close and re-open Cygwin Terminal to reload the configuration. (**Note:** When testing I had to reload it *twice* before it picked up the changed font.)
+
+Then run this to install some additional useful packages:
+
+```bash
+apt-cyg install bash-completion bind-utils curl dos2unix git-completion less links ncurses tmux tree whois
+```
+
+### On Git for Windows (formerly mSysGit):
+
+I don't recommend [Git for Windows](https://msysgit.github.io/) any more, but it should still work:
 
 ```bash
 cd
 curl djm.me/cfg > cfg
 . cfg
 ```
-
-That's it. (See http://djm.me/cfg for the script source - don't execute scripts without knowing what they do!)
 
 ## Bash aliases
 
@@ -85,7 +122,7 @@ I'm lazy so I have a lot of Bash aliases and short commands - here are the most 
 | `pow`      | `sudo poweroff`                               |                                                          |
 | `reload`   | `exec bash -l`                                | Run this after modifying any Bash config file            |
 
-**Note:** Expansions may be simplified in the list above - e.g. `l` is actually aliased to `ls -hFl --color=always --hide=*.pyc --hide=*.sublime-workspace` on Linux or `LSCOLORS=ExGxFxDaCaDaDahbaDacec ls -hFlG` on Mac.
+**Note:** Expansions are simplified in the list above - e.g. `l` is actually aliased to `ls -hFl --color=always --hide=*.pyc --hide=*.sublime-workspace` on Linux or `LSCOLORS=ExGxFxDaCaDaDahbaDacec ls -hFlG` on Mac.
 
 ## Git aliases
 
@@ -153,10 +190,53 @@ These commands will automatically be prefixed with `sudo`:
 - `userdel`
 - `usermod`
 
+## Script runner (`t` command)
+
+The `t` command makes it easy to run scripts specific to a project (or anywhere really). First, create a `scripts/` directory in the project root. For example:
+
+```
+repo/
+├── ...
+└── scripts/
+    ├── download/
+    │   ├── live.sh
+    │   └── staging.sh
+    └── push.sh
+```
+
+To run these three scripts, you would normally type:
+
+```bash
+scripts/download/live.sh
+scripts/download/staging.sh
+scripts/push.sh
+```
+
+But using the `t` command this is simplified to:
+
+```bash
+t download live
+t download staging
+t push
+```
+
+Note that the file extension is not required (it can be any extension - e.g. `.sh`/`.php` - or no extension), and files in subdirectories become subcommands. It will automatically search up the directory tree, if you are in a subdirectory of the project - in that case it's equivalent to `../../scripts/push.sh` (for example).
+
+You can also:
+
+- Type `t <name> [args...]` to run a script with arguments
+- Type `t` alone to list all the scripts available
+- Type `t <dir>` to list all the scripts in a subdirectory (e.g. `t download`)
+- Type `t -h` (for *help*) to display the contents of the `scripts/README.md` file (which will be syntax-highlighted if Node.js is installed)
+- Type `t <dir> -h` to display the contents of `scripts/<dir>/README.md`
+- Use tab-completion (e.g. `t d<tab> s<tab>` is 7 keys instead of 18)
+
 ## Supported operating systems
 
-Tested on:
+These scripts have been tested on various platforms at various times:
 
 - Linux - Debian, Ubuntu, CentOS
-- Windows (under MSysGit)
-- Mac OS X (may be out of date!)
+- Windows - Cygwin, Git for Windows
+- Mac OS X
+
+However, I no longer use Git for Windows or Mac OS X, so there could be bugs.

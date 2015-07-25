@@ -1,0 +1,3 @@
+#!/bin/bash
+
+curl https://raw.githubusercontent.com/transcode-open/apt-cyg/master/apt-cyg > ~/bin/win/apt-cyg
