@@ -9,47 +9,61 @@ fi
 if [ ! -f ~/.bashrc_config ]; then
 
     # Check for cPanel server
-    cpanel=0
-    if [ -d /var/cpanel ]; then
-        cpanel=1
-    fi
+    # Detect operating system
+    WINDOWS=false
+    CYGWIN=false
+    MSYSGIT=false
+    MAC=false
+    CPANEL=false
+    VAGRANT=false
 
-    # Check for Windows server
     case "$(uname)" in
-       MINGW|CYGWIN*) windows=1 ;;
-       *)             windows=0 ;;
+        CYGWIN*)  WINDOWS=true; CYGWIN=true ;;
+        MINGW32*) WINDOWS=true; MSYSGIT=true ;;
+        Darwin)   MAC=true ;;
     esac
 
+    if [ -d /var/cpanel ]; then
+        CPANEL=true
+    fi
+
+    if [ -d /vagrant ]; then
+        VAGRANT=true
+    fi
+
     # Generate .bashrc_config
-    echo "enable_sudo=0" >> ~/.bashrc_config
+    (
+        # Prompt message & colour
+        echo "#prompt_default=''"
 
-    echo "#prompt_default=''" >> ~/.bashrc_config
+        if $CPANEL; then
+            echo "prompt_type=live #live/staging/dev/special"
+        elif $VAGRANT; then
+            echo "prompt_type=dev #live/staging/dev/special"
+        else
+            echo "prompt_type= #live/staging/dev/special"
+        fi
 
-    if [ $cpanel -eq 1 ]; then
-        echo "prompt_type=live #live/staging/dev/special" >> ~/.bashrc_config
-    elif [ -d /vagrant ]; then
-        echo "prompt_type=dev #live/staging/dev/special" >> ~/.bashrc_config
-    else
-        echo "prompt_type= #live/staging/dev/special" >> ~/.bashrc_config
-    fi
+        # File permissions
+        if $CPANEL || $WINDOWS; then
+            echo "umask_user=022"
+        else
+            echo "umask_user=007"
+        fi
 
-    if [ $cpanel -eq 1 -o $windows -eq 1 ]; then
-        echo "umask_user=022" >> ~/.bashrc_config
-    else
-        echo "umask_user=007" >> ~/.bashrc_config
-    fi
+        echo "umask_root=022"
 
-    echo "umask_root=022" >> ~/.bashrc_config
-
-    if [ $cpanel -eq 1 ]; then
-        echo "www_dir=~/repo" >> ~/.bashrc_config
-    elif [ -d ~/repo ]; then
-        echo "www_dir=~/repo" >> ~/.bashrc_config
-    elif [ -d /vagrant ]; then
-        echo "www_dir=/vagrant" >> ~/.bashrc_config
-    else
-        echo "www_dir=" >> ~/.bashrc_config
-    fi
+        # Path for 'cw' command
+        if $VAGRANT; then
+            echo "www_dir=/vagrant"
+        elif $CYGWIN; then
+            echo "www_dir=$(cygpath --mydocs)"
+        elif $CPANEL || [ -d ~/repo ]; then
+            echo "www_dir=~/repo"
+        else
+            echo "www_dir="
+        fi
+    ) > ~/.bashrc_config
 
     # Open in editor (if running interactively, not in a Vagrant provisioner)
     if [ -t 0 ]; then
