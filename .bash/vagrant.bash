@@ -4,14 +4,19 @@ vagrant() {
     # No parameters
     if [ $# -eq 0 ]; then
         command vagrant
-        echo
-        echo "Shortcuts:"
-        echo "     u       up"
-        echo "     p       provision"
-        echo "     s       ssh"
-        echo "     st      status"
-        echo "     d       suspend (down)"
-        echo "     hosts   update /etc/hosts (hostmanager)"
+
+        # 1 = Help message displayed (or maybe other errors?)
+        # 127 = Command not found
+        if [ $? -eq 1 ]; then
+            echo "Shortcuts:"
+            echo "     d        suspend (down)"
+            echo "     hosts    update /etc/hosts (hostmanager)"
+            echo "     p        provision"
+            echo "     s        ssh"
+            echo "     st       status"
+            echo "     u        up"
+        fi
+
         return
     fi
 
