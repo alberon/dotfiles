@@ -38,7 +38,7 @@ vagrant() {
     if [ "$cmd" = "s" ]; then
         if [ $# -gt 0 ]; then
             # 'v s <cmd>' => Treat the extra parameters as a command
-            command vagrant ssh -c "$*"
+            command vagrant ssh -c "cd /vagrant; $*"
             return
         elif [ -z "$TMUX" ]; then
             # Not running tmux - Run tmux inside Vagrant (if available)
