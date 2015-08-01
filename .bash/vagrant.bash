@@ -60,3 +60,9 @@ vagrant() {
     # Other commands
     command vagrant "$cmd" "$@"
 }
+
+# Workaround for Vagrant bug on Cygwin
+# https://github.com/mitchellh/vagrant/issues/6026
+if $CYGWIN; then
+    export VAGRANT_DETECTED_OS=cygwin
+fi
