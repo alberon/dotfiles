@@ -1,7 +1,21 @@
 #!/bin/bash
 
-# Default to the current directory
-path="${1:-.}"
+# If no filenames are given, look for a project in the current directory
+if [ $# -eq 0 ]; then
+
+    projects=$(find . -name "*.sublime-project" -mindepth 1 -maxdepth 1 -type f 2>/dev/null)
+
+    if [ -n "$projects" -a $(echo "$projects" | wc -l) -eq 1 ]; then
+        # One project found - assume we want that
+        path="$projects"
+    else
+        # 0 or 2+ projects found - open the directory
+        path="."
+    fi
+
+else
+    path="$1"
+fi
 
 # Convert path to Windows format
 path="$(cygpath -aw "$path")"
