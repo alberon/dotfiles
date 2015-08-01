@@ -27,7 +27,10 @@ if [ ! -f ~/.bashrc_config ]; then
         CPANEL=true
     fi
 
-    if [ -d /vagrant ]; then
+    if [ -d /vagrant -o -d /home/vagrant ]; then
+        # The /vagrant directory doesn't always exist at this point, due to
+        # https://github.com/npm/npm/issues/3670#issuecomment-82825408
+        # so we also check for /home/vagrant
         VAGRANT=true
     fi
 
