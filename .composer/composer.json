@@ -1,6 +1,6 @@
 {
     "config": {
-        "vendor-dir": "packages"
+        "vendor-dir": "packages/vendor"
     },
     "require": {
         "drush/drush": "@stable",

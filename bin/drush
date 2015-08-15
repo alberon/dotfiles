@@ -9,4 +9,4 @@ else
     opt=
 fi
 
-exec $HOME/.composer/vendor/bin/drush $opt "$@"
+exec $HOME/.composer/packages/vendor/bin/drush $opt "$@"
