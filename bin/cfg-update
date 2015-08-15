@@ -116,5 +116,16 @@ git remote remove dd 2>/dev/null
 #    composer global install
 #fi
 
+# Have to use symlinks for these two because otherwise "git pull" fails
+if [ ! -L ~/.composer/vendor ]; then
+    rm -rf ~/.composer/vendor
+    ln -s ~/.composer/vendor-real ~/.composer/vendor
+fi
+
+if [ ! -L ~/node_modules ]; then
+    rm -rf ~/node_modules
+    ln -s ~/lib/node_modules ~/node_modules
+fi
+
 # Return true even if the last command above failed
 true

@@ -5,37 +5,36 @@
 !/.devilspie
 !/.elinks
 !/.fluxbox
-!/.hgextensions
-!/.windows-config
-!/.vim
-!/bin
-!/Dotfiles.sublime-project
-!/gnome
-!/Gruntfile.coffee
-!/lib
-!/opt
-!/package.json
-!/README.md
-!/WINDOWS.md
 !/.gitattributes-global
 !/.gitconfig
 !/.gitignore
 !/.gitignore-global
+!/.hgextensions
 !/.irbrc
 !/.minttyrc
-!/node_modules
 !/.railsrc
 !/.railsrc-x
 !/.rdebugrc
-!/.tmux_cheatsheet
 !/.tmux.conf
+!/.tmux_cheatsheet
+!/.vim
+!/.windows-config
+!/Dotfiles.sublime-project
+!/Gruntfile.coffee
+!/README.md
+!/WINDOWS.md
+!/bin
+!/gnome
+!/lib
+!/opt
+!/package.json
 
 # Composer - config only, not cache files
 !/.composer
 /.composer/*
 !/.composer/composer.json
 !/.composer/composer.lock
-!/.composer/vendor
+!/.composer/vendor_
 
 # Drush - config, not cache
 !/.drush

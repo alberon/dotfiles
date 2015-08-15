@@ -67,21 +67,6 @@ When you log in, a maximum of once per day, dotfiles will automatically check fo
 
 To upgrade manually, run `cfg pull` (or, equivalently, `cd; git pull`).
 
-### Troubleshooting upgrade problems
-
-*15 Aug 2015* - I moved the PHP and Node.js dependencies into the Git repo, to speed up future installs and updates. However, this may conflict with files previously installed files by Composer and npm. I can't find any way around that - so if you get an error like this (maybe with a lot more files listed):
-
-```
-error: Untracked working tree file '.composer/vendor/autoload.php' would be overwritten by merge.  Aborting
-```
-
-You will need to run this command to fix them:
-
-```bash
-rm -rf ~/.composer/vendor ~/node_modules
-cfg pull
-```
-
 ## Bash aliases
 
 I'm lazy so I have a lot of Bash aliases and short commands - here are the most useful ones:
