@@ -34,7 +34,7 @@
 /.composer/*
 !/.composer/composer.json
 !/.composer/composer.lock
-!/.composer/vendor_
+!/.composer/vendor-real
 
 # Drush - config, not cache
 !/.drush
