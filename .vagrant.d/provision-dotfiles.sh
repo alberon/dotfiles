@@ -2,6 +2,13 @@
 set -eu
 
 #===============================================================================
+# Settings
+#===============================================================================
+
+github_user=alberon
+public_key=~/.ssh/alberon.pub
+
+#===============================================================================
 # Helpers
 #===============================================================================
 
@@ -157,8 +164,8 @@ if [ ! -d .git ]; then
     # Based on https://djm.me/cfg but quiet and non-interactive
     echo "Installing dotfiles in $HOME..."
     git init -q
-    git remote add origin git://github.com/alberon/dotfiles.git
-    git remote set-url --push origin git@github.com:alberon/dotfiles.git
+    git remote add origin "git://github.com/$github_user/dotfiles.git"
+    git remote set-url --push origin "git@github.com:$github_user/dotfiles.git"
     git fetch -q origin
     rm -f .bashrc .bash_profile
     git checkout origin/master -b master >/dev/null 2>&1
@@ -174,16 +181,16 @@ fi
 # root dotfiles
 #---------------------------------------
 
-sudo -s <<'END'
+sudo -s <<END
     if [ ! -d ~root/.git ]; then
         # On Ubuntu, sudo sets $HOME to /home/vagrant not /root
         HOME=~root
 
-        echo "Installing dotfiles in $HOME..."
+        echo "Installing dotfiles in \$HOME..."
         cd ~
         git init -q
-        git remote add origin git://github.com/alberon/dotfiles.git
-        git remote set-url --push origin git@github.com:alberon/dotfiles.git
+        git remote add origin "git://github.com/$github_user/dotfiles.git"
+        git remote set-url --push origin "git@github.com:$github_user/dotfiles.git"
         git fetch -q origin
         rm -f .bashrc .bash_profile
         git checkout origin/master -b master >/dev/null 2>&1
@@ -193,6 +200,6 @@ sudo -s <<'END'
 END
 
 # Allow SSH access to the root user
-if [ -f ~/.ssh/alberon.pub ]; then
-    sudo cp -f ~/.ssh/alberon.pub ~root/.ssh/authorized_keys
+if [ -n "$public_key" -a -f "$public_key" ]; then
+    sudo cp -f "$public_key" ~root/.ssh/authorized_keys
 fi
