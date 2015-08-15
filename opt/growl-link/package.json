@@ -1,0 +1,11 @@
+{
+  "name": "growl-link",
+  "version": "1.0.0",
+  "private": true,
+  "repository": {},
+  "dependencies": {
+    "growler": "betamos/Node-Growler#9ec202b162f8e160cb270f3e66d28d4befc93bfe",
+    "js-yaml": "^3.0.2",
+    "lodash": "^2.4.1"
+  }
+}

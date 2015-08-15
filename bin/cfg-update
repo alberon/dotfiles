@@ -64,7 +64,7 @@ if [ -f .git/hooks/post-checkout ]; then
     rm -f .git/hooks/post-checkout
 fi
 
-# Delete old submodules
+# Delete old submodules and packages
 for i in \
     .vim/bundle/ctrlp               \
     .vim/bundle/file-line           \
@@ -85,6 +85,8 @@ for i in \
     .vim/bundle/vim-markdown        \
     .vim/bundle/vim-reload          \
     .vim/bundle/yankring            \
+    .composer/vendor                \
+    node_modules                    \
     opt/boris                       \
     opt/git-extras                  \
     opt/icdiff
@@ -100,32 +102,6 @@ ln -nsf ../../bin/cfg-update .git/hooks/post-merge
 # Add/update remote repositories
 git remote add alberon git://github.com/alberon/dotfiles.git 2>/dev/null
 git remote remove dd 2>/dev/null
-
-# Update submodules (no longer in use because they're slow)
-# git submodule sync #>/dev/null
-# git submodule init #>/dev/null
-# git submodule update
-
-# Update Node.js packages (now in Git)
-#if which npm >/dev/null 2>&1; then
-#    npm install
-#fi
-
-# Update Composer packages (now in Git)
-#if which composer >/dev/null 2>&1; then
-#    composer global install
-#fi
-
-# Have to use symlinks for these two because otherwise "git pull" fails
-if [ ! -L ~/.composer/vendor ]; then
-    rm -rf ~/.composer/vendor
-    ln -s vendor-real ~/.composer/vendor
-fi
-
-if [ ! -L ~/node_modules ]; then
-    rm -rf ~/node_modules
-    ln -s lib/node_modules ~/node_modules
-fi
 
 # Return true even if the last command above failed
 true
