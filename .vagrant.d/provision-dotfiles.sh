@@ -144,7 +144,7 @@ if [ ! -d .git ]; then
 fi
 
 # Install root dotfiles
-sudo -s <<END
+sudo -s <<'END'
     if [ ! -d ~root/.git ]; then
         # On Ubuntu, sudo sets $HOME to /home/vagrant not /root
         HOME=~root
