@@ -146,8 +146,11 @@ fi
 # Install root dotfiles
 sudo -s <<END
     if [ ! -d ~root/.git ]; then
-        echo "Installing dotfiles in $(echo ~root)..."
-        cd ~root
+        # On Ubuntu, sudo sets $HOME to /home/vagrant not /root
+        HOME=~root
+
+        echo "Installing dotfiles in $HOME..."
+        cd ~
         git init -q
         git remote add origin git://github.com/davejamesmiller/dotfiles.git
         git remote set-url --push origin git@github.com:davejamesmiller/dotfiles.git
