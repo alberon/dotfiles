@@ -39,7 +39,7 @@ fi
 
 # Check permissions on .ssh/ directory
 chmod 700 .ssh
-chmod 600 .ssh/*
+chmod 600 .ssh/* 2>/dev/null
 
 # Add known host keys for various Git servers
 if [ ! -f .ssh/known_hosts ]; then
@@ -64,7 +64,7 @@ if [ -f .git/hooks/post-checkout ]; then
     rm -f .git/hooks/post-checkout
 fi
 
-# Delete old submodules
+# Delete old submodules and packages
 for i in \
     .vim/bundle/ctrlp               \
     .vim/bundle/file-line           \
@@ -85,11 +85,13 @@ for i in \
     .vim/bundle/vim-markdown        \
     .vim/bundle/vim-reload          \
     .vim/bundle/yankring            \
+    .composer/vendor                \
+    node_modules                    \
     opt/boris                       \
     opt/git-extras                  \
     opt/icdiff
 do
-    if [ -d "$i" ]; then
+    if [ -e "$i" -o -L "$i" ]; then
         rm -rf "$i"
     fi
 done
@@ -101,17 +103,5 @@ ln -nsf ../../bin/cfg-update .git/hooks/post-merge
 git remote add alberon git://github.com/alberon/dotfiles.git 2>/dev/null
 git remote remove dd 2>/dev/null
 
-# Update submodules (no longer in use because they're slow)
-# git submodule sync #>/dev/null
-# git submodule init #>/dev/null
-# git submodule update
-
-# Update Node.js packages
-if which npm >/dev/null 2>&1; then
-    npm install
-fi
-
-# Update Composer packages
-if which composer >/dev/null 2>&1; then
-    composer global install
-fi
+# Return true even if the last command above failed
+true

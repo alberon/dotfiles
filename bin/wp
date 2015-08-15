@@ -8,4 +8,4 @@ else
     opt=
 fi
 
-exec $HOME/.composer/vendor/bin/wp $opt "$@"
+exec $HOME/.composer/packages/vendor/bin/wp $opt "$@"

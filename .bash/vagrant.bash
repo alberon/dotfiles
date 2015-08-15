@@ -25,13 +25,14 @@ vagrant() {
     shift
 
     case "$cmd" in
-        u)     cmd=up          ;;
-        p)     cmd=provision   ;;
-        st)    cmd=status      ;;
-        d)     cmd=suspend     ;;
-        down)  cmd=suspend     ;;
-        stop)  cmd=halt        ;;
-        hosts) cmd=hostmanager ;;
+        d)     cmd=suspend       ;;
+        down)  cmd=suspend       ;;
+        gs)    cmd=global-status ;;
+        hosts) cmd=hostmanager   ;;
+        p)     cmd=provision     ;;
+        st)    cmd=status        ;;
+        stop)  cmd=halt          ;;
+        u)     cmd=up            ;;
     esac
 
     # Special case for the 's' command

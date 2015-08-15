@@ -33,7 +33,7 @@ If there are any conficts, fix them any conflicts, add the files (`g a <filename
 
 ## Installing
 
-### On Linux:
+### Installing on Linux
 
 You need to have `git` and `wget` installed - e.g. `sudo apt-get install git wget` or `sudo yum install git wget`.
 
@@ -45,7 +45,7 @@ wget djm.me/cfg
 
 That's it. (See https://djm.me/cfg for the script source - don't execute scripts from the internet without knowing what they do!)
 
-### On Windows:
+### Installing on Windows:
 
 [Install Cygwin](https://cygwin.com/install.html) - select [any local mirror](https://cygwin.com/mirrors.html) (e.g. `mirrorservice.org` for UK), and when prompted add these packages:
 
@@ -78,7 +78,7 @@ Then run this to install some additional useful packages:
 apt-cyg install bash-completion bind-utils curl dos2unix git-completion less links ncurses tmux tree whois
 ```
 
-### On Git for Windows (formerly mSysGit):
+### Installing on Git for Windows (formerly mSysGit):
 
 I don't recommend [Git for Windows](https://msysgit.github.io/) any more, but it should still work:
 
@@ -87,6 +87,12 @@ cd
 curl djm.me/cfg > cfg
 . cfg
 ```
+
+## Upgrading
+
+When you log in, a maximum of once per day, dotfiles will automatically check for and install any updates.
+
+To upgrade manually, run `cfg pull` (or, equivalently, `cd; git pull`).
 
 ## Bash aliases
 

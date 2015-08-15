@@ -1,0 +1,10 @@
+{
+  "name": "mdview",
+  "version": "1.0.0",
+  "private": true,
+  "repository": {},
+  "dependencies": {
+    "markdown-it": "^4.3.0",
+    "markdown-it-terminal": "0.0.2"
+  }
+}
