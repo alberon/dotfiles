@@ -18,11 +18,11 @@ export SSH_AUTH_SOCK="$HOME/.ssh/ssh_auth_sock"
 # tmux attach (local)
 alias tm='tmux -2 attach || tmux -2 new -s default'
 
-# ssh + tmux ('h' for 'host' because 's' and 't' are in use)
+# ssh + tmux ('h' for 'host' or 'ssH', because 's' and 't' are in use)
 h() {
     host="$1"
     name="${2:-default}"
-    ssh -t "$host" "tmux -2 attach -t '$name' || tmux -2 new -s '$name' || bash -l"
+    ssh -t "$host" "which tmux >/dev/null 2>&1 && { tmux -2 attach -t '$name' || tmux -2 new -s '$name'; } || bash -l"
 }
 
 complete -o bashdefault -o default -o nospace -F _ssh h 2>/dev/null ||
