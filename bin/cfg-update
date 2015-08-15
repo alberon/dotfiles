@@ -115,3 +115,6 @@ git remote remove dd 2>/dev/null
 #if which composer >/dev/null 2>&1; then
 #    composer global install
 #fi
+
+# Return true even if the last command above failed
+true
