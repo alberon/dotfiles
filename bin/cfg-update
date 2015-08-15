@@ -39,7 +39,7 @@ fi
 
 # Check permissions on .ssh/ directory
 chmod 700 .ssh
-chmod 600 .ssh/*
+chmod 600 .ssh/* 2>/dev/null
 
 # Add known host keys for various Git servers
 if [ ! -f .ssh/known_hosts ]; then
@@ -106,12 +106,12 @@ git remote remove dd 2>/dev/null
 # git submodule init #>/dev/null
 # git submodule update
 
-# Update Node.js packages
-if which npm >/dev/null 2>&1; then
-    npm install
-fi
+# Update Node.js packages (now in Git)
+#if which npm >/dev/null 2>&1; then
+#    npm install
+#fi
 
-# Update Composer packages
-if which composer >/dev/null 2>&1; then
-    composer global install
-fi
+# Update Composer packages (now in Git)
+#if which composer >/dev/null 2>&1; then
+#    composer global install
+#fi

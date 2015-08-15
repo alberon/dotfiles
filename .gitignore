@@ -23,6 +23,7 @@
 !/.gitignore-global
 !/.irbrc
 !/.minttyrc
+!/node_modules
 !/.railsrc
 !/.railsrc-x
 !/.rdebugrc
@@ -34,6 +35,7 @@
 /.composer/*
 !/.composer/composer.json
 !/.composer/composer.lock
+!/.composer/vendor
 
 # Drush - config, not cache
 !/.drush
