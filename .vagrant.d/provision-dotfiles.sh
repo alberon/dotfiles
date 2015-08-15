@@ -5,11 +5,13 @@ set -eu
 # Helpers
 #===============================================================================
 
-is_installed() {
+is_installed()
+{
     which "$1" &>/dev/null
 }
 
-install() {
+install()
+{
     if is_installed apt-get; then
         apt_install "$1"
     elif is_installed yum; then
@@ -23,7 +25,8 @@ install() {
 
 apt_updated=false
 
-apt_update() {
+apt_update()
+{
     if ! $apt_updated; then
         echo "Updating APT sources..."
         sudo apt-get update -qqy
@@ -31,7 +34,8 @@ apt_update() {
     fi
 }
 
-apt_install() {
+apt_install()
+{
     apt_update
     echo "Installing $1..."
     # Note: apt-get install -qq doesn't actually make it silent!
@@ -44,7 +48,8 @@ apt_install() {
 
 yum_gpg_keys_installed=false
 
-yum_gpg_keys() {
+yum_gpg_keys()
+{
     if ! $yum_gpg_keys_installed; then
         if [ -f /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6 ]; then
             echo "Importing GPG keys..."
@@ -57,7 +62,8 @@ yum_gpg_keys() {
     fi
 }
 
-yum_install() {
+yum_install()
+{
     yum_gpg_keys
     echo "Installing $1..."
     sudo yum install -q -y "$1"
@@ -67,64 +73,85 @@ yum_install() {
 # Main
 #===============================================================================
 
-# Install Git - required to install dotfiles
+#---------------------------------------
+# Git
+#---------------------------------------
+
 if ! is_installed git; then
     install git
 fi
 
-# Install Vim - because I like it better than any other editor
+#---------------------------------------
+# Vim
+#---------------------------------------
+
 if ! is_installed vim; then
     install vim
 fi
 
-# Install tmux
-if ! is_installed tmux; then
+#---------------------------------------
+# tmux
+#---------------------------------------
 
-    if is_installed apt-get; then
+compare()
+{
+    [ "$(echo "$1" | bc)" = 1 ]
+}
 
-        # Ubuntu 12.04 Precise has an old version of tmux installed by default
-        if [ -f /etc/lsb-release ]; then
-            source /etc/lsb-release
-            if [ "$DISTRIB_RELEASE" = "12.04" ]; then
-                echo "Adding ppa:pi-rho/dev repository..."
-                sudo DEBIAN_FRONTEND=noninteractive apt-get install -qqy python-software-properties
-                sudo add-apt-repository -y ppa:pi-rho/dev
-                # http://askubuntu.com/a/197532
-                sudo apt-get update -qqy -o Dir::Etc::sourcelist="sources.list.d/pi-rho-dev-$DISTRIB_CODENAME.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0"
-            fi
+install_tmux()
+{
+    # Already installed *and* up to date?
+    if is_installed tmux; then
+        version="$(tmux -V | egrep -o '[0-9]+\.[0-9]+')"
+        if [ -n "$version" ] && compare "$version >= 1.9"; then
+            return
         fi
-
-        # So does Debian 7
-        if [ -f /etc/debian_version -a "$(cat /etc/debian_version)" = "7.8" ]; then
-            echo "Adding Backports repository..."
-            echo "deb http://mirrors.kernel.org/debian wheezy-backports main" | sudo tee /etc/apt/sources.list.d/wheezy-backports.list >/dev/null
-            sudo apt-get update -qqy -o Dir::Etc::sourcelist="sources.list.d/wheezy-backports.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0"
-            apt_install tmux -t wheezy-backports
-        else
-            apt_install tmux
-        fi
-
-
-    elif is_installed yum; then
-
-        if [ -f /etc/centos-release ] && grep -q '\s6\.[0-6]' /etc/centos-release; then
-
-            # CentOS 6 doesn't even have anything newer than 1.6 in the repos (main or EPEL)
-            echo "Installing tmux..."
-            yum_gpg_keys
-            sudo rpm -i http://copr-be.cloud.fedoraproject.org/results/maxamillion/epel6-tmux/epel-6-x86_64/tmux-1.9a-2.fc20/tmux-1.9a-2.el6.x86_64.rpm
-
-        else
-
-            yum_install tmux
-
-        fi
-
     fi
 
-fi
+    # Ubuntu 12.04, 14.04, etc.
+    if [ -f /etc/lsb-release ]; then
+        source /etc/lsb-release
+        if [ "$DISTRIB_ID" = "Ubuntu" ] && compare "$DISTRIB_RELEASE <= 14.04"; then
+            echo "Adding ppa:pi-rho/dev repository..."
+            sudo DEBIAN_FRONTEND=noninteractive apt-get install -qqy python-software-properties >/dev/null
+            sudo add-apt-repository -y ppa:pi-rho/dev >/dev/null 2>&1
+            # http://askubuntu.com/a/197532
+            sudo apt-get update -qqy -o Dir::Etc::sourcelist="sources.list.d/pi-rho-dev-$DISTRIB_CODENAME.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0"
+            apt_install tmux
+            return
+        fi
+    fi
 
-# Install dotfiles
+    # Debian 7.x
+    if [ -f /etc/debian_version ] && grep -q '^7\.[0-8]$' /etc/debian_version ]; then
+        echo "Adding Backports repository..."
+        echo "deb http://mirrors.kernel.org/debian wheezy-backports main" | sudo tee /etc/apt/sources.list.d/wheezy-backports.list >/dev/null
+        sudo apt-get update -qqy -o Dir::Etc::sourcelist="sources.list.d/wheezy-backports.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0"
+        apt_install tmux -t wheezy-backports
+        return
+    fi
+
+    # CentOS 6.x doesn't even have anything newer than 1.6 in the repos (main or
+    # EPEL) - so install from this third party source
+    if [ -f /etc/centos-release ] && grep -q '\s6\.[0-6]' /etc/centos-release; then
+        echo "Installing tmux..."
+        yum_gpg_keys
+        sudo rpm -i http://copr-be.cloud.fedoraproject.org/results/maxamillion/epel6-tmux/epel-6-x86_64/tmux-1.9a-2.fc20/tmux-1.9a-2.el6.x86_64.rpm
+        return
+    fi
+
+    # Anything else - probably can't upgrade, but attempt to install if it's missing
+    if ! is_installed tmux; then
+        install tmux
+    fi
+}
+
+install_tmux
+
+#---------------------------------------
+# dotfiles
+#---------------------------------------
+
 if [ ! -d .git ]; then
 
     # Based on https://djm.me/cfg but quiet and non-interactive
@@ -143,7 +170,10 @@ if [ ! -d .git ]; then
 
 fi
 
-# Install root dotfiles
+#---------------------------------------
+# root dotfiles
+#---------------------------------------
+
 sudo -s <<'END'
     if [ ! -d ~root/.git ]; then
         # On Ubuntu, sudo sets $HOME to /home/vagrant not /root
@@ -162,7 +192,7 @@ sudo -s <<'END'
     fi
 END
 
-# Allow access to the root user
+# Allow SSH access to the root user
 if [ -f ~/.ssh/davejamesmiller.pub ]; then
     sudo cp -f ~/.ssh/davejamesmiller.pub ~root/.ssh/authorized_keys
 fi
