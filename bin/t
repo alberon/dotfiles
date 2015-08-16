@@ -42,7 +42,7 @@ if [ $# -gt 0 ]; then
     cmd="$1"
 
     for script in "$scripts/$cmd"{,.*}; do
-        if [ -x "$script" ]; then
+        if [ -f "$script" ]; then
             shift
             exec "$script" "$@"
         fi
@@ -60,12 +60,12 @@ list_scripts() {
     for file in "$dir/"*; do
         name="$(basename "$file")" # Remove path
         name="${name%%.*}"         # Remove extension
-        if [ -d "$file" ]; then
-            list_scripts "$cmd$name " "$file"
-        elif [ ! -x "$file" ]; then
-            : # Skip non-executable files
-        elif [ "${name^^}" = "README" ]; then
+        if [ "${name^^}" = "README" ]; then
             : # Skip readme files
+        elif [ "${name:0:1}" = "_" ]; then
+            : # Skip includes (files starting with "_")
+        elif [ -d "$file" ]; then
+            list_scripts "$cmd$name " "$file"
         elif [[ "$name" == *" "* ]]; then
             # Spaces in the name
             echo "$cmd'$name'"
