@@ -116,13 +116,13 @@ display_help() {
             text = gensub("^.*:$", "\033[35m\\0\033[0m", 1, text)
 
             # **Bold** - Red
-            text = gensub("\\*\\*(.*)\\*\\*", "\033[31;1m\\1\033[0m", "g", text)
+            text = gensub("\\*\\*([^*]+)\\*\\*", "\033[31;1m\\1\033[0m", "g", text)
 
             # *Italic* - Green
-            text = gensub("\\*(.*)\\*", "\033[32;1m\\1\033[0m", "g", text)
+            text = gensub("\\*([^*]+)\\*", "\033[32;1m\\1\033[0m", "g", text)
 
             # `Code` - Aqua
-            text = gensub("`(.*)`", "\033[36m\\1\033[0m", "g", text)
+            text = gensub("`([^`]+)`", "\033[36m\\1\033[0m", "g", text)
 
             # URLs - underline
             text = gensub("https?://[^ )]+", "\033[4m\\0\033[0m", "g", text)
