@@ -7,4 +7,8 @@ if ! which node >/dev/null 2>&1; then
 fi
 
 # Convert the paths to Windows format because Node doesn't understand Cygwin
-exec node "$(cygpath -w "$HOME/opt/mdview/bin/mdview")" "$(cygpath -w "$1")"
+if [ $# -eq 0 ]; then
+    exec node "$(cygpath -w "$HOME/opt/mdview/bin/mdview")"
+else
+    exec node "$(cygpath -w "$HOME/opt/mdview/bin/mdview")" "$(cygpath -w "$1")"
+fi
