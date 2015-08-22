@@ -1,0 +1,3 @@
+#!/bin/bash
+
+exec "/cygdrive/c/Program Files/KDiff3/kdiff3.exe" "$@"
