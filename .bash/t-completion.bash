@@ -19,11 +19,11 @@ _t_completion() {
     COMPREPLY=()
 
     for file in "$scripts/${COMP_WORDS[$COMP_CWORD]}"*; do
+        [ -e "$file" ] || continue
+
         name="$(basename "$file")" # Remove path
         name="${name%%.*}"         # Remove extension
-        if [ "${name^^}" = "README" ]; then
-            : # Skip readme files
-        elif [ "${name:0:1}" = "_" ]; then
+        if [ "${name:0:1}" = "_" ]; then
             : # Skip includes (files starting with "_")
         elif [[ "$name" == *" "* ]]; then
             # Quote anything with spaces in the name
