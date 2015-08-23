@@ -90,6 +90,11 @@ display_help() {
             output = 0
         }
 
+        # Convert Windows new lines to Unix
+        {
+            sub(/\r$/, "")
+        }
+
         # Start/stop marker
         /#{78}/ {
             if (output) {
