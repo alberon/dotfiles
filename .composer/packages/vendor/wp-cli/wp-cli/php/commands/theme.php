@@ -55,7 +55,7 @@ class Theme_Command extends \WP_CLI\CommandWithUpgrade {
 	 * : Optional number of results to display. Defaults to 10.
 	 *
 	 * [--field=<field>]
-	 * : Prints the value of a single field for each plugin.
+	 * : Prints the value of a single field for each theme.
 	 *
 	 * [--fields=<fields>]
 	 * : Ask for specific fields from the API. Defaults to name,slug,author,rating. Acceptable values:
@@ -443,8 +443,11 @@ class Theme_Command extends \WP_CLI\CommandWithUpgrade {
 	 * [--all]
 	 * : If set, all themes that have updates will be updated.
 	 *
+	 * [--format=<format>]
+	 * : Output summary as table or summary. Defaults to table.
+	 *
 	 * [--version=<version>]
-	 * : If set, the plugin will be updated to the specified version.
+	 * : If set, the theme will be updated to the specified version.
 	 *
 	 * [--dry-run]
 	 * : Preview which themes would be updated.
