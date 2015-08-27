@@ -2,7 +2,8 @@
 
 # If we're in repo/ use repo/www/ as the root automatically
 # Can be overridden by passing another --path to it
-if [ ! -f index.php -a -f www/index.php ]; then
+# Skip if there are no parameters else WP-CLI doesn't display help
+if [ $# -gt 0 -a ! -f wp-config.php -a -f www/wp-config.php ]; then
     opt="--path=www/"
 else
     opt=

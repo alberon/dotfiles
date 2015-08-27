@@ -8,8 +8,8 @@ $baseDir = dirname(dirname($vendorDir));
 return array(
     $vendorDir . '/symfony/var-dumper/Resources/functions/dump.php',
     $vendorDir . '/nikic/php-parser/lib/bootstrap.php',
-    $vendorDir . '/wp-cli/php-cli-tools/lib/cli/cli.php',
     $vendorDir . '/ramsey/array_column/src/array_column.php',
+    $vendorDir . '/wp-cli/php-cli-tools/lib/cli/cli.php',
     $vendorDir . '/psy/psysh/src/Psy/functions.php',
     $vendorDir . '/wp-cli/wp-cli/php/Spyc.php',
 );

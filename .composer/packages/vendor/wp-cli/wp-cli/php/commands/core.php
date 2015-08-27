@@ -147,7 +147,7 @@ class Core_Command extends WP_CLI_Command {
 		WP_CLI::log( sprintf( 'Downloading WordPress %s (%s)...', $version, $locale ) );
 
 		$cache = WP_CLI::get_cache();
-		$cache_key = "core/$locale-$version.tar.gz";
+		$cache_key = "core/wordpress-{$version}-{$locale}.tar.gz";
 		$cache_file = $cache->has($cache_key);
 
 		$bad_cache = false;
@@ -178,7 +178,12 @@ class Core_Command extends WP_CLI_Command {
 			} else if ( 20 != substr( $response->status_code, 0, 2 ) ) {
 				WP_CLI::error( "Couldn't access download URL (HTTP code {$response->status_code})" );
 			}
-			self::_extract( $temp, ABSPATH );
+
+			try {
+				self::_extract( $temp, ABSPATH );
+			} catch ( Exception $e ) {
+				WP_CLI::error( "Couldn't extract WordPress archive. " . $e->getMessage() );
+			}
 			$cache->import( $cache_key, $temp );
 			unlink($temp);
 		}

@@ -331,6 +331,9 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 	 * [--all]
 	 * : If set, all plugins that have updates will be updated.
 	 *
+	 * [--format=<format>]
+	 * : Output summary as table or summary. Defaults to table.
+	 *
 	 * [--version=<version>]
 	 * : If set, the plugin will be updated to the specified version.
 	 *
@@ -561,6 +564,9 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 	 * ## EXAMPLES
 	 *
 	 *     wp plugin delete hello
+	 *
+	 *     # Delete inactive plugins
+	 *     wp plugin delete $(wp plugin list --status=inactive --field=name)
 	 */
 	function delete( $args, $assoc_args = array() ) {
 		foreach ( $this->fetcher->get_many( $args ) as $plugin ) {
@@ -607,6 +613,9 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 	 * ## EXAMPLES
 	 *
 	 *     wp plugin list --status=active --format=json
+	 *
+	 *     # List plugins on each site in a network
+	 *     wp site list --field=url | xargs -n 1 -I % wp plugin list --url=%
 	 *
 	 * @subcommand list
 	 */
