@@ -1,6 +1,8 @@
 # Ignore everything in the root except the specified files
 /*
 !/.bash
+!/.bash_completion
+!/.bash_completion.d
 !/.bazaar
 !/.elinks
 !/.gitattributes-global

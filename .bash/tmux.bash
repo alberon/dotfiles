@@ -24,6 +24,3 @@ h() {
     name="${2:-default}"
     ssh -t "$host" "which tmux >/dev/null 2>&1 && { tmux -2 attach -t '$name' || tmux -2 new -s '$name'; } || bash -l"
 }
-
-complete -o bashdefault -o default -o nospace -F _ssh h 2>/dev/null ||
-complete -o default -o nospace -F _ssh h

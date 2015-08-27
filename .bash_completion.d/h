@@ -1,0 +1,11 @@
+# Load 'ssh' completion
+if ! declare -f _ssh >/dev/null 2>&1; then
+    if [ -f /usr/share/bash-completion/completions/ssh ]; then
+        source /usr/share/bash-completion/completions/ssh
+    fi
+fi
+
+# Duplicate it
+if declare -f _ssh >/dev/null 2>&1; then
+    shopt -u hostcomplete && complete -F _ssh h
+fi
