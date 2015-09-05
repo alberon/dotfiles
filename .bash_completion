@@ -1,0 +1,28 @@
+if declare -f _completion_loader >/dev/null 2>&1; then
+
+    # Set up extra dynamic completion loading - based on:
+    # https://github.com/GArik/bash-completion/blob/afe39fd1e171d0ea3d4fb8ec0d8c8c14fa120ed8/bash_completion#L1950
+    _completion_loader_custom()
+    {
+        # Custom completions
+        local compdir=$HOME/.bash_completion.d
+
+        for compfile in "${1##*/}" _"${1##*/}"; do
+            compfile="$compdir/$compfile"
+            # Avoid trying to source dirs; https://bugzilla.redhat.com/903540
+            [[ -f "$compfile" ]] && . "$compfile" &>/dev/null && return 124
+        done
+
+        # Fallback to global completions or file listing
+        _completion_loader "$@"
+    } &&
+    complete -D -F _completion_loader_custom
+
+else
+
+    # Lazy-load not available, e.g. in Cygwin
+    for compfile in $HOME/.bash_completion.d/*; do
+        [[ -f "$compfile" ]] && . "$compfile"
+    done
+
+fi

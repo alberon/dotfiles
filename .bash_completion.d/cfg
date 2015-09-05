@@ -1,0 +1,11 @@
+# Load 'git' completion
+if ! declare -f __git_complete >/dev/null 2>&1; then
+    if [ -f /usr/share/bash-completion/completions/git ]; then
+        source /usr/share/bash-completion/completions/git
+    fi
+fi
+
+# Duplicate it
+if declare -f __git_complete >/dev/null 2>&1; then
+    __git_complete cfg __git_main
+fi

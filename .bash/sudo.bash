@@ -3,7 +3,8 @@ if $HAS_TERMINAL && ! $WINDOWS; then
     # s=sudo
     s() {
         if [[ $# == 0 ]]; then
-            sudo $(history -p '!!')
+            # Use eval to expand aliases
+            eval "sudo $(history -p '!!')"
         else
             sudo "$@"
         fi
@@ -13,11 +14,11 @@ if $HAS_TERMINAL && ! $WINDOWS; then
     alias se.="se ."
 
     # Versions of 'sudo ls'
-    alias sl='sudo ls -hF --color=always'
-    alias sls='sudo ls -hF --color=always'
-    alias sll='sudo ls -hFl --color=always'
-    alias sla='sudo ls -hFA --color=always'
-    alias slla='sudo ls -hFlA --color=always'
+    alias sl='sudo l'
+    alias sls='sudo ls'
+    alias sll='sudo ll'
+    alias sla='sudo la'
+    alias slla='sudo lla'
 
     # apt-get
     alias agi='sudo apt-get install'
@@ -65,5 +66,10 @@ if $HAS_TERMINAL && ! $WINDOWS; then
             command sudo "$@"
         fi
     }
+
+    # Expand aliases after sudo - e.g. 'sudo ll'
+    # http://askubuntu.com/a/22043/29806
+    alias sudo='sudo '
+    alias s='s '
 
 fi
