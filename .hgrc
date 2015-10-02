@@ -1,7 +1,7 @@
 [ui]
 ignore = ~/.hgignore-global
 merge = internal:merge
-username = Alberon Ltd. <info@alberon.co.uk>
+username = Pete Wond <pete@alberon.co.uk>
 
 [alias]
 ar = addremove
