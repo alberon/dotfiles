@@ -21,6 +21,14 @@ alias tm='tmux -2 attach || tmux -2 new -s default'
 # ssh + tmux ('h' for 'host' or 'ssH', because 's' and 't' are in use)
 h() {
     host="$1"
-    name="${2:-default}"
-    ssh -t "$host" "which tmux >/dev/null 2>&1 && { tmux -2 attach -t '$name' || tmux -2 new -s '$name'; } || bash -l"
+
+    if [ -z "$TMUX" ]; then
+        name="${2:-default}"
+        ssh -t "$host" "which tmux >/dev/null 2>&1 && { tmux -2 attach -t '$name' || tmux -2 new -s '$name'; } || bash -l"
+    elif [ $# -ge 2 ]; then
+        echo 'sessions should be nested with care, unset $TMUX to force' >&2
+        return 1
+    else
+        ssh "$host"
+    fi
 }
