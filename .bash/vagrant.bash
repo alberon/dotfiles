@@ -10,9 +10,11 @@ vagrant() {
         if [ $? -eq 1 ]; then
             echo "Custom commands:"
             echo "     exec      Run the given command on the guest machine"
+            echo "     rebuild   Destroy and rebuild the box"
             echo "     tmux      Run tmux (terminal multiplexer) inside the guest machine"
             echo
             echo "Shortcuts:"
+            echo "     bu        box update"
             echo "     d, down   suspend"
             echo "     h         tmux"
             echo "     gs        global-status"
@@ -45,11 +47,21 @@ vagrant() {
         x)     cmd=exec          ;;
     esac
 
+    # Box update
+    if [ "$cmd" = "bu" ]; then
+        command vagrant box update
+        return
+    fi
+
     # Execute a command on the guest
     if [ "$cmd" = "exec" ]; then
-        # 'v s <cmd>' => Treat the extra parameters as a command
         command vagrant ssh -c "cd /vagrant; $*"
         return
+    fi
+
+    # Destroy and rebuild
+    if [ "$cmd" = "rebuild" ]; then
+        command vagrant destroy "$@" && command vagrant box update && command vagrant up
     fi
 
     # tmux
