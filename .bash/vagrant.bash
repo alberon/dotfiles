@@ -8,13 +8,21 @@ vagrant() {
         # 1 = Help message displayed (or maybe other errors?)
         # 127 = Command not found
         if [ $? -eq 1 ]; then
+            echo "Custom commands:"
+            echo "     exec      Run the given command on the guest machine"
+            echo "     rebuild   Destroy and rebuild the box"
+            echo "     tmux      Run tmux (terminal multiplexer) inside the guest machine"
+            echo
             echo "Shortcuts:"
-            echo "     d        suspend (down)"
-            echo "     hosts    update /etc/hosts (hostmanager)"
-            echo "     p        provision"
-            echo "     s        ssh"
-            echo "     st       status"
-            echo "     u        up"
+            echo "     bu        box update"
+            echo "     d, down   suspend"
+            echo "     h         tmux"
+            echo "     gs        global-status"
+            echo "     hosts     hostmanager - update /etc/hosts files"
+            echo "     p         provision"
+            echo "     s         status"
+            echo "     u         up"
+            echo "     x         exec"
         fi
 
         return
@@ -27,21 +35,38 @@ vagrant() {
     case "$cmd" in
         d)     cmd=suspend       ;;
         down)  cmd=suspend       ;;
+        exe)   cmd=exec          ;;
         gs)    cmd=global-status ;;
+        h)     cmd=tmux          ;;
         hosts) cmd=hostmanager   ;;
         p)     cmd=provision     ;;
+        s)     cmd=status        ;;
         st)    cmd=status        ;;
         stop)  cmd=halt          ;;
         u)     cmd=up            ;;
+        x)     cmd=exec          ;;
     esac
 
-    # Special case for the 's' command
-    if [ "$cmd" = "s" ]; then
-        if [ $# -gt 0 ]; then
-            # 'v s <cmd>' => Treat the extra parameters as a command
-            command vagrant ssh -c "cd /vagrant; $*"
-            return
-        elif [ -z "$TMUX" ]; then
+    # Box update
+    if [ "$cmd" = "bu" ]; then
+        command vagrant box update
+        return
+    fi
+
+    # Execute a command on the guest
+    if [ "$cmd" = "exec" ]; then
+        command vagrant ssh -c "cd /vagrant; $*"
+        return
+    fi
+
+    # Destroy and rebuild
+    if [ "$cmd" = "rebuild" ]; then
+        command vagrant destroy "$@" && command vagrant box update && command vagrant up
+    fi
+
+    # tmux
+    if [ "$cmd" = "tmux" ]; then
+        if [ -z "$TMUX" ]; then
             # Not running tmux - Run tmux inside Vagrant (if available)
             command vagrant ssh -- -t 'which tmux >/dev/null 2>&1 && { tmux attach || tmux new -s default; } || bash -l'
         elif $CYGWIN; then

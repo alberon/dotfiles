@@ -48,7 +48,7 @@ if [ ! -f ~/.bashrc_config ]; then
         fi
 
         # File permissions
-        echo "umask_user=022"
+        echo "umask_user=002"
         echo "umask_root=022"
 
         # Path for 'cw' command
