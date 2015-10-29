@@ -3,15 +3,17 @@
 │ New                     │ Ctrl-A, Shift-C           │ Ctrl-A, C                 │ Ctrl-A, H  (horizontal)     │
 │                         │                           │                           │ Ctrl-A, V  (vertical)       │
 ├─────────────────────────┼───────────────────────────┼───────────────────────────┼─────────────────────────────┤
-│ Switch to previous      │ Ctrl-Alt-Up               │ Ctrl-Alt-Up               │ Alt-Left/Up                 │
+│ Switch to previous      │ Alt-Shift-Up              │ Alt-Shift-Left            │ Alt-Left/Up                 │
 │                         │ Ctrl-A, Shift-(           │ Alt-PageUp                │ Ctrl-A, Left/Up             │
 │                         │                           │ Ctrl-A, P                 │                             │
 ├─────────────────────────┼───────────────────────────┼───────────────────────────┼─────────────────────────────┤
-│ Switch to next          │ Ctrl-Alt-Down             │ Ctrl-Alt-Down             │ Alt-Right/Down              │
+│ Switch to next          │ Alt-Shift-Down            │ Alt-Shift-Right           │ Alt-Right/Down              │
 │                         │ Ctrl-A, Shift-)           │ Alt-PageDown              │ Ctrl-A, Right/Down          │
 │                         │                           │ Ctrl-A, N                 │ Ctrl-A, O                   │
 ├─────────────────────────┼───────────────────────────┼───────────────────────────┼─────────────────────────────┤
 │ Switch to last (toggle) │ Ctrl-A, Shift-L           │ Ctrl-A, L                 │ Ctrl-A, ;                   │
+├─────────────────────────┼───────────────────────────┼───────────────────────────┼─────────────────────────────┤
+│ Resize                  │                           │                           │ Ctrl-A, Alt-Arrows          │
 ├─────────────────────────┼───────────────────────────┼───────────────────────────┼─────────────────────────────┤
 │ Jump list               │ Ctrl-A, S                 │ Ctrl-A, W                 │                             │
 ├─────────────────────────┼───────────────────────────┼───────────────────────────┼─────────────────────────────┤
