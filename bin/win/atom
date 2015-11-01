@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# If no filenames are given, open the current directory
+if [ $# -eq 0 ]; then
+    path="."
+else
+    path="$1"
+    shift
+fi
+
+# Convert path to Windows format
+path="$(cygpath -aw "$path")"
+
+exec "$HOME/AppData/Local/Atom/bin/atom.cmd" "$path" "$@" &
