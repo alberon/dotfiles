@@ -62,6 +62,7 @@ vagrant() {
     # Destroy and rebuild
     if [ "$cmd" = "rebuild" ]; then
         command vagrant destroy "$@" && command vagrant box update && command vagrant up
+        return
     fi
 
     # tmux
