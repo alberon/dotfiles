@@ -22,6 +22,7 @@ vagrant() {
             echo "     p         provision"
             echo "     s         status"
             echo "     u         up"
+            echo "     uh        up && tmux"
             echo "     x         exec"
         fi
 
@@ -63,6 +64,12 @@ vagrant() {
     if [ "$cmd" = "rebuild" ]; then
         command vagrant destroy "$@" && command vagrant box update && command vagrant up
         return
+    fi
+
+    # up & tmux
+    if [ "$cmd" = "uh" ]; then
+        command vagrant up || return
+        cmd="tmux"
     fi
 
     # tmux
