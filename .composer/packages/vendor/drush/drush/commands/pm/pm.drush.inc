@@ -248,6 +248,39 @@ function pm_drush_command() {
       'output-data-type' => 'format-table',
     ),
   );
+
+  $items['pm-projectinfo'] = array(
+    'description' => 'Show a report of available projects and their extensions.',
+    'arguments' => array(
+      'projects' => 'Optional. A list of installed projects to show.',
+    ),
+    'options' => array(
+      'drush' => 'Optional. Only incude projects that have one or more Drush commands.',
+      'status' => array(
+        'description' => 'Filter by project status. Choices: enabled, disabled. A project is considered enabled when at least one of its extensions is enabled.',
+        'example-value' => 'enabled',
+      ),
+    ),
+    'outputformat' => array(
+      'default' => 'key-value-list',
+      'pipe-format' => 'json',
+      'field-labels' => array(
+        'label'      => 'Name',
+        'type'       => 'Type',
+        'version'    => 'Version',
+        'status'     => 'Status',
+        'extensions' => 'Extensions',
+        'drush'      => 'Drush Commands',
+        'datestamp'  => 'Datestamp',
+        'path'       => 'Path',
+      ),
+      'fields-default' => array('label', 'type', 'version', 'status', 'extensions', 'drush', 'datestamp', 'path'),
+      'fields-pipe' => array('label'),
+      'output-data-type' => 'format-table',
+    ),
+    'aliases' => array('pmpi'),
+  );
+
   // Install command is reserved for the download and enable of projects including dependencies.
   // @see http://drupal.org/node/112692 for more information.
   // $items['install'] = array(
@@ -386,7 +419,14 @@ function pm_drush_command() {
     'outputformat' => array(
       'default' => 'table',
       'pipe-format' => 'csv',
-      'field-labels' => array('project' => 'Project', 'version' => 'Release', 'date' => 'Date', 'status' => 'Status'),
+      'field-labels' => array(
+        'project' => 'Project',
+        'version' => 'Release',
+        'date' => 'Date',
+        'status' => 'Status',
+        'release_link' => 'Release link',
+        'download_link' => 'Download link',
+      ),
       'fields-default' => array('project', 'version', 'date', 'status'),
       'fields-pipe' => array('project', 'version', 'date', 'status'),
       'output-data-type' => 'format-table',
@@ -425,8 +465,8 @@ function pm_drush_command() {
       'select' => "Select the version to download interactively from a list of available releases.",
       'drupal-project-rename' => 'Alternate name for "drupal-x.y" directory when downloading Drupal project. Defaults to "drupal".',
       'default-major' => array(
-        'description' => 'Specify the default major version of modules to download when there is no bootstrapped Drupal site.  Defaults to "7".',
-        'example-value' => '6',
+        'description' => 'Specify the default major version of modules to download when there is no bootstrapped Drupal site.  Defaults to "8".',
+        'example-value' => '7',
       ),
       'skip' => 'Skip automatic downloading of libraries (c.f. devel).',
       'pipe' => 'Returns a list of the names of the extensions (modules and themes) contained in the downloaded projects.',
@@ -955,7 +995,7 @@ function drush_pm_enable_validate() {
     // with matching names.
     if (!empty($unknown)) {
       $found = array();
-      foreach ($unknown as $key => $name) {
+      foreach ($unknown as $name) {
         drush_log(dt('!extension was not found.', array('!extension' => $name)), 'warning');
         $project = drush_pm_enable_find_project_from_extension($name);
         if (!empty($project)) {
@@ -996,8 +1036,8 @@ function drush_pm_enable_validate() {
       $unmet_dependencies = array();
       foreach ($dependencies as $module => $info) {
         if (!empty($info['unmet-dependencies'])) {
-          foreach ($info['unmet-dependencies'] as $unmet_module) {
-            $unmet_project = drush_pm_enable_find_project_from_extension($unmet_module);
+          foreach ($info['unmet-dependencies'] as $unmet) {
+            $unmet_project = (!empty($info['dependencies'][$unmet]['project'])) ? $info['dependencies'][$unmet]['project'] : drush_pm_enable_find_project_from_extension($unmet);
             if (!empty($unmet_project)) {
               $unmet_dependencies[$module][$unmet_project] = $unmet_project;
             }
@@ -1030,6 +1070,10 @@ function drush_pm_enable_validate() {
       // Restore DRUSH_AFFIRMATIVE context.
       drush_set_context('DRUSH_AFFIRMATIVE', $drush_affirmative);
       // Refresh module cache after downloading the new modules.
+      if (drush_drupal_major_version() >= 8) {
+        \Drush\Drupal\ExtensionDiscovery::reset();
+        system_list_reset();
+      }
       $extension_info = drush_get_extensions();
       $recheck = TRUE;
     }
@@ -1045,7 +1089,8 @@ function drush_pm_enable_validate() {
       }
       elseif (!empty($info['dependencies'])) {
         // Make sure we have an assoc array.
-        $assoc = array_combine($info['dependencies'], $info['dependencies']);
+        $dependencies_list = array_keys($info['dependencies']);
+        $assoc = array_combine($dependencies_list, $dependencies_list);
         $all_dependencies = array_merge($all_dependencies, $assoc);
       }
     }
@@ -1221,34 +1266,31 @@ function drush_pm_releases() {
     $filter = '';
   }
 
-  $rows = array();
-  $releases_info = array();
+  $status_url = drush_get_option('source');
+
+  $output = array();
   foreach ($requests as $request) {
-    $request = pm_parse_request($request);
+    $request = pm_parse_request($request, $status_url, $projects);
     $project_name = $request['name'];
     $project_release_info = $release_info->get($request);
     if ($project_release_info) {
-      $version = isset($projects[$request['name']]) ? $projects[$request['name']]['version'] : NULL;
+      $version = isset($projects[$project_name]) ? $projects[$project_name]['version'] : NULL;
       $releases = $project_release_info->filterReleases($filter, $version);
       foreach ($releases as $key => $release) {
-        $rows[$key] = array(
+        $output["${project_name}-${key}"] = array(
           'project' => $project_name,
           'version' => $release['version'],
           'date' => gmdate('Y-M-d', $release['date']),
           'status' => implode(', ', $release['release_status']),
-        );
+        ) + $release;
       }
-      // Collect parsed update service info to set backend result.
-      $releases_info[$project_name] = $project_release_info->getInfo();
     }
   }
-  if (empty($rows)) {
+  if (empty($output)) {
     return drush_log(dt('No valid projects given.'), 'ok');
   }
-  #TODO# Ask @weitzman about 5a233660560a0
-  drush_backend_set_result($releases_info);
 
-  return $rows;
+  return $output;
 }
 
 /**
@@ -1257,13 +1299,24 @@ function drush_pm_releases() {
 function drush_pm_releasenotes() {
   $release_info = drush_get_engine('release_info');
 
+  // Obtain requests.
   if (!$requests = pm_parse_arguments(func_get_args(), FALSE)) {
     $requests = array('drupal');
   }
 
+  // Get installed projects.
+  if (drush_get_context('DRUSH_BOOTSTRAP_PHASE') >= DRUSH_BOOTSTRAP_DRUPAL_FULL) {
+    $projects = drush_get_projects();
+  }
+  else {
+    $projects = array();
+  }
+
+  $status_url = drush_get_option('source');
+
   $output = '';
   foreach($requests as $request) {
-    $request = pm_parse_request($request);
+    $request = pm_parse_request($request, $status_url, $projects);
     $project_release_info = $release_info->get($request);
     if ($project_release_info) {
       $version = empty($request['version']) ? NULL : $request['version'];
@@ -1518,7 +1571,7 @@ function pm_parse_version($version, $is_core = FALSE) {
   // If no major version, we have no version at all. Pick a default.
   $drupal_version_default = drush_drupal_major_version();
   if ($core_parts['major'] == '') {
-    $core_parts['major'] = ($drupal_version_default) ? $drupal_version_default : drush_get_option('default-major', 7);
+    $core_parts['major'] = ($drupal_version_default) ? $drupal_version_default : drush_get_option('default-major', 8);
   }
 
   if ($is_core) {
@@ -1599,7 +1652,7 @@ function pm_parse_version($version, $is_core = FALSE) {
  * @return array
  *   Array with all parts of the request info.
  */
-function pm_parse_request($request_string) {
+function pm_parse_request($request_string, $status_url = NULL, &$projects = array()) {
   $request = array();
 
   // Split $request_string in project name and version. Note that hyphens (-)
@@ -1624,6 +1677,14 @@ function pm_parse_request($request_string) {
   $request = array(
     'name' => $project,
   ) + pm_parse_version($version, $is_core);
+
+  // Set the status url if provided or available in project's info file.
+  if ($status_url) {
+    $request['status url'] = $status_url;
+  }
+  elseif (!empty($projects[$project]['status url'])) {
+    $request['status url'] = $projects[$project]['status url'];
+  }
 
   return $request;
 }

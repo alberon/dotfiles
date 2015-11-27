@@ -15,6 +15,16 @@ class DrupalBoot7 extends DrupalBoot {
     }
   }
 
+  function get_version($drupal_root) {
+    $path = $drupal_root . '/includes/bootstrap.inc';
+    if (is_file($path)) {
+      require_once $path;
+      if (defined('VERSION')) {
+        return VERSION;
+      }
+    }
+  }
+
   function get_profile() {
     return drupal_get_profile();
   }
@@ -30,23 +40,28 @@ class DrupalBoot7 extends DrupalBoot {
 
   function contrib_modules_paths() {
     return array(
-      conf_path() . '/modules',
+      $this->conf_path() . '/modules',
       'sites/all/modules',
     );
   }
 
   function contrib_themes_paths() {
     return array(
-      conf_path() . '/themes',
+      $this->conf_path() . '/themes',
       'sites/all/themes',
     );
   }
 
   function bootstrap_drupal_core($drupal_root) {
     define('DRUPAL_ROOT', $drupal_root);
+    require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
     $core = DRUPAL_ROOT;
 
     return $core;
+  }
+
+  function bootstrap_drupal_database_validate() {
+    return parent::bootstrap_drupal_database_validate() && $this->bootstrap_drupal_database_has_table('blocked_ips');
   }
 
   function bootstrap_drupal_database() {

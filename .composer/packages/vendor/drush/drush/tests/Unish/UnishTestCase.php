@@ -5,7 +5,8 @@ namespace Unish;
 abstract class UnishTestCase extends \PHPUnit_Framework_TestCase {
 
   /**
-   * A list of Drupal sites that have been recently installed.
+   * A list of Drupal sites that have been recently installed. They key is the
+   * site name and values are details about each site.
    *
    * @var array
    */
@@ -73,22 +74,23 @@ abstract class UnishTestCase extends \PHPUnit_Framework_TestCase {
     $line = "\nLog: $message\n";
     switch ($this->log_level()) {
       case 'verbose':
-        if (in_array($type, array('notice', 'verbose'))) print $line;
+        if (in_array($type, array('notice', 'verbose'))) fwrite(STDERR, $line);
         break;
       case 'debug':
-        print $line;
+        fwrite(STDERR, $line);
         break;
       default:
-        if ($type == 'notice') print $line;
+        if ($type == 'notice') fwrite(STDERR, $line);
         break;
     }
   }
 
   function log_level() {
+    // -d is reserved by `phpunit`
     if (in_array('--debug', $_SERVER['argv'])) {
       return 'debug';
     }
-    elseif (in_array('--verbose', $_SERVER['argv'])) {
+    elseif (in_array('--verbose', $_SERVER['argv']) || in_array('-v', $_SERVER['argv'])) {
       return 'verbose';
     }
   }
@@ -109,7 +111,10 @@ abstract class UnishTestCase extends \PHPUnit_Framework_TestCase {
   function tick() {
     static $chars = array('/', '-', '\\', '|');
     static $counter = 0;
-    print $chars[($counter++ % 4)] . "\033[1D";
+    // ANSI support is flaky on Win32, so don't try to do ticks there.
+    if (!$this->is_windows()) {
+      print $chars[($counter++ % 4)] . "\033[1D";
+    }
   }
 
   /**
@@ -201,6 +206,34 @@ abstract class UnishTestCase extends \PHPUnit_Framework_TestCase {
     }
 
     return $pass;
+  }
+
+  public function mkdir($path) {
+    if (!is_dir($path)) {
+      if ($this->mkdir(dirname($path))) {
+        if (@mkdir($path)) {
+          return TRUE;
+        }
+      }
+      return FALSE;
+    }
+    return TRUE;
+  }
+
+  public function recursive_copy($src, $dst) {
+    $dir = opendir($src);
+    $this->mkdir($dst);
+    while(false !== ( $file = readdir($dir)) ) {
+      if (( $file != '.' ) && ( $file != '..' )) {
+        if ( is_dir($src . '/' . $file) ) {
+          $this->recursive_copy($src . '/' . $file,$dst . '/' . $file);
+        }
+        else {
+          copy($src . '/' . $file,$dst . '/' . $file);
+        }
+      }
+    }
+    closedir($dir);
   }
 
   function webroot() {
@@ -322,7 +355,7 @@ abstract class UnishTestCase extends \PHPUnit_Framework_TestCase {
       chmod($site, 0777);
     }
     else {
-      mkdir($site);
+      @mkdir($site);
       touch("$site/settings.php");
     }
   }

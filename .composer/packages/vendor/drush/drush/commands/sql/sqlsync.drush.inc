@@ -41,6 +41,7 @@ function sqlsync_drush_command() {
       // 'cache' => 'Skip dump if result file exists and is less than "cache" hours old. Optional; default is 24 hours.',
       // 'no-cache' => 'Do not cache the sql-dump file.',
       'no-dump' => 'Do not dump the sql database; always use an existing dump file.',
+      'no-sync' => 'Do not rsync the database dump file from source to target.',
       'source-db-url' => 'Database specification for source system to dump from.',
       'source-remote-port' => 'Override sql database port number in source-db-url. Optional.',
       'source-remote-host' => 'Remote machine to run sql-dump file on. Optional; default is local machine.',
@@ -65,8 +66,6 @@ function sqlsync_drush_command() {
         // declare it here since this command does not bootstrap fully.
         'hidden' => TRUE,
       ),
-      // 'temp' => 'Use a temporary file to hold dump files.  Implies --no-cache.',
-      // 'dump-dir' => 'Directory to store sql dump files in when --source-dump or --target-dump are not used.',
       'create-db' => 'Create a new database before importing the database dump on the target machine.',
       'db-su' => array(
         'description' => 'Account to use when creating a new database. Optional.',
@@ -99,6 +98,16 @@ function sqlsync_drush_help_alter(&$command) {
       unset($command['options']['source-target']['hidden'], $command['options']['target-target']['hidden']);
     }
   }
+}
+
+/**
+ * Command argument complete callback.
+ *
+ * @return
+ *  Array of available site aliases.
+ */
+function sql_sql_sync_complete() {
+  return array('values' => array_keys(_drush_sitealias_all_list()));
 }
 
 /*
@@ -170,14 +179,17 @@ function drush_sqlsync_sql_sync_validate($source, $destination) {
  * A command callback.
  */
 function drush_sqlsync_sql_sync($source, $destination) {
-  // Get destination info for confirmation prompt.
   $source_settings = drush_sitealias_overlay_options(drush_sitealias_get_record($source), 'source-');
   $destination_settings = drush_sitealias_overlay_options(drush_sitealias_get_record($destination), 'target-');
-
   $source_is_local = !array_key_exists('remote-host', $source_settings) || drush_is_local_host($source_settings);
   $destination_is_local = !array_key_exists('remote-host', $destination_settings) || drush_is_local_host($destination_settings);
 
+  // These options are passed along to subcommands like sql-create, sql-dump, sql-query, sql-sanitize, ...
+  $source_options = drush_get_merged_prefixed_options('source-');
+  $target_options = drush_get_merged_prefixed_options('target-');
+
   $backend_options = array();
+  // @todo drush_redispatch_get_options() assumes you will execute same command. Not good.
   $global_options = drush_redispatch_get_options() + array(
      'strict' => 0,
   );
@@ -194,18 +206,18 @@ function drush_sqlsync_sql_sync($source, $destination) {
   // Create destination DB if needed.
   if (drush_get_option('create-db')) {
     drush_log(dt('Starting to create database on Destination.'), 'ok');
-    $return = drush_invoke_process($destination, 'sql-create', array(), $global_options, $backend_options);
+    $return = drush_invoke_process($destination, 'sql-create', array(), $global_options + $target_options, $backend_options);
     if ($return['error_status']) {
       return drush_set_error('DRUSH_SQL_CREATE_FAILED', dt('sql-create failed.'));
     }
   }
 
   // Perform sql-dump on source unless told othrwise.
-  $options = $global_options + array(
-      'gzip' => TRUE,
-      'result-file' => drush_get_option('source-dump', TRUE),
-      // 'structure-tables-list' => 'cache*', // Do we want to default to this?
-    );
+  $options = $global_options + $source_options + array(
+    'gzip' => TRUE,
+    'result-file' => drush_get_option('source-dump', TRUE),
+    // 'structure-tables-list' => 'cache*', // Do we want to default to this?
+  );
   if (!drush_get_option('no-dump')) {
     drush_log(dt('Starting to dump database on Source.'), 'ok');
     $return = drush_invoke_process($source, 'sql-dump', array(), $options, $backend_options);
@@ -230,7 +242,7 @@ function drush_sqlsync_sql_sync($source, $destination) {
   }
   elseif ($source_is_local && $destination_is_local) {
     $destination_dump_path = $source_dump_path;
-    $do_rsync = false;
+    $do_rsync = FALSE;
   }
   else {
     $tmp = '/tmp'; // Our fallback plan.
@@ -247,19 +259,7 @@ function drush_sqlsync_sql_sync($source, $destination) {
       // Cleanup if this command created the dump file.
       $rsync_options['remove-source-files'] = TRUE;
     }
-
-    // Try run to rsync locally so that aliases always resolve. https://github.com/drush-ops/drush/issues/668
-    if (drush_sitealias_is_remote_site($source) === FALSE) {
-      $runner = $source;
-    }
-    elseif (drush_sitealias_is_remote_site($destination) === FALSE) {
-      $runner = $destination;
-    }
-    else {
-      // Both are remote. Arbitrarily run rsync on destination. Aliases must be defined there (for now).
-      // @todo Add an option for choosing runner? Resolve aliases before rsync?
-      $runner = $destination;
-    }
+    $runner = drush_get_runner($source, $destination);
     $return = drush_invoke_process($runner, 'core-rsync', array("$source:$source_dump_path", "$destination:$destination_dump_path"), $rsync_options);
     drush_log(dt('Copying dump file from Source to Destination.'), 'ok');
     if ($return['error_status']) {
@@ -269,7 +269,7 @@ function drush_sqlsync_sql_sync($source, $destination) {
 
   // Import file into destination.
   drush_log(dt('Starting to import dump file onto Destination database.'), 'ok');
-  $options = $global_options + array(
+  $options = $global_options + $target_options + array(
     'file' => $destination_dump_path,
     'file-delete' => TRUE,
   );
@@ -280,7 +280,7 @@ function drush_sqlsync_sql_sync($source, $destination) {
   }
 
   // Run Sanitize if needed.
-  $options = $global_options + array();
+  $options = $global_options + $target_options;
   if (drush_get_option('sanitize')) {
     drush_log(dt('Starting to sanitize target database on Destination.'), 'ok');
     $return = drush_invoke_process($destination, 'sql-sanitize', array(), $options, $backend_options);

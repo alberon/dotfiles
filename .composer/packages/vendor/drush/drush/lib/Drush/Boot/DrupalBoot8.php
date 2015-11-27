@@ -31,20 +31,52 @@ class DrupalBoot8 extends DrupalBoot {
     }
   }
 
+  function get_version($drupal_root) {
+    // Load the autoloader so we can access the class constants.
+    drush_drupal_load_autoloader($drupal_root);
+    // Drush depends on bootstrap being loaded at this point.
+    require_once $drupal_root .'/core/includes/bootstrap.inc';
+    if (defined('Drupal::VERSION')) {
+      return \Drupal::VERSION;
+    }
+  }
+
   function get_profile() {
     return drupal_get_profile();
+  }
+
+  function conf_path($require_settings = TRUE, $reset = FALSE, Request $request = NULL) {
+    if (!isset($request)) {
+      if (\Drupal::hasRequest()) {
+        $request = \Drupal::request();
+      }
+      // @todo Remove once external CLI scripts (Drush) are updated.
+      else {
+        $request = Request::createFromGlobals();
+      }
+    }
+    if (\Drupal::hasService('kernel')) {
+      $site_path = \Drupal::service('kernel')->getSitePath();
+    }
+    if (!isset($site_path) || empty($site_path)) {
+      $site_path = DrupalKernel::findSitePath($request, $require_settings);
+    }
+    return $site_path;
   }
 
   function add_logger() {
     // If we're running on Drupal 8 or later, we provide a logger which will send
     // output to drush_log(). This should catch every message logged through every
     // channel.
-    \Drupal::getContainer()->get('logger.factory')->addLogger(new \Drush\Log\DrushLog);
+    $container = \Drupal::getContainer();
+    $parser = $container->get('logger.log_message_parser');
+    $logger = new \Drush\Log\DrushLog($parser);
+    $container->get('logger.factory')->addLogger($logger);
   }
 
   function contrib_modules_paths() {
     return array(
-      conf_path() . '/modules',
+      $this->conf_path() . '/modules',
       'sites/all/modules',
       'modules',
     );
@@ -56,7 +88,7 @@ class DrupalBoot8 extends DrupalBoot {
    */
   function contrib_themes_paths() {
     return array(
-      conf_path() . '/themes',
+      $this->conf_path() . '/themes',
       'sites/all/themes',
       'themes',
     );
@@ -68,8 +100,8 @@ class DrupalBoot8 extends DrupalBoot {
     return $core;
   }
 
-  function bootstrap_drupal_root_validate() {
-    return drush_set_error('DRUSH_DRUPAL_VERSION_UNSUPPORTED', dt('Drush !drush_version does not support Drupal 8.', array('!drush_version' => DRUSH_VERSION)));
+  function bootstrap_drupal_database_validate() {
+    return parent::bootstrap_drupal_database_validate() && $this->bootstrap_drupal_database_has_table('key_value');
   }
 
   function bootstrap_drupal_database() {
