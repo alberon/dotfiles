@@ -59,7 +59,7 @@
  * affects the loading of Drush configuration files.
  */
 
-// Specify a particular multisite.
+// Specify the base_url that should be used when generating links
 # $options['l'] = 'http://example.com/subdir';
 
 // Specify your Drupal core base directory (useful if you use symlinks).
@@ -77,6 +77,7 @@
  */
 # $options['shell-aliases']['pull'] = '!git pull'; // We've all done it.
 # $options['shell-aliases']['pulldb'] = '!git pull && drush updatedb';
+# $options['shell-aliases']['cpull'] = 'config-pull @example.prod @self --label=vcs';
 # $options['shell-aliases']['noncore'] = 'pm-list --no-core';
 # $options['shell-aliases']['wipe'] = 'cache-clear all';
 # $options['shell-aliases']['unsuck'] = 'pm-disable -y overlay,dashboard';
@@ -113,11 +114,11 @@
 
 /**
  * By default, Drush will download projects compatible with the current
- * version of Drupal, or, if no Drupal site is specified, then the Drupal-7
+ * version of Drupal, or, if no Drupal site is specified, then the Drupal-8
  * version of the project is downloaded.  Set default-major to select a
  * different default version.
  */
-# $options['default-major'] = 6;
+# $options['default-major'] = 7;
 
 // Clone extensions (modules, themes, etc.) from drupal.org via 'pm-download'.
 # $options['package-handler'] = 'git_drupalorg';
@@ -144,14 +145,6 @@
  * semi-colon (;) on Windows.
  */
 # $options['alias-path'] = array('/path/to/aliases','/path2/to/more/aliases');
-
-/**
- * Specify the folder where 'sql-sync' should store persistent dump files.
- * Keeping the dump files around improves the performance of rsync when the
- * database is rsync'ed to a remote system.  If a dump directory is not
- * specified, then 'sql-sync' will store dumps in temporary files.
- */
-# $options['dump-dir'] = '/path/to/dumpdir';
 
 /**
  * Specify the filename and path where 'sql-dump' should store backups of

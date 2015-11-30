@@ -155,6 +155,10 @@ if $HAS_TERMINAL; then
         PS1="${PS1}\[\033[30;1m\]:"                 # :                             Grey
         PS1="${PS1}\[\033[33;1m\]\$(vcsprompt)"     # Working directory / Git / Hg  Yellow
         PS1="${PS1}\[\033[30;1m\]\$(venvprompt)"    # Python virtual env            Grey
+        PS1="${PS1}\[\033[30;1m\] at "              # at                            Grey
+        PS1="${PS1}\[\033[37;0m\]\D{%T}"            # Time                          Light grey
+        #PS1="${PS1}\[\033[30;1m\] on "              # on                            Grey
+        #PS1="${PS1}\[\033[30;1m\]\D{%d/%m/%Y}"      # Date                          Light grey
         PS1="${PS1}\[\033[30;1m\]]"                 # ]                             Grey
         PS1="${PS1}\[\033[1;35m\]\$KeyStatus"       # SSH key status                Pink
         PS1="${PS1}\n"                              # (New line)

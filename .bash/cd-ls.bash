@@ -68,6 +68,9 @@ if $HAS_TERMINAL; then
     alias ll='l'
     alias lla='la'
 
+    # Use colours for 'tree' too
+    alias tree='tree -C'
+
     # Unset the colours that are sometimes set (e.g. Joshua)
     export LS_COLORS=
 

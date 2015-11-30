@@ -18,12 +18,12 @@ class saCase extends CommandUnishTestCase {
    *     places said option AFTER the command name.
    */
   function testDispatchStrictOptions() {
-    $aliasPath = UNISH_SANDBOX . '/aliases';
-    mkdir($aliasPath);
+    $aliasPath = UNISH_SANDBOX . '/site-alias-directory';
+    file_exists($aliasPath) ?: mkdir($aliasPath);
     $aliasFile = $aliasPath . '/bar.aliases.drushrc.php';
     $aliasContents = <<<EOD
   <?php
-  // Writtne by Unish. This file is safe to delete.
+  // Written by Unish. This file is safe to delete.
   \$aliases['test'] = array(
     'remote-host' => 'fake.remote-host.com',
     'remote-user' => 'www-admin',
@@ -113,5 +113,118 @@ EOD;
    */
   public function testBadAlias() {
     $this->drush('sa', array('@badalias'), array(), NULL, NULL, self::EXIT_ERROR);
+  }
+
+  /**
+   * Test to see if we can access aliases defined inside of
+   * a provided Drupal root in various locations where they
+   * may be stored.
+   */
+  public function testAliasFilesInDocroot() {
+    $root = $this->webroot();
+
+    $aliasContents = <<<EOD
+  <?php
+  // Written by Unish. This file is safe to delete.
+  \$aliases['atroot'] = array(
+    'root' => '/fake/path/to/othersite',
+    'uri' => 'default',
+  );
+EOD;
+    @mkdir($root . "/drush");
+    @mkdir($root . "/drush/site-aliases");
+    file_put_contents($root . "/drush/site-aliases/atroot.aliases.drushrc.php", $aliasContents);
+
+    $aliasContents = <<<EOD
+  <?php
+  // Written by Unish. This file is safe to delete.
+  \$aliases['insitefolder'] = array(
+    'root' => '/fake/path/to/othersite',
+    'uri' => 'default',
+  );
+EOD;
+    @mkdir($root . "/sites/all/drush");
+    @mkdir($root . "/sites/all/drush/site-aliases");
+    file_put_contents($root . "/sites/all/drush/site-aliases/sitefolder.aliases.drushrc.php", $aliasContents);
+
+    $aliasContents = <<<EOD
+  <?php
+  // Written by Unish. This file is safe to delete.
+  \$aliases['aboveroot'] = array(
+    'root' => '/fake/path/to/othersite',
+    'uri' => 'default',
+  );
+EOD;
+    @mkdir($root . "/../drush");
+    @mkdir($root . "/../drush/site-aliases");
+    file_put_contents($root . "/../drush/site-aliases/aboveroot.aliases.drushrc.php", $aliasContents);
+
+    // Ensure that none of these 'sa' commands return an error
+    $this->drush('sa', array('@atroot'), array(), '@dev');
+    $this->drush('sa', array('@insitefolder'), array(), '@dev');
+    $this->drush('sa', array('@aboveroot'), array(), '@dev');
+  }
+
+
+  /**
+   * Ensure that Drush searches deep inside specified search locations
+   * for alias files.
+   */
+  public function testDeepAliasSearching() {
+    $aliasPath = UNISH_SANDBOX . '/site-alias-directory';
+    file_exists($aliasPath) ?: mkdir($aliasPath);
+    $deepPath = $aliasPath . '/deep';
+    file_exists($deepPath) ?: mkdir($deepPath);
+    $aliasFile = $deepPath . '/baz.aliases.drushrc.php';
+    $aliasContents = <<<EOD
+  <?php
+  // Written by Unish. This file is safe to delete.
+  \$aliases['deep'] = array(
+    'remote-host' => 'fake.remote-host.com',
+    'remote-user' => 'www-admin',
+    'root' => '/fake/path/to/root',
+    'uri' => 'default',
+    'command-specific' => array(
+      'rsync' => array(
+        'delete' => TRUE,
+      ),
+    ),
+  );
+EOD;
+    file_put_contents($aliasFile, $aliasContents);
+    $options = array(
+      'alias-path' => $aliasPath,
+      'simulate' => TRUE,
+    );
+
+    $this->drush('sa', array('@deep'), $options);
+
+    // Verify that the files directory is not recursed into.
+    $filesPath = $aliasPath . '/files';
+    file_exists($filesPath) ?: mkdir($filesPath);
+    $aliasFile = $filesPath . '/biz.aliases.drushrc.php';
+    $aliasContents = <<<EOD
+    <?php
+    // Written by unish. This file is safe to delete.
+    \$aliases['nope'] = array(
+    'remote-host' => 'fake.remote-host.com',
+    'remote-user' => 'www-admin',
+    'root' => '/fake/path/to/root',
+    'uri' => 'default',
+    'command-specific' => array(
+      'rsync' => array(
+        'delete' => TRUE,
+      ),
+    ),
+  );
+EOD;
+    file_put_contents($aliasFile, $aliasContents);
+    $options = array(
+      'alias-path' => $aliasPath,
+      'simulate' => TRUE,
+    );
+
+    // This should not find the '@nope' alias.
+    $this->drush('sa', array('@nope'), $options, NULL, NULL, self::EXIT_ERROR);
   }
 }

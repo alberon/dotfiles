@@ -25,7 +25,7 @@ class Term_Command extends WP_CLI_Command {
 	 * : List terms of one or more taxonomies
 	 *
 	 * [--<field>=<value>]
-	 * : Filter by one or more fields.
+	 * : Filter by one or more fields (see get_terms() $args parameter for a list of fields).
 	 *
 	 * [--field=<field>]
 	 * : Prints the value of a single field for each term.
@@ -72,6 +72,12 @@ class Term_Command extends WP_CLI_Command {
 		} else {
 			$terms = get_terms( $args, $assoc_args );
 		}
+
+		$terms = array_map( function( $term ){
+			$term->count = (int)$term->count;
+			$term->parent = (int)$term->parent;
+			return $term;
+		}, $terms );
 
 		if ( 'ids' == $formatter->format ) {
 			$terms = wp_list_pluck( $terms, 'term_id' );
@@ -175,6 +181,9 @@ class Term_Command extends WP_CLI_Command {
 			$term_array = get_object_vars( $term );
 			$assoc_args['fields'] = array_keys( $term_array );
 		}
+
+		$term->count = (int) $term->count;
+		$term->parent = (int) $term->parent;
 
 		$formatter = $this->get_formatter( $assoc_args );
 		$formatter->display_item( $term );
