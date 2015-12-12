@@ -10,9 +10,15 @@ if $HAS_TERMINAL; then
     }
 
     # Change to the last visited directory, unless we're already in a different directory
-    if [ "$PWD" = "$HOME" -a -f ~/.bash_lastdirectory ]; then
-        # Throw away errors about that directory not existing (any more)
-        command cd "$(cat ~/.bash_lastdirectory)" 2>/dev/null
+    if [ "$PWD" = "$HOME" ]; then
+        if [ -f ~/.bash_lastdirectory ]; then
+            # Throw away errors about that directory not existing (any more)
+            command cd "$(cat ~/.bash_lastdirectory)" 2>/dev/null
+        elif [ -n "$www_dir" ]; then
+            # If this is the first login, try going to the web root instead
+            # Mainly useful for Vagrant boxes
+            cd "$www_dir"
+        fi
     fi
 
     # Detect typos in the cd command
