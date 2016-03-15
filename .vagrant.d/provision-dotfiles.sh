@@ -172,9 +172,6 @@ if [ ! -d .git ]; then
     ~/bin/cfg-install
     ~/bin/cfg-update
 
-    # Go straight to the Vagrant directory when logging in for the first time
-    echo "/vagrant" > ~/.bash_lastdirectory
-
 fi
 
 #---------------------------------------
