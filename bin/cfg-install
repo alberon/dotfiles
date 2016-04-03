@@ -71,7 +71,7 @@ if [ ! -f ~/.bashrc_config ]; then
     ) > ~/.bashrc_config
 
     # Open in editor (if running interactively, not in a Vagrant provisioner)
-    if [ -t 0 ]; then
+    if [ -t 0 -a "${1:-}" != "--unattended" ]; then
         vim ~/.bashrc_config
     fi
 
