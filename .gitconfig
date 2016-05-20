@@ -39,6 +39,7 @@
     ca = !git add -A && git commit -m
     ci = commit
     cim = commit -m
+    changedfiles = diff --name-only
     co = checkout
     cob = checkout -b
     conf = config --global --edit

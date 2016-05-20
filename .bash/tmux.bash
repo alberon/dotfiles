@@ -28,12 +28,12 @@ if ! $MAC; then
 
         if [ -z "$TMUX" ]; then
             name="${2:-default}"
-            ssh -t "$host" "which tmux >/dev/null 2>&1 && { tmux -2 attach -t '$name' || tmux -2 new -s '$name'; } || bash -l"
+            ssh -o ForwardAgent=yes -t "$host" "which tmux >/dev/null 2>&1 && { tmux -2 attach -t '$name' || tmux -2 new -s '$name'; } || bash -l"
         elif [ $# -ge 2 ]; then
             echo 'sessions should be nested with care, unset $TMUX to force' >&2
             return 1
         else
-            ssh "$host"
+            ssh -o ForwardAgent=yes "$host"
         fi
     }
 
