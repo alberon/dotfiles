@@ -72,6 +72,11 @@
 # Python compiled files
 *.pyc
 
+# cPanel executables
+/bin/pear
+/bin/peardev
+/bin/pecl
+
 # gitolite executables
 /bin/gitolite*
 /bin/gl-*
