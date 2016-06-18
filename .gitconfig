@@ -26,76 +26,87 @@
     default = tracking
 
 [alias]
-    a = add -A
-    addremove = add -A
-    #amend = !git commit --amend -C HEAD --date=\"$(date -R)\"
-    amend = commit --amend --no-edit --reset-author
-    ar = add -A
-    b = branch
-    ba = branch -a
-    bclean = "!f() { git branch --merged ${1-master} | grep -v " ${1-master}$" | xargs -r git branch -d; }; f"
-    branches = branch -avv
-    c = commit -m
-    ca = !git add -A && git commit -m
-    ci = commit
-    cim = commit -m
+    a            = add -A
+    addremove    = add -A
+    amend        = commit --amend --no-edit --reset-author
+    ap           = add --patch
+    ar           = add -A
+    b            = branch
+    ba           = branch -a
+    bclean       = "!f() { git branch --merged ${1-master} | grep -v " ${1-master}$" | xargs -r git branch -d; }; f"
+    bm           = branch --merged
+    bnm          = branch --no-merged
+    branches     = branch -avv
+    c            = commit -m
+    ca           = !git add -A && git commit -m
+    ci           = commit
+    cim          = commit -m
     changedfiles = diff --name-only
-    co = checkout
-    cob = checkout -b
-    conf = config --global --edit
-    cp = cherry-pick
-    d = diff                               #--find-copies --irreversible-delete
-    dn = diff --stat
-    dw = diff --ignore-all-space           #--find-copies --irreversible-delete
-    dc = diff --cached                     #--find-copies --irreversible-delete
-    dcn = diff --cached --stat
-    dcw = diff --cached --ignore-all-space #--find-copies --irreversible-delete
-    edit = commit --amend --reset-author
-    f = fetch -v --prune
-    fe = fetch -v --prune
-    friday = log --decorate -p --since='last friday'
-    g = grep --untracked --break --heading --line-number
-    g3 = grep --untracked --break --heading --line-number --context=3
-    g6 = grep --untracked --break --heading --line-number --context=6
-    g9 = grep --untracked --break --heading --line-number --context=9
-    gi = grep --untracked --break --heading --line-number --ignore-case
-    gi3 = grep --untracked --break --heading --line-number --ignore-case --context=3
-    gi6 = grep --untracked --break --heading --line-number --ignore-case --context=6
-    gi9 = grep --untracked --break --heading --line-number --ignore-case --context=9
-    id = log --pretty=format:'ID:    %h%nDate:  %aD%nRefs:%d' --abbrev-commit --date=short -1
-    ignored = ls-files --others -i --exclude-standard --directory
-    in = incoming
-    io = inout
-    l = log --decorate --name-status
-    l1 = log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
-    lf = log --decorate --name-status
-    lg = log --decorate --graph
-    lg1 = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
-    ll = log --decorate
-    lp = log --decorate -p
-    lpw = log --decorate -p --ignore-all-space
-    m = merge
-    mi = merge-into
-    mt = mergetool
-    out = outgoing
-    p = push
-    pt = push --tags
-    remotes = remote -v
-    root = rev-parse --show-toplevel
-    s = status
-    serve = instaweb
-    sh = repl
-    sq = squash
-    st = status
-    sub = submodule
-    sync = !git submodule sync && git submodule update --init
-    t = tag
-    tags = tag
-    todo = grep --untracked --line-number 'TODO\\|XXX\\|FIXME'
-    up = !git pull --rebase --prune $@ && git submodule update --init --recursive
-    web = instaweb
-    wipe = !git add -A && git commit -qm 'WIPE SAVEPOINT' && git reset HEAD~1 --hard
-    yesterday = log --decorate -p --since=yesterday
+    co           = checkout
+    cob          = checkout -b
+    conf         = config --global --edit
+    cp           = cherry-pick
+    d            = diff                             #--find-copies --irreversible-delete
+    dn           = diff --stat
+    dw           = diff --ignore-all-space          #--find-copies --irreversible-delete
+    dc           = diff --cached                    #--find-copies --irreversible-delete
+    dcn          = diff --cached --stat
+    dcw          = diff --cached --ignore-all-space #--find-copies --irreversible-delete
+    edit         = commit --amend --reset-author
+    f            = fetch -v --prune
+    fe           = fetch -v --prune
+    friday       = log --decorate -p --since='last friday'
+    g            = grep --untracked --break --heading --line-number
+    g3           = grep --untracked --break --heading --line-number --context=3
+    g6           = grep --untracked --break --heading --line-number --context=6
+    g9           = grep --untracked --break --heading --line-number --context=9
+    ga           = !git rev-list --all | xargs git grep --break --heading --line-number
+    ga3          = !git rev-list --all | xargs git grep --break --heading --line-number --context=3
+    ga6          = !git rev-list --all | xargs git grep --break --heading --line-number --context=6
+    ga9          = !git rev-list --all | xargs git grep --break --heading --line-number --context=9
+    gi           = grep --untracked --break --heading --line-number --ignore-case
+    gi3          = grep --untracked --break --heading --line-number --ignore-case --context=3
+    gi6          = grep --untracked --break --heading --line-number --ignore-case --context=6
+    gi9          = grep --untracked --break --heading --line-number --ignore-case --context=9
+    id           = log --pretty=format:'ID:    %h%nDate:  %aD%nRefs:%d' --abbrev-commit --date=short -1
+    ignored      = ls-files --others -i --exclude-standard --directory
+    in           = incoming
+    io           = inout
+    l            = log --decorate --name-status
+    l1           = log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
+    lf           = log --decorate --name-status
+    lg           = log --decorate --graph
+    lg1          = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
+    ll           = log --decorate
+    lp           = log --decorate -p
+    lpw          = log --decorate -p --ignore-all-space
+    m            = merge
+    mi           = merge-into
+    mt           = mergetool
+    out          = outgoing
+    p            = push
+    pl           = pull
+    pt           = push --tags
+    r            = remote
+    rb           = rebase
+    remotes      = remote -v
+    rl           = reflog
+    root         = rev-parse --show-toplevel
+    rv           = revert
+    s            = status
+    serve        = instaweb
+    sh           = repl
+    sq           = squash
+    st           = status
+    sub          = submodule
+    sync         = !git submodule sync && git submodule update --init
+    t            = tag
+    tags         = tag
+    todo         = grep --untracked --line-number 'TODO\\|XXX\\|FIXME'
+    up           = !git pull --rebase --prune $@ && git submodule update --init --recursive
+    web          = instaweb
+    wipe         = !git add -A && git commit -qm 'WIPE SAVEPOINT' && git reset HEAD~1 --hard
+    yesterday    = log --decorate -p --since=yesterday
 
 [github]
     user = davejamesmiller
