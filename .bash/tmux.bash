@@ -20,7 +20,9 @@ if ! $MAC; then
     export SSH_AUTH_SOCK="$HOME/.ssh/ssh_auth_sock"
 
     # tmux attach (local)
-    alias tm='tmux -2 attach || tmux -2 new -s default'
+    # The 'sleep' seems to be necessary in tmux 2.0 on Ubuntu - otherwise the
+    # second command fails... I have no idea why!
+    alias tm='tmux -2 attach || { sleep 0.001; tmux -2 new -s default; }'
 
     # ssh + tmux ('h' for 'host' or 'ssH', because 's' and 't' are in use)
     h() {
@@ -28,7 +30,7 @@ if ! $MAC; then
 
         if [ -z "$TMUX" ]; then
             name="${2:-default}"
-            ssh -o ForwardAgent=yes -t "$host" "which tmux >/dev/null 2>&1 && { tmux -2 attach -t '$name' || tmux -2 new -s '$name'; } || bash -l"
+            ssh -o ForwardAgent=yes -t "$host" "which tmux >/dev/null 2>&1 && { tmux -2 attach -t '$name' || { sleep 0.001; tmux -2 new -s '$name'; }; } || bash -l"
         elif [ $# -ge 2 ]; then
             echo 'sessions should be nested with care, unset $TMUX to force' >&2
             return 1
