@@ -5,12 +5,12 @@
         "version_normalized": "1.2.1.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/RobLoach/Console_Table.git",
-            "reference": "10d89fbbe533351dcfe5dc1e84de25d9a8395950"
+            "url": "https://github.com/pear/Console_Table.git",
+            "reference": "a129a91d8bf19317d81e68d1d3a2e18932f684e4"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/RobLoach/Console_Table/zipball/10d89fbbe533351dcfe5dc1e84de25d9a8395950",
+            "url": "https://api.github.com/repos/pear/Console_Table/zipball/a129a91d8bf19317d81e68d1d3a2e18932f684e4",
             "reference": "10d89fbbe533351dcfe5dc1e84de25d9a8395950",
             "shasum": ""
         },
@@ -1926,5 +1926,51 @@
             "testing",
             "xunit"
         ]
+    },
+    {
+        "name": "sensiolabs/security-checker",
+        "version": "v3.0.2",
+        "version_normalized": "3.0.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/sensiolabs/security-checker.git",
+            "reference": "21696b0daa731064c23cfb694c60a2584a7b6e93"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/sensiolabs/security-checker/zipball/21696b0daa731064c23cfb694c60a2584a7b6e93",
+            "reference": "21696b0daa731064c23cfb694c60a2584a7b6e93",
+            "shasum": ""
+        },
+        "require": {
+            "symfony/console": "~2.0|~3.0"
+        },
+        "time": "2015-11-07 08:07:40",
+        "bin": [
+            "security-checker"
+        ],
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "3.0-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "SensioLabs\\Security": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien.potencier@gmail.com"
+            }
+        ],
+        "description": "A security checker for your composer.lock"
     }
 ]
