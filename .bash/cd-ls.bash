@@ -80,6 +80,10 @@ if $HAS_TERMINAL; then
     # Unset the colours that are sometimes set (e.g. Joshua)
     export LS_COLORS=
 
+    # Stop newer versions of Bash quoting the filenames in ls
+    # http://unix.stackexchange.com/a/258687/14368
+    export QUOTING_STYLE=literal
+
     # u = up
     alias u='c ..'
     alias uu='c ../..'
