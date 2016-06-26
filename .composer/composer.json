@@ -6,6 +6,7 @@
         "drush/drush": "@stable",
         "wp-cli/wp-cli": "@stable",
         "psy/psysh": "@stable",
-        "phpunit/phpunit": "@stable"
+        "phpunit/phpunit": "@stable",
+        "sensiolabs/security-checker": "^3.0"
     }
 }
