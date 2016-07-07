@@ -197,7 +197,7 @@ function user_drush_command() {
       'path' => 'Optional path to redirect to after logging in.',
     ),
     'options' => array(
-      'browser' => 'Optional value denotes which browser to use (defaults to operating system default). Set to 0 to suppress opening a browser.',
+      'browser' => 'Optional value denotes which browser to use (defaults to operating system default). Use --no-browser to suppress opening a browser.',
       'uid' => 'A uid to log in as.',
       'redirect-port' => 'A custom port for redirecting to (e.g. when running within a Vagrant environment)',
       'name' => 'A user name to log in as.',
@@ -292,7 +292,7 @@ function drush_user_remove_role($role, $users = '') {
   $role_object = drush_role_get_class($role);
   $userlist = new UserList($users);
   $userlist->each('removeRole', array($role_object->rid));
-  drush_log(dt('Removed role !role role to !users', array('!role' => $role, '!users' => $userlist->names())),'success');
+  drush_log(dt('Removed !role role from !users', array('!role' => $role, '!users' => $userlist->names())),'success');
 }
 
 /**

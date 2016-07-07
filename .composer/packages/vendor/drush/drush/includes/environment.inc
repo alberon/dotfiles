@@ -140,7 +140,9 @@ function drush_cwd() {
  */
 function _drush_convert_path($path) {
   $path = str_replace('\\','/', $path);
-  $path = preg_replace('/^\/cygdrive\/([A-Za-z])(.*)$/', '\1:\2', $path);
+  if (drush_is_windows(_drush_get_os()) && !drush_is_cygwin(_drush_get_os())) {
+    $path = preg_replace('/^\/cygdrive\/([A-Za-z])(.*)$/', '\1:\2', $path);
+  }
 
   return $path;
 }
@@ -190,7 +192,7 @@ function drush_site_path($path = NULL) {
     // Move up dir by dir and check each.
     // Stop if we get to a Drupal root.   We don't care
     // if it is DRUSH_SELECTED_DRUPAL_ROOT or some other root.
-    while ($path = _drush_shift_path_up($path) && !drush_valid_root($path)) {
+    while (($path = _drush_shift_path_up($path)) && !drush_valid_root($path)) {
       if (file_exists($path . '/settings.php')) {
         $site_path = $path;
         break;
@@ -424,14 +426,14 @@ function drush_verify_cli() {
 }
 
 /**
- * Build a drush command suitable for use for drush to call itself
+ * Build a drush command suitable for use for Drush to call itself
  * e.g. in backend_invoke.
  */
 function drush_build_drush_command($drush_path = NULL, $php = NULL, $os = NULL, $remote_command = FALSE, $environment_variables = array()) {
   $os = _drush_get_os($os);
   $additional_options = '';
   $prefix = '';
-  if (!isset($drush_path)) {
+  if (!$drush_path) {
     if (!$remote_command) {
       $drush_path = DRUSH_COMMAND;
     }
@@ -613,30 +615,16 @@ function drush_read_drush_info() {
  *   True if the host is local.
  */
 function drush_is_local_host($host) {
-  // In order for this to work right, you must use 'localhost' or '127.0.0.1'
-  // or the machine returned by 'uname -n' for your 'remote-host' entry in
-  // your site alias.
-  if (($host == 'localhost') || ($host == '127.0.0.1')) {
+  // Check to see if the provided host is "local".
+  // @see hook_drush_sitealias_alter() in drush.api.php.
+  if (
+    ($host == 'localhost') ||
+    ($host == '127.0.0.1')
+  ) {
     return TRUE;
   }
 
-  // We'll start out by asking for uname -n via php_uname, since
-  // that is most portable.  On Linux, uname -n returns the contents of
-  // /etc/hostname, which, according to `man hostname`, should never
-  // contain the fqdn.  We will therefore also try `hostname -f`, and
-  // see if we can get the fqdn from that.
-  $uname = php_uname('n');
-  if ((strpos($uname,'.') === FALSE) && (!drush_is_windows())) {
-    $hostname = exec('hostname -f');
-    if (!empty($hostname)) {
-      $uname = $hostname;
-    }
-  }
-  // We will require an exact match if we have the fqdn for this
-  // host; if we only have the short name, then we will consider it
-  // to be a match if it matches the first part of the remote-host
-  // item (up to the first dot).
-  return (strpos($uname,'.') !== FALSE) ? ($host == $uname) : substr($host . '.',0,strlen($uname)+1) == $uname . '.';
+  return FALSE;
 }
 
 /**

@@ -1,7 +1,7 @@
 export PAGER=less
 
 # If output fits on one screen exit immediately
-export LESS=FRSX
+export LESS=FRX
 
 # Grep with pager
 # Note: This has to be a script not a function so it can detect a pipe

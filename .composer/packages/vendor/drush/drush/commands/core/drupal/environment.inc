@@ -9,8 +9,9 @@
 
 use Drupal\Core\Site\Settings;
 use Drupal\Core\StreamWrapper\PrivateStream;
+use Drupal\Core\StreamWrapper\PublicStream;
 use Psr\Log\LogLevel;
-
+use Drupal\Core\Logger\RfcLogLevel;
 
 /**
  * Get complete information for all available modules.
@@ -84,7 +85,7 @@ function drush_check_module_dependencies($modules, $module_info) {
       }
     }
     $status[$key]['unmet-dependencies'] = $unmet_dependencies;
-    $status[$key]['dependencies'] = array_keys($dependencies);
+    $status[$key]['dependencies'] = $dependencies;
   }
 
   return $status;
@@ -197,7 +198,8 @@ function drush_module_enable($modules) {
   drush_module_install($modules);
 
   // Our logger got blown away during the container rebuild above.
-  \Drupal::getContainer()->get('logger.factory')->addLogger(new \Drush\Log\DrushLog);
+  $boot = drush_select_bootstrap_class();
+  $boot->add_logger();
 
   // Flush all caches. No longer needed in D8 per https://github.com/drush-ops/drush/issues/1207
   // drupal_flush_all_caches();
@@ -224,7 +226,8 @@ function drush_module_disable($modules) {
 function drush_module_uninstall($modules) {
   \Drupal::service('module_installer')->uninstall($modules);
   // Our logger got blown away during the container rebuild above.
-  \Drupal::getContainer()->get('logger.factory')->addLogger(new \Drush\Log\DrushLog);
+  $boot = drush_select_bootstrap_class();
+  $boot->add_logger();
 }
 
 /**
@@ -262,7 +265,10 @@ function drush_get_themes($include_hidden = TRUE) {
   foreach ($themes as $key => $theme) {
     if (!$include_hidden) {
       if (isset($theme->info['hidden'])) {
-        unset($themes[$key]);
+        // Don't exclude default or admin theme.
+        if ($key != _drush_theme_default() && $key != _drush_theme_admin()) {
+          unset($themes[$key]);
+        }
       }
     }
   }
@@ -301,29 +307,26 @@ function drush_theme_disable($themes) {
 function drush_theme_uninstall($themes) {
   \Drupal::service('theme_handler')->uninstall($themes);
   // Our logger got blown away during the container rebuild above.
-  \Drupal::getContainer()->get('logger.factory')->addLogger(new \Drush\Log\DrushLog);
+  $boot = drush_select_bootstrap_class();
+  $boot->add_logger();
 }
 
 /**
  * Helper function to obtain the severity levels based on Drupal version.
  *
- * This is a copy of watchdog_severity_levels() without t().
- *
- * Severity levels, as defined in RFC 3164: http://www.ietf.org/rfc/rfc3164.txt.
- *
- * @return
- *   Array of watchdog severity levels.
+ * @return array
+ *   Watchdog severity levels keyed by RFC 3164 severities.
  */
 function drush_watchdog_severity_levels() {
   return array(
-    LogLevel::EMERGENCY => 'emergency',
-    LogLevel::ALERT => 'alert',
-    LogLevel::CRITICAL => 'critical',
-    LogLevel::ERROR    => 'error',
-    LogLevel::WARNING  => 'warning',
-    LogLevel::NOTICE   => 'notice',
-    LogLevel::INFO     => 'info',
-    LogLevel::DEBUG    => 'debug',
+    RfcLogLevel::EMERGENCY => LogLevel::EMERGENCY,
+    RfcLogLevel::ALERT => LogLevel::ALERT,
+    RfcLogLevel::CRITICAL => LogLevel::CRITICAL,
+    RfcLogLevel::ERROR => LogLevel::ERROR,
+    RfcLogLevel::WARNING => LogLevel::WARNING,
+    RfcLogLevel::NOTICE => LogLevel::NOTICE,
+    RfcLogLevel::INFO => LogLevel::INFO,
+    RfcLogLevel::DEBUG => LogLevel::DEBUG,
   );
 }
 
@@ -347,7 +350,7 @@ function _drush_theme_admin() {
 }
 
 function _drush_file_public_path() {
-  return Settings::get('file_public_path', conf_path() . '/files');
+  return PublicStream::basePath();
 }
 
 function _drush_file_private_path() {
@@ -401,5 +404,5 @@ function drush_get_token($value = NULL) {
  * Wrapper for _url().
  */
 function drush_url($path = NULL, array $options = array()) {
-  return \Drupal::urlGenerator()->generateFromPath($path, $options);
+  return \Drupal\Core\Url::fromUserInput('/' . $path, $options)->toString();
 }

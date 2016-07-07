@@ -150,15 +150,6 @@ function drush_dispatch($command, $arguments = array()) {
   $return = FALSE;
 
   if ($command) {
-    // Insure that we have reached the bootstrap level
-    // desired by the command.  We might not have bootstrapped
-    // far enough if a command uses drush_invoke to call
-    // a subcommand with a higher bootstrap level, for example.
-    $bootstrap_result = drush_bootstrap_to_phase($command['bootstrap']);
-    if (!$bootstrap_result) {
-      return FALSE;
-    }
-
     // Add arguments, if this has not already been done.
     // (If the command was fetched from drush_parse_command,
     // then you cannot provide arguments to drush_dispatch.)
@@ -182,6 +173,11 @@ function drush_dispatch($command, $arguments = array()) {
     if (drush_load_command_engines($command) === FALSE) {
       return FALSE;
     }
+
+    // Do tilde expansion immediately prior to execution,
+    // so that tildes are passed through unchanged for
+    // remote commands and other redispatches.
+    drush_preflight_tilde_expansion($command);
 
     // Call the callback function of the active command.
     $return = call_user_func_array($command['callback'], $command['arguments']);
@@ -909,7 +905,7 @@ function drush_shift() {
  */
 function drush_adjust_args_if_shebang_script(&$args) {
   if (drush_has_bash()) {
-    // The drush script may add --php or --php-options at the
+    // The drush.launcher script may add --php or --php-options at the
     // head of the argument list; skip past those.
     $base_arg_number = 1;
     while (substr($args[$base_arg_number], 0, 5) == '--php') {
@@ -1051,6 +1047,99 @@ function drush_get_commands($reset = FALSE) {
   return $commands;
 }
 
+/**
+ * Organize commands into categories. Used by help listing and core-cli.
+ *
+ * @param array $commands
+ *   A commands array as per drush_get_commands().
+ *
+ * @return array $command_categories
+ *   A categorized associative array of commands.
+ */
+function drush_commands_categorize($commands) {
+  $command_categories = array();
+  $category_map = array();
+  foreach ($commands as $key => $candidate) {
+    if ((!array_key_exists('is_alias', $candidate) || !$candidate['is_alias']) && !$candidate['hidden']) {
+      $category = $candidate['category'];
+      // If we have decided to remap a category, remap every command
+      if (array_key_exists($category, $category_map)) {
+        $category = $category_map[$category];
+      }
+      if (!array_key_exists($category, $command_categories)) {
+        $title = drush_command_invoke_all('drush_help', "meta:$category:title");
+        $alternate_title = '';
+        if (!$title) {
+          // If there is no title, then check to see if the
+          // command file is stored in a folder with the same
+          // name as some other command file (e.g. 'core') that
+          // defines a title.
+          $alternate = basename($candidate['path']);
+          $alternate_title = drush_command_invoke_all('drush_help', "meta:$alternate:title");
+        }
+        if (!empty($alternate_title)) {
+          $category_map[$category] = $alternate;
+          $category = $alternate;
+          $title = $alternate_title;
+        }
+        $command_categories[$category]['title'] = empty($title) ? '' : $title[0];
+        $summary = drush_command_invoke_all('drush_help', "meta:$category:summary");
+        if ($summary) {
+          $command_categories[$category]['summary'] = $summary[0];
+        }
+      }
+      $candidate['category'] = $category;
+      $command_categories[$category]['commands'][$key] = $candidate;
+    }
+  }
+
+  // Make sure that 'core' is always first in the list
+  $core_category = array('core' => $command_categories['core']);
+  unset($command_categories['core']);
+
+  // Post-process the categories that have no title.
+  // Any that have fewer than 4 commands go into a section called "other".
+  $processed_categories = array();
+  $misc_categories = array();
+  $other_commands = array();
+  $other_categories = array();
+  foreach ($command_categories as $key => $info) {
+    if (empty($info['title'])) {
+      $one_category = $key;
+      if (count($info['commands']) < 4) {
+        $other_commands = array_merge($other_commands, $info['commands']);
+        $other_categories[] = $one_category;
+      }
+      else {
+        $info['title'] = dt("All commands in !category", array('!category' => $key));
+        $misc_categories[$one_category] = $info;
+      }
+    }
+    else {
+      $processed_categories[$key] = $info;
+    }
+  }
+  $other_category = array();
+  if (!empty($other_categories)) {
+    $other_category[implode(',', $other_categories)] = array('title' => dt("Other commands"), 'commands' => $other_commands);
+  }
+  asort($processed_categories);
+  asort($misc_categories);
+  $command_categories = array_merge($core_category, $processed_categories, $misc_categories, $other_category);
+
+  // If the user specified --sort, then merge all of the remaining
+  // categories together
+  if (drush_get_option('sort', FALSE)) {
+    $combined_commands = array();
+    foreach ($command_categories as $key => $info) {
+      $combined_commands = array_merge($combined_commands, $info['commands']);
+    }
+    $command_categories = array('all' => array('commands' => $combined_commands, 'title' => dt("Commands:")));
+  }
+
+  return $command_categories;
+}
+
 function drush_command_defaults($key, $commandfile, $path) {
   $defaults =  array(
     'command' => $key,
@@ -1082,6 +1171,7 @@ function drush_command_defaults($key, $commandfile, $path) {
     'handle-remote-commands' => FALSE,
     'remote-tty' => FALSE,
     'strict-option-handling' => FALSE,
+    'tilde-expansion' => TRUE,
     'bootstrap_errors' => array(),
     'topics' => array(),
     'hidden' => FALSE,
@@ -1398,7 +1488,7 @@ function drush_commandfile_list() {
 }
 
 function _drush_find_commandfiles($phase, $phase_max = FALSE) {
-  drush_log(dt("Find command files for phase !phase (max=!max)", array('!phase' => $phase, '!max' => $phase_max)), 'debug');
+  drush_log(dt("Find command files for phase !phase (max=!max)", array('!phase' => $phase, '!max' => (string)$phase_max)), 'debug');
   if ($bootstrap = drush_get_bootstrap_object()) {
     $searchpath = $bootstrap->commandfile_searchpaths($phase, $phase_max);
     _drush_add_commandfiles($searchpath, $phase);
@@ -1414,7 +1504,7 @@ function _drush_add_commandfiles($searchpath, $phase = NULL, $reset = FALSE) {
       // Assemble a cid specific to the bootstrap phase and searchpaths.
       // Bump $cf_version when making a change to a dev version of Drush
       // that invalidates the commandfile cache.
-      $cf_version = 5;
+      $cf_version = 6;
       $cid = drush_get_cid('commandfiles-' . $phase, array(), array_merge($searchpath, array($cf_version)));
       $command_cache = drush_cache_get($cid);
       if (isset($command_cache->data)) {
@@ -1461,8 +1551,9 @@ function _drush_add_commandfiles($searchpath, $phase = NULL, $reset = FALSE) {
       // Only try to require if the file exists. If not, a file from the
       // command file cache may not be available anymore, in which case
       // we rebuild the cache for this phase.
-      if ($filepath = realpath($filename)) {
-        $load_command = commandfiles_cache()->add($filepath);
+      if (file_exists($filename)) {
+        // Avoid realpath() here as Drush commandfiles can have phar:// locations.
+        $load_command = commandfiles_cache()->add($filename);
         if ($load_command) {
           $needs_sort = TRUE;
         }

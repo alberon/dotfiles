@@ -6,6 +6,86 @@
  */
 
 /**
+ * The main Drush function.
+ *
+ * - Runs "early" option code, if set (see global options).
+ * - Parses the command line arguments, configuration files and environment.
+ * - Prepares and executes a Drupal bootstrap, if possible,
+ * - Dispatches the given command.
+ *
+ * function_exists('drush_main') may be used by modules to detect whether
+ * they are being called from Drush.  See http://drupal.org/node/1181308
+ * and http://drupal.org/node/827478
+ *
+ * @return mixed
+ *   Whatever the given command returns.
+ */
+function drush_main() {
+  // Load Drush core include files, and parse command line arguments.
+  if (drush_preflight_prepare() === FALSE) {
+    return(1);
+  }
+  // Start code coverage collection.
+  if ($coverage_file = drush_get_option('drush-coverage', FALSE)) {
+    drush_set_context('DRUSH_CODE_COVERAGE', $coverage_file);
+    xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
+    register_shutdown_function('drush_coverage_shutdown');
+  }
+
+  // Load the global Drush configuration files, and global Drush commands.
+  // Find the selected site based on --root, --uri or cwd
+  // Preflight the selected site, and load any configuration and commandfiles associated with it.
+  // Select and return the bootstrap class.
+  $bootstrap = drush_preflight();
+
+  // Reset our bootstrap phase to the beginning
+  drush_set_context('DRUSH_BOOTSTRAP_PHASE', DRUSH_BOOTSTRAP_NONE);
+
+  $return = '';
+  if (!drush_get_error()) {
+    if ($file = drush_get_option('early', FALSE)) {
+      require_once drush_is_absolute_path($file) ? $file : DRUSH_BASE_PATH . DIRECTORY_SEPARATOR . $file;
+      $function = 'drush_early_' . basename($file, '.inc');
+      if (function_exists($function)) {
+        if ($return = $function()) {
+          // If the function returns FALSE, we continue and attempt to bootstrap
+          // as normal. Otherwise, we exit early with the returned output.
+          if ($return === TRUE) {
+            $return = '';
+          }
+        }
+      }
+    }
+    else {
+      // Do any necessary preprocessing operations on the command,
+      // perhaps handling immediately.
+      $command_handled = drush_preflight_command_dispatch();
+      if (!$command_handled) {
+        $return = $bootstrap->bootstrap_and_dispatch();
+      }
+    }
+  }
+  // TODO: Get rid of global variable access here, and just trust
+  // the bootstrap object returned from drush_preflight().  This will
+  // require some adjustments to Drush bootstrapping.
+  // See: https://github.com/drush-ops/drush/pull/1303
+  if ($bootstrap = drush_get_bootstrap_object()) {
+    $bootstrap->terminate();
+  }
+  drush_postflight();
+
+  // How strict are we?  If we are very strict, turn 'ok' into 'error'
+  // if there are any warnings in the log.
+  if (($return == 0) && (drush_get_option('strict') > 1) && drush_log_has_errors()) {
+    $return = 1;
+  }
+
+  // After this point the drush_shutdown function will run,
+  // exiting with the correct exit code.
+  return $return;
+}
+
+/**
  * Prepare Drush for preflight.
  *
  * Runs before drush_main().
@@ -35,6 +115,7 @@ function drush_preflight_prepare() {
 
   $classloader = require $vendor_path;
 
+  require_once DRUSH_BASE_PATH . '/includes/startup.inc';
   require_once DRUSH_BASE_PATH . '/includes/bootstrap.inc';
   require_once DRUSH_BASE_PATH . '/includes/environment.inc';
   require_once DRUSH_BASE_PATH . '/includes/command.inc';
@@ -52,7 +133,7 @@ function drush_preflight_prepare() {
   require_once DRUSH_BASE_PATH . '/includes/dbtng.inc';
 
   // Stash our vendor path and classloader.
-  drush_set_context('DRUSH_VENDOR_PATH', dirname(realpath($vendor_path)));
+  drush_set_context('DRUSH_VENDOR_PATH', dirname($vendor_path));
   drush_set_context('DRUSH_CLASSLOADER', $classloader);
 
   // Terminate immediately unless invoked as a command line script
@@ -65,7 +146,7 @@ function drush_preflight_prepare() {
   // PHP_VERSION, such as drush_json_encode(), runserver/runserver.drush.inc, and also
   // adjust _drush_environment_check_php_ini() and the php_prohibited_options
   // list in the drush script.  See http://drupal.org/node/1748228
-  define('DRUSH_MINIMUM_PHP', '5.3.0');
+  define('DRUSH_MINIMUM_PHP', '5.4.5');
   if (version_compare(phpversion(), DRUSH_MINIMUM_PHP) < 0 && !getenv('DRUSH_NO_MIN_PHP')) {
     return drush_set_error('DRUSH_REQUIREMENTS_ERROR', dt('Your command line PHP installation is too old. Drush requires at least PHP !version. To suppress this check, set the environment variable DRUSH_NO_MIN_PHP=1', array('!version' => DRUSH_MINIMUM_PHP)));
   }
@@ -93,6 +174,8 @@ function drush_preflight_prepare() {
 
   // Process initial global options such as --debug.
   _drush_preflight_global_options();
+
+  drush_log(dt("Drush preflight prepare loaded autoloader at !autoloader", array('!autoloader' => realpath($vendor_path))), 'preflight');
 }
 
 /**
@@ -115,44 +198,15 @@ function drush_preflight_prepare() {
  * Additionally the DRUSH_QUIET and DRUSH_BACKEND contexts,
  * will be evaluated now, as they need to be set very early in
  * the execution flow to be able to take affect.
+ *
+ * @return \Drush\Boot\Boot;
  */
 function drush_preflight() {
   // Create an alias '@none' to represent no Drupal site
   _drush_sitealias_cache_alias('@none', array('root' => '', 'uri' => ''));
 
-  // Set the terminal width, used for wrapping table output.
-  // Normally this is exported using tput in the drush script.
-  // If this is not present we do an additional check using stty here.
-  // On Windows in CMD and PowerShell is this exported using mode con.
-  if (!($columns = getenv('COLUMNS'))) {
-    // Trying to export the columns using stty.
-    exec('stty size 2>&1', $columns_output, $columns_status);
-    if (!$columns_status) $columns = preg_replace('/\d+\s(\d+)/', '$1', $columns_output[0], -1, $columns_count);
-
-    // If stty fails and Drush us running on Windows are we trying with mode con.
-    if (($columns_status || !$columns_count) && drush_is_windows()) {
-      $columns_output = array();
-      exec('mode con', $columns_output, $columns_status);
-      if (!$columns_status && is_array($columns_output)) {
-        $columns = (int)preg_replace('/\D/', '', $columns_output[4], -1, $columns_count);
-      }
-      else {
-        drush_log(dt('Drush could not detect the console window width. Set a Windows Environment Variable of COLUMNS to the desired width.'), 'warning');
-      }
-    }
-
-    // Failling back to default columns value
-    if (empty($columns)) {
-      $columns = 80;
-    }
-  }
-  // If a caller wants to reserve some room to add additional
-  // information to the drush output via post-processing, the
-  // --reserve-margin flag can be used to declare how much
-  // space to leave out.  This only affects drush functions
-  // such as drush_print_table() that wrap the output.
-  $columns -= drush_get_option('reserve-margin', 0);
-  drush_set_context('DRUSH_COLUMNS', $columns);
+  // Discover terminal width for pretty output.
+  _drush_preflight_columns();
 
   // Display is tidy now that column width has been handled.
   drush_log(dt('Starting Drush preflight.'), 'preflight');
@@ -260,7 +314,7 @@ function drush_preflight_root() {
   // @todo Drupal code should use DRUSH_DRUPAL_ROOT instead of this constant.
   drush_set_context('DRUSH_SELECTED_DRUPAL_ROOT', $root);
 
-  // Load the config options from Drupal's /drush and sites/all/drush directories,
+  // Load the config options from Drupal's /drush, ../drush, and sites/all/drush directories,
   // even prior to bootstrapping the root.
   drush_load_config('drupal');
 }
@@ -343,17 +397,55 @@ function _drush_preflight_base_environment() {
   }
 }
 
+/*
+ * Set the terminal width, used for wrapping table output.
+ * Normally this is exported using tput in the drush script.
+ * If this is not present we do an additional check using stty here.
+ * On Windows in CMD and PowerShell is this exported using mode con.
+ */
+function _drush_preflight_columns() {
+  if (!($columns = getenv('COLUMNS'))) {
+    // Trying to export the columns using stty.
+    exec('stty size 2>&1', $columns_output, $columns_status);
+    if (!$columns_status) $columns = preg_replace('/\d+\s(\d+)/', '$1', $columns_output[0], -1, $columns_count);
+
+    // If stty fails and Drush us running on Windows are we trying with mode con.
+    if (($columns_status || !$columns_count) && drush_is_windows()) {
+      $columns_output = array();
+      exec('mode con', $columns_output, $columns_status);
+      if (!$columns_status && is_array($columns_output)) {
+        $columns = (int)preg_replace('/\D/', '', $columns_output[4], -1, $columns_count);
+      }
+      else {
+        drush_log(dt('Drush could not detect the console window width. Set a Windows Environment Variable of COLUMNS to the desired width.'), 'warning');
+      }
+    }
+
+    // Failling back to default columns value
+    if (empty($columns)) {
+      $columns = 80;
+    }
+  }
+  // If a caller wants to reserve some room to add additional
+  // information to the drush output via post-processing, the
+  // --reserve-margin flag can be used to declare how much
+  // space to leave out.  This only affects drush functions
+  // such as drush_print_table() that wrap the output.
+  $columns -= drush_get_option('reserve-margin', 0);
+  drush_set_context('DRUSH_COLUMNS', $columns);
+}
+
 function _drush_preflight_alias_path() {
   $alias_path =& drush_get_context('ALIAS_PATH');
   $default_prefix_configuration = drush_is_windows() ? getenv('ALLUSERSPROFILE') . '/Drush' : '';
   $site_wide_configuration_dir = drush_get_context('ETC_PREFIX', $default_prefix_configuration) . '/etc/drush';
-  $alias_path[] = $site_wide_configuration_dir;
+  $alias_path[] = drush_sitealias_alias_base_directory($site_wide_configuration_dir);
 
-  $alias_path[] = dirname(__FILE__) . '/..';
+  $alias_path[] = drush_sitealias_alias_base_directory(dirname(__FILE__) . '/..');
 
   $server_home = drush_server_home();
   if (isset($server_home)) {
-    $alias_path[] = $server_home . '/.drush';
+    $alias_path[] = drush_sitealias_alias_base_directory($server_home . '/.drush');
   }
 }
 
@@ -375,7 +467,7 @@ function _drush_preflight_uri() {
 
 function _drush_find_commandfiles_drush() {
   // Core commands shipping with Drush
-  $searchpath[] = realpath(dirname(__FILE__) . '/../commands/');
+  $searchpath[] = dirname(__FILE__) . '/../commands/';
 
   // User commands, specified by 'include' option
   $include = drush_get_context('DRUSH_INCLUDE', array());
@@ -462,6 +554,9 @@ function drush_preflight_command_dispatch() {
   $command_name = array_shift($args);
   $root = drush_get_context('DRUSH_SELECTED_DRUPAL_ROOT');
   $local_drush = drush_get_option('drush-script');
+  if (empty($local_drush) && !empty($root)) {
+    $local_drush = find_wrapper_or_launcher($root);
+  }
   $is_local = drush_get_option('local');
   $values = NULL;
   if (!empty($root) && !empty($local_drush) && empty($is_local)) {
@@ -470,17 +565,24 @@ function drush_preflight_command_dispatch() {
     }
     $local_drush = realpath($local_drush);
     $this_drush = drush_find_drush();
-    // If there is a local drush selected, and it is not the
-    // same drush that is currently running, redispatch to it.
-    if (file_exists($local_drush) && ($this_drush != $local_drush)) {
+    // If there is a local Drush selected, and it is not the
+    // same Drush that is currently running, redispatch to it.
+    // We assume that if the current Drush is nested inside
+    // the current Drupal root (or, more specifically, the
+    // current Drupal root's parent), then it is a site-local Drush.
+    // We avoid redispatching in that instance to prevent an
+    // infinite loop.
+    if (file_exists($local_drush) && !drush_is_nested_directory(dirname($root), $this_drush)) {
       $uri = drush_get_context('DRUSH_SELECTED_URI');
       $aditional_options = array(
         'root' => $root,
-        'local' => TRUE,
       );
       if (!empty($uri)) {
         $aditional_options['uri'] = $uri;
       }
+      // We need to chdir to the Drupal root here, for the
+      // benefit of the Drush wrapper.
+      chdir($root);
       $values = drush_do_command_redispatch(is_array($command) ? $command : $command_name, $args, NULL, NULL, $local_drush, TRUE, $aditional_options);
     }
   }
@@ -554,6 +656,32 @@ function drush_preflight_command_dispatch() {
     return TRUE;
   }
   return FALSE;
+}
+
+/**
+ * Look for instances of arguments or parameters that
+ * start with "~/".  Replace these with "$HOME/".
+ *
+ * Note that this function is called _after_ Drush does
+ * its redispatch checks; tildes are passed through
+ * unmodified on a redispatch, and are only expanded when
+ * a command is handled locally.
+ */
+function drush_preflight_tilde_expansion(&$command) {
+  // Skip tilde expansion for commands that use
+  // stict option handling, or those that explicitly
+  // turn it off via $command['tilde-expansion'] = FALSE.
+  if ($command['tilde-expansion'] && !$command['strict-option-handling']) {
+    $cli =& drush_get_context('cli');
+    $match = '#^~/#';
+    $replacement = drush_server_home() . '/';
+    foreach ($cli as $key => $value) {
+      if (is_string($value) && preg_match($match, $value)) {
+        $cli[$key] = preg_replace($match, $replacement, $value);
+      }
+    }
+    $command['arguments'] = array_map(function($value) use($match, $replacement) { return is_string($value) ? preg_replace($match, $replacement, $value) : $value; } , $command['arguments']);
+  }
 }
 
 /**

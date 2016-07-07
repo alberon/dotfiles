@@ -21,6 +21,10 @@ fi
 path="$(cygpath -aw "$path")"
 
 # Convert Sublime Text path to Linux format
-exe="$(cygpath "$ProgramW6432\\Sublime Text 2\\sublime_text.exe")"
+exe="$(cygpath "$ProgramW6432\\Sublime Text 3\\sublime_text.exe")"
+
+if [ ! -f "$exe" ]; then
+    exe="$(cygpath "$ProgramW6432\\Sublime Text 2\\sublime_text.exe")"
+fi
 
 exec "$exe" "$path" &

@@ -141,12 +141,6 @@ Feature: Manage WordPress users
       Error: Missing file: users-incorrect.csv
       """
 
-    When I try `wp user import-csv http://example.com/users.csv --skip-update`
-    Then STDERR should be:
-      """
-      Error: Couldn't access remote CSV file (HTTP 404 response).
-      """
-
     When I run `wp user import-csv users.csv`
     Then STDOUT should not be empty
 
@@ -183,7 +177,7 @@ Feature: Manage WordPress users
     When I try `wp user import-csv user-invalid.csv`
     Then STDERR should contain:
       """
-      Warning: Only lowercase letters (a-z) and numbers are allowed.
+      lowercase letters (a-z) and numbers
       """
 
     When I run `wp user import-csv user-valid.csv`
@@ -201,7 +195,7 @@ Feature: Manage WordPress users
     When I try `wp user create bob-jones bobjones@example.com`
     Then STDERR should contain:
       """
-      Error: Only lowercase letters (a-z) and numbers are allowed.
+      lowercase letters (a-z) and numbers
       """
 
     When I run `wp user create bobjones bobjones@example.com --display_name="Bob Jones"`

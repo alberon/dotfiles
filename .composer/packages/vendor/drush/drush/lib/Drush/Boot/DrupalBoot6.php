@@ -18,6 +18,16 @@ class DrupalBoot6 extends DrupalBoot {
     }
   }
 
+  function get_version($drupal_root) {
+    $path = $drupal_root . '/modules/system/system.module';
+    if (is_file($path)) {
+      require_once $path;
+      if (defined('VERSION')) {
+        return VERSION;
+      }
+    }
+  }
+
   function get_profile() {
     return variable_get('install_profile', 'standard');
   }
@@ -33,23 +43,28 @@ class DrupalBoot6 extends DrupalBoot {
 
   function contrib_modules_paths() {
     return array(
-      conf_path() . '/modules',
+      $this->conf_path() . '/modules',
       'sites/all/modules',
     );
   }
 
   function contrib_themes_paths() {
     return array(
-      conf_path() . '/themes',
+      $this->conf_path() . '/themes',
       'sites/all/themes',
     );
   }
 
   function bootstrap_drupal_core($drupal_root) {
     define('DRUPAL_ROOT', $drupal_root);
+    require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
     $core = DRUPAL_ROOT;
 
     return $core;
+  }
+
+  function bootstrap_drupal_database_validate() {
+    return parent::bootstrap_drupal_database_validate() && $this->bootstrap_drupal_database_has_table('cache');
   }
 
   function bootstrap_drupal_database() {

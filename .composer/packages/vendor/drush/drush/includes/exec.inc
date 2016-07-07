@@ -166,6 +166,15 @@ function _drush_shell_exec($args, $interactive = FALSE) {
 }
 
 /**
+ * Determine whether 'which $command' can find
+ * a command on this system.
+ */
+function drush_which($command) {
+  exec("which $command 2>&1", $output, $result);
+  return ($result == 0);
+}
+
+/**
  * Build an SSH string including an optional fragment of bash. Commands that use
  * this should also merge drush_shell_proc_build_options() into their
  * command options. @see ssh_drush_command().
@@ -341,38 +350,6 @@ function _drush_escapeshellarg_windows($arg, $raw = FALSE) {
   if(!$raw) {
     // Add surrounding quotes.
     $arg = '"' . $arg . '"';
-  }
-
-  return $arg;
-}
-
-/**
- * Linux version of escapeshellarg().
- *
- * This is intended to work the same way that escapeshellarg() does on
- * Linux.  If we need to escape a string that will be used remotely on
- * a Linux system, then we need our own implementation of escapeshellarg,
- * because the Windows version behaves differently.
- */
-function _drush_escapeshellarg_linux($arg, $raw = FALSE) {
-  // For single quotes existing in the string, we will "exit"
-  // single-quote mode, add a \' and then "re-enter"
-  // single-quote mode.  The result of this is that
-  // 'quote' becomes '\''quote'\''
-  $arg = preg_replace('/\'/', '\'\\\'\'', $arg);
-
-  // Replace "\t", "\n", "\r", "\0", "\x0B" with a whitespace.
-  // Note that this replacement makes Drush's escapeshellarg work differently
-  // than the built-in escapeshellarg in PHP on Linux, as these characters
-  // usually are NOT replaced. However, this was done deliberately to be more
-  // conservative when running _drush_escapeshellarg_linux on Windows
-  // (this can happen when generating a command to run on a remote Linux server.)
-  $arg = str_replace(array("\t", "\n", "\r", "\0", "\x0B"), ' ', $arg);
-
-  // Only wrap with quotes when needed.
-  if(!$raw) {
-    // Add surrounding quotes.
-    $arg = "'" . $arg . "'";
   }
 
   return $arg;

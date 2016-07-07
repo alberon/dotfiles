@@ -303,7 +303,7 @@ function drush_get_global_options($brief = FALSE) {
     $options['backup-location']     = array('description' => "Specifies the directory where drush will store backups.", 'example-value' => '/path/to/dir');
     $options['confirm-rollback']    = array('description' => 'Wait for confirmation before doing a rollback when something goes wrong.');
     $options['complete-debug']      = array('hidden' => TRUE, 'description' => "Turn on debug mode forf completion code");
-    $options['php-options']         = array('description' => "Options to pass to `php` when running drush.  Only effective when using the `drush` script.", 'never-propagate' => TRUE, 'example-value' => '-d error_reporting="E_ALL"');
+    $options['php-options']         = array('description' => "Options to pass to `php` when running drush.  Only effective when using the drush.launcher script.", 'never-propagate' => TRUE, 'example-value' => '-d error_reporting="E_ALL"');
     $options['deferred-sanitization'] = array('hidden' => TRUE, 'description' => "Defer calculating the sanitization operations until after the database has been copied. This is done automatically if the source database is remote.");
     $options['remote-host']         = array('hidden' => TRUE, 'description' => 'Remote site to execute drush command on. Managed by site alias.');
     $options['remote-user']         = array('hidden' => TRUE, 'description' => 'User account to use with a remote drush command. Managed by site alias.');
@@ -317,10 +317,11 @@ function drush_get_global_options($brief = FALSE) {
     $options['path-aliases']        = array('hidden' => TRUE, 'never-propagate' => TRUE, 'description' => 'Path aliases from site alias.');
     $options['ssh-options']         = array('never-propagate' => TRUE, 'description' => 'A string of extra options that will be passed to the ssh command', 'example-value' => '-p 100');
     $options['editor']              = array('never-propagate' => TRUE, 'description' => 'A string of bash which launches user\'s preferred text editor. Defaults to ${VISUAL-${EDITOR-vi}}.', 'example-value' => 'vi');
+    $options['bg']                  = array('never-propagate' => TRUE, 'description' => 'Run editor in the background. Does not work with editors such as `vi` that run in the terminal. Supresses config-import at the end.');
     $options['db-url']              = array('hidden' => TRUE, 'description' => 'A Drupal 6 style database URL. Used by various commands.', 'example-value' => 'mysql://root:pass@127.0.0.1/db');
     $options['drush-coverage']      = array('hidden' => TRUE, 'never-post' => TRUE, 'propagate-cli-value' => TRUE, 'description' => 'File to save code coverage data into.');
     $options['redirect-port']       = array('hidden' => TRUE, 'never-propagate' => TRUE, 'description' => 'Used by the user-login command to specify the redirect port on the local machine; it therefore would not do to pass this to the remote machines.');
-    $options['cache-clear']         = array('propagate' => TRUE, 'description' => 'Allow cache-clear operations / skip all cache-clear options. Caller is responsible for guaranteeing that the cache does not need to be invalidated, or to call cache-clear later.', 'example-value' => '0', );
+    $options['cache-clear']         = array('propagate' => TRUE, 'description' => 'If 0, Drush skips normal cache clearing; the caller should then clear if needed.', 'example-value' => '0', );
     $options['local']               = array('propagate' => TRUE, 'description' => 'Don\'t look in global locations for commandfiles, config, and site aliases');
 
     $command = array(
@@ -944,6 +945,7 @@ function drush_attempt_mime_content_type($filename) {
     $filename = basename(current(explode('?', $filename, 2)));
     $extension_mimetype = array(
       '.tar'     => 'application/x-tar',
+      '.sql'     => 'application/octet-stream',
     );
     foreach ($extension_mimetype as $extension => $ct) {
       if (substr($filename, -strlen($extension)) === $extension) {
@@ -1502,7 +1504,7 @@ function _drush_log_drupal_messages() {
 }
 
 // Copy of format_size() in Drupal.
-function drush_format_size($size, $langcode = NULL) {
+function drush_format_size($size) {
   if ($size < DRUSH_KILOBYTE) {
     // format_plural() not always available.
     return dt('@count bytes', array('@count' => $size));
@@ -1510,14 +1512,14 @@ function drush_format_size($size, $langcode = NULL) {
   else {
     $size = $size / DRUSH_KILOBYTE; // Convert bytes to kilobytes.
     $units = array(
-      dt('@size KB', array(), array('langcode' => $langcode)),
-      dt('@size MB', array(), array('langcode' => $langcode)),
-      dt('@size GB', array(), array('langcode' => $langcode)),
-      dt('@size TB', array(), array('langcode' => $langcode)),
-      dt('@size PB', array(), array('langcode' => $langcode)),
-      dt('@size EB', array(), array('langcode' => $langcode)),
-      dt('@size ZB', array(), array('langcode' => $langcode)),
-      dt('@size YB', array(), array('langcode' => $langcode)),
+      dt('@size KB', array()),
+      dt('@size MB', array()),
+      dt('@size GB', array()),
+      dt('@size TB', array()),
+      dt('@size PB', array()),
+      dt('@size EB', array()),
+      dt('@size ZB', array()),
+      dt('@size YB', array()),
     );
     foreach ($units as $unit) {
       if (round($size, 2) >= DRUSH_KILOBYTE) {
@@ -1549,19 +1551,17 @@ function drush_format_size($size, $langcode = NULL) {
 /**
  * Set an error code for the error handling system.
  *
- * @param error
+ * @param \Drupal\Component\Render\MarkupInterface|string $error
  *   A text string identifying the type of error.
- *
- * @param message
- *   Optional. Error message to be logged. If no message is specified, hook_drush_help will be consulted,
- *   using a key of 'error:MY_ERROR_STRING'.
- *
- * @param $output_label
+ * @param null|string $message
+ *   Optional. Error message to be logged. If no message is specified,
+ *   hook_drush_help will be consulted, using a key of 'error:MY_ERROR_STRING'.
+ * @param null|string $output_label
  *   Optional. Label to prepend to the error message.
  *
- * @return
- *   Always returns FALSE, to allow you to return with false in the calling functions,
- *   such as <code>return drush_set_error('DRUSH_FRAMEWORK_ERROR')</code>
+ * @return bool
+ *   Always returns FALSE, to allow returning false in the calling functions,
+ *   such as <code>return drush_set_error('DRUSH_FRAMEWORK_ERROR')</code>.
  */
 function drush_set_error($error, $message = null, $output_label = "") {
   $error_code =& drush_get_context('DRUSH_ERROR_CODE', DRUSH_SUCCESS);
@@ -1571,6 +1571,10 @@ function drush_set_error($error, $message = null, $output_label = "") {
 
   if (is_numeric($error)) {
     $error = 'DRUSH_FRAMEWORK_ERROR';
+  }
+  elseif (!is_string($error)) {
+    // Typical case: D8 TranslatableMarkup, implementing MarkupInterface.
+    $error = "$error";
   }
 
   $message = ($message) ? $message : drush_command_invoke_all('drush_help', 'error:' . $error);
@@ -1821,4 +1825,60 @@ function drush_complete_cache_clear($type = NULL, $command = NULL) {
   }
   // No type or command, so clear the entire complete cache.
   drush_cache_clear_all('*', 'complete', TRUE);
+}
+
+/*
+ * Cast a value according to the provided format
+ *
+ * @param mixed $value.
+ * @param string $format
+ *   Allowed values: auto, integer, float, bool, boolean, json, yaml.
+ *
+ * @return $value
+ *  The value, re-typed as needed.
+ */
+function drush_value_format($value, $format) {
+  if ($format == 'auto') {
+    if (is_numeric($value)) {
+      $value = $value + 0; // http://php.net/manual/en/function.is-numeric.php#107326
+      $format = gettype($value);
+    }
+    elseif (($value == 'TRUE') || ($value == 'FALSE')) {
+      $format = 'bool';
+    }
+  }
+
+  // Now, we parse the object.
+  switch ($format) {
+    case 'integer':
+      $value = (integer)$value;
+      break;
+    // from: http://php.net/gettype
+    // for historical reasons "double" is returned in case of a float, and not simply "float"
+    case 'double':
+    case 'float':
+      $value = (float)$value;
+      break;
+    case 'bool':
+    case 'boolean':
+      if ($value == 'TRUE') {
+        $value = TRUE;
+      }
+      elseif ($value == 'FALSE') {
+        $value = FALSE;
+      }
+      else {
+        $value = (bool)$value;
+      }
+      break;
+
+    case 'json':
+      $value = drush_json_decode($value);
+      break;
+
+    case 'yaml':
+      $value = \Symfony\Component\Yaml\Yaml::parse($value, FALSE, TRUE);
+      break;
+  }
+  return $value;
 }

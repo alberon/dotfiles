@@ -10,9 +10,15 @@ if $HAS_TERMINAL; then
     }
 
     # Change to the last visited directory, unless we're already in a different directory
-    if [ "$PWD" = "$HOME" -a -f ~/.bash_lastdirectory ]; then
-        # Throw away errors about that directory not existing (any more)
-        command cd "$(cat ~/.bash_lastdirectory)" 2>/dev/null
+    if [ "$PWD" = "$HOME" ]; then
+        if [ -f ~/.bash_lastdirectory ]; then
+            # Throw away errors about that directory not existing (any more)
+            command cd "$(cat ~/.bash_lastdirectory)" 2>/dev/null
+        elif [ -n "$www_dir" ]; then
+            # If this is the first login, try going to the web root instead
+            # Mainly useful for Vagrant boxes
+            cd "$www_dir"
+        fi
     fi
 
     # Detect typos in the cd command
@@ -68,8 +74,15 @@ if $HAS_TERMINAL; then
     alias ll='l'
     alias lla='la'
 
+    # Use colours for 'tree' too
+    alias tree='tree -C'
+
     # Unset the colours that are sometimes set (e.g. Joshua)
     export LS_COLORS=
+
+    # Stop newer versions of Bash quoting the filenames in ls
+    # http://unix.stackexchange.com/a/258687/14368
+    export QUOTING_STYLE=literal
 
     # u = up
     alias u='c ..'

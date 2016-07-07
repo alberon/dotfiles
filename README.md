@@ -183,6 +183,26 @@ Combined with the `g` alias above, these make easy to type Git commands, e.g. `g
 | `sync`     | `submodule sync; submodule update --init`     |                                                          |
 | `files`    | `ls-files | grep`                             | Find file by name                                        |
 
+## Vagrant shortcuts
+
+Combined with the `v` alias above, these make easy to type Vagrant commands, e.g. `v s` instead of `vagrant status`:
+
+| Alias      | Expansion                                     | Comments                                                 |
+|------------|-----------------------------------------------|----------------------------------------------------------|
+| `s`        | `status`                                      |                                                          |
+| `gs`       | `global-status`                               |                                                          |
+| `u`        | `up`                                          |                                                          |
+| `p`        | `provision`                                   |                                                          |
+| `d`/`down` | `suspend`                                     |                                                          |
+| `bu`       | `box update`                                  |                                                          |
+| `rebuild`  | `destroy && box update && up`                 |                                                          |
+| `hosts`    | `hostmanager`                                 | [Update /etc/hosts files](https://github.com/smdahlen/vagrant-hostmanager) |
+| `x`/`exec` | `ssh -c "cd /vagrant; $*"`                    | Run a command on the guest machine without opening Bash  |
+| `h`/`tmux` | `ssh -- -t 'tmux attach || tmux new'`         | More or less - see source for the full command!          |
+| `uh`       | `up && tmux`                                  |                                                          |
+
+Note: Since Vagrant doesn't really support aliases, this is actually a [Bash function](.bash/vagrant.bash) sitting in front of the real Vagrant.
+
 ## Automatic sudo
 
 These commands will automatically be prefixed with `sudo`:

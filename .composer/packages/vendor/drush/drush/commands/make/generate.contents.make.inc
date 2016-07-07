@@ -81,7 +81,9 @@ function _drush_make_generate_makefile_body($projects, $output = array()) {
  *   A makefile on which to base our generated one.
  */
 function make_generate_from_makefile($file, $makefile) {
-  $info = make_parse_info_file($makefile);
+  if (!$info = make_parse_info_file($makefile)) {
+    return drush_set_error('MAKE_GENERATE_FAILED_PARSE', dt('Failed to parse makefile :makefile.', array(':makefile' => $makefile)));
+  }
   $projects = drush_get_option('DRUSH_MAKE_PROJECTS', FALSE);
   if ($projects === FALSE) {
     $projects = make_prepare_projects(FALSE, $info);
@@ -97,8 +99,7 @@ function make_generate_from_makefile($file, $makefile) {
     // If a specific revision was requested, do not set the version.
     if (!isset($project['revision'])) {
       $projects[$name]['version'] = $project['download']['full_version'];
-
-      if (strpos($projects[$name]['version'], $project['core']) === 0) {
+      if ($project['type'] != 'core' && strpos($projects[$name]['version'], $project['core']) === 0) {
         $projects[$name]['version'] = substr($projects[$name]['version'], strlen($project['core'] . '-'));
       }
     }
@@ -147,11 +148,53 @@ function make_generate_from_makefile($file, $makefile) {
     }
   }
 
-  $contents = _drush_make_generate_makefile_contents($projects, $libraries, $core, $defaults);
+  $contents = make_generate_makefile_contents($projects, $libraries, $core, $defaults);
 
   // Write or print our makefile.
   $file = $file !== TRUE ? $file : NULL;
   make_generate_print($contents, $file);
+}
+
+/**
+ * Generate makefile contents in the appropriate format.
+ */
+function make_generate_makefile_contents($projects, $libraries, $core, $defaults) {
+  $format = drush_get_option('format', 'yaml');
+  $func = "make_generate_makefile_contents_$format";
+  if (function_exists($func)) {
+    $contents = call_user_func($func, $projects, $libraries, $core, $defaults);
+  }
+  else {
+    return drush_set_error('MAKE_UNKNOWN_OUTPUT_FORMAT', dt('Generating makefiles in the :format output format is not yet supported. Implement :func() to add such support.', array(':format' => $format, ':func' => $func)));
+  }
+  return $contents;
+}
+
+/**
+ * Generate makefile contents in (legacy) INI format.
+ */
+function make_generate_makefile_contents_ini($projects, $libraries, $core, $defaults) {
+  return _drush_make_generate_makefile_contents($projects, $libraries, $core, $defaults);
+}
+
+/**
+ * Generate makefile contents in YAML format.
+ */
+function make_generate_makefile_contents_yaml($projects, $libraries, $core, $defaults) {
+  $info = array(
+    'core' => $core,
+    'api' => MAKE_API,
+    'defaults' => $defaults,
+    'projects' => $projects,
+    'libraries' => $libraries,
+  );
+
+  $info = _make_generate_array_filter($info);
+  $info = _make_generate_array_filter_key('_type', $info);
+  $dumper = drush_load_engine('outputformat', 'yaml');
+  $yaml = $dumper->format($info, array());
+
+  return $yaml;
 }
 
 /**
@@ -165,6 +208,21 @@ function _make_generate_array_filter($haystack) {
     }
     if (empty($value) && $value !== '0') {
       unset($haystack[$key]);
+    }
+  }
+  return $haystack;
+}
+
+/**
+ * Helper function to recursively remove elements matching a specific key from an array.
+ */
+function _make_generate_array_filter_key($needle, $haystack) {
+  foreach ($haystack as $key => $value) {
+    if ($key === $needle) {
+      unset($haystack[$key]);
+    }
+    elseif (is_array($value)) {
+      $haystack[$key] = _make_generate_array_filter_key($needle, $haystack[$key]);
     }
   }
   return $haystack;
@@ -186,7 +244,7 @@ function make_generate_print($contents, $file = NULL) {
     drush_log(dt("Wrote .make file @file", array('@file' => $file)), 'ok');
   }
   else {
-    drush_make_error('FILE_ERROR', dt("Unable to write .make file !file", array('!file' => $file)));
+    make_error('FILE_ERROR', dt("Unable to write .make file !file", array('!file' => $file)));
   }
 }
 
