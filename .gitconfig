@@ -26,11 +26,11 @@
     default = tracking
 
 [alias]
-    a            = add -A
-    addremove    = add -A
+    a            = "!f() { git add -A "$@"; git status; }; f"
+    addremove    = "!f() { git add -A "$@"; git status; }; f"
     amend        = commit --amend --no-edit --reset-author
     ap           = add --patch
-    ar           = add -A
+    ar           = "!f() { git add -A "$@"; git status; }; f"
     b            = branch
     ba           = branch -a
     bclean       = "!f() { git branch --merged ${1-master} | grep -v " ${1-master}$" | xargs -r git branch -d; }; f"
