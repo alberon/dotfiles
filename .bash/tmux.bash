@@ -29,13 +29,36 @@ if ! $MAC; then
         host="$1"
 
         if [ -z "$TMUX" ]; then
+            # Run tmux over ssh
             name="${2:-default}"
             ssh -o ForwardAgent=yes -t "$host" "which tmux >/dev/null 2>&1 && { tmux -2 attach -t '$name' || { sleep 0.001; tmux -2 new -s '$name'; }; } || bash -l"
         elif [ $# -ge 2 ]; then
+            # Already running tmux *and* the user tried to specify a session name
             echo 'sessions should be nested with care, unset $TMUX to force' >&2
             return 1
         else
+            # Already running tmux so connect without it
             ssh -o ForwardAgent=yes "$host"
+        fi
+    }
+
+    # mosh + tmux
+    export MOSH_TITLE_NOPREFIX=1
+
+    m() {
+        host="$1"
+
+        if [ -z "$TMUX" ]; then
+            # Run tmux over mosh (https://mosh.org/)
+            name="${2:-default}"
+            mosh --ssh="ssh -o ForwardAgent=yes -tt" "$host" -- sh -c "which tmux >/dev/null 2>&1 && { tmux -2 attach -t '$name' || { sleep 0.001; tmux -2 new -s '$name'; }; } || bash -l"
+        elif [ $# -ge 2 ]; then
+            # Already running tmux *and* the user tried to specify a session name
+            echo 'sessions should be nested with care, unset $TMUX to force' >&2
+            return 1
+        else
+            # Already running tmux so connect without it
+            mosh --ssh="ssh -o ForwardAgent=yes" "$host"
         fi
     }
 
