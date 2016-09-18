@@ -26,12 +26,13 @@ if ! $MAC; then
 
     # ssh + tmux ('h' for 'host' or 'ssH', because 's' and 't' are in use)
     h() {
-        host="$1"
+        local host="$1"
+        local name="${2:-default}"
+        local path="${3:-.}"
 
         if [ -z "$TMUX" ]; then
             # Run tmux over ssh
-            name="${2:-default}"
-            ssh -o ForwardAgent=yes -t "$host" "which tmux >/dev/null 2>&1 && { tmux -2 attach -t '$name' || { sleep 0.001; tmux -2 new -s '$name'; }; } || bash -l"
+            ssh -o ForwardAgent=yes -t "$host" "cd '$path'; which tmux >/dev/null 2>&1 && { tmux -2 attach -t '$name' || { sleep 0.001; tmux -2 new -s '$name'; }; } || bash -l"
         elif [ $# -ge 2 ]; then
             # Already running tmux *and* the user tried to specify a session name
             echo 'sessions should be nested with care, unset $TMUX to force' >&2
@@ -46,12 +47,13 @@ if ! $MAC; then
     export MOSH_TITLE_NOPREFIX=1
 
     m() {
-        host="$1"
+        local host="$1"
+        local name="${2:-default}"
+        local path="${3:-.}"
 
         if [ -z "$TMUX" ]; then
             # Run tmux over mosh (https://mosh.org/)
-            name="${2:-default}"
-            mosh --ssh="ssh -o ForwardAgent=yes -tt" "$host" -- sh -c "which tmux >/dev/null 2>&1 && { tmux -2 attach -t '$name' || { sleep 0.001; tmux -2 new -s '$name'; }; } || bash -l"
+            mosh --ssh="ssh -o ForwardAgent=yes -tt" "$host" -- sh -c "cd '$path'; which tmux >/dev/null 2>&1 && { tmux -2 attach -t '$name' || { sleep 0.001; tmux -2 new -s '$name'; }; } || bash -l"
         elif [ $# -ge 2 ]; then
             # Already running tmux *and* the user tried to specify a session name
             echo 'sessions should be nested with care, unset $TMUX to force' >&2
