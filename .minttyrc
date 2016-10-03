@@ -1,11 +1,11 @@
 BoldAsFont=no
-Font=Fixedsys
+Font=Fixedsys Excelsior 3.01-L2 Mono
 CursorType=block
 RightClickAction=paste
 Term=xterm-256color
 ConfirmExit=no
 Scrollbar=none
-FontHeight=9
+FontHeight=12
 FontIsBold=no
 FontSmoothing=default
 BoldAsColour=yes
