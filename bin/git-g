@@ -2,7 +2,7 @@
 
 # 'git grep' shortcut
 
-vercomp () {
+vercomphelper () {
     # http://stackoverflow.com/a/4025065/167815
     if [[ $1 == $2 ]]
     then
@@ -34,13 +34,28 @@ vercomp () {
     return 0
 }
 
+vercomp () {
+    vercomphelper $1 $2
+    case $? in
+        0) op='=';;
+        1) op='>';;
+        2) op='<';;
+    esac
+    if [[ $op != $3 ]]
+    then
+        return 1
+    else
+        return 0
+    fi
+}
+
 version="$(git --version | sed 's/git version //')"
 
-if vercomp "$version" '1.7.8' '>='; then
+if vercomp "$version" '1.7.7' '>'; then
     # 1.7.8 added --untracked
     # https://github.com/git/git/blob/35f6318d44379452d8d33e880d8df0267b4a0cd0/Documentation/RelNotes/1.7.8.txt#L70
     exec git grep --untracked --break --heading --line-number "$@"
-elif vercomp "$version" '1.7.7' '>='; then
+elif vercomp "$version" '1.7.6' '>'; then
     # 1.7.7 added --break, --heading
     # https://github.com/git/git/blob/35f6318d44379452d8d33e880d8df0267b4a0cd0/Documentation/RelNotes/1.7.7.txt#L80
     exec git grep --break --heading --line-number "$@"
