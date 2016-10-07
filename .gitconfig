@@ -26,11 +26,11 @@
     default = tracking
 
 [alias]
-    a            = add -A
-    addremove    = add -A
+    a            = "!f() { git add -A "$@"; git --no-pager status; }; f"
+    addremove    = -A "$@"
     amend        = commit --amend --no-edit --reset-author
     ap           = add --patch
-    ar           = add -A
+    ar           = git add -A
     b            = branch
     ba           = branch -a
     bclean       = "!f() { git branch --merged ${1-master} | grep -v " ${1-master}$" | xargs -r git branch -d; }; f"
@@ -55,19 +55,19 @@
     edit         = commit --amend --reset-author
     f            = fetch -v --prune
     fe           = fetch -v --prune
+    file         = files
     friday       = log --decorate -p --since='last friday'
-    g            = grep --untracked --break --heading --line-number
-    g3           = grep --untracked --break --heading --line-number --context=3
-    g6           = grep --untracked --break --heading --line-number --context=6
-    g9           = grep --untracked --break --heading --line-number --context=9
+    g3           = g -C3
+    g6           = g -C6
+    g9           = g -C9
     ga           = !git rev-list --all | xargs git grep --break --heading --line-number
-    ga3          = !git rev-list --all | xargs git grep --break --heading --line-number --context=3
-    ga6          = !git rev-list --all | xargs git grep --break --heading --line-number --context=6
-    ga9          = !git rev-list --all | xargs git grep --break --heading --line-number --context=9
-    gi           = grep --untracked --break --heading --line-number --ignore-case
-    gi3          = grep --untracked --break --heading --line-number --ignore-case --context=3
-    gi6          = grep --untracked --break --heading --line-number --ignore-case --context=6
-    gi9          = grep --untracked --break --heading --line-number --ignore-case --context=9
+    ga3          = !git rev-list --all | xargs git grep --break --heading --line-number -C3
+    ga6          = !git rev-list --all | xargs git grep --break --heading --line-number -C6
+    ga9          = !git rev-list --all | xargs git grep --break --heading --line-number -C9
+    gi           = g --ignore-case
+    gi3          = g --ignore-case -C3
+    gi6          = g --ignore-case -C6
+    gi9          = g --ignore-case -C9
     id           = log --pretty=format:'ID:    %h%nDate:  %aD%nRefs:%d' --abbrev-commit --date=short -1
     ignored      = ls-files --others -i --exclude-standard --directory
     in           = incoming

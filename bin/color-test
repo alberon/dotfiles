@@ -1,0 +1,76 @@
+#!/bin/bash
+set -o nounset -o pipefail -o errexit
+
+echo
+echo -e "\e[93;4m Foreground                                                                                                      \e[0m"
+echo
+for fg in {30..37}; do
+    echo -en " \e[${fg}m\\\e[${fg}m   \e[0m"
+done
+echo -e "                 - Reset: \e[97m\\\e[39m\e[0m"
+
+for fg in {90..97}; do
+    echo -en " \e[${fg}m\\\e[${fg}m   \e[0m"
+done
+echo
+
+echo
+echo -e "\e[93;4m Background                                                                                                      \e[0m"
+echo
+for bg in {40..47}; do
+    echo -en " \e[37;1;${bg}m\\\e[${bg}m   \e[0m"
+done
+echo -e "                 - Reset: \e[97m\\\e[49m\e[0m"
+
+for bg in {100..107}; do
+    echo -en " \e[37;1;${bg}m\\\e[${bg}m  \e[0m"
+done
+echo
+
+echo
+echo -e "\e[93;4m Styles                                                                                                          \e[0m"
+echo
+for fg in {30..37}; do
+    echo -en " \e[${fg};1m\\\e[${fg};1m \e[0m"
+done
+echo -e " - \e[93mBold\e[0m          - Reset: \e[97m\\\e[21m\e[0m"
+
+for fg in {30..37}; do
+    echo -en " \e[${fg};2m\\\e[${fg};2m \e[0m"
+done
+echo -e " - \e[93mDim\e[0m           - Reset: \e[97m\\\e[22m\e[0m"
+
+for fg in {30..37}; do
+    echo -en " \e[${fg};3m\\\e[${fg};3m \e[0m"
+done
+echo -e " - \e[93mItalic\e[0m        - Reset: \e[97m\\\e[23m\e[0m"
+
+for fg in {30..37}; do
+    echo -en " \e[${fg};4m\\\e[${fg};4m \e[0m"
+done
+echo -e " - \e[93mUnderlined\e[0m    - Reset: \e[97m\\\e[24m\e[0m"
+
+for fg in {30..37}; do
+    echo -en " \e[${fg};5m\\\e[${fg};5m \e[0m"
+done
+echo -e " - \e[93mBlink\e[0m         - Reset: \e[97m\\\e[25m\e[0m"
+
+for fg in {30..37}; do
+    echo -en " \e[${fg};6m\\\e[${fg};6m \e[0m"
+done
+echo -e " - \e[93m???\e[0m           - Reset: \e[97m\\\e[26m\e[0m"
+
+for fg in {30..37}; do
+    echo -en " \e[${fg};7m\\\e[${fg};7m \e[0m"
+done
+echo -e " - \e[93mReverse\e[0m       - Reset: \e[97m\\\e[27m\e[0m"
+
+for fg in {30..37}; do
+    echo -en " \e[${fg};8m\\\e[${fg};8m \e[0m"
+done
+echo -e " - \e[93mHidden\e[0m        - Reset: \e[97m\\\e[28m\e[0m"
+
+for fg in {30..37}; do
+    echo -en " \e[${fg};9m\\\e[${fg};9m \e[0m"
+done
+echo -e " - \e[93mStrikethrough\e[0m - Reset: \e[97m\\\e[29m\e[0m"
