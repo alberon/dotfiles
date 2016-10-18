@@ -30,7 +30,10 @@ if ! $MAC; then
         local name="${2:-default}"
         local path="${3:-.}"
 
-        if [ -z "$TMUX" ]; then
+        if [ "$host" = "v" -a $# -eq 1 ]; then
+            # Special case for 'h v' => 'v h' => 'vagrant tmux' (see vagrant.bash)
+            vagrant tmux
+        elif [ -z "$TMUX" ]; then
             # Run tmux over ssh
             ssh -o ForwardAgent=yes -t "$host" "cd '$path'; which tmux >/dev/null 2>&1 && { tmux -2 attach -t '$name' || { sleep 0.001; tmux -2 new -s '$name'; }; } || bash -l"
         elif [ $# -ge 2 ]; then
