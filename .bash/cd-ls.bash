@@ -77,8 +77,8 @@ if $HAS_TERMINAL; then
     # Use colours for 'tree' too
     alias tree='tree -C'
 
-    # Unset the colours that are sometimes set (e.g. Joshua)
-    export LS_COLORS=
+    # Default colours except yellow not blue for directories
+    export LS_COLORS='di=93'
 
     # Stop newer versions of Bash quoting the filenames in ls
     # http://unix.stackexchange.com/a/258687/14368
