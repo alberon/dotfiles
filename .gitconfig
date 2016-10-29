@@ -12,9 +12,6 @@
     diff = auto
     grep = auto
 
-#[gc]
-#    auto = 4000 # Pack more often to reduce number of small files to be backed up
-
 [pack]
     threads = 0
 
@@ -26,7 +23,6 @@
     default = tracking
 
 [alias]
-    a            = "!f() { git add -A "$@"; git --no-pager status; }; f"
     addremove    = -A "$@"
     amend        = commit --amend --no-edit --reset-author
     ap           = add --patch
