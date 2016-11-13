@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+    echo "Usage: `basename $0` <dbname>" >&2
+    exit 1
+fi
+
+mysqldump $1 > $1.sql
