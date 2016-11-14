@@ -76,7 +76,7 @@ fi
 if [ -f artisan ]; then
     echo
     echo "Migrating database..."
-    run_php artisan migrate
+    run_php artisan migrate --force
 fi
 
 echo "========================================================================"
