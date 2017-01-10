@@ -16,6 +16,7 @@ if [ ! -f ~/.bashrc_config ]; then
     MAC=false
     CPANEL=false
     VAGRANT=false
+    ROOT=false
 
     case "$(uname)" in
         CYGWIN*)  WINDOWS=true; CYGWIN=true ;;
@@ -32,6 +33,10 @@ if [ ! -f ~/.bashrc_config ]; then
         # https://github.com/npm/npm/issues/3670#issuecomment-82825408
         # so we also check for /home/vagrant
         VAGRANT=true
+    fi
+
+    if [ "$(id -u)" = 0 ]; then
+        ROOT=true
     fi
 
     # Generate .bashrc_config
@@ -63,6 +68,9 @@ if [ ! -f ~/.bashrc_config ]; then
         elif $CYGWIN; then
             # Cygwin - My Documents
             echo "www_dir=$(cygpath --mydocs)"
+        elif $CPANEL && $ROOT; then
+            # Live server - Root user
+            echo "www_dir=/home"
         elif $CPANEL || [ -d ~/repo ]; then
             # Live server - Git repo
             echo "www_dir=~/repo"
