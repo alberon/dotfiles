@@ -50,6 +50,7 @@ if $HAS_TERMINAL && ! $WINDOWS; then
     alias reboot='sudo reboot'
     alias service='sudo service'
     alias shutdown='sudo poweroff'
+    alias systemctl='sudo systemctl'
     alias useradd='sudo useradd'
     alias userdel='sudo userdel'
     alias usermod='sudo usermod'
