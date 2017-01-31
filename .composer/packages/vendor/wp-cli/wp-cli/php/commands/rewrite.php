@@ -3,6 +3,25 @@
 /**
  * Manage rewrite rules.
  *
+ * ## EXAMPLES
+ *
+ *     # Flush rewrite rules
+ *     $ wp rewrite flush
+ *     Success: Rewrite rules flushed.
+ *
+ *     # Update permalink structure
+ *     $ wp rewrite structure '/%year%/%monthnum%/%postname%'
+ *     Success: Rewrite structure set.
+ *
+ *     # List rewrite rules
+ *     $ wp rewrite list --format=csv
+ *     match,query,source
+ *     ^wp-json/?$,index.php?rest_route=/,other
+ *     ^wp-json/(.*)?,index.php?rest_route=/$matches[1],other
+ *     category/(.+?)/feed/(feed|rdf|rss|rss2|atom)/?$,index.php?category_name=$matches[1]&feed=$matches[2],category
+ *     category/(.+?)/(feed|rdf|rss|rss2|atom)/?$,index.php?category_name=$matches[1]&feed=$matches[2],category
+ *     category/(.+?)/embed/?$,index.php?category_name=$matches[1]&embed=true,category
+ *
  * @package wp-cli
  */
 class Rewrite_Command extends WP_CLI_Command {
@@ -10,20 +29,25 @@ class Rewrite_Command extends WP_CLI_Command {
 	/**
 	 * Flush rewrite rules.
 	 *
-	 * ## DESCRIPTION
-	 *
 	 * Resets WordPress' rewrite rules based on registered post types, etc.
 	 *
 	 * To regenerate a .htaccess file with WP-CLI, you'll need to add the mod_rewrite module
 	 * to your wp-cli.yml or config.yml. For example:
 	 *
-	 * `apache_modules:
-	 *   - mod_rewrite`
+	 * ```
+	 * apache_modules:
+	 *   - mod_rewrite
+	 * ```
 	 *
 	 * ## OPTIONS
 	 *
 	 * [--hard]
 	 * : Perform a hard flush - update `.htaccess` rules as well as rewrite rules in database. Works only on single site installs.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     $ wp rewrite flush
+	 *     Success: Rewrite rules flushed.
 	 */
 	public function flush( $args, $assoc_args ) {
 		// make sure we detect mod_rewrite if configured in apache_modules in config
@@ -49,15 +73,16 @@ class Rewrite_Command extends WP_CLI_Command {
 	/**
 	 * Update the permalink structure.
 	 *
-	 * ## DESCRIPTION
+	 * Sets the post permalink structure to the specified pattern.
 	 *
-	 * Updates the post permalink structure.
+	 * To regenerate a .htaccess file with WP-CLI, you'll need to add
+	 * the mod_rewrite module to your [WP-CLI config](http://wp-cli.org/config/).
+	 * For example:
 	 *
-	 * To regenerate a .htaccess file with WP-CLI, you'll need to add the mod_rewrite module
-	 * to your wp-cli.yml or config.yml. For example:
-	 *
-	 * `apache_modules:
-	 *   - mod_rewrite`
+	 * ```
+	 * apache_modules:
+	 *   - mod_rewrite
+	 * ```
 	 *
 	 * ## OPTIONS
 	 *
@@ -75,18 +100,15 @@ class Rewrite_Command extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     wp rewrite structure '/%year%/%monthnum%/%postname%'
+	 *     $ wp rewrite structure '/%year%/%monthnum%/%postname%'
+	 *     Success: Rewrite structure set.
 	 */
 	public function structure( $args, $assoc_args ) {
 		global $wp_rewrite;
 
 		// copypasta from /wp-admin/options-permalink.php
-		$home_path = get_home_path();
-		$iis7_permalinks = iis7_supports_permalinks();
 
 		$prefix = $blog_prefix = '';
-		if ( ! got_mod_rewrite() && ! $iis7_permalinks )
-			$prefix = '/index.php';
 		if ( is_multisite() && !is_subdomain_install() && is_main_site() )
 			$blog_prefix = '/blog';
 
@@ -124,14 +146,16 @@ class Rewrite_Command extends WP_CLI_Command {
 		// Launch a new process to flush rewrites because core expects flush
 		// to happen after rewrites are set
 		$new_assoc_args = array();
+		$cmd = 'rewrite flush';
 		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'hard' ) ) {
+			$cmd .= ' --hard';
 			$new_assoc_args['hard'] = true;
 			if ( ! in_array( 'mod_rewrite', (array) WP_CLI::get_config( 'apache_modules' ) ) ) {
 				WP_CLI::warning( "Regenerating a .htaccess file requires special configuration. See usage docs." );
 			}
 		}
 
-		$process_run = WP_CLI::launch_self( 'rewrite flush', array(), $new_assoc_args, true, true, array( 'apache_modules', WP_CLI::get_config( 'apache_modules' ) ) );
+		$process_run = WP_CLI::runcommand( $cmd );
 		if ( ! empty( $process_run->stderr ) ) {
 			// Strip "Warning: "
 			WP_CLI::warning( substr( $process_run->stderr, 9 ) );
@@ -141,7 +165,7 @@ class Rewrite_Command extends WP_CLI_Command {
 	}
 
 	/**
-	 * Print current rewrite rules.
+	 * Get a list of the current rewrite rules.
 	 *
 	 * ## OPTIONS
 	 *
@@ -151,12 +175,30 @@ class Rewrite_Command extends WP_CLI_Command {
 	 * [--source=<source>]
 	 * : Show rewrite rules from a particular source.
 	 *
+	 * [--fields=<fields>]
+	 * : Limit the output to specific fields. Defaults to match,query,source.
+	 *
 	 * [--format=<format>]
-	 * : Accepted values: table, csv, json, count. Default: table
+	 * : Render output in a particular format.
+	 * ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - csv
+	 *   - json
+	 *   - count
+	 *   - yaml
+	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     wp rewrite list --format=csv
+	 *     $ wp rewrite list --format=csv
+	 *     match,query,source
+	 *     ^wp-json/?$,index.php?rest_route=/,other
+	 *     ^wp-json/(.*)?,index.php?rest_route=/$matches[1],other
+	 *     category/(.+?)/feed/(feed|rdf|rss|rss2|atom)/?$,index.php?category_name=$matches[1]&feed=$matches[2],category
+	 *     category/(.+?)/(feed|rdf|rss|rss2|atom)/?$,index.php?category_name=$matches[1]&feed=$matches[2],category
+	 *     category/(.+?)/embed/?$,index.php?category_name=$matches[1]&embed=true,category
 	 *
 	 * @subcommand list
 	 */
@@ -172,7 +214,8 @@ class Rewrite_Command extends WP_CLI_Command {
 		$defaults = array(
 			'source' => '',
 			'match'  => '',
-			'format' => 'table'
+			'format' => 'table',
+			'fields' => 'match,query,source',
 		);
 		$assoc_args = array_merge( $defaults, $assoc_args );
 
@@ -221,7 +264,7 @@ class Rewrite_Command extends WP_CLI_Command {
 			$rule_list[] = compact( 'match', 'query', 'source' );
 		}
 
-		WP_CLI\Utils\format_items( $assoc_args['format'], $rule_list, array('match', 'query', 'source' ) );
+		WP_CLI\Utils\format_items( $assoc_args['format'], $rule_list, explode( ',', $assoc_args['fields'] ) );
 	}
 
 	/**
@@ -241,8 +284,10 @@ class Rewrite_Command extends WP_CLI_Command {
 	 * To get this to work with wp-cli you'll need to add the mod_rewrite module
 	 * to your config.yml. For example
 	 *
+	 * ```
 	 * apache_modules:
 	 *   - mod_rewrite
+	 * ```
 	 *
 	 * If this isn't done then the .htaccess rewrite rules won't be flushed out
 	 * to disk.
@@ -263,5 +308,5 @@ class Rewrite_Command extends WP_CLI_Command {
 	}
 }
 
-WP_CLI:: add_command( 'rewrite', 'Rewrite_Command' );
+WP_CLI::add_command( 'rewrite', 'Rewrite_Command' );
 

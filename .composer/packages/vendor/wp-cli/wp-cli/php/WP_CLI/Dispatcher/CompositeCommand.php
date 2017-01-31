@@ -30,7 +30,6 @@ class CompositeCommand {
 
 		$this->shortdesc = $docparser->get_shortdesc();
 		$this->longdesc = $docparser->get_longdesc();
-		$this->longdesc .= $this->get_global_params();
 		$this->docparser = $docparser;
 
 		$when_to_invoke = $docparser->get_tag( 'when' );
@@ -58,6 +57,19 @@ class CompositeCommand {
 	public function add_subcommand( $name, $command ) {
 		$this->subcommands[ $name ] = $command;
 	}
+
+	/**
+	 * Remove a named subcommand from this composite command's set of contained
+	 * subcommands
+	 *
+	 * @param string $name Represents how subcommand should be invoked
+	 */
+	public function remove_subcommand( $name ) {
+		if ( isset( $this->subcommands[ $name ] ) ) {
+			unset( $this->subcommands[ $name ] );
+		}
+	}
+
 
 	/**
 	 * Composite commands always contain subcommands.
@@ -100,13 +112,31 @@ class CompositeCommand {
 	}
 
 	/**
+	 * Set the short description for this composite command.
+	 *
+	 * @param string
+	 */
+	public function set_shortdesc( $shortdesc ) {
+		$this->shortdesc = $shortdesc;
+	}
+
+	/**
 	 * Get the long description for this composite
 	 * command.
 	 *
 	 * @return string
 	 */
 	public function get_longdesc() {
-		return $this->longdesc;
+		return $this->longdesc . $this->get_global_params();
+	}
+
+	/**
+	 * Set the long description for this composite commmand
+	 *
+	 * @param string
+	 */
+	public function set_longdesc( $longdesc ) {
+		$this->longdesc = $longdesc;
 	}
 
 	/**
@@ -235,6 +265,10 @@ class CompositeCommand {
 		$binding = array();
 		$binding['root_command'] = $root_command;
 
+		if (! $this->can_have_subcommands() || ( is_object( $this->parent ) && get_class( $this->parent ) == 'WP_CLI\Dispatcher\CompositeCommand' )) {
+			$binding['is_subcommand'] = true;
+		}
+
 		foreach ( \WP_CLI::get_configurator()->get_spec() as $key => $details ) {
 			if ( false === $details['runtime'] )
 				continue;
@@ -254,6 +288,10 @@ class CompositeCommand {
 				'synopsis' => $synopsis,
 				'desc' => $details['desc']
 			);
+		}
+
+		if ( $this->get_subcommands() ) {
+			$binding['has_subcommands'] = true;
 		}
 
 		return Utils\mustache_render( 'man-params.mustache', $binding );

@@ -5,6 +5,35 @@ use \WP_CLI\Utils;
 /**
  * Manage plugins.
  *
+ * ## EXAMPLES
+ *
+ *     # Activate plugin
+ *     $ wp plugin activate hello-dolly
+ *     Plugin 'hello-dolly' activated.
+ *     Success: Activated 1 of 1 plugins.
+ *
+ *     # Deactivate plugin
+ *     $ wp plugin deactivate hello-dolly
+ *     Plugin 'hello-dolly' deactivated.
+ *     Success: Deactivated 1 of 1 plugins.
+ *
+ *     # Delete plugin
+ *     $ wp plugin delete hello-dolly
+ *     Deleted 'hello-dolly' plugin.
+ *     Success: Deleted 1 of 1 plugins.
+ *
+ *     # Install the latest version from wordpress.org and activate
+ *     $ wp plugin install bbpress --activate
+ *     Installing bbPress (2.5.9)
+ *     Downloading install package from https://downloads.wordpress.org/plugin/bbpress.2.5.9.zip...
+ *     Using cached file '/home/vagrant/.wp-cli/cache/plugin/bbpress-2.5.9.zip'...
+ *     Unpacking the package...
+ *     Installing the plugin...
+ *     Plugin installed successfully.
+ *     Activating 'bbpress'...
+ *     Plugin 'bbpress' activated.
+ *     Success: Installed 1 of 1 plugins.
+ *
  * @package wp-cli
  */
 class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
@@ -40,21 +69,54 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 	 *
 	 * [<plugin>]
 	 * : A particular plugin to show the status for.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     # Displays status of all plugins
+	 *     $ wp plugin status
+	 *     5 installed plugins:
+	 *       I akismet                3.1.11
+	 *       I easy-digital-downloads 2.5.16
+	 *       A theme-check            20160523.1
+	 *       I wen-logo-slider        2.0.3
+	 *       M ns-pack                1.0.0
+	 *     Legend: I = Inactive, A = Active, M = Must Use
+	 *
+	 *     # Displays status of a plugin
+	 *     $ wp plugin status theme-check
+	 *     Plugin theme-check details:
+	 *         Name: Theme Check
+	 *         Status: Active
+	 *         Version: 20160523.1
+	 *         Author: Otto42, pross
+	 *         Description: A simple and easy way to test your theme for all the latest WordPress standards and practices. A great theme development tool!
 	 */
-	function status( $args ) {
+	public function status( $args ) {
 		parent::status( $args );
 	}
 
 	/**
-	 * Search the wordpress.org plugin repository.
+	 * Search the WordPress.org plugin directory.
+	 *
+	 * Displays plugins in the WordPress.org plugin directory matching a given
+	 * search query.
 	 *
 	 * ## OPTIONS
 	 *
 	 * <search>
 	 * : The string to search for.
 	 *
+	 * [--page=<page>]
+	 * : Optional page to display.
+	 * ---
+	 * default: 1
+	 * ---
+	 *
 	 * [--per-page=<per-page>]
-	 * : Optional number of results to display. Defaults to 10.
+	 * : Optional number of results to display.
+	 * ---
+	 * default: 10
+	 * ---
 	 *
 	 * [--field=<field>]
 	 * : Prints the value of a single field for each plugin.
@@ -78,13 +140,32 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 	 *     **short_description**: Plugin's Short Description
 	 *
 	 * [--format=<format>]
-	 * : Accepted values: table, csv, json, count. Default: table
+	 * : Render output in a particular format.
+	 * ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - csv
+	 *   - count
+	 *   - json
+	 *   - yaml
+	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     wp plugin search dsgnwrks --per-page=20 --format=json
+	 *     $ wp plugin search dsgnwrks --per-page=20 --format=json
+	 *     Success: Showing 3 of 3 plugins.
+	 *     [{"name":"DsgnWrks Instagram Importer Debug","slug":"dsgnwrks-instagram-importer-debug","rating":0},{"name":"DsgnWrks Instagram Importer","slug":"dsgnwrks-instagram-importer","rating":84},{"name":"DsgnWrks Twitter Importer","slug":"dsgnwrks-twitter-importer","rating":80}]
 	 *
-	 *     wp plugin search dsgnwrks --fields=name,version,slug,rating,num_ratings
+	 *     $ wp plugin search dsgnwrks --fields=name,version,slug,rating,num_ratings
+	 *     Success: Showing 3 of 3 plugins.
+	 *     +-----------------------------------+---------+-----------------------------------+--------+-------------+
+	 *     | name                              | version | slug                              | rating | num_ratings |
+	 *     +-----------------------------------+---------+-----------------------------------+--------+-------------+
+	 *     | DsgnWrks Instagram Importer Debug | 0.1.6   | dsgnwrks-instagram-importer-debug | 0      | 0           |
+	 *     | DsgnWrks Instagram Importer       | 1.3.7   | dsgnwrks-instagram-importer       | 84     | 23          |
+	 *     | DsgnWrks Twitter Importer         | 1.1.1   | dsgnwrks-twitter-importer         | 80     | 1           |
+	 *     +-----------------------------------+---------+-----------------------------------+--------+-------------+
 	 */
 	public function search( $args, $assoc_args ) {
 		parent::_search( $args, $assoc_args );
@@ -151,18 +232,39 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 	 *
 	 * [--network]
 	 * : If set, the plugin will be activated for the entire multisite network.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     # Activate plugin
+	 *     $ wp plugin activate hello-dolly
+	 *     Plugin 'hello-dolly' activated.
+	 *     Success: Activated 1 of 1 plugins.
+	 *
+	 *     # Activate plugin in entire multisite network
+	 *     $ wp plugin activate hello-dolly --network
+	 *     Plugin 'hello-dolly' network activated.
+	 *     Success: Network activated 1 of 1 plugins.
 	 */
-	function activate( $args, $assoc_args = array() ) {
+	public function activate( $args, $assoc_args = array() ) {
 		$network_wide = \WP_CLI\Utils\get_flag_value( $assoc_args, 'network' );
+		$all = \WP_CLI\Utils\get_flag_value( $assoc_args, 'all', false );
 
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'all' ) ) {
+		if ( $all ) {
 			$args = array_map( function( $file ){
 				return Utils\get_plugin_name( $file );
 			}, array_keys( get_plugins() ) );
 		}
 
-		foreach ( $this->fetcher->get_many( $args ) as $plugin ) {
+		$successes = $errors = 0;
+		$plugins = $this->fetcher->get_many( $args );
+		if ( count( $plugins ) < count( $args ) ) {
+			$errors = count( $args ) - count( $plugins );
+		}
+		foreach ( $plugins as $plugin ) {
 			$status = $this->get_status( $plugin->file );
+			if ( $all && in_array( $status, array( 'active', 'active-network' ) ) ) {
+				continue;
+			}
 			// Network-active is the highest level of activation status
 			if ( 'active-network' === $status ) {
 				WP_CLI::warning( "Plugin '{$plugin->name}' is already network active." );
@@ -181,7 +283,13 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 
 			activate_plugin( $plugin->file, '', $network_wide );
 
-			$this->active_output( $plugin->name, $plugin->file, $network_wide, "activate" );
+			$this->active_output( $plugin->name, $plugin->file, $network_wide, 'activate' );
+			$successes++;
+		}
+
+		if ( ! $this->chained_command ) {
+			$verb = $network_wide ? 'network activate' : 'activate';
+			Utils\report_batch_operation_results( 'plugin', $verb, count( $args ), $successes, $errors );
 		}
 
 	}
@@ -202,8 +310,15 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 	 *
 	 * [--network]
 	 * : If set, the plugin will be deactivated for the entire multisite network.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     # Deactivate plugin
+	 *     $ wp plugin deactivate hello-dolly
+	 *     Plugin 'hello-dolly' deactivated.
+	 *     Success: Deactivated 1 of 1 plugins.
 	 */
-	function deactivate( $args, $assoc_args = array() ) {
+	public function deactivate( $args, $assoc_args = array() ) {
 		$network_wide = \WP_CLI\Utils\get_flag_value( $assoc_args, 'network' );
 		$disable_all = \WP_CLI\Utils\get_flag_value( $assoc_args, 'all' );
 
@@ -213,12 +328,23 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 			}, array_keys( get_plugins() ) );
 		}
 
-		foreach ( $this->fetcher->get_many( $args ) as $plugin ) {
+		$successes = $errors = 0;
+		$plugins = $this->fetcher->get_many( $args );
+		if ( count( $plugins ) < count( $args ) ) {
+			$errors = count( $args ) - count( $plugins );
+		}
+
+		foreach ( $plugins as $plugin ) {
 
 			$status = $this->get_status( $plugin->file );
+			if ( $disable_all && ! in_array( $status, array( 'active', 'active-network' ) ) ) {
+				continue;
+			}
+
 			// Network active plugins must be explicitly deactivated
 			if ( ! $network_wide && 'active-network' === $status ) {
 				WP_CLI::warning( "Plugin '{$plugin->name}' is network active and must be deactivated with --network flag." );
+				$errors++;
 				continue;
 			}
 
@@ -229,18 +355,38 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 
 			deactivate_plugins( $plugin->file, false, $network_wide );
 
-			$this->active_output( $plugin->name, $plugin->file, $network_wide, "deactivate" );
+			if ( ! is_network_admin() ) {
+				update_option( 'recently_activated',
+					array( $plugin->file => time() ) + (array) get_option( 'recently_activated' ) );
+			} else {
+				update_site_option( 'recently_activated',
+					array( $plugin->file => time() ) + (array) get_site_option( 'recently_activated' ) );
+			}
+
+			$this->active_output( $plugin->name, $plugin->file, $network_wide, 'deactivate' );
+			$successes++;
 
 			if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'uninstall' ) ) {
 				WP_CLI::log( "Uninstalling '{$plugin->name}'..." );
+				$this->chained_command = true;
 				$this->uninstall( array( $plugin->name ) );
+				$this->chained_command = false;
 			}
 
 		}
+
+		if ( ! $this->chained_command ) {
+			$verb = $network_wide ? 'network deactivate' : 'deactivate';
+			Utils\report_batch_operation_results( 'plugin', $verb, count( $args ), $successes, $errors );
+		}
+
 	}
 
 	/**
 	 * Toggle a plugin's activation state.
+	 *
+	 * If the plugin is active, then it will be deactivated. If the plugin is
+	 * inactive, then it will be activated.
 	 *
 	 * ## OPTIONS
 	 *
@@ -249,17 +395,38 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 	 *
 	 * [--network]
 	 * : If set, the plugin will be toggled for the entire multisite network.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     # Akismet is currently activated
+	 *     $ wp plugin toggle akismet
+	 *     Plugin 'akismet' deactivated.
+	 *     Success: Toggled 1 of 1 plugins.
+	 *
+	 *     # Akismet is currently deactivated
+	 *     $ wp plugin toggle akismet
+	 *     Plugin 'akismet' activated.
+	 *     Success: Toggled 1 of 1 plugins.
 	 */
-	function toggle( $args, $assoc_args = array() ) {
+	public function toggle( $args, $assoc_args = array() ) {
 		$network_wide = \WP_CLI\Utils\get_flag_value( $assoc_args, 'network' );
 
-		foreach ( $this->fetcher->get_many( $args ) as $plugin ) {
+		$successes = $errors = 0;
+		$plugins = $this->fetcher->get_many( $args );
+		if ( count( $plugins ) < count( $args ) ) {
+			$errors = count( $args ) - count( $plugins );
+		}
+		$this->chained_command = true;
+		foreach ( $plugins as $plugin ) {
 			if ( $this->check_active( $plugin->file, $network_wide ) ) {
 				$this->deactivate( array( $plugin->name ), $assoc_args );
 			} else {
 				$this->activate( array( $plugin->name ), $assoc_args );
 			}
+			$successes++;
 		}
+		$this->chained_command = false;
+		Utils\report_batch_operation_results( 'plugin', 'toggle', count( $args ), $successes, $errors );
 	}
 
 	/**
@@ -277,9 +444,10 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     cd $(wp plugin path)
+	 *     $ cd $(wp plugin path) && pwd
+	 *     /var/www/wordpress/wp-content/plugins
 	 */
-	function path( $args, $assoc_args ) {
+	public function path( $args, $assoc_args ) {
 		$path = untrailingslashit( WP_PLUGIN_DIR );
 
 		if ( !empty( $args ) ) {
@@ -342,17 +510,41 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     wp plugin update bbpress --version=dev
+	 *     $ wp plugin update bbpress --version=dev
+	 *     Installing bbPress (Development Version)
+	 *     Downloading install package from https://downloads.wordpress.org/plugin/bbpress.zip...
+	 *     Unpacking the package...
+	 *     Installing the plugin...
+	 *     Removing the old version of the plugin...
+	 *     Plugin updated successfully.
+	 *     Success: Updated 1 of 2 plugins.
 	 *
-	 *     wp plugin update --all
+	 *     $ wp plugin update --all
+	 *     Enabling Maintenance mode...
+	 *     Downloading update from https://downloads.wordpress.org/plugin/akismet.3.1.11.zip...
+	 *     Unpacking the update...
+	 *     Installing the latest version...
+	 *     Removing the old version of the plugin...
+	 *     Plugin updated successfully.
+	 *     Downloading update from https://downloads.wordpress.org/plugin/nginx-champuru.3.2.0.zip...
+	 *     Unpacking the update...
+	 *     Installing the latest version...
+	 *     Removing the old version of the plugin...
+	 *     Plugin updated successfully.
+	 *     Disabling Maintenance mode...
+	 *     +------------------------+-------------+-------------+---------+
+	 *     | name                   | old_version | new_version | status  |
+	 *     +------------------------+-------------+-------------+---------+
+	 *     | akismet                | 3.1.3       | 3.1.11      | Updated |
+	 *     | nginx-cache-controller | 3.1.1       | 3.2.0       | Updated |
+	 *     +------------------------+-------------+-------------+---------+
+	 *     Success: Updated 2 of 2 plugins.
 	 *
 	 * @alias upgrade
 	 */
 	function update( $args, $assoc_args ) {
 		if ( isset( $assoc_args['version'] ) ) {
 			foreach ( $this->fetcher->get_many( $args ) as $plugin ) {
-				$this->_delete( $plugin );
-
 				$assoc_args['force'] = 1;
 				$this->install( array( $plugin->name ), $assoc_args );
 			}
@@ -390,7 +582,7 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 				continue;
 			}
 			foreach( $files as $file ) {
-				$items[ $file ]['name'] = str_replace( '.' . pathinfo( $file, PATHINFO_EXTENSION ), '', $file ); 
+				$items[ $file ]['name'] = str_replace( '.' . pathinfo( $file, PATHINFO_EXTENSION ), '', $file );
 			}
 		}
 
@@ -427,18 +619,52 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 	 * ## EXAMPLES
 	 *
 	 *     # Install the latest version from wordpress.org and activate
-	 *     wp plugin install bbpress --activate
+	 *     $ wp plugin install bbpress --activate
+	 *     Installing bbPress (2.5.9)
+	 *     Downloading install package from https://downloads.wordpress.org/plugin/bbpress.2.5.9.zip...
+	 *     Using cached file '/home/vagrant/.wp-cli/cache/plugin/bbpress-2.5.9.zip'...
+	 *     Unpacking the package...
+	 *     Installing the plugin...
+	 *     Plugin installed successfully.
+	 *     Activating 'bbpress'...
+	 *     Plugin 'bbpress' activated.
+	 *     Success: Installed 1 of 1 plugins.
 	 *
 	 *     # Install the development version from wordpress.org
-	 *     wp plugin install bbpress --version=dev
+	 *     $ wp plugin install bbpress --version=dev
+	 *     Installing bbPress (Development Version)
+	 *     Downloading install package from https://downloads.wordpress.org/plugin/bbpress.zip...
+	 *     Unpacking the package...
+	 *     Installing the plugin...
+	 *     Plugin installed successfully.
+	 *     Success: Installed 1 of 1 plugins.
 	 *
 	 *     # Install from a local zip file
-	 *     wp plugin install ../my-plugin.zip
+	 *     $ wp plugin install ../my-plugin.zip
+	 *     Unpacking the package...
+	 *     Installing the plugin...
+	 *     Plugin installed successfully.
+	 *     Success: Installed 1 of 1 plugins.
 	 *
 	 *     # Install from a remote zip file
-	 *     wp plugin install http://s3.amazonaws.com/bucketname/my-plugin.zip?AWSAccessKeyId=123&Expires=456&Signature=abcdef
+	 *     $ wp plugin install http://s3.amazonaws.com/bucketname/my-plugin.zip?AWSAccessKeyId=123&Expires=456&Signature=abcdef
+	 *     Downloading install package from http://s3.amazonaws.com/bucketname/my-plugin.zip?AWSAccessKeyId=123&Expires=456&Signature=abcdef
+	 *     Unpacking the package...
+	 *     Installing the plugin...
+	 *     Plugin installed successfully.
+	 *     Success: Installed 1 of 1 plugins.
+	 *
+	 *     # Forcefully re-install all installed plugins
+	 *     $ wp plugin install $(wp plugin list --field=name) --force
+	 *     Installing Akismet (3.1.11)
+	 *     Downloading install package from https://downloads.wordpress.org/plugin/akismet.3.1.11.zip...
+	 *     Unpacking the package...
+	 *     Installing the plugin...
+	 *     Removing the old version of the plugin...
+	 *     Plugin updated successfully
+	 *     Success: Installed 1 of 1 plugins.
 	 */
-	function install( $args, $assoc_args ) {
+	public function install( $args, $assoc_args ) {
 
 		if ( ! is_dir( WP_PLUGIN_DIR ) ) {
 			wp_mkdir_p( WP_PLUGIN_DIR );
@@ -448,7 +674,7 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 	}
 
 	/**
-	 * Get a plugin.
+	 * Get details about an installed plugin.
 	 *
 	 * ## OPTIONS
 	 *
@@ -462,11 +688,20 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 	 * : Limit the output to specific fields. Defaults to all fields.
 	 *
 	 * [--format=<format>]
-	 * : Output list as table, json, CSV. Defaults to table.
+	 * : Render output in a particular format.
+	 * ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - csv
+	 *   - json
+	 *   - yaml
+	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     wp plugin get bbpress --format=json
+	 *     $ wp plugin get bbpress --format=json
+	 *     {"name":"bbpress","title":"bbPress","author":"The bbPress Contributors","version":"2.6-alpha","description":"bbPress is forum software with a twist from the creators of WordPress.","status":"active"}
 	 */
 	public function get( $args, $assoc_args ) {
 		$plugin = $this->fetcher->get_check( $args[0] );
@@ -509,32 +744,45 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     wp plugin uninstall hello
+	 *     $ wp plugin uninstall hello
+	 *     Uninstalled and deleted 'hello' plugin.
+	 *     Success: Installed 1 of 1 plugins.
 	 */
-	function uninstall( $args, $assoc_args = array() ) {
-		foreach ( $this->fetcher->get_many( $args ) as $plugin ) {
+	public function uninstall( $args, $assoc_args = array() ) {
+		$successes = $errors = 0;
+		$plugins = $this->fetcher->get_many( $args );
+		foreach ( $plugins as $plugin ) {
 			if ( is_plugin_active( $plugin->file ) && ! WP_CLI\Utils\get_flag_value( $assoc_args, 'deactivate' ) ) {
 				WP_CLI::warning( "The '{$plugin->name}' plugin is active." );
+				$errors++;
 				continue;
 			}
 
 			if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'deactivate' ) ) {
 				WP_CLI::log( "Deactivating '{$plugin->name}'..." );
+				$this->chained_command = true;
 				$this->deactivate( array( $plugin->name ) );
+				$this->chained_command = false;
 			}
 
 			uninstall_plugin( $plugin->file );
 
 			if ( ! \WP_CLI\Utils\get_flag_value( $assoc_args, 'skip-delete' ) && $this->_delete( $plugin ) ) {
-				WP_CLI::success( "Uninstalled and deleted '$plugin->name' plugin." );
+				WP_CLI::log( "Uninstalled and deleted '$plugin->name' plugin." );
 			} else {
-				WP_CLI::success( "Ran uninstall procedure for '$plugin->name' plugin without deleting." );
+				WP_CLI::log( "Ran uninstall procedure for '$plugin->name' plugin without deleting." );
 			}
+			$successes++;
+		}
+		if ( ! $this->chained_command ) {
+			Utils\report_batch_operation_results( 'plugin', 'uninstall', count( $args ), $successes, $errors );
 		}
 	}
 
 	/**
 	 * Check if the plugin is installed.
+	 *
+	 * Returns exit code 0 when installed, 1 when uninstalled.
 	 *
 	 * ## OPTIONS
 	 *
@@ -543,20 +791,23 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     wp plugin is-installed hello
+	 *     # Check whether plugin is installed; exit status 0 if installed, otherwise 1
+	 *     $ wp plugin is-installed hello-dolly
+	 *     $ echo $?
+	 *     1
 	 *
 	 * @subcommand is-installed
 	 */
-	function is_installed( $args, $assoc_args = array() ) {
+	public function is_installed( $args, $assoc_args = array() ) {
 		if ( $this->fetcher->get( $args[0] ) ) {
-			exit( 0 );
+			WP_CLI::halt( 0 );
 		} else {
-			exit( 1 );
+			WP_CLI::halt( 1 );
 		}
 	}
 
 	/**
-	 * Delete plugin files.
+	 * Delete plugin files without deactivating or uninstalling.
 	 *
 	 * ## OPTIONS
 	 *
@@ -565,16 +816,28 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     wp plugin delete hello
+	 *     # Delete plugin
+	 *     $ wp plugin delete hello
+	 *     Deleted 'hello' plugin.
+	 *     Success: Deleted 1 of 1 plugins.
 	 *
 	 *     # Delete inactive plugins
-	 *     wp plugin delete $(wp plugin list --status=inactive --field=name)
+	 *     $ wp plugin delete $(wp plugin list --status=inactive --field=name)
+	 *     Deleted 'tinymce-templates' plugin.
+	 *     Success: Deleted 1 of 1 plugins.
 	 */
-	function delete( $args, $assoc_args = array() ) {
+	public function delete( $args, $assoc_args = array() ) {
+		$successes = $errors = 0;
 		foreach ( $this->fetcher->get_many( $args ) as $plugin ) {
 			if ( $this->_delete( $plugin ) ) {
-				WP_CLI::success( "Deleted '{$plugin->name}' plugin." );
+				WP_CLI::log( "Deleted '{$plugin->name}' plugin." );
+				$successes++;
+			} else {
+				$errors++;
 			}
+		}
+		if ( ! $this->chained_command ) {
+			Utils\report_batch_operation_results( 'plugin', 'delete', count( $args ), $successes, $errors );
 		}
 	}
 
@@ -593,7 +856,16 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 	 * : Limit the output to specific object fields.
 	 *
 	 * [--format=<format>]
-	 * : Accepted values: table, csv, json, count. Default: table
+	 * : Render output in a particular format.
+	 * ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - csv
+	 *   - count
+	 *   - json
+	 *   - yaml
+	 * ---
 	 *
 	 * ## AVAILABLE FIELDS
 	 *
@@ -614,10 +886,24 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     wp plugin list --status=active --format=json
+	 *     # List active plugins on the site.
+	 *     $ wp plugin list --status=active --format=json
+	 *     [{"name":"dynamic-hostname","status":"active","update":"none","version":"0.4.2"},{"name":"tinymce-templates","status":"active","update":"none","version":"4.4.3"},{"name":"wp-multibyte-patch","status":"active","update":"none","version":"2.4"},{"name":"wp-total-hacks","status":"active","update":"none","version":"2.0.1"}]
 	 *
-	 *     # List plugins on each site in a network
-	 *     wp site list --field=url | xargs -n 1 -I % wp plugin list --url=%
+	 *     # List plugins on each site in a network.
+	 *     $ wp site list --field=url | xargs -I % wp plugin list --url=%
+	 *     +---------+----------------+--------+---------+
+	 *     | name    | status         | update | version |
+	 *     +---------+----------------+--------+---------+
+	 *     | akismet | active-network | none   | 3.1.11  |
+	 *     | hello   | inactive       | none   | 1.6     |
+	 *     +---------+----------------+--------+---------+
+	 *     +---------+----------------+--------+---------+
+	 *     | name    | status         | update | version |
+	 *     +---------+----------------+--------+---------+
+	 *     | akismet | active-network | none   | 3.1.11  |
+	 *     | hello   | inactive       | none   | 1.6     |
+	 *     +---------+----------------+--------+---------+
 	 *
 	 * @subcommand list
 	 */
@@ -640,9 +926,9 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 
 		if ( ( $action == "activate" ) ? $check : ! $check ) {
 			if ( $network_wide )
-				WP_CLI::success( "Plugin '{$name}' network {$action}d." );
+				WP_CLI::log( "Plugin '{$name}' network {$action}d." );
 			else
-				WP_CLI::success( "Plugin '{$name}' {$action}d." );
+				WP_CLI::log( "Plugin '{$name}' {$action}d." );
 		} else {
 			WP_CLI::warning( "Could not {$action} the '{$name}' plugin." );
 		}
@@ -679,12 +965,12 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 		$path = path_join( WP_PLUGIN_DIR, $plugin_dir );
 
 		if ( \WP_CLI\Utils\is_windows() ) {
-			// Handles plugins that are not in own folders 
+			// Handles plugins that are not in own folders
 			// e.g. Hello Dolly -> plugins/hello.php
-			if ( is_file( $path ) ) {			 
+			if ( is_file( $path ) ) {
 				$command = 'del /f /q ';
 			} else {
-				$command = 'rd /s /q ';			
+				$command = 'rd /s /q ';
 			}
 			$path = str_replace( "/", "\\", $path );
 		} else {

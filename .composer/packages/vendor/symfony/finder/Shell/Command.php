@@ -11,8 +11,12 @@
 
 namespace Symfony\Component\Finder\Shell;
 
+@trigger_error('The '.__NAMESPACE__.'\Command class is deprecated since version 2.8 and will be removed in 3.0.', E_USER_DEPRECATED);
+
 /**
  * @author Jean-François Simon <contact@jfsimon.fr>
+ *
+ * @deprecated since 2.8, to be removed in 3.0.
  */
 class Command
 {
@@ -61,7 +65,7 @@ class Command
      *
      * @param Command|null $parent Parent command
      *
-     * @return Command New Command instance
+     * @return self
      */
     public static function create(Command $parent = null)
     {
@@ -97,7 +101,7 @@ class Command
      *
      * @param string|Command $bit
      *
-     * @return Command The current Command instance
+     * @return $this
      */
     public function add($bit)
     {
@@ -111,7 +115,7 @@ class Command
      *
      * @param string|Command $bit
      *
-     * @return Command The current Command instance
+     * @return $this
      */
     public function top($bit)
     {
@@ -129,7 +133,7 @@ class Command
      *
      * @param string $arg
      *
-     * @return Command The current Command instance
+     * @return $this
      */
     public function arg($arg)
     {
@@ -143,7 +147,7 @@ class Command
      *
      * @param string $esc
      *
-     * @return Command The current Command instance
+     * @return $this
      */
     public function cmd($esc)
     {
@@ -157,7 +161,7 @@ class Command
      *
      * @param string $label The unique label
      *
-     * @return Command The current Command instance
+     * @return self|string
      *
      * @throws \RuntimeException If label already exists
      */
@@ -178,7 +182,7 @@ class Command
      *
      * @param string $label
      *
-     * @return Command The labeled command
+     * @return self|string
      *
      * @throws \RuntimeException
      */
@@ -194,7 +198,7 @@ class Command
     /**
      * Returns parent command (if any).
      *
-     * @return Command Parent command
+     * @return self
      *
      * @throws \RuntimeException If command has no parent
      */
@@ -220,7 +224,7 @@ class Command
     /**
      * @param \Closure $errorHandler
      *
-     * @return Command
+     * @return $this
      */
     public function setErrorHandler(\Closure $errorHandler)
     {
@@ -283,7 +287,7 @@ class Command
      * @param string|Command $bit
      * @param int            $index
      *
-     * @return Command The current Command instance
+     * @return $this
      */
     public function addAtIndex($bit, $index)
     {

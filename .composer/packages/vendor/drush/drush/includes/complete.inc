@@ -1,5 +1,8 @@
 <?php
 
+use Consolidation\AnnotatedCommand\Parser\CommandInfo;
+use Drush\Log\LogLevel;
+
 /**
  * @file
  *
@@ -102,7 +105,7 @@ function drush_early_complete() {
   // We use a distinct --complete-debug option to avoid unwanted debug messages
   // being printed when users use this option for other purposes in the command
   // they are trying to complete.
-  drush_set_option('debug', FALSE);
+  drush_set_option(LogLevel::DEBUG, FALSE);
   if (drush_get_option('complete-debug', FALSE)) {
     drush_set_context('DRUSH_DEBUG', TRUE);
   }
@@ -501,8 +504,18 @@ function drush_complete_rebuild_arguments($command) {
   // the bootstrap level, and perhaps bootstrap higher in extraordinary cases.
   drush_bootstrap_max(DRUSH_BOOTSTRAP_DRUPAL_SITE);
   $commands = drush_get_commands();
-  $hook = str_replace("-", "_", $commands[$command]['command-hook']);
-  $result = drush_command_invoke_all($hook . '_complete');
+  $command_info = $commands[$command];
+  if ($callback = $command_info['annotated-command-callback']) {
+    list($classname, $method) = $callback;
+    $commandInfo = new CommandInfo($classname, $method);
+    if ($callable = $commandInfo->getAnnotation('complete')) {
+      $result = call_user_func($callable);
+    }
+  }
+  else {
+    $hook = str_replace("-", "_", $command_info['command-hook']);
+    $result = drush_command_invoke_all($hook . '_complete');
+  }
   if (isset($result['values'])) {
     // We add a space following all completes. Eventually there may be some
     // items (e.g. comma separated arguments) where we don't add a space.

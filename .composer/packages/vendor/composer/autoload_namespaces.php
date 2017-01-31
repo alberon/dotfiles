@@ -17,4 +17,5 @@ return array(
     'JakubOnderka\\PhpConsoleHighlighter' => array($vendorDir . '/jakub-onderka/php-console-highlighter/src'),
     'JakubOnderka\\PhpConsoleColor' => array($vendorDir . '/jakub-onderka/php-console-color/src'),
     'Drush' => array($vendorDir . '/drush/drush/lib'),
+    'Consolidation' => array($vendorDir . '/drush/drush/lib'),
 );

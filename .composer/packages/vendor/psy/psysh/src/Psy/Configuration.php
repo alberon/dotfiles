@@ -18,11 +18,16 @@ use Psy\ExecutionLoop\Loop;
 use Psy\Output\OutputPager;
 use Psy\Output\ShellOutput;
 use Psy\Readline\GNUReadline;
+use Psy\Readline\HoaConsole;
 use Psy\Readline\Libedit;
 use Psy\Readline\Readline;
 use Psy\Readline\Transient;
 use Psy\TabCompletion\AutoCompleter;
 use Psy\VarDumper\Presenter;
+use Psy\VersionUpdater\Checker;
+use Psy\VersionUpdater\GitHubChecker;
+use Psy\VersionUpdater\IntervalChecker;
+use Psy\VersionUpdater\NoopChecker;
 use XdgBaseDir\Xdg;
 
 /**
@@ -30,11 +35,16 @@ use XdgBaseDir\Xdg;
  */
 class Configuration
 {
+    const COLOR_MODE_AUTO = 'auto';
+    const COLOR_MODE_FORCED = 'forced';
+    const COLOR_MODE_DISABLED = 'disabled';
+
     private static $AVAILABLE_OPTIONS = array(
         'defaultIncludes', 'useReadline', 'usePcntl', 'codeCleaner', 'pager',
         'loop', 'configDir', 'dataDir', 'runtimeDir', 'manualDbFile',
-        'requireSemicolons', 'historySize', 'eraseDuplicates', 'tabCompletion',
-        'errorLoggingLevel', 'warnOnMultipleConfigs',
+        'requireSemicolons', 'useUnicode', 'historySize', 'eraseDuplicates',
+        'tabCompletion', 'errorLoggingLevel', 'warnOnMultipleConfigs',
+        'colorMode', 'updateCheck',
     );
 
     private $defaultIncludes;
@@ -52,10 +62,13 @@ class Configuration
     private $usePcntl;
     private $newCommands = array();
     private $requireSemicolons = false;
+    private $useUnicode;
     private $tabCompletion;
     private $tabCompletionMatchers = array();
     private $errorLoggingLevel = E_ALL;
     private $warnOnMultipleConfigs = false;
+    private $colorMode;
+    private $updateCheck;
 
     // services
     private $readline;
@@ -67,16 +80,19 @@ class Configuration
     private $manualDb;
     private $presenter;
     private $completer;
+    private $checker;
 
     /**
      * Construct a Configuration instance.
      *
      * Optionally, supply an array of configuration values to load.
      *
-     * @param array $config Optional array of configuration values.
+     * @param array $config Optional array of configuration values
      */
     public function __construct(array $config = array())
     {
+        $this->setColorMode(self::COLOR_MODE_AUTO);
+
         // explicit configFile option
         if (isset($config['configFile'])) {
             $this->configFile = $config['configFile'];
@@ -201,7 +217,7 @@ class Configuration
      * The config file may directly manipulate the configuration, or may return
      * an array of options which will be merged with the current configuration.
      *
-     * @throws \InvalidArgumentException if the config file returns a non-array result.
+     * @throws \InvalidArgumentException if the config file returns a non-array result
      *
      * @param string $file
      */
@@ -353,7 +369,7 @@ class Configuration
                 strtr($oldHistory, '\\', '/'),
                 $newHistory
             );
-            trigger_error($msg, E_USER_DEPRECATED);
+            @trigger_error($msg, E_USER_DEPRECATED);
 
             return $this->historyFile = $oldHistory;
         }
@@ -453,7 +469,7 @@ class Configuration
     /**
      * Check whether this PHP instance has Readline available.
      *
-     * @return bool True if Readline is available.
+     * @return bool True if Readline is available
      */
     public function hasReadline()
     {
@@ -476,7 +492,7 @@ class Configuration
      * If `setUseReadline` as been set to true, but Readline is not actually
      * available, this will return false.
      *
-     * @return bool True if the current Shell should use Readline.
+     * @return bool True if the current Shell should use Readline
      */
     public function useReadline()
     {
@@ -532,6 +548,8 @@ class Configuration
                 return 'Psy\Readline\GNUReadline';
             } elseif (Libedit::isSupported()) {
                 return 'Psy\Readline\Libedit';
+            } elseif (HoaConsole::isSupported()) {
+                return 'Psy\Readline\HoaConsole';
             }
         }
 
@@ -541,7 +559,7 @@ class Configuration
     /**
      * Check whether this PHP instance has Pcntl available.
      *
-     * @return bool True if Pcntl is available.
+     * @return bool True if Pcntl is available
      */
     public function hasPcntl()
     {
@@ -564,7 +582,7 @@ class Configuration
      * If `setUsePcntl` has been set to true, but Pcntl is not actually
      * available, this will return false.
      *
-     * @return bool True if the current Shell should use Pcntl.
+     * @return bool True if the current Shell should use Pcntl
      */
     public function usePcntl()
     {
@@ -595,6 +613,37 @@ class Configuration
     public function requireSemicolons()
     {
         return $this->requireSemicolons;
+    }
+
+    /**
+     * Enable or disable Unicode in PsySH specific output.
+     *
+     * Note that this does not disable Unicode output in general, it just makes
+     * it so PsySH won't output any itself.
+     *
+     * @param bool $useUnicode
+     */
+    public function setUseUnicode($useUnicode)
+    {
+        $this->useUnicode = (bool) $useUnicode;
+    }
+
+    /**
+     * Check whether to use Unicode in PsySH specific output.
+     *
+     * Note that this does not disable Unicode output in general, it just makes
+     * it so PsySH won't output any itself.
+     *
+     * @return bool
+     */
+    public function useUnicode()
+    {
+        if (isset($this->useUnicode)) {
+            return $this->useUnicode;
+        }
+
+        // TODO: detect `chsh` != 65001 on Windows and return false
+        return true;
     }
 
     /**
@@ -671,7 +720,7 @@ class Configuration
      * If `setTabCompletion` has been set to true, but readline is not actually
      * available, this will return false.
      *
-     * @return bool True if the current Shell should use tab completion.
+     * @return bool True if the current Shell should use tab completion
      */
     public function getTabCompletion()
     {
@@ -701,10 +750,31 @@ class Configuration
     public function getOutput()
     {
         if (!isset($this->output)) {
-            $this->output = new ShellOutput(ShellOutput::VERBOSITY_NORMAL, null, null, $this->getPager());
+            $this->output = new ShellOutput(
+                ShellOutput::VERBOSITY_NORMAL,
+                $this->getOutputDecorated(),
+                null,
+                $this->getPager()
+            );
         }
 
         return $this->output;
+    }
+
+    /**
+     * Get the decoration (i.e. color) setting for the Shell Output service.
+     *
+     * @return null|bool 3-state boolean corresponding to the current color mode
+     */
+    public function getOutputDecorated()
+    {
+        if ($this->colorMode() === self::COLOR_MODE_AUTO) {
+            return;
+        } elseif ($this->colorMode() === self::COLOR_MODE_FORCED) {
+            return true;
+        } elseif ($this->colorMode() === self::COLOR_MODE_DISABLED) {
+            return false;
+        }
     }
 
     /**
@@ -713,7 +783,7 @@ class Configuration
      * If a string is supplied, a ProcOutputPager will be used which shells out
      * to the specified command.
      *
-     * @throws \InvalidArgumentException if $pager is not a string or OutputPager instance.
+     * @throws \InvalidArgumentException if $pager is not a string or OutputPager instance
      *
      * @param string|OutputPager $pager
      */
@@ -979,5 +1049,128 @@ class Configuration
     public function warnOnMultipleConfigs()
     {
         return $this->warnOnMultipleConfigs;
+    }
+
+    /**
+     * Set the current color mode.
+     *
+     * @param string $colorMode
+     */
+    public function setColorMode($colorMode)
+    {
+        $validColorModes = array(
+            self::COLOR_MODE_AUTO,
+            self::COLOR_MODE_FORCED,
+            self::COLOR_MODE_DISABLED,
+        );
+
+        if (in_array($colorMode, $validColorModes)) {
+            $this->colorMode = $colorMode;
+        } else {
+            throw new \InvalidArgumentException('invalid color mode: ' . $colorMode);
+        }
+    }
+
+    /**
+     * Get the current color mode.
+     *
+     * @return string
+     */
+    public function colorMode()
+    {
+        return $this->colorMode;
+    }
+
+    /**
+     * Set an update checker service instance.
+     *
+     * @param Checker $checker
+     */
+    public function setChecker(Checker $checker)
+    {
+        $this->checker = $checker;
+    }
+
+    /**
+     * Get an update checker service instance.
+     *
+     * If none has been explicitly defined, this will create a new instance.
+     *
+     * @return Checker
+     */
+    public function getChecker()
+    {
+        if (!isset($this->checker)) {
+            $interval = $this->getUpdateCheck();
+            switch ($interval) {
+                case Checker::ALWAYS:
+                    $this->checker = new GitHubChecker();
+                    break;
+
+                case Checker::DAILY:
+                case Checker::WEEKLY:
+                case Checker::MONTHLY:
+                    $this->checker = new IntervalChecker($this->getUpdateCheckCacheFile(), $interval);
+                    break;
+
+                case Checker::NEVER:
+                    $this->checker = new NoopChecker();
+                    break;
+            }
+        }
+
+        return $this->checker;
+    }
+
+    /**
+     * Get the current update check interval.
+     *
+     * One of 'always', 'daily', 'weekly', 'monthly' or 'never'. If none is
+     * explicitly set, default to 'weekly'.
+     *
+     * @return string
+     */
+    public function getUpdateCheck()
+    {
+        return isset($this->updateCheck) ? $this->updateCheck : Checker::WEEKLY;
+    }
+
+    /**
+     * Set the update check interval.
+     *
+     * @throws \InvalidArgumentDescription if the update check interval is unknown
+     *
+     * @param string $interval
+     */
+    public function setUpdateCheck($interval)
+    {
+        $validIntervals = array(
+            Checker::ALWAYS,
+            Checker::DAILY,
+            Checker::WEEKLY,
+            Checker::MONTHLY,
+            Checker::NEVER,
+        );
+
+        if (!in_array($interval, $validIntervals)) {
+            throw new \InvalidArgumentException('invalid update check interval: ' . $interval);
+        }
+
+        $this->updateCheck = $interval;
+    }
+
+    /**
+     * Get a cache file path for the update checker.
+     *
+     * @return string
+     */
+    public function getUpdateCheckCacheFile()
+    {
+        $dir = $this->configDir ?: ConfigPaths::getCurrentConfigDir();
+        if (!is_dir($dir)) {
+            mkdir($dir, 0700, true);
+        }
+
+        return $dir . '/update_check.json';
     }
 }

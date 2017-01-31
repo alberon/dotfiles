@@ -6,6 +6,8 @@
  *   to assure that no sensitive data is shared. See http://drupal.org/node/1246738.
  */
 
+use Drush\Log\LogLevel;
+
 /**
  * To send usage data, add the following to a .drushrc.php file:
  * $options['drush_usage_log'] = TRUE;
@@ -108,20 +110,7 @@ function _drush_usage_get_file($required = FALSE) {
 }
 
 function _drush_usage_log($command, $file) {
-  drush_merge_engine_data($command);
-
-  // Start out with just the options in the current command record.
-  $options = _drush_get_command_options($command);
-  // If 'allow-additional-options' contains a list of command names,
-  // then union together all of the options from all of the commands.
-  if (is_array($command['allow-additional-options'])) {
-    $implemented = drush_get_commands();
-    foreach ($command['allow-additional-options'] as $subcommand_name) {
-      if (array_key_exists($subcommand_name, $implemented)) {
-        $options = array_merge($options, _drush_get_command_options($implemented[$subcommand_name]));
-      }
-    }
-  }
+  $options = drush_get_command_options_extended($command);
 
   $used = drush_get_merged_options();
   $command_specific = array_intersect(array_keys($used), array_keys($options));
@@ -136,10 +125,10 @@ function _drush_usage_log($command, $file) {
   );
   $prequel = (file_exists($file)) ? ",\n" : "";
   if (file_put_contents($file, $prequel . json_encode($record), FILE_APPEND)) {
-    drush_log(dt('Logged command and option names to local cache.'), 'debug');
+    drush_log(dt('Logged command and option names to local cache.'), LogLevel::DEBUG);
   }
   else {
-    drush_log(dt('Failed to log command and option names to local cache.'), 'debug');
+    drush_log(dt('Failed to log command and option names to local cache.'), LogLevel::DEBUG);
   }
 }
 
@@ -157,11 +146,11 @@ function _drush_usage_mongolab($file, $min_size_to_send) {
     $header = 'Content-Type: application/json';
     if (!drush_shell_exec("wget -q -O - --no-check-certificate --timeout=20 --header=\"$header\" --post-data %s %s", $json, $url)) {
       if (!drush_shell_exec("curl -s --connect-timeout 20 --header \"$header\" --data %s %s", $json, $url)) {
-        drush_log(dt('Drush usage statistics failed to post.'), 'debug');
+        drush_log(dt('Drush usage statistics failed to post.'), LogLevel::DEBUG);
         return FALSE;
       }
     }
-    drush_log(dt('Drush usage statistics successfully posted.'), 'debug');
+    drush_log(dt('Drush usage statistics successfully posted.'), LogLevel::DEBUG);
     // Empty the usage.txt file.
     unlink($file);
     return TRUE;

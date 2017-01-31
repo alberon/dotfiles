@@ -13,7 +13,9 @@ namespace Psy\ExecutionLoop;
 
 use Psy\Configuration;
 use Psy\Exception\BreakException;
+use Psy\Exception\ErrorException;
 use Psy\Exception\ThrowUpException;
+use Psy\Exception\TypeErrorException;
 use Psy\Shell;
 
 /**
@@ -21,6 +23,8 @@ use Psy\Shell;
  */
 class Loop
 {
+    const NOOP_INPUT = 'return null;';
+
     /**
      * Loop constructor.
      *
@@ -37,7 +41,7 @@ class Loop
     /**
      * Run the execution loop.
      *
-     * @throws ThrowUpException if thrown by the `throw-up` command.
+     * @throws ThrowUpException if thrown by the `throw-up` command
      *
      * @param Shell $shell
      */
@@ -73,7 +77,7 @@ class Loop
                     );
 
                     set_error_handler(array($__psysh__, 'handleError'));
-                    $_ = eval($__psysh__->flushCode());
+                    $_ = eval($__psysh__->flushCode() ?: Loop::NOOP_INPUT);
                     restore_error_handler();
 
                     ob_end_flush();
@@ -95,6 +99,18 @@ class Loop
                     $__psysh__->writeException($_e);
 
                     throw $_e;
+                } catch (\TypeError $_e) {
+                    restore_error_handler();
+                    if (ob_get_level() > 0) {
+                        ob_end_clean();
+                    }
+                    $__psysh__->writeException(TypeErrorException::fromTypeError($_e));
+                } catch (\Error $_e) {
+                    restore_error_handler();
+                    if (ob_get_level() > 0) {
+                        ob_end_clean();
+                    }
+                    $__psysh__->writeException(ErrorException::fromError($_e));
                 } catch (\Exception $_e) {
                     restore_error_handler();
                     if (ob_get_level() > 0) {
@@ -103,8 +119,6 @@ class Loop
                     $__psysh__->writeException($_e);
                 }
 
-                // a bit of housekeeping
-                unset($__psysh_out__);
                 $__psysh__->afterLoop();
             } while (true);
         };
