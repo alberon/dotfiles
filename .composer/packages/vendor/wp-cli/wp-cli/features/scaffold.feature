@@ -7,8 +7,43 @@ Feature: WordPress code scaffolding
     And save STDOUT as {THEME_DIR}
 
     When I run `wp scaffold child-theme zombieland --parent_theme=umbrella --theme_name=Zombieland --author=Tallahassee --author_uri=http://www.wp-cli.org --theme_uri=http://www.zombieland.com`
+    Then the {THEME_DIR}/zombieland/style.css file should exist
+    And the {THEME_DIR}/zombieland/functions.php file should exist
+    And STDOUT should be:
+      """
+      Success: Created '{THEME_DIR}/zombieland'.
+      """
+
+  Scenario: Scaffold a child theme with only --parent_theme parameter
+    Given a WP install
+    Given I run `wp theme path`
+    And save STDOUT as {THEME_DIR}
+
+    When I run `wp scaffold child-theme hello-world --parent_theme=simple-life`
     Then STDOUT should not be empty
-    And the {THEME_DIR}/zombieland/style.css file should exist
+    And the {THEME_DIR}/hello-world/style.css file should exist
+    And the {THEME_DIR}/hello-world/style.css file should contain:
+      """
+      Theme Name:     Hello-world
+      """
+
+  Scenario: Scaffold a child theme with non existing parent theme and also activate parameter
+    Given a WP install
+
+    When I try `wp scaffold child-theme hello-world --parent_theme=just-test --activate --quiet`
+    Then STDERR should contain:
+      """
+      Error: The parent theme is missing. Please install the "just-test" parent theme.
+      """
+
+  Scenario: Scaffold a child theme with non existing parent theme and also network activate parameter
+    Given a WP install
+
+    When I try `wp scaffold child-theme hello-world --parent_theme=just-test --enable-network --quiet`
+    Then STDERR should contain:
+      """
+      Error: This is not a multisite install.
+      """
 
   Scenario: Scaffold a child theme and network enable it
     Given a WP multisite install
@@ -30,6 +65,25 @@ Feature: WordPress code scaffolding
 
     When I run `wp scaffold post-type zombie --theme`
     Then the {STYLESHEETPATH}/post-types/zombie.php file should exist
+    And STDOUT should be:
+      """
+      Success: Created '{STYLESHEETPATH}/post-types/zombie.php'.
+      """
+
+    When I run `wp scaffold post-type zombie`
+    Then STDOUT should contain:
+      """
+      register_post_type( 'zombie'
+      """
+    And STDOUT should contain:
+      """
+      add_filter( 'post_updated_messages'
+      """
+    When I run `wp scaffold post-type zombie --raw`
+    Then STDOUT should not contain:
+      """
+      add_filter( 'post_updated_messages'
+      """
 
   # Test for all flags but --label, --theme, --plugin and --raw
   @tax
@@ -109,14 +163,97 @@ Feature: WordPress code scaffolding
     Given a WP install
     Given I run `wp plugin path`
     And save STDOUT as {PLUGIN_DIR}
+    Given I run `wp core version`
+    And save STDOUT as {WP_VERSION}
 
-    When I run `wp scaffold plugin hello-world`
+    When I run `wp scaffold plugin hello-world --plugin_author="Hello World Author"`
     Then STDOUT should not be empty
+    And the {PLUGIN_DIR}/hello-world/.gitignore file should exist
     And the {PLUGIN_DIR}/hello-world/.editorconfig file should exist
     And the {PLUGIN_DIR}/hello-world/hello-world.php file should exist
     And the {PLUGIN_DIR}/hello-world/readme.txt file should exist
     And the {PLUGIN_DIR}/hello-world/package.json file should exist
     And the {PLUGIN_DIR}/hello-world/Gruntfile.js file should exist
+    And the {PLUGIN_DIR}/hello-world/.gitignore file should contain:
+      """
+      .DS_Store
+      Thumbs.db
+      wp-cli.local.yml
+      node_modules/
+      """
+    And the {PLUGIN_DIR}/hello-world/.distignore file should contain:
+      """
+      .git
+      .gitignore
+      """
+    And the {PLUGIN_DIR}/hello-world/hello-world.php file should contain:
+      """
+      * Plugin Name:     Hello World
+      """
+    And the {PLUGIN_DIR}/hello-world/hello-world.php file should contain:
+      """
+      * Version:         0.1.0
+      """
+    And the {PLUGIN_DIR}/hello-world/hello-world.php file should contain:
+      """
+      * @package         Hello_World
+      """
+    And the {PLUGIN_DIR}/hello-world/readme.txt file should contain:
+      """
+      Stable tag: 0.1.0
+      """
+    And the {PLUGIN_DIR}/hello-world/readme.txt file should contain:
+      """
+      Tested up to: {WP_VERSION}
+      """
+
+    When I run `cat {PLUGIN_DIR}/hello-world/package.json`
+    Then STDOUT should be JSON containing:
+      """
+      {"author":"Hello World Author"}
+      """
+    And STDOUT should be JSON containing:
+      """
+      {"version":"0.1.0"}
+      """
+
+  Scenario: Scaffold a plugin by prompting
+    Given a WP install
+    And a session file:
+      """
+      hello-world
+
+      Hello World
+      An awesome introductory plugin for WordPress
+      WP-CLI
+      http://wp-cli.org
+      http://wp-cli.org
+      n
+      travis
+      Y
+      n
+      n
+      """
+
+    When I run `wp scaffold plugin --prompt < session`
+    Then STDOUT should not be empty
+    And the wp-content/plugins/hello-world/hello-world.php file should exist
+    And the wp-content/plugins/hello-world/readme.txt file should exist
+    And the wp-content/plugins/hello-world/tests directory should exist
+
+    When I run `wp plugin status hello-world`
+    Then STDOUT should contain:
+      """
+      Status: Active
+      """
+    And STDOUT should contain:
+      """
+      Name: Hello World
+      """
+    And STDOUT should contain:
+      """
+      Description: An awesome introductory plugin for WordPress
+      """
 
   Scenario: Scaffold a plugin and activate it
     Given a WP install
@@ -132,112 +269,6 @@ Feature: WordPress code scaffolding
     Then STDOUT should contain:
       """
       Plugin 'hello-world' network activated.
-      """
-
-  Scenario: Scaffold plugin tests
-    Given a WP install
-    When I run `wp plugin path`
-    Then save STDOUT as {PLUGIN_DIR}
-
-    When I run `wp scaffold plugin hello-world --skip-tests`
-    Then STDOUT should not be empty
-    And the {PLUGIN_DIR}/hello-world/.editorconfig file should exist
-    And the {PLUGIN_DIR}/hello-world/hello-world.php file should exist
-    And the {PLUGIN_DIR}/hello-world/readme.txt file should exist
-    And the {PLUGIN_DIR}/hello-world/tests directory should not exist
-
-    When I run `wp scaffold plugin-tests hello-world`
-    Then STDOUT should not be empty
-    And the {PLUGIN_DIR}/hello-world/tests directory should contain:
-      """
-      bootstrap.php
-      test-sample.php
-      """
-    And the {PLUGIN_DIR}/hello-world/tests/bootstrap.php file should contain:
-      """
-      require dirname( dirname( __FILE__ ) ) . '/hello-world.php';
-      """
-    And the {PLUGIN_DIR}/hello-world/bin directory should contain:
-      """
-      install-wp-tests.sh
-      """
-    And the {PLUGIN_DIR}/hello-world/phpunit.xml file should exist
-    And the {PLUGIN_DIR}/hello-world/.travis.yml file should exist
-
-    When I run `wp eval "if ( is_executable( '{PLUGIN_DIR}/hello-world/bin/install-wp-tests.sh' ) ) { echo 'executable'; } else { exit( 1 ); }"`
-    Then STDOUT should be:
-      """
-      executable
-      """
-
-  Scenario: Scaffold package tests
-    Given a WP install
-    Given a community-command/command.php file:
-      """
-      <?php
-      """
-    And a community-command/composer.json file:
-      """
-      {
-        "name": "wp-cli/community-command",
-        "description": "A demo community command.",
-        "license": "MIT",
-        "minimum-stability": "dev",
-        "require": {
-        },
-        "autoload": {
-          "files": [ "dictator.php" ]
-        },
-        "require-dev": {
-          "behat/behat": "~2.5"
-        }
-      }
-      """
-    And a invalid-command/command.php file:
-      """
-      <?php
-      """
-
-    When I run `wp scaffold package-tests community-command`
-    Then STDOUT should not be empty
-    And the community-command/.travis.yml file should exist
-    And the community-command/bin/install-package-tests.sh file should exist
-    And the community-command/utils/get-package-require-from-composer.php file should exist
-    And the community-command/features directory should contain:
-      """
-      bootstrap
-      extra
-      load-wp-cli.feature
-      steps
-      """
-    And the community-command/features/bootstrap directory should contain:
-      """
-      FeatureContext.php
-      Process.php
-      support.php
-      utils.php
-      """
-    And the community-command/features/steps directory should contain:
-      """
-      given.php
-      then.php
-      when.php
-      """
-    And the community-command/features/extra directory should contain:
-      """
-      no-mail.php
-      """
-
-    When I run `wp eval "if ( is_executable( 'community-command/bin/install-package-tests.sh' ) ) { echo 'executable'; } else { exit( 1 ); }"`
-    Then STDOUT should be:
-      """
-      executable
-      """
-
-    When I try `wp scaffold package-tests invalid-command`
-    Then STDERR should be:
-      """
-      Error: Invalid package directory. composer.json file must be present.
       """
 
   Scenario: Scaffold starter code for a theme
@@ -321,6 +352,25 @@ Feature: WordPress code scaffolding
     """
     require dirname( dirname( __FILE__ ) ) . '/custom-plugin-slug.php';
     """
+
+  Scenario: Scaffold tests parses plugin readme.txt
+    Given a WP install
+    When I run `wp core version`
+    Then save STDOUT as {WP_VERSION}
+    When I run `wp plugin path`
+    Then save STDOUT as {PLUGIN_DIR}
+
+    When I run `wp scaffold plugin hello-world`
+    Then STDOUT should not be empty
+    And the {PLUGIN_DIR}/hello-world/readme.txt file should exist
+    And the {PLUGIN_DIR}/hello-world/.travis.yml file should exist
+    And the {PLUGIN_DIR}/hello-world/.travis.yml file should contain:
+      """
+      env:
+        - WP_VERSION=latest WP_MULTISITE=0
+        - WP_VERSION=3.7 WP_MULTISITE=0
+        - WP_VERSION={WP_VERSION} WP_MULTISITE=0
+      """
 
   Scenario: Scaffold starter code for a theme and network enable it
     Given a WP multisite install

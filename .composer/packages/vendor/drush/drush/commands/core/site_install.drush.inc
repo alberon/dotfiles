@@ -1,5 +1,8 @@
 <?php
 
+use Drush\Log\LogLevel;
+use Drupal\Core\Config\FileStorage;
+
 function site_install_drush_command() {
   $items['site-install'] = array(
     'description' => 'Install Drupal along with modules/themes/configuration using the specified install profile.',
@@ -52,8 +55,7 @@ function site_install_drush_command() {
         'value' => 'required',
         'example-value' => 'directory_name',
       ),
-      'writable' => 'Make CMI and other dirs writable by both web and CLI users. Suitable for non Prod environments.',
-      'keep-config' => 'Keep CMI directories untouched. This preserves existing configuration.'
+      'config-dir' => 'A path pointing to a full set of configuration which should be imported after installation.',
     ),
     'examples' => array(
       'drush site-install expert --locale=uk' => '(Re)install using the expert install profile. Set default language to Ukrainian.',
@@ -61,7 +63,7 @@ function site_install_drush_command() {
       'drush site-install --db-url=sqlite://sites/example.com/files/.ht.sqlite' => 'Install using SQLite (D7+ only).',
       'drush site-install --account-name=joe --account-pass=mom' => 'Re-install with specified uid1 credentials.',
       'drush site-install standard install_configure_form.site_default_country=FR my_profile_form.my_settings.key=value' => 'Pass additional arguments to the profile (D7 example shown here - for D6, omit the form id).',
-      "drush site-install install_configure_form.update_status_module='array(FALSE,FALSE)'" => 'Disable email notification during install and later. If your server has no smtp, this gets rid of an error during install.',
+      "drush site-install standard install_configure_form.update_status_module='array(FALSE,FALSE)'" => 'Disable email notification during install and later. If your server has no smtp, this gets rid of an error during install.',
     ),
     'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_ROOT,
     'aliases' => array('si'),
@@ -79,8 +81,7 @@ function site_install_drush_help_alter(&$command) {
       unset($command['options']['clean-url']);
     }
     else {
-      unset($command['options']['writable']);
-      unset($command['options']['keep-config']);
+      unset($command['options']['config-dir']);
     }
   }
 }
@@ -92,11 +93,20 @@ function drush_core_site_install_validate() {
   if ($sites_subdir = drush_get_option('sites-subdir')) {
     $lower = strtolower($sites_subdir);
     if ($sites_subdir != $lower) {
-      drush_log(dt('Only lowercase sites-subdir are valid. Switching to !lower.', array('!lower' => $lower)), 'warning');
+      drush_log(dt('Only lowercase sites-subdir are valid. Switching to !lower.', array('!lower' => $lower)), LogLevel::WARNING);
       drush_set_option('sites-subdir', $lower);
     }
     // Make sure that we will bootstrap to the 'sites-subdir' site.
     drush_set_context('DRUSH_SELECTED_URI', 'http://' . $sites_subdir);
+  }
+
+  if ($config = drush_get_option('config-dir')) {
+    if (!file_exists($config)) {
+      return drush_set_error('config_import_target', 'The config source directory does not exist.');
+    }
+    if (!is_dir($config)) {
+      return drush_set_error('config_import_target', 'The config source is not a directory.');
+    }
   }
 }
 
@@ -183,7 +193,7 @@ function drush_core_pre_site_install($profile = NULL) {
   // Write an empty sites.php if we are on D8 and using multi-site.
   if ($sitesfile_write) {
     if (!drush_op('copy', 'sites/example.sites.php', $sitesfile) && !drush_get_context('DRUSH_SIMULATE')) {
-      return drush_set_error(dt('Failed to copy sites/sites.php to @sitesfile', array('@sitesfile' => $sitesfile)));
+      return drush_set_error(dt('Failed to copy sites/example.sites.php to @sitesfile', array('@sitesfile' => $sitesfile)));
     }
   }
 
@@ -197,64 +207,8 @@ function drush_core_pre_site_install($profile = NULL) {
     drush_bootstrap(DRUSH_BOOTSTRAP_DRUPAL_SITE);
   }
 
-  $sql->drop_or_create($db_spec);
-
-  if (drush_drupal_major_version() >= 8) {
-    // Empty out any existing config directories.
-    $directories = array();
-    // Check for alternative format:
-    // @code
-    // $config_directories = array(
-    //   'active' => 'config/active',
-    //   'staging' => 'config/staging',
-    // );
-    // @endcode
-    // @todo update this regex to omit path.
-    // preg_match('/\n\$config_directories[^;]*\'path\' => \'([^\']*)\'.*\'path\' => \'([^\']*)\'/s', file_get_contents($settingsfile), $directories);
-
-    if (empty($directories)) {
-      // Check for canonical format:
-      // @code
-      // $config_directories['active'] = 'config/active';
-      // $config_directories['staging'] = 'config/staging';
-      // @endcode
-      foreach (array('active', 'staging') as $type) {
-        preg_match('/\n\$config_directories[^;]*\'' . $type . '\'\] = \'([^\']*)\'/', file_get_contents($settingsfile), $directory);
-        if (isset($directory[1])) {
-          $directories[$type] = $directory[1];
-        }
-      }
-    }
-    else {
-      $directories['active'] =  $files . '/' . $directories[1];
-      $directories['staging'] =  $files . '/' . $directories[2];
-    }
-
-    if (drush_get_option('keep-config', FALSE) == FALSE) {
-      foreach ($directories as $directory) {
-        if (file_exists($directory)) {
-          drush_delete_dir_contents($directory, TRUE);
-        }
-      }
-    }
-
-    if (drush_get_option('writable')) {
-      if (is_writable($settingsfile)) {
-        $chmod = <<<'EOD'
-// Appended by Drush site-install.
-$settings['file_chmod_directory'] = 0777;
-$settings['file_chmod_file'] = 0777;
-EOD;
-        drush_file_append_data($settingsfile, "\n$chmod\n");
-      }
-      else {
-        drush_log(dt('Not appending file_chmod_* to @settingsfile as it is not writable.', array('@settingsfile' => $settingsfile)), 'notice');
-      }
-    }
-
-
-    // Remove files/php if needed.
-    drush_delete_dir("$files/php", TRUE);
+  if (!$sql->drop_or_create($db_spec)) {
+    return drush_set_error(dt('Failed to create database: @error', array('@error' => implode(drush_shell_exec_output()))));
   }
 
   return TRUE;
@@ -272,7 +226,7 @@ function drush_core_site_install($profile = NULL) {
     $profile = array_shift($args);
     // Subsequent arguments are additional form values.
     foreach ($args as $arg) {
-      list($key, $value) = explode('=', $arg);
+      list($key, $value) = explode('=', $arg, 2);
 
       // Allow for numeric and NULL values to be passed in.
       if (is_numeric($value)) {
@@ -285,6 +239,22 @@ function drush_core_site_install($profile = NULL) {
       $form_options[$key] = $value;
     }
   }
+
+  // If the profile is not explicitly set, default to the 'minimal' for an issue-free config import.
+  if (empty($profile) && drush_get_option('config-dir')) {
+    $profile = 'minimal';
+  }
+
   drush_include_engine('drupal', 'site_install');
   drush_core_site_install_version($profile, $form_options);
+
+  // Post installation, run the configuration import.
+  if ($config = drush_get_option('config-dir')) {
+    // Set the destination site UUID to match the source UUID, to bypass a core fail-safe.
+    $source_storage = new FileStorage($config);
+    $options = ['yes' => TRUE];
+    drush_invoke_process('@self', 'config-set', array('system.site', 'uuid', $source_storage->read('system.site')['uuid']), $options);
+    // Run a full configuration import.
+    drush_invoke_process('@self', 'config-import', array(), array('source' => $config) + $options);
+  }
 }

@@ -2,8 +2,13 @@
 
 class Import_Command extends WP_CLI_Command {
 
+	var $processed_posts = array();
+
 	/**
 	 * Import content from a WXR file.
+	 *
+	 * Provides a command line interface to the WordPress Importer plugin, for
+	 * performing data migrations.
 	 *
 	 * ## OPTIONS
 	 *
@@ -15,6 +20,17 @@ class Import_Command extends WP_CLI_Command {
 	 *
 	 * [--skip=<data-type>]
 	 * : Skip importing specific data. Supported options are: 'attachment' and 'image_resize' (skip time-consuming thumbnail generation).
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     # Import content from a WXR file
+	 *     $ wp import example.wordpress.2016-06-21.xml --authors=create
+	 *     Starting the import process...
+	 *     Processing post #1 ("Hello world!") (post_type: post)
+	 *     -- 1 of 1
+	 *     -- Tue, 21 Jun 2016 05:31:12 +0000
+	 *     -- Imported post as post_id #1
+	 *     Success: Finished importing from 'example.wordpress.2016-06-21.xml' file.
 	 */
 	public function __invoke( $args, $assoc_args ) {
 		$defaults = array(
@@ -49,7 +65,7 @@ class Import_Command extends WP_CLI_Command {
 
 		foreach ( $args as $file ) {
 			if ( ! is_readable( $file ) ) {
-				WP_CLI::warning( "Can't read $file file." );
+				WP_CLI::warning( "Can't read '$file' file." );
 			}
 
 			$ret = $this->import_wxr( $file, $assoc_args );
@@ -57,8 +73,8 @@ class Import_Command extends WP_CLI_Command {
 			if ( is_wp_error( $ret ) ) {
 				WP_CLI::error( $ret );
 			} else {
-				WP_CLI::line(); // WXR import ends with HTML, so make sure message is on next line
-				WP_CLI::success( "Finished importing from $file file." );
+				WP_CLI::log(''); // WXR import ends with HTML, so make sure message is on next line
+				WP_CLI::success( "Finished importing from '$file' file." );
 			}
 		}
 	}
@@ -69,6 +85,7 @@ class Import_Command extends WP_CLI_Command {
 	private function import_wxr( $file, $args ) {
 
 		$wp_import = new WP_Import;
+		$wp_import->processed_posts = $this->processed_posts;
 		$import_data = $wp_import->parse( $file );
 		if ( is_wp_error( $import_data ) )
 			return $import_data;
@@ -137,7 +154,9 @@ class Import_Command extends WP_CLI_Command {
 			add_filter( 'intermediate_image_sizes_advanced', array( $this, 'filter_set_image_sizes' ) );
 		}
 
+		$GLOBALS['wp_cli_import_current_file'] = basename( $file );
 		$wp_import->import( $file );
+		$this->processed_posts += $wp_import->processed_posts;
 
 		return true;
 	}
@@ -167,14 +186,14 @@ class Import_Command extends WP_CLI_Command {
 		}, 10, 3 );
 
 		add_filter( 'wp_import_post_data_raw', function( $post ) {
-			global $wpcli_import_counts;
+			global $wpcli_import_counts, $wp_cli_import_current_file;
 
 			$wpcli_import_counts['current_post']++;
-			WP_CLI::line();
-			WP_CLI::line();
-			WP_CLI::line( sprintf( 'Processing post #%d ("%s") (post_type: %s)', $post['post_id'], $post['post_title'], $post['post_type'] ) );
-			WP_CLI::line( sprintf( '-- %s of %s', number_format( $wpcli_import_counts['current_post'] ), number_format( $wpcli_import_counts['total_posts'] ) ) );
-			WP_CLI::line( '-- ' . date( 'r' ) );
+			WP_CLI::log('');
+			WP_CLI::log('');
+			WP_CLI::log( sprintf( 'Processing post #%d ("%s") (post_type: %s)', $post['post_id'], $post['post_title'], $post['post_type'] ) );
+			WP_CLI::log( sprintf( '-- %s of %s (in file %s)', number_format( $wpcli_import_counts['current_post'] ), number_format( $wpcli_import_counts['total_posts'] ), $wp_cli_import_current_file ) );
+			WP_CLI::log( '-- ' . date( 'r' ) );
 
 			return $post;
 		} );
@@ -184,32 +203,32 @@ class Import_Command extends WP_CLI_Command {
 			if ( is_wp_error( $post_id ) ) {
 				WP_CLI::warning( "-- Error importing post: " . $post_id->get_error_code() );
 			} else {
-				WP_CLI::line( "-- Imported post as post_id #{$post_id}" );
+				WP_CLI::log( "-- Imported post as post_id #{$post_id}" );
 			}
 
 			if ( $wpcli_import_counts['current_post'] % 500 === 0 ) {
 				WP_CLI\Utils\wp_clear_object_cache();
-				WP_CLI::line( "-- Cleared object cache." );
+				WP_CLI::log( "-- Cleared object cache." );
 			}
 
 		}, 10, 4 );
 
 		add_action( 'wp_import_insert_term', function( $t, $import_term, $post_id, $post ) {
-			WP_CLI::line( "-- Created term \"{$import_term['name']}\"" );
+			WP_CLI::log( "-- Created term \"{$import_term['name']}\"" );
 		}, 10, 4 );
 
 		add_action( 'wp_import_set_post_terms', function( $tt_ids, $term_ids, $taxonomy, $post_id, $post ) {
-			WP_CLI::line( "-- Added terms (" . implode( ',', $term_ids ) .") for taxonomy \"{$taxonomy}\"" );
+			WP_CLI::log( "-- Added terms (" . implode( ',', $term_ids ) .") for taxonomy \"{$taxonomy}\"" );
 		}, 10, 5 );
 
 		add_action( 'wp_import_insert_comment', function( $comment_id, $comment, $comment_post_ID, $post ) {
 			global $wpcli_import_counts;
 			$wpcli_import_counts['current_comment']++;
-			WP_CLI::line( sprintf( '-- Added comment #%d (%s of %s)', $comment_id, number_format( $wpcli_import_counts['current_comment'] ), number_format( $wpcli_import_counts['total_comments'] ) ) );
+			WP_CLI::log( sprintf( '-- Added comment #%d (%s of %s)', $comment_id, number_format( $wpcli_import_counts['current_comment'] ), number_format( $wpcli_import_counts['total_comments'] ) ) );
 		}, 10, 4 );
 
 		add_action( 'import_post_meta', function( $post_id, $key, $value ) {
-			WP_CLI::line( "-- Added post_meta $key" );
+			WP_CLI::log( "-- Added post_meta $key" );
 		}, 10, 3 );
 
 	}

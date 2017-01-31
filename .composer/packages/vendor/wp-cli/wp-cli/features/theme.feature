@@ -32,6 +32,7 @@ Feature: Manage WordPress themes
     Then STDERR should be:
       """
       Warning: Can't delete the currently active theme: p2
+      Error: No themes deleted.
       """
     And STDOUT should be empty
 
@@ -49,6 +50,20 @@ Feature: Manage WordPress themes
 
     When I run `wp theme list`
     Then STDOUT should not be empty
+
+  Scenario: Checking theme status without theme parameter
+    Given a WP install
+
+    When I run `wp theme install classic --activate`
+    And I run `wp theme list --field=name --status=inactive | xargs wp theme delete`
+    And I run `wp theme status`
+    Then STDOUT should be:
+      """
+      1 installed theme:
+        A classic 1.6
+
+      Legend: A = Active
+      """
 
   Scenario: Install a theme, activate, then force install an older version of the theme
     Given a WP install
@@ -108,10 +123,10 @@ Feature: Manage WordPress themes
       Success: Switched to 'P2' theme.
       """
 
-    When I run `wp theme activate p2`
-    Then STDOUT should be:
+    When I try `wp theme activate p2`
+    Then STDERR should be:
       """
-      Success: The 'P2' theme is already active.
+      Warning: The 'P2' theme is already active.
       """
 
   Scenario: Install a theme when the theme directory doesn't yet exist
@@ -128,6 +143,36 @@ Feature: Manage WordPress themes
     Then STDOUT should be a table containing rows:
       | name  | status   |
       | p2    | active   |
+
+  Scenario: Attempt to activate or fetch a broken theme
+    Given a WP install
+
+    When I run `mkdir -pv wp-content/themes/myth`
+    Then the wp-content/themes/myth directory should exist
+
+    When I try `wp theme activate myth`
+    Then STDERR should contain:
+      """
+      Error: Stylesheet is missing.
+      """
+
+    When I try `wp theme get myth`
+    Then STDERR should contain:
+      """
+      Error: Stylesheet is missing.
+      """
+
+    When I try `wp theme status myth`
+    Then STDERR should be:
+      """
+      Error: Stylesheet is missing.
+      """
+
+    When I run `wp theme install myth --force`
+    Then STDOUT should contain:
+      """
+      Theme updated successfully.
+      """
 
   Scenario: Enabling and disabling a theme
   	Given a WP multisite install
@@ -236,7 +281,7 @@ Feature: Manage WordPress themes
     When I try `wp theme activate biker`
     Then STDERR should contain:
       """
-      Error: The 'biker' theme cannot be activated without its parent, 'jolene'.
+      Error: The parent theme is missing. Please install the "jolene" parent theme.
       """
 
   Scenario: List an active theme with its parent
@@ -249,3 +294,79 @@ Feature: Manage WordPress themes
       | name          | status   |
       | biker         | active   |
       | jolene        | parent   |
+
+  Scenario: When updating a theme --format should be the same when using --dry-run
+    Given a WP install
+
+    When I run `wp theme install --force twentytwelve --version=1.0`
+    Then STDOUT should not be empty
+
+    When I run `wp theme list --name=twentytwelve --field=update_version`
+    And save STDOUT as {UPDATE_VERSION}
+
+    When I run `wp theme update twentytwelve --format=summary --dry-run`
+    Then STDOUT should contain:
+      """
+      Available theme updates:
+      Twenty Twelve update from version 1.0 to version {UPDATE_VERSION}
+      """
+
+    When I run `wp theme update twentytwelve --format=json --dry-run`
+    Then STDOUT should be JSON containing:
+      """
+      [{"name":"twentytwelve","status":"inactive","version":"1.0","update_version":"{UPDATE_VERSION}"}]
+      """
+
+    When I run `wp theme update twentytwelve --format=csv --dry-run`
+    Then STDOUT should contain:
+      """
+      name,status,version,update_version
+      twentytwelve,inactive,1.0,{UPDATE_VERSION}
+      """
+
+  Scenario: Check json and csv formats when updating a theme
+    Given a WP install
+
+    When I run `wp theme install --force twentytwelve --version=1.0`
+    Then STDOUT should not be empty
+
+    When I run `wp theme list --name=twentytwelve --field=update_version`
+    And save STDOUT as {UPDATE_VERSION}
+
+    When I run `wp theme update twentytwelve --format=json`
+    Then STDOUT should contain:
+      """
+      [{"name":"twentytwelve","old_version":"1.0","new_version":"{UPDATE_VERSION}","status":"Updated"}]
+      """
+
+    When I run `wp theme install --force twentytwelve --version=1.0`
+    Then STDOUT should not be empty
+
+    When I run `wp theme update twentytwelve --format=csv`
+    Then STDOUT should contain:
+      """
+      name,old_version,new_version,status
+      twentytwelve,1.0,{UPDATE_VERSION},Updated
+      """
+
+  Scenario: Automatically install parent theme for a child theme
+    Given a WP install
+
+    When I try `wp theme status stargazer`
+    Then STDERR should contain:
+      """
+      Error: The 'stargazer' theme could not be found.
+      """
+
+    When I run `wp theme install buntu`
+    Then STDOUT should contain:
+      """
+      This theme requires a parent theme. Checking if it is installed
+      """
+
+    When I run `wp theme status stargazer`
+    Then STDOUT should contain:
+      """
+      Theme stargazer details:
+      """
+    And STDERR should be empty

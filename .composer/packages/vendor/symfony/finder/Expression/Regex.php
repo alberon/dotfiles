@@ -11,6 +11,8 @@
 
 namespace Symfony\Component\Finder\Expression;
 
+@trigger_error('The '.__NAMESPACE__.'\Regex class is deprecated since version 2.8 and will be removed in 3.0.', E_USER_DEPRECATED);
+
 /**
  * @author Jean-François Simon <contact@jfsimon.fr>
  */
@@ -55,7 +57,7 @@ class Regex implements ValueInterface
     /**
      * @param string $expr
      *
-     * @return Regex
+     * @return self
      *
      * @throws \InvalidArgumentException
      */
@@ -173,7 +175,7 @@ class Regex implements ValueInterface
     /**
      * @param string $option
      *
-     * @return Regex
+     * @return $this
      */
     public function addOption($option)
     {
@@ -187,7 +189,7 @@ class Regex implements ValueInterface
     /**
      * @param string $option
      *
-     * @return Regex
+     * @return $this
      */
     public function removeOption($option)
     {
@@ -199,7 +201,7 @@ class Regex implements ValueInterface
     /**
      * @param bool $startFlag
      *
-     * @return Regex
+     * @return $this
      */
     public function setStartFlag($startFlag)
     {
@@ -219,7 +221,7 @@ class Regex implements ValueInterface
     /**
      * @param bool $endFlag
      *
-     * @return Regex
+     * @return $this
      */
     public function setEndFlag($endFlag)
     {
@@ -239,7 +241,7 @@ class Regex implements ValueInterface
     /**
      * @param bool $startJoker
      *
-     * @return Regex
+     * @return $this
      */
     public function setStartJoker($startJoker)
     {
@@ -259,7 +261,7 @@ class Regex implements ValueInterface
     /**
      * @param bool $endJoker
      *
-     * @return Regex
+     * @return $this
      */
     public function setEndJoker($endJoker)
     {
@@ -279,7 +281,7 @@ class Regex implements ValueInterface
     /**
      * @param array $replacement
      *
-     * @return Regex
+     * @return $this
      */
     public function replaceJokers($replacement)
     {

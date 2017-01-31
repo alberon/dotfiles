@@ -95,7 +95,7 @@ Feature: Manage WordPress themes and plugins
     When I run `wp <type> delete <item>`
     Then STDOUT should contain:
       """
-      Success: Deleted '<item>' <type>.
+      Deleted '<item>' <type>.
       """
 
     When I try `wp <type> status <item>`
@@ -119,7 +119,7 @@ Feature: Manage WordPress themes and plugins
     When I run `wp <type> delete <item>`
     Then STDOUT should contain:
       """
-      Success: Deleted '<item>' <type>.
+      Deleted '<item>' <type>.
       """
     And the <file_to_check> file should not exist
 
@@ -135,7 +135,7 @@ Feature: Manage WordPress themes and plugins
     When I run `wp <type> delete <item>`
     Then STDOUT should contain:
       """
-      Success: Deleted '<item>' <type>.
+      Deleted '<item>' <type>.
       """
     And the <file_to_check> file should not exist
 
@@ -150,7 +150,7 @@ Feature: Manage WordPress themes and plugins
     When I run `wp <type> delete <item>`
     Then STDOUT should contain:
       """
-      Success: Deleted '<item>' <type>.
+      Deleted '<item>' <type>.
       """
     And the <file_to_check> file should not exist
 
@@ -165,7 +165,7 @@ Feature: Manage WordPress themes and plugins
     When I run `wp <type> delete <item>`
     Then STDOUT should contain:
       """
-      Success: Deleted '<item>' <type>.
+      Deleted '<item>' <type>.
       """
     And the <file_to_check> file should not exist
 
@@ -173,6 +173,12 @@ Feature: Manage WordPress themes and plugins
     Then STDOUT should contain:
       """
       Showing 2 of
+      """
+
+    When I try `wp <type> install an-impossible-slug-because-abc3fr`
+    Then STDERR should contain:
+      """
+      Warning: Couldn't find 'an-impossible-slug-because-abc3fr' in the WordPress.org <type> directory.
       """
 
     Examples:

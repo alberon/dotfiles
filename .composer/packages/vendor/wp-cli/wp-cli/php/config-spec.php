@@ -4,7 +4,19 @@ return array(
 	'path' => array(
 		'runtime' => '=<path>',
 		'file' => '<path>',
-		'desc' => 'Path to the WordPress files',
+		'desc' => 'Path to the WordPress files.',
+	),
+
+	'ssh' => array(
+		'runtime' => '=[<user>@]<host>[:<port>][<path>]',
+		'file' => '[<user>@]<host>[:<port>][<path>]',
+		'desc' => 'Perform operation against a remote server over SSH.',
+	),
+
+	'http' => array(
+		'runtime' => '=<http>',
+		'file' => '<http>',
+		'desc' => 'Perform operation against a remote WordPress install over HTTP.',
 	),
 
 	'url' => array(
@@ -17,35 +29,37 @@ return array(
 		'runtime' => '=<url>',
 	),
 
-	'config' => array(
-		'deprecated' => 'Use the WP_CLI_CONFIG_PATH environment variable instead.',
-		'runtime' => '=<path>',
-	),
-
 	'user' => array(
 		'runtime' => '=<id|login|email>',
 		'file' => '<id|login|email>',
-		'desc' => 'Set the WordPress user',
+		'desc' => 'Set the WordPress user.',
 	),
 
 	'skip-plugins' => array(
 		'runtime' => '[=<plugin>]',
 		'file' => '<list>',
-		'desc' => 'Skip loading all or some plugins',
+		'desc' => 'Skip loading all or some plugins. Note: mu-plugins are still loaded.',
 		'default' => '',
 	),
-	
+
 	'skip-themes' => array(
 		'runtime' => '[=<theme>]',
 		'file' => '<list>',
-		'desc' => 'Skip loading all or some themes',
+		'desc' => 'Skip loading all or some themes.',
 		'default' => '',
+	),
+
+	'skip-packages' => array(
+		'runtime'   => '',
+		'file'      => '<bool>',
+		'desc'      => 'Skip loading all installed packages.',
+		'default'   => false,
 	),
 
 	'require' => array(
 		'runtime' => '=<path>',
 		'file' => '<path>',
-		'desc' => 'Load PHP file before running the command (may be used more than once)',
+		'desc' => 'Load PHP file before running the command (may be used more than once).',
 		'multiple' => true,
 		'default' => array(),
 	),
@@ -53,40 +67,40 @@ return array(
 	'disabled_commands' => array(
 		'file' => '<list>',
 		'default' => array(),
-		'desc' => '(Sub)commands to disable',
+		'desc' => '(Sub)commands to disable.',
 	),
 
 	'color' => array(
 		'runtime' => true,
 		'file' => '<bool>',
 		'default' => 'auto',
-		'desc' => 'Whether to colorize the output',
+		'desc' => 'Whether to colorize the output.',
 	),
 
 	'debug' => array(
-		'runtime' => '',
-		'file' => '<bool>',
+		'runtime' => '[=<group>]',
+		'file' => '<group>',
 		'default' => false,
-		'desc' => 'Show all PHP errors; add verbosity to WP-CLI bootstrap',
+		'desc' => 'Show all PHP errors; add verbosity to WP-CLI bootstrap.',
 	),
 
 	'prompt' => array(
-		'runtime' => '',
+		'runtime' => '[=<assoc>]',
 		'file' => false,
 		'default' => false,
-		'desc' => 'Prompt the user to enter values for all command arguments',
+		'desc' => 'Prompt the user to enter values for all command arguments, or a subset specified as comma-separated values.',
 	),
 
 	'quiet' => array(
 		'runtime' => '',
 		'file' => '<bool>',
 		'default' => false,
-		'desc' => 'Suppress informational messages',
+		'desc' => 'Suppress informational messages.',
 	),
 
 	'apache_modules' => array(
 		'file' => '<list>',
-		'desc' => 'List of Apache Modules that are to be reported as loaded',
+		'desc' => 'List of Apache Modules that are to be reported as loaded.',
 		'multiple' => true,
 		'default' => array(),
 	),
@@ -100,4 +114,3 @@ return array(
 	),
 
 );
-

@@ -27,16 +27,33 @@ Feature: Get help about WP-CLI commands
       wp post list
       """
 
+  Scenario: Help when WordPress is downloaded but not installed
+    Given an empty directory
+
+    When I run `wp core download`
+    And I run `wp help core config`
+    Then STDOUT should contain:
+      """
+      wp core config
+      """
+
+    When I run `wp core config {CORE_CONFIG_SETTINGS}`
+    And I run `wp help core install`
+    Then STDOUT should contain:
+      """
+      wp core install
+      """
+
   Scenario: Help for nonexistent commands
     Given a WP install
-    
+
     When I try `wp help non-existent-command`
     Then the return code should be 1
     And STDERR should be:
       """
       Error: 'non-existent-command' is not a registered wp command.
       """
-      
+
     When I try `wp help non-existent-command non-existent-subcommand`
     Then the return code should be 1
     And STDERR should be:
@@ -156,4 +173,54 @@ Feature: Get help about WP-CLI commands
     Then STDOUT should contain:
       """
       test-extra
+      """
+
+  Scenario: Help renders global parameters correctly
+    Given a WP install
+
+    When I run `wp help import get`
+    Then STDOUT should contain:
+      """
+      GLOBAL PARAMETERS
+      """
+    And STDOUT should not contain:
+      """
+      ## GLOBAL PARAMETERS
+      """
+
+    When I run `wp help option get`
+    Then STDOUT should contain:
+      """
+      GLOBAL PARAMETERS
+      """
+    And STDOUT should not contain:
+      """
+      ## GLOBAL PARAMETERS
+      """
+
+    When I run `wp help option`
+    Then STDOUT should contain:
+      """
+      GLOBAL PARAMETERS
+      """
+    And STDOUT should not contain:
+      """
+      ## GLOBAL PARAMETERS
+      """
+
+  Scenario: Display alias in man page
+    Given a WP install
+
+    When I run `wp help plugin update`
+    Then STDOUT should contain:
+      """
+      ALIAS
+
+        upgrade
+      """
+
+    When I run `wp help plugin install`
+    Then STDOUT should not contain:
+      """
+      ALIAS
       """

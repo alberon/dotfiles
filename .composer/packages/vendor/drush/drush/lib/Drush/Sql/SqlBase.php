@@ -2,6 +2,9 @@
 
 namespace Drush\Sql;
 
+use Drush\Log\LogLevel;
+use Webmozart\PathUtil\Path;
+
 class SqlBase {
 
   // An Drupal style array containing specs for connecting to database.
@@ -72,7 +75,7 @@ class SqlBase {
     // Avoid the php memory of the $output array in drush_shell_exec().
     if (!$return = drush_op_system($cmd)) {
       if ($file) {
-        drush_log(dt('Database dump saved to !path', array('!path' => $file)), 'success');
+        drush_log(dt('Database dump saved to !path', array('!path' => $file)), LogLevel::SUCCESS);
         drush_backend_set_result($file);
       }
     }
@@ -114,7 +117,7 @@ class SqlBase {
         if (empty($backup_dir)) {
           $backup_dir = drush_find_tmp();
         }
-        $file = $backup_dir . '/@DATABASE_@DATE.sql';
+        $file = Path::join($backup_dir, '@DATABASE_@DATE.sql');
       }
       $file = str_replace(array('@DATABASE', '@DATE'), array($database, gmdate('Ymd_His')), $file);
     }
@@ -141,11 +144,11 @@ class SqlBase {
   public function query($query, $input_file = NULL, $result_file = '') {
     $input_file_original = $input_file;
     if ($input_file && drush_file_is_tarball($input_file)) {
-      if (drush_shell_exec('gunzip %s', $input_file)) {
+      if (drush_shell_exec('gzip -d %s', $input_file)) {
         $input_file = trim($input_file, '.gz');
       }
       else {
-        return drush_set_error(dt('Failed to gunzip input file.'));
+        return drush_set_error(dt('Failed to decompress input file.'));
       }
     }
 
@@ -174,7 +177,7 @@ class SqlBase {
     // but the sql query itself is stored in a temp file and not displayed.
     // We show the query when --debug is used and this function created the temp file.
     if ((drush_get_context('DRUSH_DEBUG') || drush_get_context('DRUSH_SIMULATE')) && empty($input_file_original)) {
-      drush_log('sql-query: ' . $query, 'status');
+      drush_log('sql-query: ' . $query, LogLevel::NOTICE);
     }
 
     $success = drush_shell_exec($exec);
@@ -198,7 +201,7 @@ class SqlBase {
       // Enable prefix processing which can be dangerous so off by default. See http://drupal.org/node/1219850.
       if (drush_get_option('db-prefix')) {
         if (drush_drupal_major_version() >= 7) {
-          $query = Database::getConnection()->prefixTables($query);
+          $query = \Database::getConnection()->prefixTables($query);
         }
         else {
           $query = db_prefix_tables($query);
@@ -213,11 +216,21 @@ class SqlBase {
     return $query;
   }
 
+  /**
+   * Drop specified database.
+   *
+   * @param array $tables
+   *   An array of table names
+   * @return boolean
+   *   True if successful, FALSE if failed.
+   */
   public function drop($tables) {
+    $return = TRUE;
     if ($tables) {
       $sql = 'DROP TABLE '. implode(', ', $tables);
-      return $this->query($sql);
+      $return = $this->query($sql);
     }
+    return $return;
   }
 
   /**
@@ -237,10 +250,12 @@ class SqlBase {
    * @param boolean $quoted
    *   Quote the database name. Mysql uses backticks to quote which can cause problems
    *   in a Windows shell. Set TRUE if the CREATE is not running on the bash command line.
+   * @return boolean
+   *   True if successful, FALSE otherwise.
    */
   public function createdb($quoted = FALSE) {
     $dbname = $this->db_spec['database'];
-    $sql = $this->createdb_sql($dbname);
+    $sql = $this->createdb_sql($dbname, $quoted);
     // Adjust connection to allow for superuser creds if provided.
     $this->su();
     return $this->query($sql);
@@ -254,10 +269,10 @@ class SqlBase {
    */
   public function drop_or_create() {
     if ($this->db_exists()) {
-      $this->drop($this->listTables());
+      return $this->drop($this->listTables());
     }
     else {
-      $this->createdb();
+      return $this->createdb();
     }
   }
 

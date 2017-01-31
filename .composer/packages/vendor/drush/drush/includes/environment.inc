@@ -10,6 +10,9 @@
  * @see includes/bootstrap.inc
  */
 
+use Drush\Log\LogLevel;
+use Webmozart\PathUtil\Path;
+
 /**
  * Log PHP errors to the Drush log. This is in effect until Drupal's error
  * handler takes over.
@@ -26,9 +29,10 @@ function drush_error_handler($errno, $message, $filename, $line, $context) {
   if ($errno & error_reporting()) {
     // By default we log notices.
     $type = drush_get_option('php-notices', 'notice');
+    $halt_on_error = drush_get_option('halt-on-error', (drush_drupal_major_version() != 6));
 
     // Bitmask value that constitutes an error needing to be logged.
-    $error = E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR;
+    $error = E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR | E_RECOVERABLE_ERROR;
     if ($errno & $error) {
       $type = 'error';
     }
@@ -36,10 +40,15 @@ function drush_error_handler($errno, $message, $filename, $line, $context) {
     // Bitmask value that constitutes a warning being logged.
     $warning = E_WARNING | E_CORE_WARNING | E_COMPILE_WARNING | E_USER_WARNING;
     if ($errno & $warning) {
-      $type = 'warning';
+      $type = LogLevel::WARNING;
     }
 
     drush_log($message . ' ' . basename($filename) . ':' . $line, $type);
+
+    if ($errno == E_RECOVERABLE_ERROR && $halt_on_error) {
+      drush_log(dt('E_RECOVERABLE_ERROR encountered; aborting. To ignore recoverable errors, run again with --no-halt-on-error'), 'error');
+      exit(DRUSH_APPLICATION_ERROR);
+    }
 
     return TRUE;
   }
@@ -100,7 +109,7 @@ function _drush_environment_check_php_ini() {
     }
   }
   if (!empty($prohibited_list)) {
-    drush_log(dt('The following restricted PHP modes have non-empty values: !prohibited_list. This configuration is incompatible with drush.  !php_ini_msg', array('!prohibited_list' => implode(' and ', $prohibited_list), '!php_ini_msg' => _drush_php_ini_loaded_file_message())), 'error');
+    drush_log(dt('The following restricted PHP modes have non-empty values: !prohibited_list. This configuration is incompatible with drush.  !php_ini_msg', array('!prohibited_list' => implode(' and ', $prohibited_list), '!php_ini_msg' => _drush_php_ini_loaded_file_message())), LogLevel::ERROR);
   }
 
   return TRUE;
@@ -125,7 +134,7 @@ function drush_cwd() {
   }
 
   // Convert windows paths.
-  $path = _drush_convert_path($path);
+  $path = Path::canonicalize($path);
 
   // Save original working dir case some command wants it.
   drush_set_context('DRUSH_OLDCWD', $path);
@@ -160,10 +169,11 @@ function _drush_shift_path_up($path) {
   if (empty($path)) {
     return FALSE;
   }
-  $path = explode('/', $path);
+  $path = explode(DIRECTORY_SEPARATOR, $path);
   // Move one directory up.
   array_pop($path);
-  return implode('/', $path);
+  return implode(DIRECTORY_SEPARATOR, $path);
+  // return dirname($path);
 }
 
 /**
@@ -362,19 +372,28 @@ function drush_valid_root($path) {
 
 /**
  * Tests the currently loaded database credentials to ensure a database connection can be made.
+ *
+ * @param bool $log_errors
+ *   (optional) If TRUE, log error conditions; otherwise be quiet.
+ *
+ * @return bool
+ *   TRUE if database credentials are valid.
  */
 function drush_valid_db_credentials() {
   try {
     $sql = drush_sql_get_class();
     if (!$sqlVersion = drush_sql_get_version()) {
+      drush_log(dt('While checking DB credentials, could not instantiate SQLVersion class.'), 'debug');
       return FALSE;
     }
     if (!$sqlVersion->valid_credentials($sql->db_spec())) {
+      drush_log(dt('DB credentials are invalid.'), 'debug');
       return FALSE;
     }
     return $sql->query('SELECT 1;');
   }
   catch (Exception $e) {
+    drush_log(dt('Checking DB credentials yielded error: @e', array('@e' => $e->getMessage())), 'debug');
     return FALSE;
   }
 }
@@ -402,12 +421,10 @@ function drush_valid_db_credentials() {
  * @see DRUSH_COMMAND
  */
 function drush_find_drush() {
-  $drush = realpath($_SERVER['argv']['0']);
-  // TODO: On Windows, if we leave $drush as-is, then callbacks will
-  // be done just as we were called by the batch file:  php.exe C:\path\drush.php
-  // We could also convert drush.php to drush.bat to run the batch file again,
-  // but this works just as well.
-  return $drush;
+  if ($drush = realpath($_SERVER['argv']['0'])) {
+    return Path::canonicalize($drush);
+  }
+  return FALSE;
 }
 
 /**
@@ -438,7 +455,7 @@ function drush_build_drush_command($drush_path = NULL, $php = NULL, $os = NULL, 
       $drush_path = DRUSH_COMMAND;
     }
     else {
-      $drush_path = drush_is_windows($os) ? 'drush.bat' : 'drush';
+      $drush_path = 'drush'; // drush_is_windows($os) ? 'drush.bat' : 'drush';
     }
   }
   // If the path to drush points to drush.php, then we will need to
@@ -488,16 +505,6 @@ function drush_build_drush_command($drush_path = NULL, $php = NULL, $os = NULL, 
   }
 
   return trim($prefix . ' ' . drush_escapeshellarg($drush_path, $os) . $additional_options);
-}
-
-/**
- * Check if the operating system is Windows.
- * This will return TRUE under DOS, Powershell
- * Cygwin and MSYSGIT shells, so test for the
- * Windows variant FIRST if you care.
- */
-function drush_is_windows($os = NULL) {
-  return _drush_test_os($os, array("WIN","CYGWIN","CWRSYNC","MINGW"));
 }
 
 /**
@@ -631,21 +638,11 @@ function drush_is_local_host($host) {
  * Return the user's home directory.
  */
 function drush_server_home() {
-  // Cannot use $_SERVER superglobal since that's empty during UnitUnishTestCase
-  // getenv('HOME') isn't set on Windows and generates a Notice.
-  $home = getenv('HOME');
-  if (!empty($home)) {
-    // home should never end with a trailing slash.
-    $home = rtrim($home, '/');
+  try {
+    return Path::getHomeDirectory();
+  } catch (Exception $e) {
+    return NULL;
   }
-  elseif (!empty($_SERVER['HOMEDRIVE']) && !empty($_SERVER['HOMEPATH'])) {
-    // home on windows
-    $home = $_SERVER['HOMEDRIVE'] . $_SERVER['HOMEPATH'];
-    // If HOMEPATH is a root directory the path can end with a slash. Make sure
-    // that doesn't happen.
-    $home = rtrim($home, '\\/');
-  }
-  return empty($home) ? NULL : $home;
 }
 
 /**
@@ -719,7 +716,7 @@ function drush_get_extensions($include_hidden = TRUE) {
       $extensions[$name]->label = $extension->info['name'].' ('.$name.')';
     }
     else {
-      drush_log(dt("Extension !name provides no human-readable name in .info file.", array('!name' => $name), 'debug'));
+      drush_log(dt("Extension !name provides no human-readable name in .info file.", array('!name' => $name), LogLevel::DEBUG));
       $extensions[$name]->label = $name.' ('.$name.')';
     }
     if (empty($extension->info['package'])) {
@@ -850,8 +847,8 @@ function drush_get_drupal_core_compatibility() {
   if (defined('DRUPAL_CORE_COMPATIBILITY')) {
     return DRUPAL_CORE_COMPATIBILITY;
   }
-  elseif (defined('Drupal::CORE_COMPATIBILITY')) {
-    return Drupal::CORE_COMPATIBILITY;
+  elseif (defined('\Drupal::CORE_COMPATIBILITY')) {
+    return \Drupal::CORE_COMPATIBILITY;
   }
 }
 
