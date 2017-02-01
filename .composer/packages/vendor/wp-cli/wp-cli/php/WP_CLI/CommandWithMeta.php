@@ -107,25 +107,50 @@ abstract class CommandWithMeta extends \WP_CLI_Command {
 	 * <id>
 	 * : The ID of the object.
 	 *
-	 * <key>
+	 * [<key>]
 	 * : The name of the meta field to delete.
 	 *
 	 * [<value>]
 	 * : The value to delete. If omitted, all rows with key will deleted.
+	 *
+	 * [--all]
+	 * : Delete all meta for the object.
 	 */
 	public function delete( $args, $assoc_args ) {
-		list( $object_id, $meta_key ) = $args;
+		list( $object_id ) = $args;
 
+		$meta_key = ! empty( $args[1] ) ? $args[1] : '';
 		$meta_value = ! empty( $args[2] ) ? $args[2] : '';
+
+		if ( empty( $meta_key ) && ! Utils\get_flag_value( $assoc_args, 'all' ) ) {
+			WP_CLI::error( 'Please specify a meta key, or use the --all flag.' );
+		}
 
 		$object_id = $this->check_object_id( $object_id );
 
-		$success = delete_metadata( $this->meta_type, $object_id, $meta_key, $meta_value );
-
-		if ( $success ) {
-			WP_CLI::success( "Deleted custom field." );
+		if ( Utils\get_flag_value( $assoc_args, 'all' ) ) {
+			$errors = false;
+			foreach( get_metadata( $this->meta_type, $object_id ) as $meta_key => $values ) {
+				$success = delete_metadata( $this->meta_type, $object_id, $meta_key );
+				if ( $success ) {
+					WP_CLI::log( "Deleted '{$meta_key}' custom field." );
+				} else {
+					WP_CLI::warning( "Failed to delete '{$meta_key}' custom field." );
+					$errors = true;
+				}
+			}
+			if ( $errors ) {
+				WP_CLI::error( 'Failed to delete all custom fields.' );
+			} else {
+				WP_CLI::success( 'Deleted all custom fields.' );
+			}
 		} else {
-			WP_CLI::error( "Failed to delete custom field." );
+			$success = delete_metadata( $this->meta_type, $object_id, $meta_key, $meta_value );
+			if ( $success ) {
+				WP_CLI::success( "Deleted custom field." );
+			} else {
+				WP_CLI::error( "Failed to delete custom field." );
+			}
 		}
 	}
 
@@ -141,10 +166,16 @@ abstract class CommandWithMeta extends \WP_CLI_Command {
 	 * : The name of the meta field to create.
 	 *
 	 * [<value>]
-	 * : The value of the meta field. If ommited, the value is read from STDIN.
+	 * : The value of the meta field. If omitted, the value is read from STDIN.
 	 *
 	 * [--format=<format>]
-	 * : The serialization format for the value. Default is plaintext.
+	 * : The serialization format for the value.
+	 * ---
+	 * default: plaintext
+	 * options:
+	 *   - plaintext
+	 *   - json
+	 * ---
 	 */
 	public function add( $args, $assoc_args ) {
 		list( $object_id, $meta_key ) = $args;
@@ -154,6 +185,7 @@ abstract class CommandWithMeta extends \WP_CLI_Command {
 
 		$object_id = $this->check_object_id( $object_id );
 
+		$meta_value = wp_slash( $meta_value );
 		$success = add_metadata( $this->meta_type, $object_id, $meta_key, $meta_value );
 
 		if ( $success ) {
@@ -175,10 +207,16 @@ abstract class CommandWithMeta extends \WP_CLI_Command {
 	 * : The name of the meta field to update.
 	 *
 	 * [<value>]
-	 * : The new value. If ommited, the value is read from STDIN.
+	 * : The new value. If omitted, the value is read from STDIN.
 	 *
 	 * [--format=<format>]
-	 * : The serialization format for the value. Default is plaintext.
+	 * : The serialization format for the value.
+	 * ---
+	 * default: plaintext
+	 * options:
+	 *   - plaintext
+	 *   - json
+	 * ---
 	 *
 	 * @alias set
 	 */
@@ -196,6 +234,7 @@ abstract class CommandWithMeta extends \WP_CLI_Command {
 		if ( $meta_value === $old_value ) {
 			WP_CLI::success( "Value passed for custom field '$meta_key' is unchanged." );
 		} else {
+			$meta_value = wp_slash( $meta_value );
 			$success = update_metadata( $this->meta_type, $object_id, $meta_key, $meta_value );
 
 			if ( $success ) {

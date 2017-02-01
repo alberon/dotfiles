@@ -28,9 +28,6 @@ if $HAS_TERMINAL; then
     if $MAC; then
         # Mac
         ls_opts='-G'
-        # Use the same color scheme as Debian
-        # http://geoff.greer.fm/lscolors/
-        export LSCOLORS=ExGxFxDaCaDaDahbaDacec
     elif ls --hide=*.pyc >/dev/null 2>&1; then
         # Recent Linux
         ls_opts='--color=always --hide=*.pyc --hide=*.sublime-workspace'
@@ -77,8 +74,17 @@ if $HAS_TERMINAL; then
     # Use colours for 'tree' too
     alias tree='tree -C'
 
-    # Unset the colours that are sometimes set (e.g. Joshua)
-    export LS_COLORS=
+    # Custom 'ls' colours
+    if $MAC; then
+        # Use the same color scheme as Debian
+        # http://geoff.greer.fm/lscolors/
+        export LSCOLORS=ExGxFxDaCaDaDahbaDacec
+    else
+        # These don't work on CentOS 5: rs (RESET), mh (MULTIHARDLINK), ca (CAPABILITY) -
+        # but we're using the defaults so it doesn't really matter
+        #export LS_COLORS='rs=0:fi=97:di=93:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32'
+        export LS_COLORS='fi=97:di=93:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:tw=30;42:ow=34;42:st=37;44:ex=01;32'
+    fi
 
     # Stop newer versions of Bash quoting the filenames in ls
     # http://unix.stackexchange.com/a/258687/14368

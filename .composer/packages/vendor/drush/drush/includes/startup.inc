@@ -6,7 +6,7 @@
  *
  * This file is included and used early in the Drush
  * startup process, before any other Drush APIs are
- * available.
+ * available, and before the autoloader has been included.
  */
 
 /**
@@ -47,43 +47,102 @@ function drush_env() {
 /**
  * Checks the provided location and return the appropriate
  * Drush wrapper or Drush launcher script, if found.
+ *
+ * If the provided location looks like it might be a web
+ * root (i.e., it contains an index.php), then we will search
+ * in a number of locations in the general vicinity of the
+ * web root for a Drush executable.
+ *
+ * For other locations, we will look only in that specific
+ * directory, or in vendor/bin.
  */
 function find_wrapper_or_launcher($location) {
-  // We look for a "Drush wrapper" script that might
-  // be stored in the root of a site.  If there is
-  // no wrapper script, then we look for the
-  // drush.launcher script in vendor/bin.  We try just a
-  // few of the most common locations; if the user relocates
-  // their vendor directory anywhere else, then they must
-  // use a wrapper script to locate it.  See the comment in
-  // 'examples/drush' for details.
-  //
-  // We are somewhat "loose" about whether we are looking
-  // for "drush" or "drush.launcher", because in old versions
-  // of Drush, the "drush launcher" was named "drush".
-  // Otherwise, there wouldn't be any point in looking for
-  // "drush.launcher" at the root, or "drush" in a vendor directory.
-  // We also allow users to rename their drush wrapper to
-  // 'drush.wrapper' to avoid conflicting with a directory named
-  // 'drush' at the site root.
-  $drush_locations = array(
-    "drush",
-    "vendor/bin/drush",
-    "../vendor/bin/drush",
-    "sites/all/vendor/bin/drush",
-    "sites/all/vendor/drush/drush/drush",
-    "sites/all/drush/drush/drush",
-    "drush/drush/drush",
-  );
+  if (file_exists($location. DIRECTORY_SEPARATOR. 'index.php')) {
+    return find_wrapper_or_launcher_in_vicinity($location);
+  }
+  return find_wrapper_or_launcher_in_specific_locations($location, ["", 'vendor'. DIRECTORY_SEPARATOR. 'bin']);
+}
 
+/**
+ * We look for a "Drush wrapper" script that might
+ * be stored in the root of a site.  If there is
+ * no wrapper script, then we look for the
+ * drush.launcher script in vendor/bin.  We try just a
+ * few of the most common locations; if the user relocates
+ * their vendor directory anywhere else, then they must
+ * use a wrapper script to locate it.  See the comment in
+ * 'examples/drush' for details.
+ */
+function find_wrapper_or_launcher_in_vicinity($location) {
+  $sep = DIRECTORY_SEPARATOR;
+  $drush_locations = [
+    "",
+    "vendor{$sep}bin/",
+    "..{$sep}vendor{$sep}bin{$sep}",
+    "sites{$sep}all{$sep}vendor{$sep}bin{$sep}",
+    "sites{$sep}all{$sep}vendor{$sep}drush{$sep}drush{$sep}",
+    "sites{$sep}all{$sep}drush{$sep}drush{$sep}",
+    "drush{$sep}drush{$sep}",
+  ];
+
+  return find_wrapper_or_launcher_in_specific_locations($location, $drush_locations);
+}
+
+function find_wrapper_or_launcher_in_specific_locations($location, $drush_locations) {
+  $sep = DIRECTORY_SEPARATOR;
   foreach ($drush_locations as $d) {
-    foreach (array('.launcher', '.wrapper', '') as $suffix) {
-      if (is_file("$location/$d$suffix")) {
-        return "$location/$d$suffix";
-      }
+    $found_script = find_wrapper_or_launcher_at_location("$location$sep$d");
+    if (!empty($found_script)) {
+      return $found_script;
     }
   }
   return "";
+}
+
+/**
+ * We are somewhat "loose" about whether we are looking
+ * for "drush" or "drush.launcher", because in old versions
+ * of Drush, the "drush launcher" was named "drush".
+ * Otherwise, there wouldn't be any point in looking for
+ * "drush.launcher" at the root, or "drush" in a vendor directory.
+ * We also allow users to rename their drush wrapper to
+ * 'drush.wrapper' to avoid conflicting with a directory named
+ * 'drush' at the site root.
+ */
+function find_wrapper_or_launcher_at_location($location) {
+  $sep = DIRECTORY_SEPARATOR;
+  // Sanity-check: empty $location means that we should search
+  // at the cwd, not at the root of the filesystem.
+  if (empty($location)) {
+    $location = ".";
+  }
+  foreach (array('.launcher', '.wrapper', '') as $suffix) {
+    $check_location = "$location{$sep}drush$suffix";
+    if (is_file($check_location)) {
+      return $check_location;
+    }
+  }
+  return "";
+}
+
+/**
+ * Determine whether current OS is a Windows variant.
+ */
+function drush_is_windows($os = NULL) {
+  return strtoupper(substr($os ?: PHP_OS, 0, 3)) === 'WIN';
+}
+
+function drush_escapeshellarg($arg, $os = NULL, $raw = FALSE) {
+  // Short-circuit escaping for simple params (keep stuff readable)
+  if (preg_match('|^[a-zA-Z0-9.:/_-]*$|', $arg)) {
+    return $arg;
+  }
+  elseif (drush_is_windows($os)) {
+    return _drush_escapeshellarg_windows($arg, $raw);
+  }
+  else {
+    return _drush_escapeshellarg_linux($arg, $raw);
+  }
 }
 
 /**
@@ -119,25 +178,47 @@ function _drush_escapeshellarg_linux($arg, $raw = FALSE) {
 }
 
 /**
+ * Windows version of escapeshellarg().
+ */
+function _drush_escapeshellarg_windows($arg, $raw = FALSE) {
+  // Double up existing backslashes
+  $arg = preg_replace('/\\\/', '\\\\\\\\', $arg);
+
+  // Double up double quotes
+  $arg = preg_replace('/"/', '""', $arg);
+
+  // Double up percents.
+  // $arg = preg_replace('/%/', '%%', $arg);
+
+  // Only wrap with quotes when needed.
+  if(!$raw) {
+    // Add surrounding quotes.
+    $arg = '"' . $arg . '"';
+  }
+
+  return $arg;
+}
+
+/**
  * drush_startup is called once, by the Drush "finder"
  * script -- the "drush" script at the Drush root.
  * It finds the correct Drush "wrapper" or "launcher"
  * script to use, and executes it with process replacement.
  */
 function drush_startup($argv) {
+  $sep = DIRECTORY_SEPARATOR;
   $found_script = "";
+  $cwd = getcwd();
   $home = getenv("HOME");
-  $use_dir = "$home/.drush/use";
+  $use_dir = "$home{$sep}.drush{$sep}use";
 
   // Get the arguments for the command.  Shift off argv[0],
   // which contains the name of this script.
   $arguments = $argv;
   array_shift($arguments);
 
-  //
   // We need to do at least a partial parsing of the options,
   // so that we can find --root / -r and so on.
-  //
   $VERBOSE=FALSE;
   $DEBUG=FALSE;
   $ROOT=FALSE;
@@ -159,11 +240,15 @@ function drush_startup($argv) {
           $VAR = "ROOT";
           break;
 
+        case "-dv":
+        case "-vd":
         case "--debug":
         case "-d":
           $DEBUG = TRUE;
           break;
 
+        case "-dv":
+        case "-vd":
         case "--verbose":
         case "-v":
           $VERBOSE = TRUE;
@@ -183,7 +268,11 @@ function drush_startup($argv) {
 
   $NONE=($ALIAS == "@none");
 
-  //
+  // If we have found the site-local Drush script, then
+  // do not search for it again; use the environment value
+  // we set last time.
+  $found_script = getenv('DRUSH_FINDER_SCRIPT');
+
   // If the @none alias is used, then we skip the Drush wrapper,
   // and call the Drush launcher directly.
   //
@@ -195,9 +284,9 @@ function drush_startup($argv) {
   //
   // In either event, the appropriate 'drush.launcher' should be right next
   // to this script (stored in the same directory).
-  if ($NONE) {
-    if (is_file(dirname(__DIR__) . "/drush.launcher")) {
-      $found_script = dirname(__DIR__) . "/drush.launcher";
+  if (empty($found_script) && $NONE) {
+    if (is_file(dirname(__DIR__) . "{$sep}drush.launcher")) {
+      $found_script = dirname(__DIR__) . "{$sep}drush.launcher";
     }
     else {
       fwrite(STDERR, "Could not find drush.launcher in " . dirname(__DIR__) . ". Check your installation.\n");
@@ -205,7 +294,6 @@ function drush_startup($argv) {
     }
   }
 
-  //
   // Check for a root option:
   //
   //   drush --root=/path
@@ -214,7 +302,6 @@ function drush_startup($argv) {
   // should always use the Drush stored at this root, if there is one.
   // We will first check for a "wrapper" script at the root, and then
   // we will look for a "launcher" script in vendor/bin.
-  //
   if (empty($found_script) && !empty($ROOT)) {
     $found_script = find_wrapper_or_launcher($ROOT);
     if (!empty($found_script)) {
@@ -222,28 +309,24 @@ function drush_startup($argv) {
     }
   }
 
-  //
   // If there is a .drush-use file, then its contents will
   // contain the path to the Drush to use.
-  //
   if (empty($found_script)) {
     if (is_file(".drush-use")) {
-      $found_script = file_get_contents(".drush-use");
+      $found_script = trim(file_get_contents(".drush-use"));
     }
   }
 
-  //
   // Look for a 'drush' wrapper or launcher at the cwd,
   // and in each of the directories above the cwd.  If
   // we find one, use it.
-  //
   if (empty($found_script)) {
     $c = getcwd();
     // Windows can give us lots of different strings to represent the root
     // directory as it often includes the drive letter. If we get the same
     // result from dirname() twice in a row, then we know we're at the root.
     $last = '';
-    while (!empty($c) && ($c != $last) && file_exists("$c/index.php")) {
+    while (!empty($c) && ($c != $last)) {
       $found_script = find_wrapper_or_launcher($c);
       if ($found_script) {
         chdir($c);
@@ -268,25 +351,34 @@ function drush_startup($argv) {
     // called "drush", we have probably found a Drush install directory,
     // not a site root.  Adjust appropriately.  Note that this
     // also catches the case where a drush "finder" script finds itself.
-    if (is_file(dirname($found_script) . "/drush.launcher")) {
-      $found_script = dirname($found_script) . "/drush.launcher";
+    if (is_file(dirname($found_script) . "{$sep}drush.launcher")) {
+      $found_script = dirname($found_script) . "{$sep}drush.launcher";
     }
   }
 
-  // Didn't find any site-local Drush, or @use'd Drush?
-  // In that case, there should always be a drush.launcher in
-  // the same directory this script is stored in; use that.
+  // Didn't find any site-local Drush, or @use'd Drush.
+  // Skip the Bash niceties of the launcher and proceed to drush_main() in either case:
+  // - No script was found and we are running a Phar
+  // - The found script *is* the Phar https://github.com/drush-ops/drush/pull/2246.
+  $phar_path = class_exists('Phar') ? Phar::running(FALSE) : '';
+  if ((empty($found_script) && $phar_path) || !empty($found_script) && $found_script == $phar_path) {
+    drush_run_main($DEBUG, $sep, "Phar detected. Proceeding to drush_main().");
+  }
+
+  // Didn't find any site-local Drush, or @use'd Drush, or Phar.
+  // There should be a drush.launcher in same directory as this script.
   if (empty($found_script)) {
-    $found_script = dirname(__DIR__) . "/drush.launcher";
-    if (!is_executable($found_script)) {
-      // Can't execute the found launcher, so proceed with the current drush,
-      // bypassing the Bash niceties of the launcher.
-      // Emit a message in debug mode advertising how we proceeded.
-      if ($DEBUG) {
-        fwrite(STDERR, "Phar detected. Proceeding to drush_main().");
-      }
-      require __DIR__ . '/preflight.inc';
-      exit(drush_main());
+    $found_script = dirname(__DIR__) . "{$sep}drush.launcher";
+  }
+
+  if (drush_is_windows()) {
+    // Sometimes we found launcher in /bin, and sometimes not. Adjust accordingly.
+    if (strpos($found_script, 'bin')) {
+      $found_script = dirname($found_script). $sep. 'drush.php.bat';
+    }
+    else {
+      array_unshift($arguments, dirname($found_script). $sep. 'drush.php');
+      $found_script = 'php';
     }
   }
 
@@ -299,6 +391,13 @@ function drush_startup($argv) {
     putenv("DRUSH_SHELL_PID=" . posix_getppid());
   }
 
+  // Set an environment variable indicating which script
+  // the Drush finder found. If we end up re-entrantly calling
+  // another Drush finder, then we will skip searching for
+  // a site-local Drush, and always use the drush.launcher
+  // found previously.  This environment variable typically should
+  // not be set by clients.
+  putenv("DRUSH_FINDER_SCRIPT=$found_script");
 
   // Emit a message in debug mode advertising the location of the
   // script we found.
@@ -323,10 +422,38 @@ function drush_startup($argv) {
     exit(1);
   }
   else {
-    $escaped_args = array_map(function($item) { return _drush_escapeshellarg_linux($item); }, $arguments);
-    $process = proc_open($found_script . ' ' . implode(' ', $escaped_args), array(0 => STDIN, 1 => STDOUT, 2 => STDERR), $pipes);
+    $escaped_args = array_map(function($item) { return drush_escapeshellarg($item); }, $arguments);
+    // Double quotes around $found_script as it can contain spaces.
+    $cmd = drush_escapeshellarg($found_script). ' '. implode(' ', $escaped_args);
+    if (drush_is_windows()) {
+      // Windows requires double quotes around whole command.
+      // @see https://bugs.php.net/bug.php?id=49139
+      // @see https://bugs.php.net/bug.php?id=60181
+      $cmd = '"'. $cmd. '"';
+    }
+    $process = proc_open($cmd, array(0 => STDIN, 1 => STDOUT, 2 => STDERR), $pipes, $cwd);
     $proc_status = proc_get_status($process);
     $exit_code = proc_close($process);
     exit($proc_status["running"] ? $exit_code : $proc_status["exitcode"] );
   }
+}
+
+/**
+ * Run drush_main() and then exit. Used when we cannot hand over execution to
+ * the launcher.
+ *
+ * @param bool $DEBUG
+ *   Are we in debug mode
+ * @param string $sep
+ *   Directory separator
+ * @param string $msg
+ *   Debug message to log before running drush_main()
+ */
+function drush_run_main($DEBUG, $sep, $msg) {
+// Emit a message in debug mode advertising how we proceeded.
+  if ($DEBUG) {
+    fwrite(STDERR, $msg. "\n");
+  }
+  require __DIR__ . "{$sep}preflight.inc";
+  exit(drush_main());
 }

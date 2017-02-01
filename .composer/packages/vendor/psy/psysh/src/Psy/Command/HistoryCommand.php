@@ -60,7 +60,7 @@ class HistoryCommand extends Command
             ))
             ->setDescription('Show the Psy Shell history.')
             ->setHelp(
-                <<<HELP
+                <<<'HELP'
 Show, search, save or replay the Psy Shell history.
 
 e.g.
@@ -177,7 +177,7 @@ HELP
      * @param string $head
      * @param string $tail
      *
-     * @return array A slilce of history.
+     * @return array A slilce of history
      */
     private function getHistorySlice($show, $head, $tail)
     {

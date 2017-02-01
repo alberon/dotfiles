@@ -5,6 +5,8 @@
  * Preflight, postflight and shutdown code.
  */
 
+use Drush\Log\LogLevel;
+
 /**
  * The main Drush function.
  *
@@ -73,6 +75,9 @@ function drush_main() {
     $bootstrap->terminate();
   }
   drush_postflight();
+  if (is_object($return)) {
+    $return = 0;
+  }
 
   // How strict are we?  If we are very strict, turn 'ok' into 'error'
   // if there are any warnings in the log.
@@ -108,7 +113,7 @@ function drush_preflight_prepare() {
     $vendor_path = $global_vendor_path;
   }
   else {
-    $msg = "Unable to load autoload.php. Drush now requires Composer in order to install its dependencies and autoload classes. Please see README.md\n";
+    $msg = "Unable to load autoload.php. Run composer install to fetch dependencies and write this file (http://docs.drush.org/en/master/install-alternative/). Or if you prefer, use the drush.phar which already has dependencies included (http://docs.drush.org/en/master/install).\n";
     fwrite(STDERR, $msg);
     return FALSE;
   }
@@ -118,6 +123,7 @@ function drush_preflight_prepare() {
   require_once DRUSH_BASE_PATH . '/includes/startup.inc';
   require_once DRUSH_BASE_PATH . '/includes/bootstrap.inc';
   require_once DRUSH_BASE_PATH . '/includes/environment.inc';
+  require_once DRUSH_BASE_PATH . '/includes/annotationcommand_adapter.inc';
   require_once DRUSH_BASE_PATH . '/includes/command.inc';
   require_once DRUSH_BASE_PATH . '/includes/drush.inc';
   require_once DRUSH_BASE_PATH . '/includes/engines.inc';
@@ -131,10 +137,14 @@ function drush_preflight_prepare() {
   require_once DRUSH_BASE_PATH . '/includes/cache.inc';
   require_once DRUSH_BASE_PATH . '/includes/filesystem.inc';
   require_once DRUSH_BASE_PATH . '/includes/dbtng.inc';
+  require_once DRUSH_BASE_PATH . '/includes/array_column.inc';
 
   // Stash our vendor path and classloader.
   drush_set_context('DRUSH_VENDOR_PATH', dirname($vendor_path));
   drush_set_context('DRUSH_CLASSLOADER', $classloader);
+
+  // Can't log until we have a logger, so we'll create this ASAP.
+  _drush_create_default_logger();
 
   // Terminate immediately unless invoked as a command line script
   if (!drush_verify_cli()) {
@@ -175,7 +185,7 @@ function drush_preflight_prepare() {
   // Process initial global options such as --debug.
   _drush_preflight_global_options();
 
-  drush_log(dt("Drush preflight prepare loaded autoloader at !autoloader", array('!autoloader' => realpath($vendor_path))), 'preflight');
+  drush_log(dt("Drush preflight prepare loaded autoloader at !autoloader", array('!autoloader' => realpath($vendor_path))), LogLevel::PREFLIGHT);
 }
 
 /**
@@ -209,7 +219,7 @@ function drush_preflight() {
   _drush_preflight_columns();
 
   // Display is tidy now that column width has been handled.
-  drush_log(dt('Starting Drush preflight.'), 'preflight');
+  drush_log(dt('Starting Drush preflight.'), LogLevel::PREFLIGHT);
 
   // Statically define a way to call drush again.
   define('DRUSH_COMMAND', drush_find_drush());
@@ -247,7 +257,7 @@ function drush_preflight() {
   _drush_find_commandfiles_drush();
 
   // Look up the alias identifier that the user wants to use,
-  // either via an arguement or via 'site-set'.
+  // either via an argument or via 'site-set'.
   $target_alias = drush_sitealias_check_arg_and_site_set();
 
   // Process the site alias that specifies which instance
@@ -283,6 +293,14 @@ function drush_preflight() {
 
   // Fail if we could not find the selected site alias.
   if ($target_alias && empty($alias_record)) {
+    // We will automatically un-set the site-set alias if it could not be found.
+    // Otherwise, we'd be stuck -- the user would only be able to execute Drush
+    // commands again after `drush @none site-set @none`, and most folks would
+    // have a hard time figuring that out.
+    $site_env = drush_sitealias_site_get();
+    if ($site_env == $target_alias) {
+      drush_sitealias_site_clear();
+    }
     return drush_set_error('DRUSH_BOOTSTRAP_NO_ALIAS', dt("Could not find the alias !alias", array('!alias' => $target_alias)));
   }
 
@@ -317,6 +335,19 @@ function drush_preflight_root() {
   // Load the config options from Drupal's /drush, ../drush, and sites/all/drush directories,
   // even prior to bootstrapping the root.
   drush_load_config('drupal');
+
+  // Search for commandfiles in the root locations
+  $discovery = annotationcommand_adapter_get_discovery();
+  $searchpath = [dirname($root) . '/drush', "$root/drush", "$root/sites/all/drush"];
+
+  $drush_root_extensions = $discovery->discover($searchpath, '\Drush');
+  drush_set_context(
+    'DRUSH_ANNOTATED_COMMANDFILES',
+    array_merge(
+      drush_get_context('DRUSH_ANNOTATED_COMMANDFILES'),
+      $drush_root_extensions
+    )
+  );
 }
 
 function drush_preflight_site() {
@@ -342,9 +373,12 @@ function drush_preflight_site() {
 
 function _drush_preflight_global_options() {
   // Debug implies verbose
-  drush_set_context('DRUSH_VERBOSE',     drush_get_option(array('verbose', 'debug'), FALSE));
-  drush_set_context('DRUSH_DEBUG', drush_get_option('debug'));
-  drush_set_context('DRUSH_SIMULATE',    drush_get_option('simulate', FALSE));
+  $verbose = drush_get_option('verbose', FALSE);
+  $debug = drush_get_option('debug', FALSE);
+  drush_set_context('DRUSH_VERBOSE',      $verbose || $debug);
+  drush_set_context('DRUSH_DEBUG',        $debug);
+  drush_set_context('DRUSH_DEBUG_NOTIFY', $verbose && $debug);
+  drush_set_context('DRUSH_SIMULATE',     drush_get_option('simulate', FALSE));
 
   // Backend implies affirmative unless negative is explicitly specified
   drush_set_context('DRUSH_NEGATIVE',    drush_get_option('no', FALSE));
@@ -417,7 +451,7 @@ function _drush_preflight_columns() {
         $columns = (int)preg_replace('/\D/', '', $columns_output[4], -1, $columns_count);
       }
       else {
-        drush_log(dt('Drush could not detect the console window width. Set a Windows Environment Variable of COLUMNS to the desired width.'), 'warning');
+        drush_log(dt('Drush could not detect the console window width. Set a Windows Environment Variable of COLUMNS to the desired width.'), LogLevel::WARNING);
       }
     }
 
@@ -473,7 +507,7 @@ function _drush_find_commandfiles_drush() {
   $include = drush_get_context('DRUSH_INCLUDE', array());
   foreach ($include as $path) {
     if (is_dir($path)) {
-      drush_log('Include ' . $path, 'notice');
+      drush_log('Include ' . $path, LogLevel::NOTICE);
       $searchpath[] = $path;
     }
   }
@@ -494,6 +528,25 @@ function _drush_find_commandfiles_drush() {
 
   // @todo the zero parameter is a bit weird here. It's $phase.
   _drush_add_commandfiles($searchpath, 0);
+
+  // Also discover Drush's own annotation commands.
+  $discovery = annotationcommand_adapter_get_discovery();
+  $annotation_commandfiles = $discovery->discover(DRUSH_BASE_PATH . '/lib/Drush', '\Drush');
+
+  // And, finally, search for commandfiles in the $searchpath
+  $searchpath = array_map(
+    function ($item) {
+      if (strtolower(basename($item)) == 'commands') {
+        return dirname($item);
+      }
+      return $item;
+    },
+    $searchpath
+  );
+  $global_drush_extensions = $discovery->discover($searchpath, '\Drush');
+  $annotation_commandfiles += $global_drush_extensions;
+
+  drush_set_context('DRUSH_ANNOTATED_COMMANDFILES', $annotation_commandfiles);
 }
 
 /**
@@ -561,7 +614,7 @@ function drush_preflight_command_dispatch() {
   $values = NULL;
   if (!empty($root) && !empty($local_drush) && empty($is_local)) {
     if (!drush_is_absolute_path($local_drush)) {
-      $local_drush = $root . '/' . $local_drush;
+      $local_drush = $root . DIRECTORY_SEPARATOR . $local_drush;
     }
     $local_drush = realpath($local_drush);
     $this_drush = drush_find_drush();

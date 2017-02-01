@@ -83,3 +83,144 @@ Feature: Load WP-CLI
       """
       Error: This does not seem to be a WordPress install.
       """
+
+  Scenario: Globalize global variables in wp-config.php
+    Given an empty directory
+    And WP files
+    And a wp-config-extra.php file:
+      """
+      $redis_server = 'foo';
+      """
+
+    When I run `wp core config {CORE_CONFIG_SETTINGS} --extra-php < wp-config-extra.php`
+    Then the wp-config.php file should contain:
+      """
+      $redis_server = 'foo';
+      """
+
+    When I run `wp db create`
+    And I run `wp core install --url='localhost:8001' --title='Test' --admin_user=wpcli --admin_email=admin@example.com --admin_password=1`
+    Then STDOUT should not be empty
+
+    When I run `wp eval 'echo $GLOBALS["redis_server"];'`
+    Then STDOUT should be:
+      """
+      foo
+      """
+
+  Scenario: Use a custom error code with WP_CLI::error()
+    Given an empty directory
+    And a exit-normal.php file:
+      """
+      <?php
+      WP_CLI::error( 'This is return code 1.' );
+      """
+    And a exit-higher.php file:
+      """
+      <?php
+      WP_CLI::error( 'This is return code 5.', 5 );
+      """
+    And a no-exit.php file:
+      """
+      <?php
+      WP_CLI::error( 'This has no exit.', false );
+      WP_CLI::error( 'So I can use multiple lines.', false );
+      """
+
+    When I try `wp --require=exit-normal.php`
+    Then the return code should be 1
+    And STDERR should be:
+      """
+      Error: This is return code 1.
+      """
+
+    When I try `wp --require=exit-higher.php`
+    Then the return code should be 5
+    And STDERR should be:
+      """
+      Error: This is return code 5.
+      """
+
+    When I try `wp --require=no-exit.php`
+    Then the return code should be 0
+    And STDERR should be:
+      """
+      Error: This has no exit.
+      Error: So I can use multiple lines.
+      """
+
+  Scenario: A plugin calling wp_redirect() shouldn't redirect
+    Given a WP install
+    And a wp-content/mu-plugins/redirect.php file:
+      """
+      <?php
+      add_action( 'init', function(){
+          wp_redirect( 'http://apple.com' );
+      });
+      """
+
+    When I try `wp option get home`
+    Then STDERR should contain:
+      """
+      Warning: Some code is trying to do a URL redirect.
+      """
+
+  Scenario: It should be possible to work on a site in maintenance mode
+    Given a WP install
+    And a .maintenance file:
+      """
+      <?php
+      $upgrading = time();
+      """
+
+    When I run `wp option get home`
+    Then STDOUT should be:
+      """
+      http://example.com
+      """
+
+  Scenario: Handle error when WordPress cannot connect to the database host
+    Given a WP install
+    And a wp-debug.php file:
+      """
+      <?php
+      define( 'WP_DEBUG', true );
+      """
+    And a invalid-host.php file:
+      """
+      <?php
+      define( 'DB_HOST', 'localghost' );
+      """
+
+    When I try `wp --require=invalid-host.php option get home`
+    Then STDERR should contain:
+      """
+      Error: Error establishing a database connection.
+      """
+
+    When I try `wp --require=invalid-host.php --require=wp-debug.php option get home`
+    Then STDERR should contain:
+      """
+      Error: Error establishing a database connection.
+      """
+
+  Scenario: Allow WP_CLI hooks to pass arguments to callbacks
+    Given an empty directory
+    And a my-command.php file:
+      """
+      <?php
+
+      WP_CLI::add_hook( 'foo', function( $bar ){
+        WP_CLI::log( $bar );
+      });
+      WP_CLI::add_command( 'my-command', function( $args ){
+        WP_CLI::do_hook( 'foo', $args[0] );
+      }, array( 'when' => 'before_wp_load' ) );
+      """
+
+    When I run `wp --require=my-command.php my-command bar`
+    Then STDOUT should be:
+      """
+      bar
+      """
+    And STDERR should be empty

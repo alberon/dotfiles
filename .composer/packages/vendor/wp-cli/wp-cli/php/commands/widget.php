@@ -1,21 +1,32 @@
 <?php
 
+use WP_CLI\Utils;
+
 /**
  * Manage sidebar widgets.
  *
  * ## EXAMPLES
  *
  *     # List widgets on a given sidebar
- *     wp widget list sidebar-1
+ *     $ wp widget list sidebar-1
+ *     +----------+------------+----------+----------------------+
+ *     | name     | id         | position | options              |
+ *     +----------+------------+----------+----------------------+
+ *     | meta     | meta-6     | 1        | {"title":"Meta"}     |
+ *     | calendar | calendar-2 | 2        | {"title":"Calendar"} |
+ *     +----------+------------+----------+----------------------+
  *
  *     # Add a calendar widget to the second position on the sidebar
- *     wp widget add calendar sidebar-1 2
+ *     $ wp widget add calendar sidebar-1 2
+ *     Success: Added widget to sidebar.
  *
  *     # Update option(s) associated with a given widget
- *     wp widget update calendar-1 --title="Calendar"
+ *     $ wp widget update calendar-1 --title="Calendar"
+ *     Success: Widget updated.
  *
  *     # Delete one or more widgets entirely
- *     wp widget delete calendar-2 archive-1
+ *     $ wp widget delete calendar-2 archive-1
+ *     Success: 2 widgets removed from sidebar.
  */
 
 class Widget_Command extends WP_CLI_Command {
@@ -30,6 +41,8 @@ class Widget_Command extends WP_CLI_Command {
 	/**
 	 * List widgets associated with a sidebar.
 	 *
+	 * ## OPTIONS
+	 *
 	 * <sidebar-id>
 	 * : ID for the corresponding sidebar.
 	 *
@@ -37,7 +50,17 @@ class Widget_Command extends WP_CLI_Command {
 	 * : Limit the output to specific object fields.
 	 *
 	 * [--format=<format>]
-	 * : Accepted values: table, csv, json, count, ids. Default: table
+	 * : Render output in a particular format.
+	 * ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - csv
+	 *   - ids
+	 *   - json
+	 *   - count
+	 *   - yaml
+	 * ---
 	 *
 	 * ## AVAILABLE FIELDS
 	 *
@@ -52,7 +75,10 @@ class Widget_Command extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     wp sidebar widget list <sidebar-id> --fields=name --format=csv
+	 *     $ wp widget list sidebar-1 --fields=name,id --format=csv
+	 *     name,id
+	 *     meta,meta-5
+	 *     search,search-3
 	 *
 	 * @subcommand list
 	 */
@@ -76,6 +102,11 @@ class Widget_Command extends WP_CLI_Command {
 	/**
 	 * Add a widget to a sidebar.
 	 *
+	 * Creates a new widget entry in the database, and associates it with the
+	 * sidebar.
+	 *
+	 * ## OPTIONS
+	 *
 	 * <name>
 	 * : Widget name.
 	 *
@@ -90,7 +121,9 @@ class Widget_Command extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     wp widget add calendar sidebar-1 2 --title="Calendar"
+	 *     # Add a new calendar widget to sidebar-1 with title "Calendar"
+	 *     $ wp widget add calendar sidebar-1 2 --title="Calendar"
+	 *     Success: Added widget to sidebar.
 	 *
 	 * @subcommand add
 	 */
@@ -130,7 +163,9 @@ class Widget_Command extends WP_CLI_Command {
 	}
 
 	/**
-	 * Update a given widget's options.
+	 * Update options for an existing widget.
+	 *
+	 * ## OPTIONS
 	 *
 	 * <widget-id>
 	 * : Unique ID for the widget
@@ -140,14 +175,18 @@ class Widget_Command extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     wp widget update calendar-1 --title="Calendar"
+	 *     # Change calendar-1 widget title to "Our Calendar"
+	 *     $ wp widget update calendar-1 --title="Our Calendar"
+	 *     Success: Widget updated.
 	 *
 	 * @subcommand update
 	 */
 	public function update( $args, $assoc_args ) {
 
 		list( $widget_id ) = $args;
-		$this->validate_sidebar_widget( $widget_id );
+		if ( ! $this->validate_sidebar_widget( $widget_id ) ) {
+			WP_CLI::error( "Widget doesn't exist." );
+		}
 
 		if ( empty( $assoc_args ) ) {
 			WP_CLI::error( "No options specified to update." );
@@ -165,7 +204,12 @@ class Widget_Command extends WP_CLI_Command {
 	}
 
 	/**
-	 * Move a widget from one position on a sidebar to another.
+	 * Move the position of a widget.
+	 *
+	 * Changes the order of a widget in its existing sidebar, or moves it to a
+	 * new sidebar.
+	 *
+	 * ## OPTIONS
 	 *
 	 * <widget-id>
 	 * : Unique ID for the widget
@@ -178,16 +222,22 @@ class Widget_Command extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     wp widget move recent-comments-2 --position=2
+	 *     # Change position of widget
+	 *     $ wp widget move recent-comments-2 --position=2
+	 *     Success: Widget moved.
 	 *
-	 *     wp widget move recent-comments-2 --sidebar-id=wp_inactive_widgets
+	 *     # Move widget to Inactive Widgets
+	 *     $ wp widget move recent-comments-2 --sidebar-id=wp_inactive_widgets
+	 *     Success: Widget moved.
 	 *
 	 * @subcommand move
 	 */
 	public function move( $args, $assoc_args ) {
 
 		list( $widget_id ) = $args;
-		$this->validate_sidebar_widget( $widget_id );
+		if ( ! $this->validate_sidebar_widget( $widget_id ) ) {
+			WP_CLI::error( "Widget doesn't exist." );
+		}
 
 		if ( empty( $assoc_args['position'] ) && empty( $assoc_args['sidebar-id'] ) ) {
 			WP_CLI::error( "A new position or new sidebar must be specified." );
@@ -214,19 +264,31 @@ class Widget_Command extends WP_CLI_Command {
 	/**
 	 * Deactivate one or more widgets from an active sidebar.
 	 *
+	 * Moves widgets to Inactive Widgets.
+	 *
+	 * ## OPTIONS
+	 *
 	 * <widget-id>...
 	 * : Unique ID for the widget(s)
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     wp widget deactivate recent-comments-2
+	 *     # Deactivate the recent-comments-2 widget.
+	 *     $ wp widget deactivate recent-comments-2
+	 *     Success: 1 widget deactivated.
 	 *
 	 * @subcommand deactivate
 	 */
 	public function deactivate( $args, $assoc_args ) {
 
+		$count = $errors = 0;
+
 		foreach( $args as $widget_id ) {
-			$this->validate_sidebar_widget( $widget_id );
+			if ( ! $this->validate_sidebar_widget( $widget_id ) ) {
+				WP_CLI::warning( "Widget '{$widget_id}' doesn't exist." );
+				$errors++;
+				continue;
+			}
 
 			list( $name, $option_index, $sidebar_id, $sidebar_index ) = $this->get_widget_data( $widget_id );
 			if ( 'wp_inactive_widgets' == $sidebar_id ) {
@@ -236,42 +298,138 @@ class Widget_Command extends WP_CLI_Command {
 
 			$this->move_sidebar_widget( $widget_id, $sidebar_id, 'wp_inactive_widgets', $sidebar_index, 0 );
 
+			$count++;
+
 		}
 
-		WP_CLI::success( "Widget(s) deactivated" );
+		Utils\report_batch_operation_results( 'widget', 'deactivate', count( $args ), $count, $errors );
 	}
 
 	/**
 	 * Delete one or more widgets from a sidebar.
+	 *
+	 * ## OPTIONS
 	 *
 	 * <widget-id>...
 	 * : Unique ID for the widget(s)
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     wp widget delete recent-comments-2
+	 *     # Delete the recent-comments-2 widget from its sidebar.
+	 *     $ wp widget delete recent-comments-2
+	 *     Success: Deleted 1 of 1 widgets.
 	 *
 	 * @subcommand delete
 	 */
 	public function delete( $args, $assoc_args ) {
 
-		foreach( $args as $widget_id ) {
-			$this->validate_sidebar_widget( $widget_id );
+		$count = $errors = 0;
 
-			// Remove the widget's settings
+		foreach( $args as $widget_id ) {
+			if ( ! $this->validate_sidebar_widget( $widget_id ) ) {
+				WP_CLI::warning( "Widget '{$widget_id}' doesn't exist." );
+				$errors++;
+				continue;
+			}
+
+			// Remove the widget's settings.
 			list( $name, $option_index, $sidebar_id, $sidebar_index ) = $this->get_widget_data( $widget_id );
 			$widget_options = $this->get_widget_options( $name );
 			unset( $widget_options[ $option_index ] );
 			$this->update_widget_options( $name, $widget_options );
 
-			// Remove the widget from the sidebar
+			// Remove the widget from the sidebar.
 			$all_widgets = $this->wp_get_sidebars_widgets();
 			unset( $all_widgets[ $sidebar_id ][ $sidebar_index ] );
 			$all_widgets[ $sidebar_id ] = array_values( $all_widgets[ $sidebar_id ] );
 			update_option( 'sidebars_widgets', $all_widgets );
+
+			$count++;
 		}
 
-		WP_CLI::success( "Widget(s) removed from sidebar." );
+		Utils\report_batch_operation_results( 'widget', 'delete', count( $args ), $count, $errors );
+	}
+
+	/**
+	 * Reset sidebar.
+	 *
+	 * Removes all widgets from the sidebar and places them in Inactive Widgets.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [<sidebar-id>...]
+	 * : One or more sidebars to reset.
+	 *
+	 * [--all]
+	 * : If set, all sidebars will be reset.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     # Reset a sidebar
+	 *     $ wp widget reset sidebar-1
+	 *     Success: Sidebar 'sidebar-1' reset.
+	 *
+	 *     # Reset multiple sidebars
+	 *     $ wp widget reset sidebar-1 sidebar-2
+	 *     Success: Sidebar 'sidebar-1' reset.
+	 *     Success: Sidebar 'sidebar-2' reset.
+	 *
+	 *     # Reset all sidebars
+	 *     $ wp widget reset --all
+	 *     Success: Sidebar 'sidebar-1' reset.
+	 *     Success: Sidebar 'sidebar-2' reset.
+	 *     Success: Sidebar 'sidebar-3' reset.
+	 */
+	public function reset( $args, $assoc_args ) {
+
+		global $wp_registered_sidebars;
+
+		$all = \WP_CLI\Utils\get_flag_value( $assoc_args, 'all', false );
+
+		// Bail if no arguments and no all flag.
+		if ( ! $all && empty( $args ) ) {
+			WP_CLI::error( 'Please specify one or more sidebars, or use --all.' );
+		}
+
+		// Fetch all sidebars if all flag is set.
+		if ( $all ) {
+			$args = array_keys( $wp_registered_sidebars );
+		}
+
+		// Sidebar ID wp_inactive_widgets is reserved by WP core for inactive widgets.
+		if ( isset( $args['wp_inactive_widgets'] ) ) {
+			unset( $args['wp_inactive_widgets'] );
+		}
+
+		// Check if no registered sidebar.
+		if ( empty( $args ) ) {
+			WP_CLI::error( 'No sidebar registered.' );
+		}
+
+		$count = $errors = 0;
+		foreach ( $args as $sidebar_id ) {
+			if ( ! array_key_exists( $sidebar_id, $wp_registered_sidebars ) ) {
+				WP_CLI::warning( sprintf( 'Invalid sidebar: %s', $sidebar_id ) );
+				$errors++;
+				continue;
+			}
+
+			$widgets = $this->get_sidebar_widgets( $sidebar_id );
+			if ( empty( $widgets ) ) {
+				WP_CLI::warning( sprintf( "Sidebar '%s' is already empty.", $sidebar_id ) );
+			}
+			else {
+				foreach ( $widgets as $widget ) {
+					$widget_id = $widget->id;
+					list( $name, $option_index, $new_sidebar_id, $sidebar_index ) = $this->get_widget_data( $widget_id );
+					$this->move_sidebar_widget( $widget_id, $new_sidebar_id, 'wp_inactive_widgets', $sidebar_index, 0 );
+				}
+				WP_CLI::log( sprintf( "Sidebar '%s' reset.", $sidebar_id ) );
+				$count++;
+			}
+		}
+
+		Utils\report_batch_operation_results( 'sidebar', 'reset', count( $args ), $count, $errors );
 	}
 
 	/**
@@ -307,11 +465,7 @@ class Widget_Command extends WP_CLI_Command {
 			}
 
 		}
-
-		if ( false === $widget_exists ) {
-			WP_CLI::error( "Specified widget isn't present on sidebar." );
-		}
-
+		return $widget_exists;
 	}
 
 	/**

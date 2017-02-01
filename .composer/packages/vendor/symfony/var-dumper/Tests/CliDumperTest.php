@@ -69,28 +69,25 @@ array:24 [
   7 => b"é\\x00"
   "[]" => []
   "res" => stream resource {@{$res}
-    wrapper_type: "plainfile"
+%A  wrapper_type: "plainfile"
     stream_type: "STDIO"
     mode: "r"
     unread_bytes: 0
     seekable: true
-    timed_out: false
-    blocked: true
-    eof: false
-    options: []
+%A  options: []
   }
   "obj" => Symfony\Component\VarDumper\Tests\Fixture\DumbFoo {#%d
     +foo: "foo"
     +"bar": "bar"
   }
   "closure" => Closure {{$r}{$closure54}
-    parameters: array:2 [
-      "\$a" => []
-      "&\$b" => array:2 [
-        "typeHint" => "PDO"
-        "default" => null
-      ]
-    ]
+    parameters: {
+      \$a: {}
+      &\$b: {
+        typeHint: "PDO"
+        default: null
+      }
+    }
     file: "{$var['file']}"
     line: "{$var['line']} to {$var['line']}"
   }
@@ -123,12 +120,51 @@ EOTXT
         $var = xml_parser_create();
 
         $this->assertDumpMatchesFormat(
-            <<<EOTXT
+            <<<'EOTXT'
 xml resource {
   current_byte_index: %i
   current_column_number: %i
   current_line_number: 1
   error_code: XML_ERROR_NONE
+}
+EOTXT
+            ,
+            $var
+        );
+    }
+
+    public function testJsonCast()
+    {
+        $var = (array) json_decode('{"0":{},"1":null}');
+        foreach ($var as &$v) {
+        }
+        $var[] = &$v;
+        $var[''] = 2;
+
+        $this->assertDumpMatchesFormat(
+            <<<'EOTXT'
+array:4 [
+  "0" => {}
+  "1" => &1 null
+  0 => &1 null
+  "" => 2
+]
+EOTXT
+            ,
+            $var
+        );
+    }
+
+    public function testObjectCast()
+    {
+        $var = (object) array(1 => 1);
+        $var->{1} = 2;
+
+        $this->assertDumpMatchesFormat(
+            <<<'EOTXT'
+{
+  +1: 1
+  +"1": 2
 }
 EOTXT
             ,
@@ -157,7 +193,7 @@ EOTXT
 
         $this->assertStringMatchesFormat(
             <<<EOTXT
-Unknown resource @{$res}
+Closed resource @{$res}
 
 EOTXT
             ,
@@ -165,9 +201,15 @@ EOTXT
         );
     }
 
+    /**
+     * @requires function Twig_Template::getSourceContext
+     */
     public function testThrowingCaster()
     {
         $out = fopen('php://memory', 'r+b');
+
+        require_once __DIR__.'/Fixtures/Twig.php';
+        $twig = new \__TwigTemplate_VarDumperFixture_u75a09(new \Twig_Environment(new \Twig_Loader_Filesystem()));
 
         $dumper = new CliDumper();
         $dumper->setColors(false);
@@ -180,12 +222,15 @@ EOTXT
             },
         ));
         $cloner->addCasters(array(
-            ':stream' => function () {
-                throw new \Exception('Foobar');
-            },
+            ':stream' => eval('return function () use ($twig) {
+                try {
+                    $twig->render(array());
+                } catch (\Twig_Error_Runtime $e) {
+                    throw $e->getPrevious();
+                }
+            };'),
         ));
-        $line = __LINE__ - 3;
-        $file = __FILE__;
+        $line = __LINE__ - 2;
         $ref = (int) $out;
 
         $data = $cloner->cloneVar($out);
@@ -197,24 +242,67 @@ EOTXT
         $this->assertStringMatchesFormat(
             <<<EOTXT
 stream resource {@{$ref}
-  wrapper_type: "PHP"
+%Awrapper_type: "PHP"
   stream_type: "MEMORY"
   mode: "%s+b"
   unread_bytes: 0
   seekable: true
   uri: "php://memory"
-  timed_out: false
-  blocked: true
-  eof: false
-  options: []
+%Aoptions: []
   ⚠: Symfony\Component\VarDumper\Exception\ThrowingCasterException {{$r}
     #message: "Unexpected Exception thrown from a caster: Foobar"
-    trace: array:1 [
-      0 => array:2 [
-        "call" => "%slosure%s()"
-        "file" => "{$file}:{$line}"
-      ]
-    ]
+    -trace: {
+      %d. __TwigTemplate_VarDumperFixture_u75a09->doDisplay() ==> new Exception(): {
+        src: {
+          %sTwig.php:21: """
+                // line 2\\n
+                throw new \Exception('Foobar');\\n
+            }\\n
+            """
+          bar.twig:2: """
+            foo bar\\n
+              twig source\\n
+            \\n
+            """
+        }
+      }
+      %d. Twig_Template->displayWithErrorHandling() ==> __TwigTemplate_VarDumperFixture_u75a09->doDisplay(): {
+        src: {
+          %sTemplate.php:%d: """
+            try {\\n
+                \$this->doDisplay(\$context, \$blocks);\\n
+            } catch (Twig_Error \$e) {\\n
+            """
+        }
+      }
+      %d. Twig_Template->display() ==> Twig_Template->displayWithErrorHandling(): {
+        src: {
+          %sTemplate.php:%d: """
+            {\\n
+                \$this->displayWithErrorHandling(\$this->env->mergeGlobals(\$context), array_merge(\$this->blocks, \$blocks));\\n
+            }\\n
+            """
+        }
+      }
+      %d. Twig_Template->render() ==> Twig_Template->display(): {
+        src: {
+          %sTemplate.php:%d: """
+            try {\\n
+                \$this->display(\$context);\\n
+            } catch (Exception \$e) {\\n
+            """
+        }
+      }
+      %d. %slosure%s() ==> Twig_Template->render(): {
+        src: {
+          %sCliDumperTest.php:{$line}: """
+                    }\\n
+                };'),\\n
+            ));\\n
+            """
+        }
+      }
+    }
   }
 }
 
@@ -263,7 +351,7 @@ EOTXT
         $var = $this->getSpecialVars();
 
         $this->assertDumpEquals(
-            <<<EOTXT
+            <<<'EOTXT'
 array:3 [
   0 => array:1 [
     0 => &1 array:1 [
@@ -309,7 +397,7 @@ EOTXT
         $dumper->dump($data);
 
         $this->assertSame(
-            <<<EOTXT
+            <<<'EOTXT'
 array:2 [
   1 => array:1 [
     "GLOBALS" => &1 array:1 [
@@ -351,7 +439,7 @@ EOTXT
         });
 
         $this->assertSame(
-            <<<EOTXT
+            <<<'EOTXT'
 array:1 [
   0 => array:1 [
     0 => array:1 [

@@ -122,13 +122,16 @@ if $HAS_TERMINAL; then
         # Display the provided message above the prompt and in the titlebar
         if [ -n "$*" ]; then
             PromptMessage="$*"
-        else
+        elif [ -n "$prompt_default" ]; then
             PromptMessage="$prompt_default"
+        elif [ $EUID -eq 0 ]; then
+            PromptMessage="Logged in as ROOT!"
+            prompt_color='41;1' # Red
+        else
+            PromptMessage=""
         fi
 
         if [ -n "$PromptMessage" ]; then
-            #MessageCode="\033[35;1m--------------------------------------------------------------------------------\n $*\n--------------------------------------------------------------------------------\033[0m\n"
-            #columns=${COLUMNS:-$(tput cols)}
             # Lots of escaped characters here to prevent this being executed
             # until the prompt is displayed, so it can adjust when the window
             # is resized

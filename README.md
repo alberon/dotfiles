@@ -47,6 +47,8 @@ That's it. (See https://djm.me/cfg for the script source - don't execute scripts
 
 ### Installing on Windows:
 
+Install the [Fixedsys Excelsior Mono](http://askubuntu.com/a/725445) font (which is the regular Fixedsys font plus unicode characters).
+
 [Install Cygwin](https://cygwin.com/install.html) - select [any local mirror](https://cygwin.com/mirrors.html) (e.g. `mirrorservice.org` for UK), and when prompted add these packages:
 
 - git

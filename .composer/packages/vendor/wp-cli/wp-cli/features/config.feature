@@ -155,6 +155,26 @@ Feature: Have a config file
     And I run `grep WP_POST_REVISIONS wp-config.php`
     Then STDOUT should not be empty
 
+  Scenario: Persist positional parameters when defined in a config
+    Given a WP install
+    And a wp-cli.yml file:
+      """
+      user create:
+        - examplejoe
+        - joe@example.com
+        user_pass: joe
+        role: administrator
+      """
+
+    When I run `wp user create`
+    Then STDOUT should not be empty
+
+    When I run `wp user get examplejoe --field=roles`
+    Then STDOUT should contain:
+      """
+      administrator
+      """
+
   Scenario: Command-specific configs
     Given a WP install
     And a wp-cli.yml file:
@@ -228,25 +248,208 @@ Feature: Have a config file
       Running command: option get
       """
 
+    When I run `wp option get home --debug=bootstrap`
+    Then STDERR should contain:
+      """
+      No readable global config found
+      """
+    Then STDERR should contain:
+      """
+      No project config found
+      """
+    And STDERR should contain:
+      """
+      Begin WordPress load
+      """
+    And STDERR should contain:
+      """
+      wp-config.php path:
+      """
+    And STDERR should contain:
+      """
+      Loaded WordPress
+      """
+    And STDERR should contain:
+      """
+      Running command: option get
+      """
+
+    When I run `wp option get home --debug=foo`
+    Then STDERR should not contain:
+      """
+      No readable global config found
+      """
+    Then STDERR should not contain:
+      """
+      No project config found
+      """
+    And STDERR should not contain:
+      """
+      Begin WordPress load
+      """
+    And STDERR should not contain:
+      """
+      wp-config.php path:
+      """
+    And STDERR should not contain:
+      """
+      Loaded WordPress
+      """
+    And STDERR should not contain:
+      """
+      Running command: option get
+      """
+
   Scenario: Missing required files should not fatal WP-CLI
     Given an empty directory
     And a wp-cli.yml file:
-	  """
-	  require:
-	    - missing-file.php
-	  """
+    """
+    require:
+      - missing-file.php
+    """
 
-	  When I try `wp help`
-	  Then STDERR should contain:
-	    """
-	    Error: Required file 'missing-file.php' doesn't exist
-	    """
+    When I try `wp help`
+    Then STDERR should contain:
+      """
+      Error: Required file 'missing-file.php' doesn't exist (from project's wp-cli.yml).
+      """
 
     When I run `wp cli info`
-	  Then STDOUT should not be empty
+    Then STDOUT should not be empty
 
     When I run `wp --info`
-	  Then STDOUT should not be empty
+    Then STDOUT should not be empty
+
+  Scenario: Missing required file in global config
+    Given an empty directory
+    And a config.yml file:
+      """
+      require:
+        - /foo/baz.php
+      """
+
+    When I try `WP_CLI_CONFIG_PATH=config.yml wp help`
+    Then STDERR should contain:
+      """
+      Error: Required file 'baz.php' doesn't exist (from global config.yml).
+      """
+
+  Scenario: Missing required file as runtime argument
+    Given an empty directory
+
+    When I try `wp help --require=foo.php`
+    Then STDERR should contain:
+      """
+      Error: Required file 'foo.php' doesn't exist (from runtime argument).
+      """
+
+  Scenario: Config inheritance from project to global
+    Given an empty directory
+    And a test-cmd.php file:
+      """
+      <?php
+      $command = function( $_, $assoc_args ) {
+         echo json_encode( $assoc_args );
+      };
+      WP_CLI::add_command( 'test-cmd', $command, array( 'when' => 'before_wp_load' ) );
+      """
+    And a config.yml file:
+      """
+      test-cmd:
+        foo: bar
+        apple: banana
+      apple: banana
+      """
+    And a wp-cli.yml file:
+      """
+      _:
+        merge: true
+      test-cmd:
+        bar: burrito
+        apple: apple
+      apple: apple
+      """
+
+    When I run `wp --require=test-cmd.php test-cmd`
+    Then STDOUT should be JSON containing:
+      """
+      {"bar":"burrito","apple":"apple"}
+      """
+    When I run `WP_CLI_CONFIG_PATH=config.yml wp --require=test-cmd.php test-cmd`
+    Then STDOUT should be JSON containing:
+      """
+      {"foo":"bar","apple":"apple","bar":"burrito"}
+      """
+
+    Given a wp-cli.yml file:
+      """
+      _:
+        merge: false
+      test-cmd:
+        bar: burrito
+        apple: apple
+      apple: apple
+      """
+    When I run `WP_CLI_CONFIG_PATH=config.yml wp --require=test-cmd.php test-cmd`
+    Then STDOUT should be JSON containing:
+      """
+      {"bar":"burrito","apple":"apple"}
+      """
+
+  Scenario: Config inheritance from local to project
+    Given an empty directory
+    And a test-cmd.php file:
+      """
+      <?php
+      $command = function( $_, $assoc_args ) {
+         echo json_encode( $assoc_args );
+      };
+      WP_CLI::add_command( 'test-cmd', $command, array( 'when' => 'before_wp_load' ) );
+      """
+    And a wp-cli.yml file:
+      """
+      test-cmd:
+        foo: bar
+        apple: banana
+      apple: banana
+      """
+
+    When I run `wp --require=test-cmd.php test-cmd`
+    Then STDOUT should be JSON containing:
+      """
+      {"foo":"bar","apple":"banana"}
+      """
+
+    Given a wp-cli.local.yml file:
+      """
+      _:
+        inherit: wp-cli.yml
+        merge: true
+      test-cmd:
+        bar: burrito
+        apple: apple
+      apple: apple
+      """
+
+    When I run `wp --require=test-cmd.php test-cmd`
+    Then STDOUT should be JSON containing:
+      """
+      {"foo":"bar","apple":"apple","bar":"burrito"}
+      """
+
+    Given a wp-cli.local.yml file:
+      """
+      test-cmd:
+        bar: burrito
+        apple: apple
+      apple: apple
+      """
+
+    When I run `wp --require=test-cmd.php test-cmd`
+    Then STDOUT should be JSON containing:
+      """
+      {"bar":"burrito","apple":"apple"}
+      """
 
   @require-wp-3.9
   Scenario: WordPress install with local dev DOMAIN_CURRENT_SITE

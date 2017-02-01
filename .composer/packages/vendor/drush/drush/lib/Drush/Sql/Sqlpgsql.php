@@ -6,7 +6,7 @@ define('PSQL_SHOW_TABLES', "SELECT tablename FROM pg_tables WHERE schemaname='pu
 
 class Sqlpgsql extends SqlBase {
 
-  public $query_extra = "--no-align --field-separator='\t' --pset tuples_only=on";
+  public $query_extra = "--no-align --field-separator=\"\t\" --pset tuples_only=on";
 
   public $query_file = "--file";
 
@@ -120,6 +120,9 @@ class Sqlpgsql extends SqlBase {
     $extra = str_replace('--dbname=', ' ', $this->creds());
     if (isset($data_only)) {
       $extra .= ' --data-only';
+    }
+    if ($option = drush_get_option('extra', $this->query_extra)) {
+      $extra .= " $option";
     }
     $exec .= $extra;
     $exec .= (!isset($create_db) && !isset($data_only) ? ' --clean' : '');

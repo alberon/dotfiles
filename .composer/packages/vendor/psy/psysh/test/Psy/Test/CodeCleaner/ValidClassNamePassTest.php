@@ -225,10 +225,99 @@ class ValidClassNamePassTest extends CodeCleanerTestCase
                     }
                 }
             '),
+            array('
+                class Psy_Test_CodeCleaner_ValidClassNamePass_ClassWithStatic {
+                    public static function foo() {
+                        return parent::bar();
+                    }
+                }
+            '),
+            array('
+                class Psy_Test_CodeCleaner_ValidClassNamePass_ClassWithStatic {
+                    public static function foo() {
+                        return self::bar();
+                    }
+                }
+            '),
+            array('
+                class Psy_Test_CodeCleaner_ValidClassNamePass_ClassWithStatic {
+                    public static function foo() {
+                        return static::bar();
+                    }
+                }
+            '),
 
-            // PHP 7.0 anonymous classes.
-            array('$obj = new class() {}'),
+            array('class A { static function b() { return new A; } }'),
+            array('
+                class A {
+                    const B = 123;
+                    function c() {
+                        return A::B;
+                    }
+                }
+            '),
+            array('class A {} class B { function c() { return new A; } }'),
+
+            // recursion
+            array('class A { function a() { A::a(); } }'),
+
+            // conditionally defined classes
+            array('
+                class A {}
+                if (false) {
+                    class A {}
+                }
+            '),
+            array('
+                class A {}
+                if (true) {
+                    class A {}
+                } else if (false) {
+                    class A {}
+                } else {
+                    class A {}
+                }
+            '),
+            // ewww
+            array('
+                class A {}
+                if (true):
+                    class A {}
+                elseif (false):
+                    class A {}
+                else:
+                    class A {}
+                endif;
+            '),
+            array('
+                class A {}
+                while (false) { class A {} }
+            '),
+            array('
+                class A {}
+                do { class A {} } while (false);
+            '),
+            array('
+                class A {}
+                switch (1) {
+                    case 0:
+                        class A {}
+                        break;
+                    case 1:
+                        class A {}
+                        break;
+                    case 2:
+                        class A {}
+                        break;
+                }
+            '),
         );
+
+        // Ugh. There's gotta be a better way to test for this.
+        if (class_exists('PhpParser\ParserFactory')) {
+            // PHP 7.0 anonymous classes, only supported by PHP Parser v2.x
+            $valid[] = array('$obj = new class() {}');
+        }
 
         if (version_compare(PHP_VERSION, '5.5', '>=')) {
             $valid[] = array('interface A {} A::class');

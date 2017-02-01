@@ -11,7 +11,7 @@ $local_vendor_path = $drush_base_path . '/vendor/autoload.php';
 $global_vendor_path = $drush_base_path . '/../../../vendor/autoload.php';
 // Check for a local composer install or a global composer install. Vendor dirs are in different spots.
 if ((!@include $local_vendor_path) && (!@include $global_vendor_path)) {
-  $msg = "Unable to load autoload.php. Drush now requires Composer in order to install its dependencies and autoload classes. Please see README.md\n";
+  $msg = "Unable to load autoload.php. Drush now requires Composer in order to install its dependencies and autoload classes. Please see http://docs.drush.org/en/master/install/\n";
   fwrite(STDERR, $msg);
   return FALSE;
 }
@@ -48,7 +48,8 @@ function unish_init() {
     $unish_drush = isset($_SERVER['UNISH_DRUSH']) ? $_SERVER['UNISH_DRUSH'] : NULL;
     $unish_drush = isset($GLOBALS['UNISH_DRUSH']) ? $GLOBALS['UNISH_DRUSH'] : $unish_drush;
     if (empty($unish_drush)) {
-      $unish_drush = \Unish\UnishTestCase::is_windows() ? exec('for %i in (drush) do @echo.   %~$PATH:i') : dirname(__DIR__) . '/drush';
+      $script = \Unish\UnitUnishTestCase::is_windows() ? 'dr.bat' : 'drush';
+      $unish_drush =  dirname(__DIR__) . DIRECTORY_SEPARATOR . $script;
     }
     define('UNISH_DRUSH', $unish_drush);
   }
@@ -70,7 +71,7 @@ function unish_init() {
     $ret = mkdir(UNISH_CACHE, 0777, TRUE);
   }
 
-  $home = UNISH_SANDBOX . '/home';
+  $home = UNISH_SANDBOX . DIRECTORY_SEPARATOR . 'home';
   putenv("HOME=$home");
   putenv("HOMEDRIVE=$home");
 
@@ -88,6 +89,9 @@ function unish_init() {
  *
  * Usually respects read-only files and folders. To do a forced delete use
  * drush_delete_tmp_dir() or set the parameter $forced.
+ *
+ * To avoid permission denied error on Windows, make sure your CWD is not
+ * inside the directory being deleted.
  *
  * This is essentially a copy of drush_delete_dir().
  *
@@ -108,7 +112,7 @@ function unish_init() {
  *
  * @see drush_delete_dir()
  */
-function unish_file_delete_recursive($dir, $force = FALSE, $follow_symlinks = FALSE) {
+function unish_file_delete_recursive($dir, $force = TRUE, $follow_symlinks = FALSE) {
   // Do not delete symlinked files, only unlink symbolic links
   if (is_link($dir) && !$follow_symlinks) {
     return unlink($dir);

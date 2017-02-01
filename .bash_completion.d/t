@@ -1,4 +1,7 @@
-_t_completion() {
+_t_completion()
+{
+    compopt +o default
+
     # Locate the scripts directory
     if ! root="$(findup -d scripts)"; then
         return
@@ -12,6 +15,10 @@ _t_completion() {
     done
 
     if [ ! -d "$scripts" ]; then
+        # Not a directory - fall back to regular filename completion
+        # http://stackoverflow.com/a/19062943/167815
+        compopt -o default
+        COMPREPLY=()
         return
     fi
 

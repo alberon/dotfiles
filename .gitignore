@@ -38,6 +38,7 @@
 /.elinks/bookmarks
 /.elinks/cookies
 /.elinks/globhist
+/.elinks/searchhist
 
 # Grip - config only, not cache & access token
 !/.grip

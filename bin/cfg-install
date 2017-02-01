@@ -16,6 +16,7 @@ if [ ! -f ~/.bashrc_config ]; then
     MAC=false
     CPANEL=false
     VAGRANT=false
+    ROOT=false
 
     case "$(uname)" in
         CYGWIN*)  WINDOWS=true; CYGWIN=true ;;
@@ -34,6 +35,10 @@ if [ ! -f ~/.bashrc_config ]; then
         VAGRANT=true
     fi
 
+    if [ "$(id -u)" = 0 ]; then
+        ROOT=true
+    fi
+
     # Generate .bashrc_config
     (
         # Prompt message & colour
@@ -48,7 +53,12 @@ if [ ! -f ~/.bashrc_config ]; then
         fi
 
         # File permissions
-        echo "umask_user=002"
+        if $CPANEL; then
+           echo "umask_user=022"
+        else
+           echo "umask_user=002"
+        fi
+
         echo "umask_root=022"
 
         # Path for 'cw' command - try to guess what's the best directory to use
@@ -58,6 +68,9 @@ if [ ! -f ~/.bashrc_config ]; then
         elif $CYGWIN; then
             # Cygwin - My Documents
             echo "www_dir=$(cygpath --mydocs)"
+        elif $CPANEL && $ROOT; then
+            # Live server - Root user
+            echo "www_dir=/home"
         elif $CPANEL || [ -d ~/repo ]; then
             # Live server - Git repo
             echo "www_dir=~/repo"

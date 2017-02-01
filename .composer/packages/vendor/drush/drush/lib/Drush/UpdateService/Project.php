@@ -2,6 +2,8 @@
 
 namespace Drush\UpdateService;
 
+use Drush\Log\LogLevel;
+
 /**
  * Representation of a project's release info from the update service.
  */
@@ -233,6 +235,12 @@ class Project {
       $releases[$release_info['version']] = $release_info;
     }
 
+    // If there's no "Recommended major version", we want to recommend
+    // the most recent release.
+    if (!$recommended_major) {
+      $latest_version = key($releases);
+    }
+
     // If there is no -stable- release in the recommended major,
     // then take the latest version in the recommended major to be
     // the recommended release.
@@ -297,7 +305,7 @@ class Project {
    *
    * @return array|bool
    */
-  private static function getBestRelease(array $releases) {
+  public static function getBestRelease(array $releases) {
     if (empty($releases)) {
       return FALSE;
     }
@@ -322,7 +330,7 @@ class Project {
   private function searchReleases($key, $value) {
     $releases = array();
     foreach ($this->parsed['releases'] as $version => $release) {
-      if ($release['status'] == 'published' && isset($release[$key]) && $release[$key] == $value) {
+      if ($release['status'] == 'published' && isset($release[$key]) && strcmp($release[$key], $value) == 0) {
         $releases[$version] = $release;
       }
     }
@@ -385,10 +393,12 @@ class Project {
     if ($recommended_major != 0) {
       $majors[] = $this->parsed['recommended_major'];
     }
-    $supported = explode(',', $this->parsed['supported_majors']);
-    foreach ($supported as $v) {
-      if ($v != $recommended_major) {
-        $majors[] = $v;
+    if (!empty($this->parsed['supported_majors'])) {
+      $supported = explode(',', $this->parsed['supported_majors']);
+      foreach ($supported as $v) {
+        if ($v != $recommended_major) {
+          $majors[] = $v;
+        }
       }
     }
     $releases = array();
@@ -584,7 +594,7 @@ class Project {
 
     foreach ($versions as $version) {
       if (!isset($this->parsed['releases'][$version]['release_link'])) {
-        drush_log(dt("Project !project does not have release notes for version !version.", array('!project' => $project_name, '!version' => $version)), 'warning');
+        drush_log(dt("Project !project does not have release notes for version !version.", array('!project' => $project_name, '!version' => $version)), LogLevel::WARNING);
         continue;
       }
 
@@ -593,10 +603,10 @@ class Project {
       $filename = drush_download_file($release_link, drush_tempnam($project_name));
       @$dom = \DOMDocument::loadHTMLFile($filename);
       if ($dom) {
-        drush_log(dt("Successfully parsed and loaded the HTML contained in the release notes' page for !project (!version) project.", array('!project' => $project_name, '!version' => $version)), 'notice');
+        drush_log(dt("Successfully parsed and loaded the HTML contained in the release notes' page for !project (!version) project.", array('!project' => $project_name, '!version' => $version)), LogLevel::NOTICE);
       }
       else {
-        drush_log(dt("Error while requesting the release notes page for !project project.", array('!project' => $project_name)), 'error');
+        drush_log(dt("Error while requesting the release notes page for !project project.", array('!project' => $project_name)), LogLevel::ERROR);
         continue;
       }
       $xml = simplexml_import_dom($dom);

@@ -213,8 +213,8 @@
  * - 'parent': Deprecated.  See "altering aliases", below.
  * - 'path-aliases': An array of aliases for common rsync targets.
  *   Relative aliases are always taken from the Drupal root.
- *   - '%drush-script': The path to the 'drush' script, or to 'drush.php' or
- *     'drush.bat', as desired.  This is used by backend invoke when drush
+ *   - '%drush-script': The path to the 'drush' script, or to 'drush.php'.
+ *     This is used by backend invoke when drush
  *     runs a drush command.  The default is 'drush' on remote machines, or
  *     the full path to drush.php on the local machine.
  *   - '%drush': A read-only property: points to the folder that the drush
@@ -268,16 +268,7 @@
  *     // will not work).
  *     'delete' => TRUE,
  *
- *     // wrapping an option's value in "" preserves inner '' on output;
- *     // but is not always required.
- *     'exclude' => "'*.gz'",
- *
- *     // cannot add multiple options of same key; each key overwrites
- *     // the previous key's value. This 'exclude' option will overwrite
- *     // the previous one above.
- *     'exclude' => '*.sql',
- *
- *     // if you need multiple exludes, use an rsync exclude file
+ *     // if you need multiple excludes, use an rsync exclude file
  *     'exclude-from' => "'/etc/rsync/exclude.rules'",
  *
  *     // filter options with white space must be wrapped in "" to preserve

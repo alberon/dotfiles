@@ -90,7 +90,7 @@ class ParseCommand extends Command implements PresenterAware
             ->setDefinition($definition)
             ->setDescription('Parse PHP code and show the abstract syntax tree.')
             ->setHelp(
-                <<<HELP
+                <<<'HELP'
 Parse PHP code and show the abstract syntax tree.
 
 This command is used in the development of PsySH. Given a string of PHP code,
@@ -113,7 +113,7 @@ HELP
             $code = '<?php ' . $code;
         }
 
-        $parserKind = $input->getOption('kind');
+        $parserKind = $this->parserFactory->hasKindsSupport() ? $input->getOption('kind') : null;
         $depth      = $input->getOption('depth');
         $nodes      = $this->parse($this->getParser($parserKind), $code);
         $output->page($this->presenter->present($nodes, $depth));
@@ -144,7 +144,7 @@ HELP
     /**
      * Get (or create) the Parser instance.
      *
-     * @param string|null $kind One of Psy\ParserFactory constants (only for PHP parser 2.0 and above).
+     * @param string|null $kind One of Psy\ParserFactory constants (only for PHP parser 2.0 and above)
      *
      * @return Parser
      */

@@ -1,14 +1,34 @@
 # Configuration file for unit test runner at http://travis-ci.org/#!/drush-ops/drush
+branches:
+  only:
+    - master
+    - 8.x
+    - 7.x
+    - 6.x
+    - 5.x
+    - /^[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+.*$/
 language: php
 php:
 #  See master-fulltest branch for broader PHP version testing.
-  - 5.5
+  - 5.4
+  - 7.0
+
+# Cache Composer & Unish directories.
+cache:
+  directories:
+    - $HOME/.composer/cache
+    - /tmp/unish
 
 # http://blog.travis-ci.com/2014-12-17-faster-builds-with-container-based-infrastructure/
 sudo: false
 
 env:
   matrix:
+#D6
+    - UNISH_DRUPAL_MAJOR_VERSION=6 PHPUNIT_ARGS=--group=base
+    - UNISH_DRUPAL_MAJOR_VERSION=6 PHPUNIT_ARGS=--group=commands
+    - UNISH_DRUPAL_MAJOR_VERSION=6 PHPUNIT_ARGS=--group=pm
+    - UNISH_DRUPAL_MAJOR_VERSION=6 PHPUNIT_ARGS=--exclude-group=base,make,commands,pm,quick-drupal
 #D7
     - UNISH_DRUPAL_MAJOR_VERSION=7 PHPUNIT_ARGS=--group=make
     - UNISH_DRUPAL_MAJOR_VERSION=7 PHPUNIT_ARGS=--group=base
@@ -39,15 +59,45 @@ env:
   global:
     # Github deploy
     - secure: VfYokT2CchfuBRJp9/gSwfVGPfsVfkZdDVEuNWEqxww3z4vq+5aLKqoCtPL54E5EIMjhyCE3GVo+biG35Gab1KOVgUs8zD1hAUWA1FPKfMFhoPDfI3ZJC2rX2T1iWK4ZR90pBtcPzS+2OObzTYz8go0PfeSTT6eq69Na1KcNLaE=
-    # For S3
-    # - secure: "4hrE8tDV4UOzf9fjHpkk/IyE6Lx79s+0M0d9aIGz5Tbex5YKoF48YeUISSDV8qTvPZkBrVRXpcHCDpG/FAdDpPp/w+BXHA5Xth+dOqTwB6IOJLaeImwsUgHVjrBlHxqQbNUK0qwrLIdWYagUNjtCbCb06kVef2YBdHbgLS0vhCc="
     - UNISH_NO_TIMEOUTS=y
     - UNISH_DB_URL=mysql://root:@127.0.0.1
-before_install: travis_retry composer selfupdate
+
+matrix:
+  exclude:
+    # Drupal 6 does not work with php 7, so skip all of the Drupal 6 tests with this php.
+    - php: 7.0
+      env: UNISH_DRUPAL_MAJOR_VERSION=6 PHPUNIT_ARGS=--group=base
+    - php: 7.0
+      env: UNISH_DRUPAL_MAJOR_VERSION=6 PHPUNIT_ARGS=--group=commands
+    - php: 7.0
+      env: UNISH_DRUPAL_MAJOR_VERSION=6 PHPUNIT_ARGS=--group=pm
+    - php: 7.0
+      env: UNISH_DRUPAL_MAJOR_VERSION=6 PHPUNIT_ARGS=--exclude-group=base,make,commands,pm,quick-drupal
+    # Drupal 8 requires a minimum php of 5.5, so skip all of the Drupal 8 tests with this php.
+    - php: 5.4
+      env: UNISH_DRUPAL_MAJOR_VERSION=8 PHPUNIT_ARGS=--group=make
+    - php: 5.4
+      env: UNISH_DRUPAL_MAJOR_VERSION=8 PHPUNIT_ARGS=--group=base
+    - php: 5.4
+      env: UNISH_DRUPAL_MAJOR_VERSION=8 PHPUNIT_ARGS=--group=commands
+    - php: 5.4
+      env: UNISH_DRUPAL_MAJOR_VERSION=8 PHPUNIT_ARGS=--group=pm
+    - php: 5.4
+      env: UNISH_DRUPAL_MAJOR_VERSION=8 PHPUNIT_ARGS=--group=quick-drupal
+    - php: 5.4
+      env: UNISH_DRUPAL_MAJOR_VERSION=8 PHPUNIT_ARGS=--exclude-group=base,make,commands,pm,quick-drupal TEST_CHILDREN="drush-ops/config-extra"
+
+before_install:
+  - echo 'mbstring.http_input = pass' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  - echo 'mbstring.http_output = pass' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  - travis_retry composer selfupdate
+
 install: travis_retry composer install --no-interaction
 
 before_script:
-  - echo "sendmail_path='true'" >> `php --ini | grep "Loaded Configuration" | awk '{print $4}'`
+  - phpenv config-rm xdebug.ini
+  - echo 'sendmail_path = /bin/true' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  # - echo "sendmail_path='true'" >> `php --ini | grep "Loaded Configuration" | awk '{print $4}'`
   - export UNISH_DRUSH="${PWD}/drush"
 
 script: ${PWD}/unish.sh $PHPUNIT_ARGS
@@ -56,6 +106,7 @@ script: ${PWD}/unish.sh $PHPUNIT_ARGS
 after_success: ${PWD}/tests/testChildren.sh
 
 before_deploy:
+  - gem install mime-types -v 2.6.2 # https://github.com/travis-ci/travis-ci/issues/5145
   - curl -LSs https://box-project.github.io/box2/installer.php | php
   - php box.phar build
   - test $TRAVIS_TAG=true && mkdir s3-stable && cp drush.phar s3-stable/drush.phar
@@ -80,6 +131,7 @@ deploy:
     bucket: files.drush.org
     skip_cleanup: true
     local_dir: s3-unstable
+    detect_encoding: true
     on:
       repo: drush-ops/drush
       branch: master
@@ -93,7 +145,8 @@ deploy:
     bucket: "files.drush.org"
     skip_cleanup: true
     local_dir: s3-stable
+    detect_encoding: true
     on:
       tags: true
       repo: drush-ops/drush
-      all_branches: true
+      branch: master

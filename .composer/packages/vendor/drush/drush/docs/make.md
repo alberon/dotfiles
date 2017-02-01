@@ -192,6 +192,24 @@ Do not use both types of declarations for a single project in your makefile.
           - es
           - fr
 
+- `do_recursion`
+
+  Recursively build an included makefile. Defaults to 'true'. 
+
+        do_recursion: false
+
+- `variant`
+
+  Which type of tarball to download for profiles. Valid options include:
+    - 'full': complete distro including Drupal core, e.g. `distro_name-core.tar.gz`
+    - 'projects': the fully built profile, projects defined drupal-org.make, etc., e.g. `distro_name-no-core.tar.gz`
+    - 'profile-only' (just the bare profile, e.g. `distro_name.tar.gz`).
+  Defaults to 'profile-only'. When using 'projects', `do_recursion: false` will be necessary to avoid recursively making any makefiles included in the profile.
+
+        variant: projects
+
+
+
 ### Project download options
 
   Use an alternative download method instead of retrieval through update XML.
@@ -337,10 +355,11 @@ projects. Additionally, they may specify a destination:
 
 ### Includes
 
-An array of makefiles to include. Each include may be a local relative path
-to the include makefile directory, a direct URL to the makefile, or from a git repository. Includes
-are appended in order with the source makefile appended last, allowing latter
-makefiles to override the keys/values of former makefiles.
+An array of makefiles to include. Each include may be a local relative path to
+the include makefile directory, a direct URL to the makefile, or from a git
+repository. Includes are appended in order with the source makefile appended
+last. As a result, values in the source makefile take precedence over those in
+includes. Use `overrides` for the reverse order of precedence.
 
 **Example:**
 
@@ -352,12 +371,68 @@ makefiles to override the keys/values of former makefiles.
       # A remote-hosted file.
       - "http://www.example.com/remote.make"
       # A file on a git repository.
-      makefile: "example_dir/example.make"
-      download:
-        type: "git"
-        url: "git@github.com:organisation/repository.git"
-        # Branch could be tag or revision, it relies on the standard Drush git download feature.
-        branch: "master"          
+      - makefile: "example_dir/example.make"
+        download:
+          type: "git"
+          url: "git@github.com:organisation/repository.git"
+          # Branch could be tag or revision, it relies on the standard Drush git download feature.
+          branch: "master"          
+
+The `--includes` option is available for most make commands, and allows
+makefiles to be included at build-time.
+
+**Example:**
+
+    # Build from a production makefile, but add development and test projects.
+    $ drush make production.make --includes=dev.make,test.make
+
+
+### Overrides
+
+Similar to `includes`, `overrides` will include content from other makefiles.
+However, the order of precedence is reversed. That is, they override the
+keys/values of the source makefile.
+
+The `--overrides` option is available for most make commands, and allows
+overrides to be included at build-time.
+
+**Example:**
+
+    #production.make.yml:
+    api: 2
+    core: 8.x
+    includes:
+      - core.make
+      - contrib.make
+    projects:
+      custom_feature_A:
+        type: module
+        download:
+          branch: production
+          type: git
+          url: http://github.com/example/custom_feature_A.git
+      custom_feature_B:
+        type: module
+        download:
+          branch: production
+          type: git
+          url: http://github.com/example/custom_feature_B.git
+
+     # Build production code-base.
+     $ drush make production.make.yml
+
+     #testing.make
+     projects:
+       custom_feature_A:
+         download:
+           branch: dev/bug_fix
+       custom_feature_B:
+         download:
+           branch: feature/new_feature
+
+     # Build production code-base using development/feature branches for custom code.
+     $ drush make /path/to/production.make --overrides=http://url/of/testing.make
+
 
 ### Defaults
 
@@ -419,6 +494,7 @@ setting the corresponding key to NULL:
 
 Recursion
 ---------
+
 If a project that is part of a build contains a `.make.yml` itself, Drush make will
 automatically parse it and recurse into a derivative build.
 
@@ -450,18 +526,32 @@ directory. Subdirectories will be ignored.
 
 **Build a full Drupal site with the Managing News install profile:**
 
-    core = 6.x
+    core: 6.x
+    api: 2
     projects:
       - drupal
       - managingnews
 
 ** Use a distribution as core **
 
-    core = 7.x
+    core: 7.x
+    api: 2
     projects:
       commerce_kickstart:
         type: "core"
         version: "7.x-1.19"
+
+This behavior can be overridden globally using the `--no-recursion` option, or on a project-by-project basis by setting the `do_recursion` project parameter to 'false' in a makefile:
+
+    core: 7.x
+    api: 2
+    projects:
+      drupal:
+        type: core
+      hostmaster:
+        type: profile
+        do_recursion: false
+
 
 Testing
 -------

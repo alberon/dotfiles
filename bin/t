@@ -115,7 +115,7 @@ display_help() {
             text = $0
 
             # Remove comment markers
-            text = gensub("^#\\s*", "", 1)
+            text = gensub("^#\\s?", "", 1)
 
             # Target: - Purple
             text = gensub("^.*:$", "\033[35m\\0\033[0m", 1, text)
