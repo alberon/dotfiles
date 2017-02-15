@@ -52,11 +52,12 @@
 /.rvm/hooks/*
 !/.rvm/hooks/after_cd_record_bash_lastdirectory
 
-# SSH - config & public key only
+# SSH - config & public key only, but ignore id_rsa.pub as it's only used for per-account keys
 !/.ssh
 /.ssh/*
 !/.ssh/config
 !/.ssh/*.pub
+/.ssh/id_rsa.pub
 
 # Vagrant
 !/.vagrant.d
