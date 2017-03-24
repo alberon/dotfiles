@@ -50,11 +50,19 @@ if $HAS_TERMINAL && ! $WINDOWS; then
     alias reboot='sudo reboot'
     alias service='sudo service'
     alias shutdown='sudo poweroff'
-    alias systemctl='sudo systemctl'
     alias useradd='sudo useradd'
     alias userdel='sudo userdel'
     alias usermod='sudo usermod'
     alias yum='sudo yum'
+
+    systemctl() {
+        if [ "$1" = "list-units" ]; then
+            # The 'list-units' subcommand is used by tab completion
+            command systemctl "$@"
+        else
+            command sudo systemctl "$@"
+        fi
+    }
 
     # Add sbin folder to my path so they can be auto-completed
     PATH="$PATH:/usr/local/sbin:/usr/sbin:/sbin"
