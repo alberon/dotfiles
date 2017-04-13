@@ -1,16 +1,10 @@
 #!/bin/bash
 
-start="$PWD"
+if ! dir="$(findup -f vendor/bin/phpunit)"; then
+    echo "You do not appear to be within a project with PHPUnit installed (vendor/bin/phpunit)" >&2
+    exit 1
+fi
 
-# Search for a locally installed version of PHP Unit, to make sure it's the
-# right version and to avoid conflicts
-while [ ! -x vendor/bin/phpunit ]; do
-    if [ "`pwd`" = "/" ]; then
-        # Run the globally installed version as a fallback if not found
-        cd "$start"
-        exec phpunit "$@"
-    fi
-    cd ..
-done
+cd "$dir"
 
 exec vendor/bin/phpunit "$@"
