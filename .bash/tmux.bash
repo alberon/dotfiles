@@ -33,6 +33,9 @@ if ! $MAC; then
         if [ "$host" = "v" -a $# -eq 1 ]; then
             # Special case for 'h v' => 'v h' => 'vagrant tmux' (see vagrant.bash)
             vagrant tmux
+        elif [ $# -eq 2 -a "$name" = "^" ]; then
+            # For 'h user@host ^' upload SSH public key - easier than retyping it
+            ssh-copy-id "$host"
         elif [ -z "$TMUX" ]; then
             # Run tmux over ssh
             ssh -o ForwardAgent=yes -t "$host" "cd '$path'; which tmux >/dev/null 2>&1 && { tmux -2 attach -t '$name' || { sleep 0.001; tmux -2 new -s '$name'; }; } || bash -l"
