@@ -42,9 +42,19 @@ dclean()
 denv()
 {
     echo "Switching Docker environment..."
-    cmd="$(docker-machine env "${1:-Docker}")" || return
+    cmd="$(docker-machine env "${1:-default}")" || return
     eval "$cmd"
     echo "Done."
+}
+
+# Kill most recent container
+dkill()
+{
+    container="$(docker ps -ql)"
+
+    if [ -n "$container" ]; then
+        docker kill $container
+    fi
 }
 
 # Kill all containers
@@ -60,14 +70,8 @@ dkillall()
 # Init
 dinit()
 {
-    docker-machine create --driver virtualbox "${1:-Docker}"
-    denv "${1:-Docker}"
-}
-
-# Remove
-dremove()
-{
-    docker-machine rm "$DOCKER_MACHINE_NAME"
+    docker-machine create --driver virtualbox "${1:-default}"
+    denv "${1:-default}"
 }
 
 # Resume
@@ -115,4 +119,24 @@ dssh()
     shift
     ip="$(docker-machine ip "$machine")" || return
     ssh -i "$HOME/.docker/machine/machines/$machine/id_rsa" "docker@$ip" "$@"
+}
+
+# Stop most recent container
+dstop()
+{
+    container="$(docker ps -ql)"
+
+    if [ -n "$container" ]; then
+        docker kill $container
+    fi
+}
+
+# Stop all containers
+dstopall()
+{
+    containers="$(docker ps -q)"
+
+    if [ -n "$containers" ]; then
+        docker stop $containers
+    fi
 }
