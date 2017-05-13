@@ -2,7 +2,7 @@
 docker()
 {
     if $WINDOWS; then
-        winpty docker $(cygpath -w -- "$@")
+        eval winpty docker $(cygpathmap "$@")
     else
         docker "$@"
     fi
