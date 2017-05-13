@@ -21,21 +21,8 @@ alias dr='docker run'
 # Clean up stopped containers and dangling (untagged) images
 dclean()
 {
-    echo "Cleaning stopped containers..."
-    containers="$(docker ps -qf status=exited)"
-
-    if [ -n "$containers" ]; then
-        docker rm $containers
-    fi
-
-    echo "Cleaning dangling images..."
-    images="$(docker images -qf dangling=true)"
-
-    if [ -n "$images" ]; then
-        docker rmi $images
-    fi
-
-    echo "Done."
+    docker container prune
+    docker image prune
 }
 
 # Environment
