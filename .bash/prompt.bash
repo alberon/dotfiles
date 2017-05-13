@@ -124,7 +124,7 @@ if $HAS_TERMINAL; then
             PromptMessage="$*"
         elif [ -n "$prompt_default" ]; then
             PromptMessage="$prompt_default"
-        elif [ $EUID -eq 0 ]; then
+        elif ! $DOCKER && [ $EUID -eq 0 ]; then
             PromptMessage="Logged in as ROOT!"
             prompt_color='41;1' # Red
         else
