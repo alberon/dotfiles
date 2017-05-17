@@ -8,13 +8,22 @@ docker()
     fi
 }
 
-alias docker-compose='winpty docker-compose'
+docker-compose()
+{
+    if $WINDOWS; then
+        eval winpty docker-compose $(cygpathmap "$@")
+    else
+        docker-compose "$@"
+    fi
+}
+
 alias docker-machine='winpty docker-machine'
 
 # Shorthand
 alias d='docker'
 alias db='docker build'
 alias dc='docker-compose'
+alias dcr='docker-compose run'
 alias dm='docker-machine'
 alias dr='docker run'
 
