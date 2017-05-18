@@ -4,7 +4,7 @@ docker()
     if $WINDOWS; then
         eval winpty docker $(cygpathmap "$@")
     else
-        docker "$@"
+        command docker "$@"
     fi
 }
 
@@ -13,7 +13,7 @@ docker-compose()
     if $WINDOWS; then
         eval winpty docker-compose $(cygpathmap "$@")
     else
-        docker-compose "$@"
+        command docker-compose "$@"
     fi
 }
 
