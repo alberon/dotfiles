@@ -102,8 +102,7 @@ dsh()
         # -A = Enable agent forwarding, -t = Force TTY allocation
         dssh "$DOCKER_MACHINE_NAME" -At "$cmd"
     else
-        # Untested...
-        $cmd
+        eval "$cmd"
     fi
 }
 
