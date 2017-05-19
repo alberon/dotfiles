@@ -122,7 +122,7 @@ dstop()
     container="$(docker ps -ql)"
 
     if [ -n "$container" ]; then
-        docker kill $container
+        docker stop $container
     fi
 }
 
