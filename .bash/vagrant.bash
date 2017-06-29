@@ -74,20 +74,34 @@ vagrant() {
 
     # tmux
     if [ "$cmd" = "tmux" ]; then
+        # if [ -z "$TMUX" ]; then
+        #     # Not running tmux - Run tmux inside Vagrant (if available)
+        #     command vagrant ssh -- -t 'which tmux >/dev/null 2>&1 && { tmux attach || tmux new -s default; } || bash -l'
+        # elif $CYGWIN; then
+        #     # We're running tmux already - on Cygwin
+        #     # For some reason Cygwin -> tmux -> vagrant (ruby) -> ssh is *really* slow
+        #     # But if we skip ruby it's fine!
+        #     # Note: The Vagrant setup may still be slow... So I don't use tmux in Cygwin much
+        #     (umask 077 && command vagrant ssh-config > /tmp/vagrant-ssh-config)
+        #     ssh -F /tmp/vagrant-ssh-config default
+        # else
+        #     # We're running tmux on another platform - just connect as normal
+        #     command vagrant ssh
+        # fi
+
+        # For some reason Cygwin -> tmux -> vagrant (ruby) -> ssh is *really* slow
+        # And since I upgraded Vagrant, Cygwin -> vagrant -> ssh doesn't work properly
+        # So bypass Vagrant and use the Cygwin ssh instead, always
+        (umask 077 && command vagrant ssh-config > /tmp/vagrant-ssh-config)
+
         if [ -z "$TMUX" ]; then
             # Not running tmux - Run tmux inside Vagrant (if available)
-            command vagrant ssh -- -t 'which tmux >/dev/null 2>&1 && { tmux attach || tmux new -s default; } || bash -l'
-        elif $CYGWIN; then
-            # We're running tmux already - on Cygwin
-            # For some reason Cygwin -> tmux -> vagrant (ruby) -> ssh is *really* slow
-            # But if we skip ruby it's fine!
-            # Note: The Vagrant setup may still be slow... So I don't use tmux in Cygwin much
-            (umask 077 && command vagrant ssh-config > /tmp/vagrant-ssh-config)
-            ssh -F /tmp/vagrant-ssh-config default
+            ssh -F /tmp/vagrant-ssh-config default -t 'which tmux >/dev/null 2>&1 && { tmux attach || tmux new -s default; } || bash -l'
         else
-            # We're running tmux on another platform - just connect as normal
-            command vagrant ssh
+            # We're running tmux already
+            ssh -F /tmp/vagrant-ssh-config default
         fi
+
         return
     fi
 
