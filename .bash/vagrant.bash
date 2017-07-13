@@ -99,7 +99,9 @@ vagrant() {
             ssh -F /tmp/vagrant-ssh-config default -t 'which tmux >/dev/null 2>&1 && { tmux attach || tmux new -s default; } || bash -l'
         else
             # We're running tmux already
+            tmux rename-window vagrant
             ssh -F /tmp/vagrant-ssh-config default
+            tmux setw automatic-rename
         fi
 
         return

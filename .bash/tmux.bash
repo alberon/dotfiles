@@ -45,7 +45,9 @@ if ! $MAC; then
             return 1
         else
             # Already running tmux so connect without it
+            tmux rename-window "$host"
             ssh -o ForwardAgent=yes "$host"
+            tmux setw automatic-rename
         fi
     }
 
