@@ -161,7 +161,7 @@ install_tmux
 
 if [ ! -d .git ]; then
 
-    # Based on https://djm.me/cfg but quiet and non-interactive
+    # Based on https://alberon.uk/cfg but quiet and non-interactive
     echo "Installing dotfiles in $HOME..."
     git init -q
     git remote add origin "git://github.com/$github_user/dotfiles.git"
