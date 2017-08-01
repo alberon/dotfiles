@@ -1,4 +1,5 @@
 # Operating system files
+._.DS_Store
 Thumbs.db
 
 # Fabric
