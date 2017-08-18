@@ -46,6 +46,7 @@ class Cache
 
         if (preg_match('{(^|[\\\\/])(\$null|NUL|/dev/null)([\\\\/]|$)}', $cacheDir)) {
             $this->enabled = false;
+
             return;
         }
 
@@ -169,6 +170,15 @@ class Cache
         $file = preg_replace('{[^'.$this->whitelist.']}i', '-', $file);
         if ($this->enabled && file_exists($this->root . $file)) {
             return $this->filesystem->unlink($this->root . $file);
+        }
+
+        return false;
+    }
+
+    public function clear()
+    {
+        if ($this->enabled) {
+            return $this->filesystem->removeDirectory($this->root);
         }
 
         return false;

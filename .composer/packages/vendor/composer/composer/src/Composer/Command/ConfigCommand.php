@@ -63,7 +63,7 @@ class ConfigCommand extends BaseCommand
     {
         $this
             ->setName('config')
-            ->setDescription('Set config options')
+            ->setDescription('Sets config options.')
             ->setDefinition(array(
                 new InputOption('global', 'g', InputOption::VALUE_NONE, 'Apply command to the global config file'),
                 new InputOption('editor', 'e', InputOption::VALUE_NONE, 'Open editor'),
@@ -146,10 +146,14 @@ EOT
         // passed in a file to use
         $configFile = $input->getOption('global')
             ? ($this->config->get('home') . '/config.json')
-            : ($input->getOption('file') ?: trim(getenv('COMPOSER')) ?: 'composer.json');
+            : ($input->getOption('file') ?: Factory::getComposerFile());
 
         // Create global composer.json if this was invoked using `composer global config`
-        if ($configFile === 'composer.json' && !file_exists($configFile) && realpath(getcwd()) === realpath($this->config->get('home'))) {
+        if (
+            ($configFile === 'composer.json' || $configFile === './composer.json')
+            && !file_exists($configFile)
+            && realpath(getcwd()) === realpath($this->config->get('home'))
+        ) {
             file_put_contents($configFile, "{\n}\n");
         }
 
@@ -286,19 +290,29 @@ EOT
 
         $values = $input->getArgument('setting-value'); // what the user is trying to add/change
 
-        $booleanValidator = function ($val) { return in_array($val, array('true', 'false', '1', '0'), true); };
-        $booleanNormalizer = function ($val) { return $val !== 'false' && (bool) $val; };
+        $booleanValidator = function ($val) {
+            return in_array($val, array('true', 'false', '1', '0'), true);
+        };
+        $booleanNormalizer = function ($val) {
+            return $val !== 'false' && (bool) $val;
+        };
 
         // handle config values
         $uniqueConfigValues = array(
             'process-timeout' => array('is_numeric', 'intval'),
             'use-include-path' => array($booleanValidator, $booleanNormalizer),
             'preferred-install' => array(
-                function ($val) { return in_array($val, array('auto', 'source', 'dist'), true); },
-                function ($val) { return $val; },
+                function ($val) {
+                    return in_array($val, array('auto', 'source', 'dist'), true);
+                },
+                function ($val) {
+                    return $val;
+                },
             ),
             'store-auths' => array(
-                function ($val) { return in_array($val, array('true', 'false', 'prompt'), true); },
+                function ($val) {
+                    return in_array($val, array('true', 'false', 'prompt'), true);
+                },
                 function ($val) {
                     if ('prompt' === $val) {
                         return 'prompt';
@@ -308,27 +322,55 @@ EOT
                 },
             ),
             'notify-on-install' => array($booleanValidator, $booleanNormalizer),
-            'vendor-dir' => array('is_string', function ($val) { return $val; }),
-            'bin-dir' => array('is_string', function ($val) { return $val; }),
-            'archive-dir' => array('is_string', function ($val) { return $val; }),
-            'archive-format' => array('is_string', function ($val) { return $val; }),
-            'data-dir' => array('is_string', function ($val) { return $val; }),
-            'cache-dir' => array('is_string', function ($val) { return $val; }),
-            'cache-files-dir' => array('is_string', function ($val) { return $val; }),
-            'cache-repo-dir' => array('is_string', function ($val) { return $val; }),
-            'cache-vcs-dir' => array('is_string', function ($val) { return $val; }),
+            'vendor-dir' => array('is_string', function ($val) {
+                return $val;
+            }),
+            'bin-dir' => array('is_string', function ($val) {
+                return $val;
+            }),
+            'archive-dir' => array('is_string', function ($val) {
+                return $val;
+            }),
+            'archive-format' => array('is_string', function ($val) {
+                return $val;
+            }),
+            'data-dir' => array('is_string', function ($val) {
+                return $val;
+            }),
+            'cache-dir' => array('is_string', function ($val) {
+                return $val;
+            }),
+            'cache-files-dir' => array('is_string', function ($val) {
+                return $val;
+            }),
+            'cache-repo-dir' => array('is_string', function ($val) {
+                return $val;
+            }),
+            'cache-vcs-dir' => array('is_string', function ($val) {
+                return $val;
+            }),
             'cache-ttl' => array('is_numeric', 'intval'),
             'cache-files-ttl' => array('is_numeric', 'intval'),
             'cache-files-maxsize' => array(
-                function ($val) { return preg_match('/^\s*([0-9.]+)\s*(?:([kmg])(?:i?b)?)?\s*$/i', $val) > 0; },
-                function ($val) { return $val; },
+                function ($val) {
+                    return preg_match('/^\s*([0-9.]+)\s*(?:([kmg])(?:i?b)?)?\s*$/i', $val) > 0;
+                },
+                function ($val) {
+                    return $val;
+                },
             ),
             'bin-compat' => array(
-                function ($val) { return in_array($val, array('auto', 'full')); },
-                function ($val) { return $val; },
+                function ($val) {
+                    return in_array($val, array('auto', 'full'));
+                },
+                function ($val) {
+                    return $val;
+                },
             ),
             'discard-changes' => array(
-                function ($val) { return in_array($val, array('stash', 'true', 'false', '1', '0'), true); },
+                function ($val) {
+                    return in_array($val, array('stash', 'true', 'false', '1', '0'), true);
+                },
                 function ($val) {
                     if ('stash' === $val) {
                         return 'stash';
@@ -337,7 +379,9 @@ EOT
                     return $val !== 'false' && (bool) $val;
                 },
             ),
-            'autoloader-suffix' => array('is_string', function ($val) { return $val === 'null' ? null : $val; }),
+            'autoloader-suffix' => array('is_string', function ($val) {
+                return $val === 'null' ? null : $val;
+            }),
             'sort-packages' => array($booleanValidator, $booleanNormalizer),
             'optimize-autoloader' => array($booleanValidator, $booleanNormalizer),
             'classmap-authoritative' => array($booleanValidator, $booleanNormalizer),
@@ -346,14 +390,23 @@ EOT
             'disable-tls' => array($booleanValidator, $booleanNormalizer),
             'secure-http' => array($booleanValidator, $booleanNormalizer),
             'cafile' => array(
-                function ($val) { return file_exists($val) && is_readable($val); },
-                function ($val) { return $val === 'null' ? null : $val; },
+                function ($val) {
+                    return file_exists($val) && is_readable($val);
+                },
+                function ($val) {
+                    return $val === 'null' ? null : $val;
+                },
             ),
             'capath' => array(
-                function ($val) { return is_dir($val) && is_readable($val); },
-                function ($val) { return $val === 'null' ? null : $val; },
+                function ($val) {
+                    return is_dir($val) && is_readable($val);
+                },
+                function ($val) {
+                    return $val === 'null' ? null : $val;
+                },
             ),
             'github-expose-hostname' => array($booleanValidator, $booleanNormalizer),
+            'htaccess-protect' => array($booleanValidator, $booleanNormalizer),
         );
         $multiConfigValues = array(
             'github-protocols' => array(
@@ -412,14 +465,28 @@ EOT
 
         // handle properties
         $uniqueProps = array(
-            'name' => array('is_string', function ($val) { return $val; }),
-            'type' => array('is_string', function ($val) { return $val; }),
-            'description' => array('is_string', function ($val) { return $val; }),
-            'homepage' => array('is_string', function ($val) { return $val; }),
-            'version' => array('is_string', function ($val) { return $val; }),
+            'name' => array('is_string', function ($val) {
+                return $val;
+            }),
+            'type' => array('is_string', function ($val) {
+                return $val;
+            }),
+            'description' => array('is_string', function ($val) {
+                return $val;
+            }),
+            'homepage' => array('is_string', function ($val) {
+                return $val;
+            }),
+            'version' => array('is_string', function ($val) {
+                return $val;
+            }),
             'minimum-stability' => array(
-                function ($val) { return isset(BasePackage::$stabilities[VersionParser::normalizeStability($val)]); },
-                function ($val) { return VersionParser::normalizeStability($val); }
+                function ($val) {
+                    return isset(BasePackage::$stabilities[VersionParser::normalizeStability($val)]);
+                },
+                function ($val) {
+                    return VersionParser::normalizeStability($val);
+                },
             ),
             'prefer-stable' => array($booleanValidator, $booleanNormalizer),
         );
@@ -472,7 +539,7 @@ EOT
             if (2 === count($values)) {
                 return $this->configSource->addRepository($matches[1], array(
                     'type' => $values[0],
-                    'url'  => $values[1],
+                    'url' => $values[1],
                 ));
             }
 

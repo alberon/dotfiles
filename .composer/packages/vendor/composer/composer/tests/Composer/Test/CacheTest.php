@@ -17,14 +17,13 @@ use Composer\Util\Filesystem;
 
 class CacheTest extends TestCase
 {
-    private $files, $root, $finder, $cache;
+    private $files;
+    private $root;
+    private $finder;
+    private $cache;
 
     public function setUp()
     {
-        if (getenv('TRAVIS')) {
-            $this->markTestSkipped('Test causes intermittent failures on Travis');
-        }
-
         $this->root = $this->getUniqueTmpDirectory();
         $this->files = array();
         $zeros = str_repeat('0', 1000);
@@ -103,5 +102,19 @@ class CacheTest extends TestCase
             $this->assertFileNotExists("{$this->root}/cached.file{$i}.zip");
         }
         $this->assertFileExists("{$this->root}/cached.file3.zip");
+    }
+
+    public function testClearCache()
+    {
+        $this->finder
+            ->method('removeDirectory')
+            ->with($this->root)
+            ->willReturn(true);
+
+        $this->assertTrue($this->cache->clear());
+
+        for ($i = 0; $i < 3; $i++) {
+            $this->assertFileNotExists("{$this->root}/cached.file{$i}.zip");
+        }
     }
 }

@@ -1,3 +1,68 @@
+### [1.5.1] - 2017-08-09
+
+  * Fixed regression in GitLabDriver with repos containing >100 branches or tags
+  * Fixed sub-directory call support to respect the COMPOSER env var
+
+### [1.5.0] - 2017-08-08
+
+  * Changed the package install order to ensure that plugins are always installed as soon as possible
+  * Added ability to call composer from within sub-directories of a project
+  * Added support for GitLab API v4
+  * Added support for GitLab sub-groups
+  * Added some more rules to composer validate
+  * Added support for reading the `USER` env when guessing the username in `composer init`
+  * Added warning when uncompressing files with the same name but difference cases on case insensitive filesystems
+  * Added `htaccess-protect` option / `COMPOSER_HTACCESS_PROTECT` env var to disable the .htaccess creation in home dir (defaults to true)
+  * Improved `clear-cache` command
+  * Minor improvements/fixes and many documentation updates
+
+### [1.4.3] - 2017-08-06
+
+  * Fixed GitLab URLs
+  * Fixed root package version detection using latest git versions
+  * Fixed inconsistencies in date format in composer.lock when installing from source
+  * Fixed Mercurial support regression
+  * Fixed exclude-from-classmap not being applied when autoloading files for Composer plugins
+  * Fixed exclude-from-classmap being ignored when cwd has the wrong case on case insensitive filesystems
+  * Fixed several other minor issues
+
+### [1.4.2] - 2017-05-17
+
+  * Fixed Bitbucket API handler parsing old deleted branches in hg repos
+  * Fixed regression in gitlab downloads
+  * Fixed output inconsistencies
+  * Fixed unicode handling in `init` command for author names
+  * Fixed useless warning when doing partial updates/removes on packages that are not currently installed
+  * Fixed xdebug disabling issue when combined with disable_functions and allow_url_fopen CLI overrides
+
+### [1.4.1] - 2017-03-10
+
+  * Fixed `apcu-autoloader` config option being ignored in `dump-autoload` command
+  * Fixed json validation not allowing boolean for trunk-path, branches-path and tags-path in svn repos
+  * Fixed json validation not allowing repository URLs without scheme
+
+### [1.4.0] - 2017-03-08
+
+  * Improved memory usage of dependency solver
+  * Added `--format json` option to the `outdated` and `show` command to get machine readable package listings
+  * Added `--ignore-filters` flag to `archive` command to bypass the .gitignore and co
+  * Added support for `outdated` output without ansi colors
+  * Added support for Bitbucket API v2
+  * Changed the require command to follow minimum-stability / prefer-stable values when picking a version
+  * Fixed regression when using composer in a Mercurial repository
+
+### [1.3.3] - 2017-03-08
+
+  * **Capifony users beware**: This release has output format tweaks that mess up capifony interactive mode, see #6233
+  * Improved baseline psr-4 autoloader performance for projects with many nested namespaces configured
+  * Fixed issues with gitlab API access when the token had insufficient permissions
+  * Fixed some HHVM strict type issues
+  * Fixed version guessing of headless git checkouts in some conditions
+  * Fixed compatibility with subversion 1.8
+  * Fixed version guessing not working with svn/hg
+  * Fixed script/exec errors not being output correctly
+  * Fixed PEAR repository bug with pear.php.net
+
 ### [1.3.2] - 2017-01-27
 
   * Added `COMPOSER_BINARY` env var that is defined within the scope of a Composer run automatically with the path to the phar file
@@ -492,6 +557,13 @@
 
   * Initial release
 
+[1.5.1]: https://github.com/composer/composer/compare/1.5.0...1.5.1
+[1.5.0]: https://github.com/composer/composer/compare/1.4.3...1.5.0
+[1.4.3]: https://github.com/composer/composer/compare/1.4.2...1.4.3
+[1.4.2]: https://github.com/composer/composer/compare/1.4.1...1.4.2
+[1.4.1]: https://github.com/composer/composer/compare/1.4.0...1.4.1
+[1.4.0]: https://github.com/composer/composer/compare/1.3.3...1.4.0
+[1.3.3]: https://github.com/composer/composer/compare/1.3.2...1.3.3
 [1.3.2]: https://github.com/composer/composer/compare/1.3.1...1.3.2
 [1.3.1]: https://github.com/composer/composer/compare/1.3.0...1.3.1
 [1.3.0]: https://github.com/composer/composer/compare/1.3.0-RC...1.3.0

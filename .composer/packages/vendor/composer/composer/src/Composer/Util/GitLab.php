@@ -112,8 +112,8 @@ class GitLab
                         $this->io->writeError('Maximum number of login attempts exceeded. Please try again later.');
                     }
 
-                    $this->io->writeError('You can also manually create a personal token at '.$scheme.'://'.$originUrl.'/profile/applications');
-                    $this->io->writeError('Add it using "composer config gitlab-oauth.'.$originUrl.' <token>"');
+                    $this->io->writeError('You can also manually create a personal token at '.$scheme.'://'.$originUrl.'/profile/personal_access_tokens');
+                    $this->io->writeError('Add it using "composer config --global --auth gitlab-token.'.$originUrl.' <token>"');
 
                     continue;
                 }
@@ -144,7 +144,7 @@ class GitLab
             'username' => $username,
             'password' => $password,
             'grant_type' => 'password',
-        ));
+        ), null, '&');
         $options = array(
             'retry-auth-failure' => false,
             'http' => array(

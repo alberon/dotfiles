@@ -109,6 +109,28 @@ class JsonManipulatorTest extends \PHPUnit_Framework_TestCase
 }
 ',
             ),
+
+
+            array(
+                '{
+    "require":
+    {
+        "foo": "bar",
+        "vendor/baz": "baz"
+    }
+}',
+                'require',
+                'vEnDoR/bAz',
+                'qux',
+                '{
+    "require":
+    {
+        "foo": "bar",
+        "vendor/baz": "qux"
+    }
+}
+',
+            ),
             array(
                 '{
     "require":
@@ -119,6 +141,26 @@ class JsonManipulatorTest extends \PHPUnit_Framework_TestCase
 }',
                 'require',
                 'vendor/baz',
+                'qux',
+                '{
+    "require":
+    {
+        "foo": "bar",
+        "vendor/baz": "qux"
+    }
+}
+',
+            ),
+            array(
+                '{
+    "require":
+    {
+        "foo": "bar",
+        "vendor\/baz": "baz"
+    }
+}',
+                'require',
+                'vEnDoR/bAz',
                 'qux',
                 '{
     "require":
@@ -2266,7 +2308,6 @@ class JsonManipulatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('{
 }
 ', $manipulator->getContents());
-
     }
 
     public function testIndentDetection()

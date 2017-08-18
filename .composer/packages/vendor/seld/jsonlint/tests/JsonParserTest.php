@@ -32,6 +32,8 @@ class JsonParserTest extends PHPUnit_Framework_TestCase
         '["http:\/\/foo\\\\zomg"]',
         '{"":"foo"}',
         '{"a":"b", "b":"c"}',
+        '0',
+        '""',
     );
 
     /**
@@ -215,5 +217,13 @@ bar"}');
         } catch (ParsingException $e) {
             $this->assertContains('BOM detected', $e->getMessage());
         }
+    }
+
+    public function testLongString()
+    {
+        $parser = new JsonParser();
+
+        $json = '{"k":"' . str_repeat("a\\n",10000) . '"}';
+        $this->assertEquals(json_decode($json), $parser->parse($json));
     }
 }

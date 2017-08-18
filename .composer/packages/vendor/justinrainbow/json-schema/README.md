@@ -33,7 +33,7 @@ $data = json_decode(file_get_contents('data.json'));
 
 // Validate
 $validator = new JsonSchema\Validator;
-$validator->check($data, (object)['$ref' => 'file://' . realpath('schema.json')]);
+$validator->validate($data, (object)['$ref' => 'file://' . realpath('schema.json')]);
 
 if ($validator->isValid()) {
     echo "The supplied JSON validates against the schema.\n";
@@ -63,20 +63,63 @@ $request = (object)[
     'refundAmount'=>"17"
 ];
 
-$validator->coerce($request, (object) [
+$validator->validate(
+    $request, (object) [
     "type"=>"object",
-    "properties"=>(object)[
-        "processRefund"=>(object)[
-            "type"=>"boolean"
-        ],
-        "refundAmount"=>(object)[
-            "type"=>"number"
+        "properties"=>(object)[
+            "processRefund"=>(object)[
+                "type"=>"boolean"
+            ],
+            "refundAmount"=>(object)[
+                "type"=>"number"
+            ]
         ]
-    ]
-]); // validates!
+    ],
+    Constraint::CHECK_MODE_COERCE_TYPES
+); // validates!
 
 is_bool($request->processRefund); // true
 is_int($request->refundAmount); // true
+```
+
+A shorthand method is also available:
+```PHP
+$validator->coerce($request, $schema);
+// equivalent to $validator->validate($data, $schema, Constraint::CHECK_MODE_COERCE_TYPES);
+```
+
+### Default values
+
+If your schema contains default values, you can have these automatically applied during validation:
+
+```php
+<?php
+
+use JsonSchema\Validator;
+use JsonSchema\Constraints\Constraint;
+
+$request = (object)[
+    'refundAmount'=>17
+];
+
+$validator = new Validator();
+
+$validator->validate(
+    $request,
+    (object)[
+        "type"=>"object",
+        "properties"=>(object)[
+            "processRefund"=>(object)[
+                "type"=>"boolean",
+                "default"=>true
+            ]
+        ]
+    ],
+    Constraint::CHECK_MODE_APPLY_DEFAULTS
+); //validates, and sets defaults for missing properties
+
+is_bool($request->processRefund); // true
+$request->processRefund; // true
 ```
 
 ### With inline references
@@ -130,13 +173,34 @@ $jsonValidator = new Validator( new Factory($schemaStorage));
 $jsonToValidateObject = json_decode('{"data":123}');
 
 // Do validation (use isValid() and getErrors() to check the result)
-$jsonValidator->check($jsonToValidateObject, $jsonSchemaObject);
+$jsonValidator->validate($jsonToValidateObject, $jsonSchemaObject);
 ```
+
+### Configuration Options
+A number of flags are available to alter the behavior of the validator. These can be passed as the
+third argument to `Validator::validate()`, or can be provided as the third argument to
+`Factory::__construct()` if you wish to persist them across multiple `validate()` calls.
+
+| Flag | Description |
+|------|-------------|
+| `Constraint::CHECK_MODE_NORMAL` | Validate in 'normal' mode - this is the default |
+| `Constraint::CHECK_MODE_TYPE_CAST` | Enable fuzzy type checking for associative arrays and objects |
+| `Constraint::CHECK_MODE_COERCE_TYPES` | Convert data types to match the schema where possible |
+| `Constraint::CHECK_MODE_APPLY_DEFAULTS` | Apply default values from the schema if not set |
+| `Constraint::CHECK_MODE_ONLY_REQUIRED_DEFAULTS` | When applying defaults, only set values that are required |
+| `Constraint::CHECK_MODE_EXCEPTIONS` | Throw an exception immediately if validation fails |
+| `Constraint::CHECK_MODE_DISABLE_FORMAT` | Do not validate "format" constraints |
+| `Constraint::CHECK_MODE_VALIDATE_SCHEMA` | Validate the schema as well as the provided document |
+
+Please note that using `Constraint::CHECK_MODE_COERCE_TYPES` or `Constraint::CHECK_MODE_APPLY_DEFAULTS`
+will modify your original data.
 
 ## Running the tests
 
 ```bash
-composer test
-composer testOnly TestClass
-composer testOnly TestClass::testMethod
+composer test                            # run all unit tests
+composer testOnly TestClass              # run specific unit test class
+composer testOnly TestClass::testMethod  # run specific unit test method
+composer style-check                     # check code style for errors
+composer style-fix                       # automatically fix code style errors
 ```

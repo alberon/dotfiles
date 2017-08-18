@@ -355,7 +355,7 @@ class Locker
                 continue;
             }
 
-            $name    = $package->getPrettyName();
+            $name = $package->getPrettyName();
             $version = $package->getPrettyVersion();
 
             if (!$name || !$version) {
@@ -432,6 +432,6 @@ class Locker
             }
         }
 
-        return $datetime ? $datetime->format('Y-m-d H:i:s') : null;
+        return $datetime ? $datetime->format(DATE_RFC3339) : null;
     }
 }
