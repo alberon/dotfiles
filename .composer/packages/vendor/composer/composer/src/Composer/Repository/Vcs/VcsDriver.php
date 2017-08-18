@@ -75,8 +75,8 @@ abstract class VcsDriver implements VcsDriverInterface
     /**
      * Returns whether or not the given $identifier should be cached or not.
      *
-     * @param string $identifier
-     * @return boolean
+     * @param  string $identifier
+     * @return bool
      */
     protected function shouldCache($identifier)
     {
@@ -102,7 +102,6 @@ abstract class VcsDriver implements VcsDriverInterface
             $this->infoCache[$identifier] = $composer;
         }
 
-
         return $this->infoCache[$identifier];
     }
 
@@ -117,7 +116,7 @@ abstract class VcsDriver implements VcsDriverInterface
         $composer = JsonFile::parseJson($composerFileContent, $identifier . ':composer.json');
 
         if (empty($composer['time']) && $changeDate = $this->getChangeDate($identifier)) {
-            $composer['time'] = $changeDate->format('Y-m-d H:i:s');
+            $composer['time'] = $changeDate->format(DATE_RFC3339);
         }
 
         return $composer;
@@ -161,7 +160,9 @@ abstract class VcsDriver implements VcsDriverInterface
      */
     protected function getContents($url)
     {
-        return $this->remoteFilesystem->getContents($this->originUrl, $url, false);
+        $options = isset($this->repoConfig['options']) ? $this->repoConfig['options'] : array();
+
+        return $this->remoteFilesystem->getContents($this->originUrl, $url, false, $options);
     }
 
     /**

@@ -11,6 +11,7 @@
 
 namespace Symfony\Component\Console\Tests\Helper;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Helper\HelperSet;
@@ -23,7 +24,7 @@ use Symfony\Component\Console\Question\Question;
 /**
  * @group tty
  */
-class QuestionHelperTest extends \PHPUnit_Framework_TestCase
+class QuestionHelperTest extends TestCase
 {
     public function testAskChoice()
     {
@@ -273,6 +274,37 @@ class QuestionHelperTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider specialCharacterInMultipleChoice
+     */
+    public function testSpecialCharacterChoiceFromMultipleChoiceList($providedAnswer, $expectedValue)
+    {
+        $possibleChoices = array(
+            '.',
+            'src',
+        );
+
+        $dialog = new QuestionHelper();
+        $dialog->setInputStream($this->getInputStream($providedAnswer."\n"));
+        $helperSet = new HelperSet(array(new FormatterHelper()));
+        $dialog->setHelperSet($helperSet);
+
+        $question = new ChoiceQuestion('Please select the directory', $possibleChoices);
+        $question->setMaxAttempts(1);
+        $question->setMultiselect(true);
+        $answer = $dialog->ask($this->createInputInterfaceMock(), $this->createOutputInterface(), $question);
+
+        $this->assertSame($expectedValue, $answer);
+    }
+
+    public function specialCharacterInMultipleChoice()
+    {
+        return array(
+            array('.', array('.')),
+            array('., src', array('.', 'src')),
+        );
+    }
+
+    /**
      * @dataProvider mixedKeysChoiceListAnswerProvider
      */
     public function testChoiceFromChoicelistWithMixedKeys($providedAnswer, $expectedValue)
@@ -431,6 +463,15 @@ class QuestionHelperTest extends \PHPUnit_Framework_TestCase
         });
 
         $dialog->ask($this->createInputInterfaceMock(), $this->createOutputInterface(), $question);
+    }
+
+    /**
+     * @expectedException \LogicException
+     * @expectedExceptionMessage Choice question must have at least 1 choice available.
+     */
+    public function testEmptyChoices()
+    {
+        new ChoiceQuestion('Question', array(), 'irrelevant');
     }
 
     protected function getInputStream($input)

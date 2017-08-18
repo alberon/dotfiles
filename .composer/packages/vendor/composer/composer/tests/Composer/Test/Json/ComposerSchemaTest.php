@@ -95,16 +95,16 @@ class ComposerSchemaTest extends \PHPUnit_Framework_TestCase
 
     private function check($json)
     {
-        $schema = json_decode(file_get_contents(__DIR__ . '/../../../../res/composer-schema.json'));
         $validator = new Validator();
-        $validator->check(json_decode($json), $schema);
+        $validator->check(json_decode($json), (object) array('$ref' => 'file://' . __DIR__ . '/../../../../res/composer-schema.json'));
 
         if (!$validator->isValid()) {
             $errors = $validator->getErrors();
 
-            // remove justinrainbow/json-schema 3.0 props so it works with all versions
+            // remove justinrainbow/json-schema 3.0/5.2 props so it works with all versions
             foreach ($errors as &$err) {
                 unset($err['pointer']);
+                unset($err['context']);
             }
 
             return $errors;

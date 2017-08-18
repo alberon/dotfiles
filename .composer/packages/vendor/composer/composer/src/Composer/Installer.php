@@ -334,7 +334,7 @@ class Installer
      * @param  RepositoryInterface $installedRepo
      * @param  PlatformRepository  $platformRepo
      * @param  array               $aliases
-     * @return array [int, PackageInterfaces[]|null] with the exit code and an array of dev packages on update, or null on install
+     * @return array               [int, PackageInterfaces[]|null] with the exit code and an array of dev packages on update, or null on install
      */
     protected function doInstall($localRepo, $installedRepo, $platformRepo, $aliases)
     {
@@ -359,7 +359,7 @@ class Installer
         }
 
         $this->whitelistUpdateDependencies(
-            $localRepo,
+            $lockedRepository ?: $localRepo,
             $this->package->getRequires(),
             $this->package->getDevRequires()
         );
@@ -473,6 +473,9 @@ class Installer
         } catch (SolverProblemsException $e) {
             $this->io->writeError('<error>Your requirements could not be resolved to an installable set of packages.</error>', true, IOInterface::QUIET);
             $this->io->writeError($e->getMessage());
+            if ($this->update && !$this->devMode) {
+                $this->io->writeError('<warning>Running update with --no-dev does not mean require-dev is ignored, it just means the packages will not be installed. If dev requirements are blocking the update you have to resolve those problems.</warning>', true, IOInterface::QUIET);
+            }
 
             return array(max(1, $e->getCode()), array());
         }
@@ -744,8 +747,11 @@ class Installer
      */
     private function movePluginsToFront(array $operations)
     {
-        $installerOps = array();
-        foreach ($operations as $idx => $op) {
+        $pluginsNoDeps = array();
+        $pluginsWithDeps = array();
+        $pluginRequires = array();
+
+        foreach (array_reverse($operations, true) as $idx => $op) {
             if ($op instanceof InstallOperation) {
                 $package = $op->getPackage();
             } elseif ($op instanceof UpdateOperation) {
@@ -754,23 +760,32 @@ class Installer
                 continue;
             }
 
-            if ($package->getType() === 'composer-plugin' || $package->getType() === 'composer-installer') {
-                // ignore requirements to platform or composer-plugin-api
-                $requires = array_keys($package->getRequires());
-                foreach ($requires as $index => $req) {
-                    if ($req === 'composer-plugin-api' || preg_match(PlatformRepository::PLATFORM_PACKAGE_REGEX, $req)) {
-                        unset($requires[$index]);
-                    }
+            // is this package a plugin?
+            $isPlugin = $package->getType() === 'composer-plugin' || $package->getType() === 'composer-installer';
+
+            // is this a plugin or a dependency of a plugin?
+            if ($isPlugin || count(array_intersect($package->getNames(), $pluginRequires))) {
+                // get the package's requires, but filter out any platform requirements or 'composer-plugin-api'
+                $requires = array_filter(array_keys($package->getRequires()), function($req) {
+                    return $req !== 'composer-plugin-api' && !preg_match(PlatformRepository::PLATFORM_PACKAGE_REGEX, $req);
+                });
+
+                // is this a plugin with no meaningful dependencies?
+                if ($isPlugin && !count($requires)) {
+                    // plugins with no dependencies go to the very front
+                    array_unshift($pluginsNoDeps, $op);
+                } else {
+                    // capture the requirements for this package so those packages will be moved up as well
+                    $pluginRequires = array_merge($pluginRequires, $requires);
+                    // move the operation to the front
+                    array_unshift($pluginsWithDeps, $op);
                 }
-                // if there are no other requirements, move the plugin to the top of the op list
-                if (!count($requires)) {
-                    $installerOps[] = $op;
-                    unset($operations[$idx]);
-                }
+
+                unset($operations[$idx]);
             }
         }
 
-        return array_merge($installerOps, $operations);
+        return array_merge($pluginsNoDeps, $pluginsWithDeps, $operations);
     }
 
     /**
@@ -1187,13 +1202,14 @@ class Installer
         }
 
         $package->setSourceReference($reference);
-        $package->setDistReference($reference);
 
         if (preg_match('{^https?://(?:(?:www\.)?bitbucket\.org|(api\.)?github\.com)/}i', $package->getDistUrl())) {
+            $package->setDistReference($reference);
             $package->setDistUrl(preg_replace('{(?<=/)[a-f0-9]{40}(?=/|$)}i', $reference, $package->getDistUrl()));
+        } else if ($package->getDistReference()) { // update the dist reference if there was one, but if none was provided ignore it
+            $package->setDistReference($reference);
         }
     }
-
 
     /**
      * @param PlatformRepository $platformRepo
@@ -1269,11 +1285,13 @@ class Installer
      * skipped including their dependencies, unless they are listed in the
      * update whitelist themselves.
      *
-     * @param RepositoryInterface $localRepo
+     * @param RepositoryInterface $localOrLockRepo Use the locked repo if available, otherwise installed repo will do
+     *                                             As we want the most accurate package list to work with, and installed
+     *                                             repo might be empty but locked repo will always be current.
      * @param array               $rootRequires    An array of links to packages in require of the root package
      * @param array               $rootDevRequires An array of links to packages in require-dev of the root package
      */
-    private function whitelistUpdateDependencies($localRepo, array $rootRequires, array $rootDevRequires)
+    private function whitelistUpdateDependencies($localOrLockRepo, array $rootRequires, array $rootDevRequires)
     {
         if (!$this->updateWhitelist) {
             return;
@@ -1292,7 +1310,7 @@ class Installer
         }
 
         $pool = new Pool;
-        $pool->addRepository($localRepo);
+        $pool->addRepository($localOrLockRepo);
 
         $seen = array();
 
@@ -1316,7 +1334,7 @@ class Installer
                 }
             }
 
-            if (count($depPackages) == 0 && !$nameMatchesRequiredPackage && !in_array($packageName, array('nothing', 'lock'))) {
+            if (count($depPackages) == 0 && !$nameMatchesRequiredPackage && !in_array($packageName, array('nothing', 'lock', 'mirrors'))) {
                 $this->io->writeError('<warning>Package "' . $packageName . '" listed for update is not installed. Ignoring.</warning>');
             }
 
@@ -1424,7 +1442,7 @@ class Installer
      */
     public function setDryRun($dryRun = true)
     {
-        $this->dryRun = (boolean) $dryRun;
+        $this->dryRun = (bool) $dryRun;
 
         return $this;
     }
@@ -1447,7 +1465,7 @@ class Installer
      */
     public function setPreferSource($preferSource = true)
     {
-        $this->preferSource = (boolean) $preferSource;
+        $this->preferSource = (bool) $preferSource;
 
         return $this;
     }
@@ -1460,7 +1478,7 @@ class Installer
      */
     public function setPreferDist($preferDist = true)
     {
-        $this->preferDist = (boolean) $preferDist;
+        $this->preferDist = (bool) $preferDist;
 
         return $this;
     }
@@ -1473,7 +1491,7 @@ class Installer
      */
     public function setOptimizeAutoloader($optimizeAutoloader = false)
     {
-        $this->optimizeAutoloader = (boolean) $optimizeAutoloader;
+        $this->optimizeAutoloader = (bool) $optimizeAutoloader;
         if (!$this->optimizeAutoloader) {
             // Force classMapAuthoritative off when not optimizing the
             // autoloader
@@ -1492,7 +1510,7 @@ class Installer
      */
     public function setClassMapAuthoritative($classMapAuthoritative = false)
     {
-        $this->classMapAuthoritative = (boolean) $classMapAuthoritative;
+        $this->classMapAuthoritative = (bool) $classMapAuthoritative;
         if ($this->classMapAuthoritative) {
             // Force optimizeAutoloader when classmap is authoritative
             $this->setOptimizeAutoloader(true);
@@ -1509,7 +1527,7 @@ class Installer
      */
     public function setApcuAutoloader($apcuAutoloader = false)
     {
-        $this->apcuAutoloader = (boolean) $apcuAutoloader;
+        $this->apcuAutoloader = (bool) $apcuAutoloader;
 
         return $this;
     }
@@ -1522,7 +1540,7 @@ class Installer
      */
     public function setUpdate($update = true)
     {
-        $this->update = (boolean) $update;
+        $this->update = (bool) $update;
 
         return $this;
     }
@@ -1535,7 +1553,7 @@ class Installer
      */
     public function setDevMode($devMode = true)
     {
-        $this->devMode = (boolean) $devMode;
+        $this->devMode = (bool) $devMode;
 
         return $this;
     }
@@ -1550,7 +1568,7 @@ class Installer
      */
     public function setDumpAutoloader($dumpAutoloader = true)
     {
-        $this->dumpAutoloader = (boolean) $dumpAutoloader;
+        $this->dumpAutoloader = (bool) $dumpAutoloader;
 
         return $this;
     }
@@ -1565,7 +1583,7 @@ class Installer
      */
     public function setRunScripts($runScripts = true)
     {
-        $this->runScripts = (boolean) $runScripts;
+        $this->runScripts = (bool) $runScripts;
 
         return $this;
     }
@@ -1591,7 +1609,7 @@ class Installer
      */
     public function setVerbose($verbose = true)
     {
-        $this->verbose = (boolean) $verbose;
+        $this->verbose = (bool) $verbose;
 
         return $this;
     }
@@ -1614,7 +1632,7 @@ class Installer
      */
     public function setIgnorePlatformRequirements($ignorePlatformReqs = false)
     {
-        $this->ignorePlatformReqs = (boolean) $ignorePlatformReqs;
+        $this->ignorePlatformReqs = (bool) $ignorePlatformReqs;
 
         return $this;
     }
@@ -1641,7 +1659,7 @@ class Installer
      */
     public function setWhitelistDependencies($updateDependencies = true)
     {
-        $this->whitelistDependencies = (boolean) $updateDependencies;
+        $this->whitelistDependencies = (bool) $updateDependencies;
 
         return $this;
     }
@@ -1654,7 +1672,7 @@ class Installer
      */
     public function setPreferStable($preferStable = true)
     {
-        $this->preferStable = (boolean) $preferStable;
+        $this->preferStable = (bool) $preferStable;
 
         return $this;
     }
@@ -1667,7 +1685,7 @@ class Installer
      */
     public function setPreferLowest($preferLowest = true)
     {
-        $this->preferLowest = (boolean) $preferLowest;
+        $this->preferLowest = (bool) $preferLowest;
 
         return $this;
     }
@@ -1682,7 +1700,7 @@ class Installer
      */
     public function setWriteLock($writeLock = true)
     {
-        $this->writeLock = (boolean) $writeLock;
+        $this->writeLock = (bool) $writeLock;
 
         return $this;
     }
@@ -1697,7 +1715,7 @@ class Installer
      */
     public function setExecuteOperations($executeOperations = true)
     {
-        $this->executeOperations = (boolean) $executeOperations;
+        $this->executeOperations = (bool) $executeOperations;
 
         return $this;
     }
@@ -1710,7 +1728,7 @@ class Installer
      */
     public function setSkipSuggest($skipSuggest = true)
     {
-        $this->skipSuggest = (boolean) $skipSuggest;
+        $this->skipSuggest = (bool) $skipSuggest;
 
         return $this;
     }

@@ -1,3 +1,12 @@
+### 1.6.1 (2017-06-18)
+
+  * Fixed parsing of `0` as invalid
+
+### 1.6.0 (2017-03-06)
+
+  * Added $flags arg to JsonParser::lint() to take the same flag as parse() did
+  * Fixed backtracking performance issues on long strings with a lot of escaped characters
+
 ### 1.5.0 (2016-11-14)
 
   * Added support for PHP 7.1 (which converts `{"":""}` to an object property called `""` and not `"_empty_"` like 7.0 and below).

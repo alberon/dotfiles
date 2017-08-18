@@ -67,6 +67,7 @@ class XdebugHandler
                 $command = $this->getCommand();
                 $this->restart($command);
             }
+
             return;
         }
 
@@ -173,6 +174,8 @@ class XdebugHandler
             $content .= $data.PHP_EOL;
         }
 
+        $content .= 'allow_url_fopen='.ini_get('allow_url_fopen').PHP_EOL;
+        $content .= 'disable_functions="'.ini_get('disable_functions').'"'.PHP_EOL;
         $content .= 'memory_limit='.ini_get('memory_limit').PHP_EOL;
 
         if (defined('PHP_WINDOWS_VERSION_BUILD')) {
@@ -199,8 +202,8 @@ class XdebugHandler
     /**
      * Returns true if the restart environment variables were set
      *
-     * @param bool $additional Whether there were additional inis
-     * @param array $iniPaths Locations used by the current prcoess
+     * @param bool  $additional Whether there were additional inis
+     * @param array $iniPaths   Locations used by the current prcoess
      *
      * @return bool
      */
@@ -249,7 +252,7 @@ class XdebugHandler
         }
 
         if ($this->output->isDecorated()) {
-            $offset = count($args) > 1 ? 2: 1;
+            $offset = count($args) > 1 ? 2 : 1;
             array_splice($args, $offset, 0, '--ansi');
         }
 
@@ -262,8 +265,8 @@ class XdebugHandler
      * From https://github.com/johnstevenson/winbox-args
      * MIT Licensed (c) John Stevenson <john-stevenson@blueyonder.co.uk>
      *
-     * @param string $arg The argument to be escaped
-     * @param bool $meta Additionally escape cmd.exe meta characters
+     * @param string $arg  The argument to be escaped
+     * @param bool   $meta Additionally escape cmd.exe meta characters
      *
      * @return string The escaped argument
      */

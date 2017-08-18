@@ -1,20 +1,24 @@
 <!--
-    tagline: Host your own composer repository
+    tagline: Hosting and installing private Composer packages
 -->
 
-# Handling private packages with Satis or Toran Proxy
+# Handling private packages
 
-# Toran Proxy
+# Private Packagist
 
-[Toran Proxy] is a commercial alternative to Satis offering professional
-support as well as a web UI to manage everything and a better integration with
-Composer. It also provides proxying/mirroring for git repos and package zip
-files which makes installs faster and independent from third party systems.
+[Private Packagist](https://packagist.com) is a commercial package hosting product
+offering professional support and web based management of private and public packages,
+and granular access permissions. Private Packagist provides mirroring for packages' zip
+files which makes installs faster and independent from third party systems - e.g.
+you can deploy even if GitHub is down because your zip files are mirrored.
 
-Toran's revenue is also used to pay for Composer and Packagist development and
-hosting so using it is a good way to support open source financially. You can
-find more information about how to set it up and use it on the [Toran Proxy]
-website.
+Private Packagist is available as a hosted SaaS solution or as an on-premise self-hosted
+package, providing an easy interactive set up experience.
+
+Some of Private Packagist's revenue is used to pay for Composer and Packagist.org
+development and hosting so using it is a good way to support the maintenance of
+these open source projects financially. You can find more information about how to
+set up your own package archive on [Packagist.com](https://packagist.com).
 
 # Satis
 
@@ -158,7 +162,7 @@ Example using a custom repository using SSH (requires the SSH2 PECL extension):
 
 > **Tip:** See [ssh2 context options] for more information.
 
-Example using HTTP over SSL using a client certificate:
+Example using SSL/TLS (HTTPS) using a client certificate:
 
 ```json
 {
@@ -216,7 +220,7 @@ available globally you can use the `--global` (`-g`) flag.
 
 ### Downloads
 
-When GitHub or BitBucket repositories are mirrored on your local satis, the
+When GitHub, GitLab or BitBucket repositories are mirrored on your local satis, the
 build process will include the location of the downloads these platforms make
 available. This means that the repository and your setup depend on the
 availability of these services.
@@ -333,9 +337,8 @@ is set to true.
    user installs a package. See [notify-batch].
 
 
-[Toran Proxy]: https://toranproxy.com/
-[ssh2 context options]: https://www.php.net/manual/en/wrappers.ssh2.php#refsect1-wrappers.ssh2-options
-[ssl context options]: https://www.php.net/manual/en/context.ssl.php
+[ssh2 context options]: https://secure.php.net/manual/en/wrappers.ssh2.php#refsect1-wrappers.ssh2-options
+[ssl context options]: https://secure.php.net/manual/en/context.ssl.php
 [Twig]: http://twig.sensiolabs.org/
-[config schema]: http://getcomposer.org/doc/04-schema.md#config
+[config schema]: https://getcomposer.org/doc/04-schema.md#config
 [notify-batch]: https://getcomposer.org/doc/05-repositories.md#notify-batch

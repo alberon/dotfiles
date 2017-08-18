@@ -13,11 +13,9 @@
 namespace Composer\Repository\Vcs;
 
 use Composer\Config;
-use Composer\Json\JsonFile;
 use Composer\Util\ProcessExecutor;
 use Composer\Util\Filesystem;
 use Composer\IO\IOInterface;
-use Symfony\Component\Process\Process;
 
 /**
  * @author Per Bernhardt <plb@webfactory.de>
@@ -120,7 +118,7 @@ class HgDriver extends VcsDriver
     public function getFileContent($file, $identifier)
     {
         $resource = sprintf('hg cat -r %s %s', ProcessExecutor::escape($identifier), ProcessExecutor::escape($file));
-        $this->process->execute(sprintf('hg cat -r %s', $resource), $content, $this->repoDir);
+        $this->process->execute($resource, $content, $this->repoDir);
 
         if (!trim($content)) {
             return;
@@ -142,6 +140,7 @@ class HgDriver extends VcsDriver
             $output,
             $this->repoDir
         );
+
         return new \DateTime(trim($output), new \DateTimeZone('UTC'));
     }
 

@@ -179,7 +179,7 @@ class ConsoleIOTest extends TestCase
             ->with(
                 $this->isInstanceOf('Symfony\Component\Console\Input\InputInterface'),
                 $this->isInstanceOf('Symfony\Component\Console\Output\OutputInterface'),
-                $this->isInstanceOf('Symfony\Component\Console\Question\ConfirmationQuestion')
+                $this->isInstanceOf('Composer\Question\StrictConfirmationQuestion')
             )
         ;
 
@@ -218,8 +218,11 @@ class ConsoleIOTest extends TestCase
             ->will($this->returnValue($helperMock))
         ;
 
+        $validator = function ($value) {
+             return true;
+        };
         $consoleIO = new ConsoleIO($inputMock, $outputMock, $setMock);
-        $consoleIO->askAndValidate('Why?', 'validator', 10, 'default');
+        $consoleIO->askAndValidate('Why?', $validator, 10, 'default');
     }
 
     public function testSelect()

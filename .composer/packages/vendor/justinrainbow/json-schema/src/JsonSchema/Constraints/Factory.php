@@ -9,11 +9,14 @@
 
 namespace JsonSchema\Constraints;
 
+use JsonSchema\Constraints\Constraint;
 use JsonSchema\Exception\InvalidArgumentException;
+use JsonSchema\Exception\InvalidConfigException;
 use JsonSchema\SchemaStorage;
 use JsonSchema\SchemaStorageInterface;
 use JsonSchema\Uri\UriRetriever;
 use JsonSchema\UriRetrieverInterface;
+use JsonSchema\Validator;
 
 /**
  * Factory for centralize constraint initialization.
@@ -26,14 +29,14 @@ class Factory
     protected $schemaStorage;
 
     /**
-     * @var UriRetriever $uriRetriever
+     * @var UriRetriever
      */
     protected $uriRetriever;
 
     /**
      * @var int
      */
-    private $checkMode;
+    private $checkMode = Constraint::CHECK_MODE_NORMAL;
 
     /**
      * @var TypeCheck\TypeCheckInterface[]
@@ -41,7 +44,12 @@ class Factory
     private $typeCheck = array();
 
     /**
-     * @var array $constraintMap
+     * @var int Validation context
+     */
+    protected $errorContext = Validator::ERROR_DOCUMENT_VALIDATION;
+
+    /**
+     * @var array
      */
     protected $constraintMap = array(
         'array' => 'JsonSchema\Constraints\CollectionConstraint',
@@ -54,8 +62,7 @@ class Factory
         'enum' => 'JsonSchema\Constraints\EnumConstraint',
         'format' => 'JsonSchema\Constraints\FormatConstraint',
         'schema' => 'JsonSchema\Constraints\SchemaConstraint',
-        'validator' => 'JsonSchema\Validator',
-        'coercer' => 'JsonSchema\Coerce'
+        'validator' => 'JsonSchema\Validator'
     );
 
     /**
@@ -64,18 +71,66 @@ class Factory
     private $instanceCache = array();
 
     /**
-     * @param SchemaStorage $schemaStorage
+     * @param SchemaStorage         $schemaStorage
      * @param UriRetrieverInterface $uriRetriever
-     * @param int $checkMode
+     * @param int                   $checkMode
      */
     public function __construct(
         SchemaStorageInterface $schemaStorage = null,
         UriRetrieverInterface $uriRetriever = null,
         $checkMode = Constraint::CHECK_MODE_NORMAL
     ) {
-        $this->uriRetriever = $uriRetriever ?: new UriRetriever;
+        // set provided config options
+        $this->setConfig($checkMode);
+
+        $this->uriRetriever = $uriRetriever ?: new UriRetriever();
         $this->schemaStorage = $schemaStorage ?: new SchemaStorage($this->uriRetriever);
+    }
+
+    /**
+     * Set config values
+     *
+     * @param int $checkMode Set checkMode options - does not preserve existing flags
+     */
+    public function setConfig($checkMode = Constraint::CHECK_MODE_NORMAL)
+    {
         $this->checkMode = $checkMode;
+    }
+
+    /**
+     * Enable checkMode flags
+     *
+     * @param int $options
+     */
+    public function addConfig($options)
+    {
+        $this->checkMode |= $options;
+    }
+
+    /**
+     * Disable checkMode flags
+     *
+     * @param int $options
+     */
+    public function removeConfig($options)
+    {
+        $this->checkMode &= ~$options;
+    }
+
+    /**
+     * Get checkMode option
+     *
+     * @param int $options Options to get, if null then return entire bitmask
+     *
+     * @return int
+     */
+    public function getConfig($options = null)
+    {
+        if ($options === null) {
+            return $this->checkMode;
+        }
+
+        return $this->checkMode & $options;
     }
 
     /**
@@ -95,8 +150,8 @@ class Factory
     {
         if (!isset($this->typeCheck[$this->checkMode])) {
             $this->typeCheck[$this->checkMode] = ($this->checkMode & Constraint::CHECK_MODE_TYPE_CAST)
-                ? new TypeCheck\LooseTypeCheck
-                : new TypeCheck\StrictTypeCheck;
+                ? new TypeCheck\LooseTypeCheck()
+                : new TypeCheck\StrictTypeCheck();
         }
 
         return $this->typeCheck[$this->checkMode];
@@ -105,6 +160,7 @@ class Factory
     /**
      * @param string $name
      * @param string $class
+     *
      * @return Factory
      */
     public function setConstraintClass($name, $class)
@@ -118,6 +174,7 @@ class Factory
             throw new InvalidArgumentException('Invalid class ' . $name);
         }
         $this->constraintMap[$name] = $class;
+
         return $this;
     }
 
@@ -125,8 +182,10 @@ class Factory
      * Create a constraint instance for the given constraint name.
      *
      * @param string $constraintName
+     *
+     * @throws InvalidArgumentException if is not possible create the constraint instance
+     *
      * @return ConstraintInterface|ObjectConstraint
-     * @throws InvalidArgumentException if is not possible create the constraint instance.
      */
     public function createInstanceFor($constraintName)
     {
@@ -142,10 +201,22 @@ class Factory
     }
 
     /**
-     * @return int
+     * Get the error context
+     *
+     * @return string
      */
-    public function getCheckMode()
+    public function getErrorContext()
     {
-        return $this->checkMode;
+        return $this->errorContext;
+    }
+
+    /**
+     * Set the error context
+     *
+     * @param string $validationContext
+     */
+    public function setErrorContext($errorContext)
+    {
+        $this->errorContext = $errorContext;
     }
 }
