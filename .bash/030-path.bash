@@ -32,11 +32,11 @@ PATH="$HOME/local/bin:$PATH"
 export PATH
 
 # Add extra man pages
-if which manpath >/dev/null 2>&1; then
-    MANPATH="$(manpath 2>/dev/null)"
-    MANPATH="$HOME/opt/git-extras-man:$MANPATH"
-    export MANPATH
-fi
+#if which manpath >/dev/null 2>&1; then
+#    MANPATH="$(manpath 2>/dev/null)"
+#    MANPATH="$HOME/opt/git-extras-man:$MANPATH"
+#    export MANPATH
+#fi
 
 # Tool to debug the path
 dump_path()
