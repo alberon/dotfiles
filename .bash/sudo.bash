@@ -33,6 +33,7 @@ if $HAS_TERMINAL && ! $WINDOWS; then
     alias agr='maybe_sudo apt-get remove'
     alias agar='maybe_sudo apt-get autoremove'
     alias agu='maybe_sudo apt-get update && maybe_sudo apt-get upgrade'
+    alias agdu='maybe_sudo apt-get dist-upgrade'
     alias agupdate='maybe_sudo apt-get update'
     alias agupgrade='maybe_sudo apt-get upgrade'
     alias acs='apt-cache search'
