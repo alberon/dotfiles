@@ -21,48 +21,60 @@ if $HAS_TERMINAL && ! $WINDOWS; then
     alias slla='sudo lla'
 
     # apt-get
-    maybe_sudo() {
-        if [ $UID -eq 0 ]; then
-            command "$@"
-        else
-            sudo "$@"
-        fi
-    }
+    if [ $UID -eq 0 ]; then
+        alias agi='apt-get install'
+        alias agr='apt-get remove'
+        alias agar='apt-get autoremove'
+        alias agu='apt-get update && apt-get upgrade'
+        alias agdu='apt-get dist-upgrade'
+        alias agupdate='apt-get update'
+        alias agupgrade='apt-get upgrade'
+    else
+        alias agi='sudo apt-get install'
+        alias agr='sudo apt-get remove'
+        alias agar='sudo apt-get autoremove'
+        alias agu='sudo apt-get update && sudo apt-get upgrade'
+        alias agdu='sudo apt-get dist-upgrade'
+        alias agupdate='sudo apt-get update'
+        alias agupgrade='sudo apt-get upgrade'
+    fi
 
-    alias agi='maybe_sudo apt-get install'
-    alias agr='maybe_sudo apt-get remove'
-    alias agar='maybe_sudo apt-get autoremove'
-    alias agu='maybe_sudo apt-get update && maybe_sudo apt-get upgrade'
-    alias agdu='maybe_sudo apt-get dist-upgrade'
-    alias agupdate='maybe_sudo apt-get update'
-    alias agupgrade='maybe_sudo apt-get upgrade'
     alias acs='apt-cache search'
     alias acsh='apt-cache show'
 
+    # Power aliases
+    if [ $UID -eq 0 ]; then
+        alias pow='poweroff'
+        alias shutdown='poweroff'
+    else
+        alias pow='sudo poweroff'
+        alias shutdown='sudo poweroff'
+    fi
+
     # These commands require sudo
-    alias a2dismod='maybe_sudo a2dismod'
-    alias a2dissite='maybe_sudo a2dissite'
-    alias a2enmod='maybe_sudo a2enmod'
-    alias a2ensite='maybe_sudo a2ensite'
-    alias addgroup='maybe_sudo addgroup'
-    alias adduser='maybe_sudo adduser'
-    alias dpkg-reconfigure='maybe_sudo dpkg-reconfigure'
-    alias groupadd='maybe_sudo groupadd'
-    alias groupdel='maybe_sudo groupdel'
-    alias groupmod='maybe_sudo groupmod'
-    alias php5dismod='maybe_sudo php5dismod'
-    alias php5enmod='maybe_sudo php5enmod'
-    alias phpdismod='maybe_sudo phpdismod'
-    alias phpenmod='maybe_sudo phpenmod'
-    alias pow='maybe_sudo poweroff'
-    alias poweroff='maybe_sudo poweroff'
-    alias reboot='maybe_sudo reboot'
-    alias service='maybe_sudo service'
-    alias shutdown='maybe_sudo poweroff'
-    alias useradd='maybe_sudo useradd'
-    alias userdel='maybe_sudo userdel'
-    alias usermod='maybe_sudo usermod'
-    alias yum='maybe_sudo yum'
+    if [ $UID -ne 0 ]; then
+        alias a2dismod='sudo a2dismod'
+        alias a2dissite='sudo a2dissite'
+        alias a2enmod='sudo a2enmod'
+        alias a2ensite='sudo a2ensite'
+        alias addgroup='sudo addgroup'
+        alias adduser='sudo adduser'
+        alias dpkg-reconfigure='sudo dpkg-reconfigure'
+        alias groupadd='sudo groupadd'
+        alias groupdel='sudo groupdel'
+        alias groupmod='sudo groupmod'
+        alias php5dismod='sudo php5dismod'
+        alias php5enmod='sudo php5enmod'
+        alias phpdismod='sudo phpdismod'
+        alias phpenmod='sudo phpenmod'
+        alias poweroff='sudo poweroff'
+        alias reboot='sudo reboot'
+        alias service='sudo service'
+        alias useradd='sudo useradd'
+        alias userdel='sudo userdel'
+        alias usermod='sudo usermod'
+        alias yum='sudo yum'
+    fi
 
     systemctl() {
         if [ "$1" = "list-units" ]; then
