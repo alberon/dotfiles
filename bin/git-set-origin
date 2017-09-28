@@ -6,4 +6,4 @@ if [ $# -ge 1 ]; then
 fi
 
 git fetch origin
-git branch --set-upstream master origin/master
+git branch --set-upstream-to origin/master master

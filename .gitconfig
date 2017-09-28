@@ -92,6 +92,7 @@
     recent       = for-each-ref --count=10 --sort=-committerdate refs/heads/ --format="%(refname:short)"
     remotes      = remote -v
     rl           = reflog
+    rmc          = rm --cached -r
     root         = rev-parse --show-toplevel
     rv           = revert
     s            = status
