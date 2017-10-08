@@ -8,7 +8,11 @@
 
 # Use this separator to make it more noticable in the output on the remote site
 # It is 72 chars wide because the prefix "remote: " is 8 chars wide
-echo "========================================================================"
+draw_line() {
+    echo "========================================================================"
+}
+
+draw_line
 
 # If the script has been called as a hook, chdir to the working copy
 if [ "$GIT_DIR" = "." ]; then
@@ -25,7 +29,11 @@ fi
 head="$(git symbolic-ref HEAD)"
 
 # Abort if we're on a detached head
-[ "$?" != "0" ] && exit 1
+if [ "$?" != "0" ]; then
+    echo "Remote is in 'detached HEAD' state, skipping push hook."
+    draw_line
+    exit
+fi
 
 # Read the STDIN to detect if this push changed the current branch
 while read oldrev newrev refname; do
@@ -33,7 +41,11 @@ while read oldrev newrev refname; do
 done
 
 # Abort if there's no update, or in case the branch is deleted
-[ -z "${newrev//0}" ] && exit
+if [ -z "${newrev//0}" ]; then
+    echo "No updates to checked out '$(git symbolic-ref --short HEAD)' branch, skipping push hook."
+    draw_line
+    exit
+fi
 
 # Check out the latest code into the working copy
 echo "Updating working copy..."
@@ -79,4 +91,4 @@ if [ -f artisan ]; then
     run_php artisan migrate --force
 fi
 
-echo "========================================================================"
+draw_line
