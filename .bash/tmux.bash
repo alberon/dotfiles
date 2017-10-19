@@ -36,7 +36,7 @@ if ! $MAC; then
         elif [ $# -eq 2 -a "$name" = "^" ]; then
             # For 'h user@host ^' upload SSH public key - easier than retyping it
             ssh-copy-id "$host"
-        elif [ -z "$TMUX" ]; then
+        elif [ -z "$TMUX" ] && [[ "$TERM" != screen* ]]; then
             # Run tmux over ssh
             ssh -o ForwardAgent=yes -t "$host" "cd '$path'; which tmux >/dev/null 2>&1 && { tmux -2 attach -t '$name' || { sleep 0.001; tmux -2 new -s '$name'; }; } || bash -l"
         elif [ $# -ge 2 ]; then
@@ -45,9 +45,9 @@ if ! $MAC; then
             return 1
         else
             # Already running tmux so connect without it
-            tmux rename-window -t $TMUX_PANE "$host"
+            tmux rename-window -t $TMUX_PANE "$host" 2>/dev/null
             ssh -o ForwardAgent=yes "$host"
-            tmux setw -t $TMUX_PANE automatic-rename
+            tmux setw -t $TMUX_PANE automatic-rename 2>/dev/null
             sleep 0.3 # Need a short delay else the window is named 'tmux' not 'bash'
         fi
     }
