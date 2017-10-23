@@ -94,14 +94,14 @@ vagrant() {
         # So bypass Vagrant and use the Cygwin ssh instead, always
         (umask 077 && command vagrant ssh-config > /tmp/vagrant-ssh-config)
 
-        if [ -z "$TMUX" ]; then
+        if [ -z "$TMUX" ] && [[ "$TERM" != screen* ]]; then
             # Not running tmux - Run tmux inside Vagrant (if available)
             ssh -F /tmp/vagrant-ssh-config default -t 'which tmux >/dev/null 2>&1 && { tmux attach || tmux new -s default; } || bash -l'
         else
             # We're running tmux already
-            tmux rename-window -t $TMUX_PANE vagrant
+            tmux rename-window -t $TMUX_PANE vagrant 2>/dev/null
             ssh -F /tmp/vagrant-ssh-config default
-            tmux setw -t $TMUX_PANE automatic-rename
+            tmux setw -t $TMUX_PANE automatic-rename 2>/dev/null
             sleep 0.3 # Need a short delay else the window is named 'tmux' not 'bash'
         fi
 
