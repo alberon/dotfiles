@@ -1,0 +1,5 @@
+if which _aws_completer >/dev/null 2>&1; then
+    # https://github.com/aws/aws-cli/issues/2947
+    #complete -C aws_completer aws
+    complete -C _aws_completer aws
+fi
