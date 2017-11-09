@@ -76,7 +76,7 @@ vagrant() {
     if [ "$cmd" = "tmux" ]; then
         # if [ -z "$TMUX" ]; then
         #     # Not running tmux - Run tmux inside Vagrant (if available)
-        #     command vagrant ssh -- -t 'which tmux >/dev/null 2>&1 && { tmux attach || tmux new -s default; } || bash -l'
+        #     command vagrant ssh -- -t 'command -v tmux &>/dev/null && { tmux attach || tmux new -s default; } || bash -l'
         # elif $CYGWIN; then
         #     # We're running tmux already - on Cygwin
         #     # For some reason Cygwin -> tmux -> vagrant (ruby) -> ssh is *really* slow
@@ -96,7 +96,7 @@ vagrant() {
 
         if [ -z "$TMUX" ] && [[ "$TERM" != screen* ]]; then
             # Not running tmux - Run tmux inside Vagrant (if available)
-            ssh -F /tmp/vagrant-ssh-config default -t 'which tmux >/dev/null 2>&1 && { tmux attach || tmux new -s default; } || bash -l'
+            ssh -F /tmp/vagrant-ssh-config default -t 'command -v tmux &>/dev/null && { tmux attach || tmux new -s default; } || bash -l'
         else
             # We're running tmux already
             tmux rename-window -t $TMUX_PANE vagrant 2>/dev/null

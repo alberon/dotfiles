@@ -38,7 +38,7 @@ if ! $MAC; then
             ssh-copy-id "$host"
         elif [ -z "$TMUX" ] && [[ "$TERM" != screen* ]]; then
             # Run tmux over ssh
-            ssh -o ForwardAgent=yes -t "$host" "cd '$path'; which tmux >/dev/null 2>&1 && { tmux -2 attach -t '$name' || { sleep 0.001; tmux -2 new -s '$name'; }; } || bash -l"
+            ssh -o ForwardAgent=yes -t "$host" "cd '$path'; command -v tmux &>/dev/null && { tmux -2 attach -t '$name' || { sleep 0.001; tmux -2 new -s '$name'; }; } || bash -l"
         elif [ $# -ge 2 ]; then
             # Already running tmux *and* the user tried to specify a session name
             echo 'sessions should be nested with care, unset $TMUX to force' >&2
@@ -62,7 +62,7 @@ if ! $MAC; then
 
         if [ -z "$TMUX" ]; then
             # Run tmux over mosh (https://mosh.org/)
-            mosh --ssh="ssh -o ForwardAgent=yes -tt" "$host" -- sh -c "cd '$path'; which tmux >/dev/null 2>&1 && { tmux -2 attach -t '$name' || { sleep 0.001; tmux -2 new -s '$name'; }; } || bash -l"
+            mosh --ssh="ssh -o ForwardAgent=yes -tt" "$host" -- sh -c "cd '$path'; command -v tmux &>/dev/null && { tmux -2 attach -t '$name' || { sleep 0.001; tmux -2 new -s '$name'; }; } || bash -l"
         elif [ $# -ge 2 ]; then
             # Already running tmux *and* the user tried to specify a session name
             echo 'sessions should be nested with care, unset $TMUX to force' >&2

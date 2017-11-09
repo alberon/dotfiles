@@ -7,11 +7,11 @@ source_dir="${1%/}"
 source_name="`basename "$source_dir"`"
 
 # Compress if possible
-if which bzip2 >/dev/null
+if command -v bzip2 &>/dev/null
 then
     flags=jcf
     ext=.bz2
-elif which gzip >/dev/null
+elif command -v gzip &>/dev/null
 then
     flags=zcf
     ext=.gz

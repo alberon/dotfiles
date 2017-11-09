@@ -14,7 +14,7 @@ public_key=~/.ssh/davejamesmiller.pub
 
 is_installed()
 {
-    which "$1" &>/dev/null
+    command -v "$1" &>/dev/null
 }
 
 install()

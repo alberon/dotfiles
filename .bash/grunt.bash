@@ -1,3 +1,3 @@
-if which grunt >/dev/null 2>&1; then
+if command -v grunt &>/dev/null; then
     eval "$(grunt --completion=bash)"
 fi

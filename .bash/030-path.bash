@@ -32,7 +32,7 @@ PATH="$HOME/local/bin:$PATH"
 export PATH
 
 # Add extra man pages
-#if which manpath >/dev/null 2>&1; then
+#if command -v manpath &>/dev/null; then
 #    MANPATH="$(manpath 2>/dev/null)"
 #    MANPATH="$HOME/opt/git-extras-man:$MANPATH"
 #    export MANPATH
