@@ -50,7 +50,7 @@ Close and re-open Cygwin Terminal to reload the configuration. (**Note:** When t
 Then run this to install some additional useful packages:
 
 ```bash
-apt-cyg install bash-completion bind-utils curl dos2unix git-completion less links ncurses tmux tree whois
+apt-cyg install bash-completion bind-utils curl dos2unix git-completion inetutils less links ncurses tmux tree whois
 ```
 
 ### Installing on Git for Windows (formerly mSysGit):
