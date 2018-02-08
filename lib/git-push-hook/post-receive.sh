@@ -80,7 +80,7 @@ if [ -f composer.json ]; then
     if [ -n "$composer" ]; then
         echo
         echo "Installing Composer packages..."
-        run_php $composer install
+        run_php $composer install --no-dev
     fi
 fi
 
