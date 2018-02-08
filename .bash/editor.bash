@@ -11,10 +11,10 @@ if $MAC; then
             export EDITOR='subl -w'
             export GEDITOR=subl
 
-        elif mvim --version >/dev/null 2>&1; then
+        elif mvim --version &>/dev/null; then
 
             # MacVim
-            # Note: Can't use `which mvim` above because the mvim script exists
+            # Note: Can't use `command -v mvim` above because the mvim script exists
             # whether or not the actual MacVim.app exists - so we have to run
             # the script to determine whether it returns an error or not
             alias gvim=mvim

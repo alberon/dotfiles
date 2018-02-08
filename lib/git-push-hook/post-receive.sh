@@ -55,7 +55,7 @@ git reset --hard
 # Helper method
 run_php()
 {
-    phpcli=$(which php-cli 2>/dev/null)
+    phpcli=$(command -v php-cli 2>/dev/null)
 
     if [ -n "$phpcli" ]; then
         # On CentOS 5 the CGI version is the default not CLI
@@ -76,11 +76,11 @@ fi
 
 # Update Composer packages
 if [ -f composer.json ]; then
-    composer=$(which composer 2>/dev/null)
+    composer=$(command -v composer 2>/dev/null)
     if [ -n "$composer" ]; then
         echo
         echo "Installing Composer packages..."
-        run_php $composer install
+        run_php $composer install --no-dev
     fi
 fi
 
