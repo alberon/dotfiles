@@ -1,3 +1,0 @@
- * proper escaping of the commit message
- * Allow the filename and number of items to be configured via
-   branch.conf/branches.conf etc.
