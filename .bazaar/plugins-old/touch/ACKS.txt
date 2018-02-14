@@ -1,5 +1,0 @@
-Barry Warsaw wrote the original version.
-
-Other contributors:
-
-* Parth Malwankar
