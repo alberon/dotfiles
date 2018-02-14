@@ -5,7 +5,7 @@
 ## How to fork it
 
 - Fork the repo on GitHub
-- Ask Dave to add you to the [`djm.me/cfg`](https://djm.me/cfg) script
+- Add yourself to the setup script - [`alberon.uk/cfg`](https://alberon.uk/cfg) (edit it directly on the web server)
 - Install as normal
 - Put your public key in `~/.ssh/<name>.pub` (e.g. `~/.ssh/dave.pub`)
 - Uncomment `IdentityFile` and `IdentitiesOnly` in `~/.ssh/config`
