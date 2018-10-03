@@ -1,9 +1,6 @@
 #!/bin/bash
 
-# If this is run manually, not as a Git hook, we may be in the wrong directory
-if [ -z "$GIT_DIR" ]; then
-    cd $(dirname "$0")/..
-fi
+cd $HOME
 
 # Delete old .hg directory if necessary
 # Note: This is because Mercurial writes to the .hg/dirstate after it is
