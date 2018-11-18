@@ -1,6 +1,6 @@
 # Dotfiles
 
-[These dotfiles](https://github.com/alberon/dotfiles) are a fork of [Dave's](https://github.com/davejamesmiller/dotfiles), suitable for use on shared accounts.
+[These dotfiles](https://github.com/alberon/dotfiles) are for use on shared Alberon accounts. You can also fork them to make your own copy.
 
 ## How to fork it
 
