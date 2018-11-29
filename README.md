@@ -29,7 +29,7 @@ To update your fork with the latest changes:
 git pull alberon master
 ```
 
-If there are any conficts, fix them any conflicts, add the files (`g a <filename>`) and commit (`g ci`).
+If there are any conficts, fix them conflicts, add the files (`g a <filename>`) and commit (`g ci`), then push (`g p`).
 
 ## Installing
 
