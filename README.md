@@ -5,8 +5,7 @@
 ## How to fork it
 
 - Fork the repo on GitHub
-- Add yourself to the setup script - [`alberon.uk/cfg`](https://alberon.uk/cfg) (edit it directly on the web server)
-- Install as normal
+- Install as normal (see below)
 - Put your public key in `~/.ssh/<name>.pub` (e.g. `~/.ssh/dave.pub`)
 - Uncomment `IdentityFile` and `IdentitiesOnly` in `~/.ssh/config`
 - Use `g gi alberon` (i.e. `git grep -i alberon`) to find all the places to replace with your own name / email address - currently this includes:
