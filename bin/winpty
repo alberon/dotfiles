@@ -4,8 +4,8 @@ set -o nounset -o pipefail -o errexit
 WINDOWS=false
 
 case "$(uname)" in
-    CYGWIN*)  WINDOWS=true ;;
-    MINGW32*) WINDOWS=true ;;
+    CYGWIN*) WINDOWS=true ;;
+    MINGW*)  WINDOWS=true ;;
 esac
 
 # -t 1 check prevents 'stdout is not a tty' error

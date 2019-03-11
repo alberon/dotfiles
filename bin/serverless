@@ -1,0 +1,10 @@
+#!/bin/bash
+
+exe=node_modules/serverless/bin/serverless
+
+if ! dir="$(findup -f $exe)"; then
+    echo "You do not appear to be within a project with Serverless Framework installed ($exe)" >&2
+    exit 1
+fi
+
+exec $dir/$exe "$@"

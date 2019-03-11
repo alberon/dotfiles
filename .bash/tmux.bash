@@ -2,23 +2,6 @@
 # But not using tmux on Mac anyway so it'll do for now!
 if ! $MAC; then
 
-    # Workaround for losing SSH agent connection when reconnecting tmux: update a
-    # symlink to the socket each time we reconnect and use that as the socket in
-    # every session. First we make sure there's a valid socket connecting us to the
-    # agent and it's not already pointing to the symlink, and there's no existing
-    # working symlink:
-    link="$HOME/.ssh/ssh_auth_sock"
-    if [ "$SSH_AUTH_SOCK" != "$link" -a -S "$SSH_AUTH_SOCK" -a ! -S "$link" ]; then
-        # We also check if the agent has any keys loaded - PuTTY will still open an
-        # agent connection even if we used password authentication
-        if ssh-add -l >/dev/null 2>&1; then
-            ln -nsf "$SSH_AUTH_SOCK" "$HOME/.ssh/ssh_auth_sock"
-        fi
-    fi
-
-    # Now that's done we can use the symlink for every session
-    export SSH_AUTH_SOCK="$HOME/.ssh/ssh_auth_sock"
-
     # tmux attach (local)
     # The 'sleep' seems to be necessary in tmux 2.0 on Ubuntu - otherwise the
     # second command fails... I have no idea why!
@@ -30,8 +13,8 @@ if ! $MAC; then
         local name="${2:-default}"
         local path="${3:-.}"
 
-        if [ "$host" = "v" -a $# -eq 1 ]; then
-            # Special case for 'h v' => 'v h' => 'vagrant tmux' (see vagrant.bash)
+        if [ "$host" = "v" -o "$host" = "vagrant" ] && [ $# -eq 1 ]; then
+            # Special case for 'h vagrant' / 'h v' => 'v h' => 'vagrant tmux' (see vagrant.bash)
             vagrant tmux
         elif [ $# -eq 2 -a "$name" = "^" ]; then
             # For 'h user@host ^' upload SSH public key - easier than retyping it
@@ -45,10 +28,18 @@ if ! $MAC; then
             return 1
         else
             # Already running tmux so connect without it
-            tmux rename-window -t $TMUX_PANE "$host" 2>/dev/null
+            autoname="$(tmux display-message -pt $TMUX_PANE '#{automatic-rename}')"
+
+            if [ "$autoname" = 1 ]; then
+                tmux rename-window -t $TMUX_PANE "$host" 2>/dev/null
+            fi
+
             ssh -o ForwardAgent=yes "$host"
-            tmux setw -t $TMUX_PANE automatic-rename 2>/dev/null
-            sleep 0.3 # Need a short delay else the window is named 'tmux' not 'bash'
+
+            if [ "$autoname" = 1 ]; then
+                tmux setw -t $TMUX_PANE automatic-rename 2>/dev/null
+                sleep 0.3 # Need a short delay else the window is named 'tmux' not 'bash'
+            fi
         fi
     }
 

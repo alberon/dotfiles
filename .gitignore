@@ -4,8 +4,7 @@
 !/.bash_completion
 !/.bash_completion.d
 !/.bazaar
-!/.composer
-!/.dotfiles-docker
+!/.dotfiles
 !/.drush
 !/.elinks
 !/.gitattributes-global
@@ -30,12 +29,6 @@
 !/lib
 !/opt
 
-# Composer - config only, not cache files
-/.composer/*
-!/.composer/composer.json
-!/.composer/composer.lock
-!/.composer/packages
-
 # Drush - config, not cache
 /.drush/cache
 
@@ -55,10 +48,11 @@
 /.rvm/hooks/*
 !/.rvm/hooks/after_cd_record_bash_lastdirectory
 
-# SSH - config & public key only, but ignore id_rsa.pub as it's only used for per-account keys
+# SSH - config & public keys only, but ignore per-account public keys
 /.ssh/*
 !/.ssh/config
 !/.ssh/*.pub
+/.ssh/google_compute_engine.pub
 /.ssh/id_rsa.pub
 
 # Vagrant

@@ -99,10 +99,18 @@ vagrant() {
             ssh -F /tmp/vagrant-ssh-config default -t 'command -v tmux &>/dev/null && { tmux attach || tmux new -s default; } || bash -l'
         else
             # We're running tmux already
-            tmux rename-window -t $TMUX_PANE vagrant 2>/dev/null
+            autoname="$(tmux display-message -pt $TMUX_PANE '#{automatic-rename}')"
+
+            if [ "$autoname" = 1 ]; then
+                tmux rename-window -t $TMUX_PANE vagrant 2>/dev/null
+            fi
+
             ssh -F /tmp/vagrant-ssh-config default
-            tmux setw -t $TMUX_PANE automatic-rename 2>/dev/null
-            sleep 0.3 # Need a short delay else the window is named 'tmux' not 'bash'
+
+            if [ "$autoname" = 1 ]; then
+                tmux setw -t $TMUX_PANE automatic-rename 2>/dev/null
+                sleep 0.3 # Need a short delay else the window is named 'tmux' not 'bash'
+            fi
         fi
 
         return

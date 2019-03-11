@@ -1,0 +1,175 @@
+#!/bin/bash
+
+#================================================================================
+# USAGE:
+# wget alberon.uk/cfg
+# . cfg
+#================================================================================
+
+# Run this in a sub-process, so there's no variables left over at the end
+(
+
+    # Should be in home directory anyway, but just in case...
+    cd
+
+    # Make sure this file is in the home directory
+    if [ ! -f cfg ]; then
+        echo 'Script must be named ~/cfg' >&2
+        exit 1
+    fi
+
+    # Check git is available
+    if ! command -v git >/dev/null; then
+        echo 'Git is not installed' >&2
+        exit 2
+    fi
+
+    # Delete the remains of the old repository, which should have been deleted by the old
+    # cfg-update script, except the one file that hg creates after it runs
+    if [ -d .hg ]; then
+        if [ "$(ls -1A .hg | wc -l)" = 1 ] && [ -f .hg/dirstate ]; then
+            rm -rf .hg
+        else
+            echo '~/.hg exists' >&2
+            exit 3
+        fi
+    fi
+
+    # Check .git doesn't exist
+    if [ -d .git ]; then
+        echo '~/.git exists' >&2
+        exit 4
+    fi
+
+    # Ask which repository to use
+    echo
+    echo 'Please enter the GitHub username to use.'
+    echo 'For a shared account please accept the default (alberon).'
+    echo 'To set up your own Dotfiles see https://github.com/alberon/dotfiles.'
+    echo
+    user=
+    while [ -z "$user" ]; do
+        read -p '> [alberon] ' answer || exit 5
+
+        # Default
+        if [ -z "$answer" ]; then
+            answer="alberon"
+        fi
+
+        # Make sure it exists
+        if git ls-remote "git://github.com/$answer/dotfiles.git" >/dev/null; then
+            user="$answer"
+        else
+            echo
+            echo "Cannot find repo at https://github.com/$answer/dotfiles"
+            echo "Please check and try again"
+            echo
+        fi
+    done
+    echo
+
+    # Download the repository
+    echo 'Initialising Git repository...'
+    echo
+    git init || exit 6
+    git remote add origin "https://github.com/$user/dotfiles.git" || exit 7
+    git remote set-url --push origin "git@github.com:$user/dotfiles.git" || exit 8
+
+    if [ "$user" != "alberon" ]; then
+        git remote add alberon https://github.com/alberon/dotfiles.git
+    fi
+
+    echo
+    echo 'Fetching Git repository...'
+    echo
+    git fetch origin || exit 9
+
+    # Update the working directory
+    # Delete or move any conflicting files (usually .bashrc and .bash_logout)
+    echo
+    echo 'Updating working directory...'
+    echo
+    i=0
+    while true; do
+
+        # Try to update
+        result="$(git checkout origin/master -b master 2>&1)"
+
+        # If it succeeds, we're done
+        if [ $? -eq 0 ]; then
+            if [ $i -gt 0 ]; then
+                echo
+            fi
+            echo "$result"
+            break
+        fi
+
+        # If it fails, move or delete the conflicting file
+        # Old versions of git have this message:
+        file="$(echo "$result" | sed -n "/error: Untracked working tree file/ { s/error: Untracked working tree file '\\(.*\\)' would be overwritten by merge./\\1/; p; q }")"
+        if [ -z "$file" ]; then
+            # Newer versions of git have a different message, split across two lines:
+            file="$(echo "$result" | sed -n "/error: The following untracked working tree files would be overwritten by checkout:/ { n; s/\\s\\+\\(.*\\)/\\1/; p; q }")"
+        fi
+        if [ -n "$file" ] && [ "$file" != "$result" ]; then
+
+            read -p "Backup $file? [y/N] " answer
+            case $answer in
+                y*|Y*)
+                    dest="$file.orig"
+                    rm -f "$dest"
+                    mv "$file" "$dest"
+                    echo "  Moved to $dest"
+                    ;;
+                *)
+                    rm -f "$file"
+                    ;;
+            esac
+
+        else
+
+            # Unknown error
+            echo "Unknown error in 'git checkout':" >&2
+            echo "$result" >&2
+            exit 10
+
+        fi
+
+        # Prevent infinite loop - just in case
+        ((i++))
+        if [ $i -ge 100 ]; then
+            echo
+            echo 'Detected possible infinite loop - giving up' >&2
+            exit 11
+        fi
+
+    done
+
+    echo
+
+    # Remove this script
+    # (Note: $0 is not set because we 'source' this file)
+    if [ -f cfg ]; then
+        rm -f cfg
+    fi
+
+)
+
+ret=$?
+if [ $ret == 0 ]; then
+
+    # Run any post-install commands, e.g. prepare config file
+    [ -x ~/bin/cfg-install ] && ~/bin/cfg-install
+
+    # Run post-update script
+    [ -x ~/bin/cfg-update ] && ~/bin/cfg-update
+
+    # Load the new bash config
+    exec bash -l
+
+else
+
+    echo
+    echo "SETUP FAILED with error code $ret" >&2
+
+fi

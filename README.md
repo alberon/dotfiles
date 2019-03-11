@@ -50,11 +50,11 @@ Install the [Fixedsys Excelsior Mono](http://askubuntu.com/a/725445) font (which
 
 [Install Cygwin](https://cygwin.com/install.html) - select [any local mirror](https://cygwin.com/mirrors.html) (e.g. `mirrorservice.org` for UK), and when prompted add these packages:
 
-- git
-- vim
-- wget
+- `git`
+- `vim`
+- `wget`
 
-**Tip:** Click the "View" button in the top-right corner to select "Full" mode, then use the search box.
+**Tip:** Select View > Full mode, then use the search box to find them.
 
 Once it's installed, run Cygwin Terminal and run this to set the same home directory in Cygwin and Windows:
 
@@ -76,7 +76,15 @@ Close and re-open Cygwin Terminal to reload the configuration. (**Note:** When t
 Then run this to install some additional useful packages:
 
 ```bash
-apt-cyg install bash-completion bind-utils curl dos2unix git-completion inetutils less links ncurses tmux tree whois
+apt-cyg install bash-completion bind-utils chere curl dos2unix git-completion inetutils less links make ncurses procps-ng tmux tree unzip whois xinit
+```
+
+(They can also be installed from the GUI - but it's much more tedious to find them all!)
+
+And run this to add Cygwin to Explorer's right-click menu:
+
+```bash
+chere -icmf -t mintty -s bash -e 'Open with Cygwin'
 ```
 
 ### Installing on Git for Windows (formerly mSysGit):
@@ -137,52 +145,64 @@ I'm lazy so I have a lot of Bash aliases and short commands - here are the most 
 | `dus`      | `du -sh`                                      | Also sorts files/directories by size                     |
 | `pow`      | `sudo poweroff`                               |                                                          |
 | `reload`   | `exec bash -l`                                | Run this after modifying any Bash config file            |
+| `d`        | `docker`                                      |                                                          |
+| `dc`       | `docker-compose`                              |                                                          |
+| `db`       | `docker build`                                |                                                          |
+| `dr`       | `docker run`                                  |                                                          |
+| `dri`      | `docker run -it`                              | Run interactively, e.g. `dri ubuntu`                     |
+| `dsh`      | `docker run ... /bin/bash`                    | Run /bun/bash in the container (with agent forwarding)   |
+| `dresume`  | `docker start -ai "$(docker ps ...)"`         | Resume most recently stopped container                   |
+| `dstop`    | `docker stop $(docker ps -ql)`                | Stop most recent container                               |
+| `dstopall` | `docker stop $(docker ps -q)`                 | Stop all running containers                              |
+| `dkill`    | `docker kill $(docker ps -ql)`                | Kill most recent container                               |
+| `dkillall` | `docker kill $(docker ps -q)`                 | Kill all running containers                              |
+| `dclean`   | `docker container prune; docker image prune`  | Clean up stopped containers and untagged images          |
 
-**Note:** Expansions are simplified in the list above - e.g. `l` is actually aliased to `ls -hFl --color=always --hide=*.pyc --hide=*.sublime-workspace` on Linux or `LSCOLORS=ExGxFxDaCaDaDahbaDacec ls -hFlG` on Mac.
+**Note:** Some expansions are simplified in the list above - e.g. `l` is actually aliased to `ls -hFl --color=always --hide=*.pyc --hide=*.sublime-workspace` on Linux or `LSCOLORS=ExGxFxDaCaDaDahbaDacec ls -hFlG` on Mac.
 
 ## Git aliases
 
 Combined with the `g` alias above, these make easy to type Git commands, e.g. `g s` instead of `git status`:
 
-| Alias      | Expansion                                     | Comments                                                 |
-|------------|-----------------------------------------------|----------------------------------------------------------|
-| `s`        | `status`                                      |                                                          |
-| `a`        | `add -A`                                      | Adds *and* removes files                                 |
-| `d`        | `diff`                                        |                                                          |
-| `dc`       | `diff --cached`                               | Shows diff for staged files                              |
-| `c`        | `commit -m`                                   | e.g. `g c "Commit message"`                              |
-| `amend`    | `commit --amend --no-edit`                    | Modify the previous commit, keep the same message        |
-| `edit`     | `commit --amend`                              | Modify the previous commit, edit the message             |
-| `l`        | `log --name-status`                           | Includes list of modified files                          |
-| `l1`       | `log --name-status --pretty=...`              | Single-line format                                       |
-| `lg`       | `log --graph`                                 |                                                          |
-| `lg1`      | `log --graph --pretty=...`                    | Single-line format                                       |
-| `ll`       | `log`                                         | Without list of modified files                           |
-| `lp`       | `log --patch`                                 | Displays diff with each log entry                        |
-| `lpw`      | `log --patch --ignore-all-space`              | Displays diff excluding whitespace changes               |
-| `in`       | `log origin/master..`                         | Lists commits incoming from the default remote           |
-| `io`       | `log --left-right origin/master..HEAD`        | Lists commits incoming & outgoing to the default remote  |
-| `out`      | `log ..origin/master`                         | Lists commits outgoing to the default remote             |
-| `f`        | `fetch`                                       |                                                          |
-| `p`        | `push`                                        |                                                          |
-| `pt`       | `push --tags`                                 |                                                          |
-| `pu`       | `push -u origin HEAD`                         | Push and set upstream                                    |
-| `b`        | `branch`                                      |                                                          |
-| `ba`       | `branch -a`                                   |                                                          |
-| `co`       | `checkout`                                    |                                                          |
-| `g`        | `grep`                                        |                                                          |
-| `g3`       | `grep --context=3`                            | Also `g6` and `g9`                                       |
-| `gi`       | `grep --ignore-case`                          |                                                          |
-| `gi3`      | `grep --ignore-case --context=3`              | Also `gi6` and `gi9`                                     |
-| `todo`     | `grep 'TODO\|XXX\|FIXME'`                     |                                                          |
-| `cls`      | `grep -i "class\s\+$1\b"`                     | Search for class definition                              |
-| `fun`      | `grep -i "function\s\+$1\b"`                  | Search for function definition                           |
-| `cp`       | `cherry-pick`                                 |                                                          |
-| `m`        | `merge`                                       |                                                          |
-| `mt`       | `mergetool`                                   |                                                          |
-| `sub`      | `submodule`                                   |                                                          |
-| `sync`     | `submodule sync; submodule update --init`     |                                                          |
-| `files`    | `ls-files \| grep`                            | Find file by name                                        |
+| Alias        | Expansion                                         | Comments                                                 |
+|--------------|---------------------------------------------------|----------------------------------------------------------|
+| `g s`        | `git status`                                      |                                                          |
+| `g a`        | `git add -A`                                      | Adds *and* removes files                                 |
+| `g d`        | `git diff`                                        |                                                          |
+| `g dc`       | `git diff --cached`                               | Shows diff for staged files                              |
+| `g c`        | `git commit -m`                                   | e.g. `g c "Commit message"`                              |
+| `g amend`    | `git commit --amend --no-edit`                    | Modify the previous commit, keep the same message        |
+| `g edit`     | `git commit --amend`                              | Modify the previous commit, edit the message             |
+| `g l`        | `git log --name-status`                           | Includes list of modified files                          |
+| `g l1`       | `git log --name-status --pretty=...`              | Single-line format                                       |
+| `g lg`       | `git log --graph`                                 |                                                          |
+| `g lg1`      | `git log --graph --pretty=...`                    | Single-line format                                       |
+| `g ll`       | `git log`                                         | Without list of modified files                           |
+| `g lp`       | `git log --patch`                                 | Displays diff with each log entry                        |
+| `g lpw`      | `git log --patch --ignore-all-space`              | Displays diff excluding whitespace changes               |
+| `g in`       | `git log origin/master..`                         | Lists commits incoming from the default remote           |
+| `g io`       | `git log --left-right origin/master..HEAD`        | Lists commits incoming & outgoing to the default remote  |
+| `g out`      | `git log ..origin/master`                         | Lists commits outgoing to the default remote             |
+| `g f`        | `git fetch`                                       |                                                          |
+| `g p`        | `git push`                                        |                                                          |
+| `g pt`       | `git push --tags`                                 |                                                          |
+| `g pu`       | `git push -u origin HEAD`                         | Push and set upstream                                    |
+| `g b`        | `git branch`                                      |                                                          |
+| `g ba`       | `git branch -a`                                   |                                                          |
+| `g co`       | `git checkout`                                    |                                                          |
+| `g g`        | `git grep`                                        |                                                          |
+| `g g3`       | `git grep --context=3`                            | Also `g6` and `g9`                                       |
+| `g gi`       | `git grep --ignore-case`                          |                                                          |
+| `g gi3`      | `git grep --ignore-case --context=3`              | Also `gi6` and `gi9`                                     |
+| `g todo`     | `git grep 'TODO\|XXX\|FIXME'`                     |                                                          |
+| `g cls`      | `git grep -i "class\s\+$1\b"`                     | Search for class definition                              |
+| `g fun`      | `git grep -i "function\s\+$1\b"`                  | Search for function definition                           |
+| `g cp`       | `git cherry-pick`                                 |                                                          |
+| `g m`        | `git merge`                                       |                                                          |
+| `g mt`       | `git mergetool`                                   |                                                          |
+| `g sub`      | `git submodule`                                   |                                                          |
+| `g sync`     | `git submodule sync; submodule update --init`     |                                                          |
+| `g files`    | `git ls-files \| grep`                            | Find file by name                                        |
 
 ## Vagrant shortcuts
 

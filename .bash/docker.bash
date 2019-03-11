@@ -1,31 +1,9 @@
-# Windows support
-docker()
-{
-    if $WINDOWS; then
-        eval winpty docker $(cygpathmap "$@")
-    else
-        command docker "$@"
-    fi
-}
-
-docker-compose()
-{
-    if $WINDOWS; then
-        eval winpty docker-compose $(cygpathmap "$@")
-    else
-        command docker-compose "$@"
-    fi
-}
-
-alias docker-machine='winpty docker-machine'
-
 # Shorthand
 alias d='docker'
 alias db='docker build'
 alias dc='docker-compose'
-alias dcr='docker-compose run'
-alias dm='docker-machine'
 alias dr='docker run'
+alias dri='docker run -it'
 
 # Clean up stopped containers and dangling (untagged) images
 dclean()
@@ -34,19 +12,13 @@ dclean()
     docker image prune
 }
 
-# Environment
-denv()
-{
-    echo "Switching Docker environment..."
-    cmd="$(docker-machine env "${1:-default}")" || return
-    eval "$cmd"
-    echo "Done."
-}
-
 # Kill most recent container
 dkill()
 {
-    container="$(docker ps -ql)"
+    container="${1:-}"
+    if [ -z "$container" ]; then
+        container="$(docker ps -qlf status=running)"
+    fi
 
     if [ -n "$container" ]; then
         docker kill $container
@@ -56,18 +28,11 @@ dkill()
 # Kill all containers
 dkillall()
 {
-    containers="$(docker ps -q)"
+    containers="$(docker ps -qf status=running)"
 
     if [ -n "$containers" ]; then
         docker kill $containers
     fi
-}
-
-# Init
-dinit()
-{
-    docker-machine create --driver virtualbox "${1:-default}"
-    denv "${1:-default}"
 }
 
 # Resume
@@ -84,42 +49,38 @@ dresume()
     fi
 }
 
+# Serve a directory of files over HTTP for quick local sharing
+# https://github.com/halverneus/static-file-server
+dserve()
+{
+    dr -v "$PWD:/web" -p 80:8080 halverneus/static-file-server
+}
+
 # Shell
 dsh()
 {
     # Set up SSH agent forwarding
     if [ -n "$SSH_AUTH_SOCK" ]; then
-        opt="--volume \$SSH_AUTH_SOCK:/tmp/ssh-agent --env SSH_AUTH_SOCK=/tmp/ssh-agent"
+        opt=(--volume $SSH_AUTH_SOCK:/tmp/ssh-agent --env SSH_AUTH_SOCK=/tmp/ssh-agent)
     else
-        opt=
+        opt=()
     fi
 
     # Build the command to run a shell on the specified image
-    local cmd="docker run $opt -it --entrypoint '${2:-/bin/bash}' '${1:-ubuntu}'"
+    local image="${1:-ubuntu}"
+    local entrypoint="${2:-/bin/bash}"
+    shift $(($# > 2 ? 2 : $#))
 
-    # If using Windows, we need to connect to the Docker VM first
-    if $WINDOWS; then
-        # -A = Enable agent forwarding, -t = Force TTY allocation
-        dssh "$DOCKER_MACHINE_NAME" -At "$cmd"
-    else
-        eval "$cmd"
-    fi
-}
-
-# SSH to docker-machine
-dssh()
-{
-    # This avoids using 'docker-machine ssh' which breaks formatting in Cygwin
-    machine="${1:-$DOCKER_MACHINE_NAME}"
-    shift
-    ip="$(docker-machine ip "$machine")" || return
-    ssh -i "$HOME/.docker/machine/machines/$machine/id_rsa" "docker@$ip" "$@"
+    docker run "${opt[@]}" -it "$@" --entrypoint "$entrypoint" "$image"
 }
 
 # Stop most recent container
 dstop()
 {
-    container="$(docker ps -ql)"
+    container="${1:-}"
+    if [ -z "$container" ]; then
+        container="$(docker ps -qlf status=running)"
+    fi
 
     if [ -n "$container" ]; then
         docker stop $container
@@ -129,7 +90,7 @@ dstop()
 # Stop all containers
 dstopall()
 {
-    containers="$(docker ps -q)"
+    containers="$(docker ps -qf status=running)"
 
     if [ -n "$containers" ]; then
         docker stop $containers

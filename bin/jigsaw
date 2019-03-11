@@ -1,0 +1,12 @@
+#!/bin/bash
+
+exe=vendor/bin/jigsaw
+
+if ! dir="$(findup -f $exe)"; then
+    echo "You do not appear to be within a project with Jigsaw installed ($exe)" >&2
+    exit 1
+fi
+
+cd "$dir"
+
+exec $exe "$@"

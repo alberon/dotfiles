@@ -86,7 +86,8 @@ for i in \
     node_modules                    \
     opt/boris                       \
     opt/git-extras                  \
-    opt/icdiff
+    opt/icdiff                      \
+    yankring_history_v2.txt
 do
     if [ -e "$i" -o -L "$i" ]; then
         rm -rf "$i"

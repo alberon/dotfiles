@@ -85,6 +85,7 @@
     out          = outgoing
     p            = push
     pl           = pull
+    plr          = pull --rebase
     praise       = blame
     pt           = push --tags
     r            = remote
@@ -111,6 +112,7 @@
     up           = !git pull --rebase --prune $@ && git submodule update --init --recursive
     web          = instaweb
     wipe         = !git add -A && git commit -qm 'WIPE SAVEPOINT' && git reset HEAD~1 --hard
+    wt           = worktree
     yesterday    = log --decorate -p --since=yesterday
 
 [github]
