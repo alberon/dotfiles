@@ -26,7 +26,8 @@
     addremove    = -A "$@"
     amend        = commit --amend --no-edit --reset-author
     ap           = add --patch
-    ar           = git add -A
+    ar           = add -A
+    authors      = shortlog -sn
     b            = branch
     ba           = branch -a
     bclean       = "!f() { git branch --merged ${1-master} | grep -v " ${1-master}$" | xargs -r git branch -d; }; f"
@@ -42,12 +43,14 @@
     cob          = checkout -b
     conf         = config --global --edit
     cp           = cherry-pick
-    d            = diff                             #--find-copies --irreversible-delete
+    d            = diff --find-copies --irreversible-delete
     dn           = diff --stat
-    dw           = diff --ignore-all-space          #--find-copies --irreversible-delete
-    dc           = diff --cached                    #--find-copies --irreversible-delete
+    dw           = diff --ignore-all-space --find-copies --irreversible-delete
+    dww          = diff --ignore-all-space --find-copies --irreversible-delete --word-diff=color
+    dc           = diff --cached --find-copies --irreversible-delete
     dcn          = diff --cached --stat
-    dcw          = diff --cached --ignore-all-space #--find-copies --irreversible-delete
+    dcw          = diff --cached --ignore-all-space --find-copies --irreversible-delete
+    dcww         = diff --cached --ignore-all-space --find-copies --irreversible-delete --word-diff=color
     edit         = commit --amend --reset-author
     f            = fetch -v --prune
     fe           = fetch -v --prune
@@ -69,10 +72,10 @@
     in           = incoming
     io           = inout
     l            = log --decorate --name-status
-    l1           = log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
+    l1           = log --pretty=format:'%C(red)%h%C(reset) -%C(yellow)%d%C(reset) %s %C(green)(%ci) %C(bold blue)<%an>%C(reset)'
     lf           = log --decorate --name-status
     lg           = log --decorate --graph
-    lg1          = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
+    lg1          = log --graph --pretty=format:'%C(red)%h%C(reset) -%C(yellow)%d%C(reset) %s %C(green)(%ci) %C(bold blue)<%an>%C(reset)'
     ll           = log --decorate
     lp           = log --decorate -p
     lpw          = log --decorate -p --ignore-all-space
@@ -82,11 +85,18 @@
     out          = outgoing
     p            = push
     pl           = pull
+    plr          = pull --rebase
+    praise       = blame
     pt           = push --tags
     r            = remote
     rb           = rebase
+    rba          = rebase --abort
+    rbc          = rebase --continue
+    rbs          = rebase --skip
+    recent       = for-each-ref --count=10 --sort=-committerdate refs/heads/ --format="%(refname:short)"
     remotes      = remote -v
     rl           = reflog
+    rmc          = rm --cached -r
     root         = rev-parse --show-toplevel
     rv           = revert
     s            = status
@@ -102,6 +112,7 @@
     up           = !git pull --rebase --prune $@ && git submodule update --init --recursive
     web          = instaweb
     wipe         = !git add -A && git commit -qm 'WIPE SAVEPOINT' && git reset HEAD~1 --hard
+    wt           = worktree
     yesterday    = log --decorate -p --since=yesterday
 
 [github]

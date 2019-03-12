@@ -1,0 +1,16 @@
+#!/bin/bash
+set -o nounset -o pipefail -o errexit
+
+WINDOWS=false
+
+case "$(uname)" in
+    CYGWIN*) WINDOWS=true ;;
+    MINGW*)  WINDOWS=true ;;
+esac
+
+# -t 1 check prevents 'stdout is not a tty' error
+if $WINDOWS && [ -t 1 ]; then
+    exec "$HOME/opt/winpty/bin/winpty.exe" "$@"
+else
+    exec "$@"
+fi

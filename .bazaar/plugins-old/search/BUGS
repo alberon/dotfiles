@@ -1,9 +1,0 @@
-For current bugs and to file bugs, please see launchpad:
-https://launchpad.net/bzr-search.
-
-Some key caveats though (not bugs per se):
-
- - memory scaling: Full text indexing currently requires a significant amount
-   of memory.  To index the history of 'bzr' requires nearly 200MB of memory
-   (revno 3494).  Larger trees are exceedingly likely to require as-much or
-   more.

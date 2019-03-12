@@ -74,20 +74,45 @@ vagrant() {
 
     # tmux
     if [ "$cmd" = "tmux" ]; then
-        if [ -z "$TMUX" ]; then
+        # if [ -z "$TMUX" ]; then
+        #     # Not running tmux - Run tmux inside Vagrant (if available)
+        #     command vagrant ssh -- -t 'command -v tmux &>/dev/null && { tmux attach || tmux new -s default; } || bash -l'
+        # elif $CYGWIN; then
+        #     # We're running tmux already - on Cygwin
+        #     # For some reason Cygwin -> tmux -> vagrant (ruby) -> ssh is *really* slow
+        #     # But if we skip ruby it's fine!
+        #     # Note: The Vagrant setup may still be slow... So I don't use tmux in Cygwin much
+        #     (umask 077 && command vagrant ssh-config > /tmp/vagrant-ssh-config)
+        #     ssh -F /tmp/vagrant-ssh-config default
+        # else
+        #     # We're running tmux on another platform - just connect as normal
+        #     command vagrant ssh
+        # fi
+
+        # For some reason Cygwin -> tmux -> vagrant (ruby) -> ssh is *really* slow
+        # And since I upgraded Vagrant, Cygwin -> vagrant -> ssh doesn't work properly
+        # So bypass Vagrant and use the Cygwin ssh instead, always
+        (umask 077 && command vagrant ssh-config > /tmp/vagrant-ssh-config)
+
+        if [ -z "$TMUX" ] && [[ "$TERM" != screen* ]]; then
             # Not running tmux - Run tmux inside Vagrant (if available)
-            command vagrant ssh -- -t 'which tmux >/dev/null 2>&1 && { tmux attach || tmux new -s default; } || bash -l'
-        elif $CYGWIN; then
-            # We're running tmux already - on Cygwin
-            # For some reason Cygwin -> tmux -> vagrant (ruby) -> ssh is *really* slow
-            # But if we skip ruby it's fine!
-            # Note: The Vagrant setup may still be slow... So I don't use tmux in Cygwin much
-            (umask 077 && command vagrant ssh-config > /tmp/vagrant-ssh-config)
-            ssh -F /tmp/vagrant-ssh-config default
+            ssh -F /tmp/vagrant-ssh-config default -t 'command -v tmux &>/dev/null && { tmux attach || tmux new -s default; } || bash -l'
         else
-            # We're running tmux on another platform - just connect as normal
-            command vagrant ssh
+            # We're running tmux already
+            autoname="$(tmux display-message -pt $TMUX_PANE '#{automatic-rename}')"
+
+            if [ "$autoname" = 1 ]; then
+                tmux rename-window -t $TMUX_PANE vagrant 2>/dev/null
+            fi
+
+            ssh -F /tmp/vagrant-ssh-config default
+
+            if [ "$autoname" = 1 ]; then
+                tmux setw -t $TMUX_PANE automatic-rename 2>/dev/null
+                sleep 0.3 # Need a short delay else the window is named 'tmux' not 'bash'
+            fi
         fi
+
         return
     fi
 

@@ -1,12 +1,15 @@
 #!/bin/bash
 
-# If we're in repo/ use repo/www/ as the root automatically
-# Can be overridden by passing another -r to it
-if [ ! -f index.php -a -f www/index.php ]; then
-    # Seems to require absolute path
-    opt="-r $(pwd)/www/"
-else
-    opt=
+exe=vendor/bin/drush
+
+if ! dir="$(findup -f $exe)"; then
+    echo "You do not appear to be within a project with Drush installed ($exe)" >&2
+    exit 1
 fi
 
-exec $HOME/.composer/packages/vendor/drush/drush/drush.launcher $opt "$@"
+args=
+if [ -f "$dir/www/includes/bootstrap.inc" ]; then
+    args="--root=$dir/www"
+fi
+
+exec "$dir/$exe" $args "$@"

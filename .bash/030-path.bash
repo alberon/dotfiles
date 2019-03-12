@@ -4,11 +4,14 @@
 # MacPorts
 $MAC && PATH="/opt/local/bin:/opt/local/sbin:$PATH"
 
+# Yarn
+PATH="$HOME/.yarn/bin:$PATH"
+
 # RVM
 PATH="$HOME/.rvm/bin:$PATH"
 
-# Composer packages (Boris, Drush, etc.)
-PATH="$HOME/.composer/packages/vendor/bin:$PATH"
+# Composer
+PATH="$HOME/.config/composer/vendor/bin:$HOME/.composer/vendor/bin:$HOME/.composer/packages/vendor/bin:$PATH"
 
 # Manually installed packages
 for bin in $HOME/opt/*/bin; do
@@ -32,11 +35,11 @@ PATH="$HOME/local/bin:$PATH"
 export PATH
 
 # Add extra man pages
-if which manpath >/dev/null 2>&1; then
-    MANPATH="$(manpath 2>/dev/null)"
-    MANPATH="$HOME/opt/git-extras-man:$MANPATH"
-    export MANPATH
-fi
+#if command -v manpath &>/dev/null; then
+#    MANPATH="$(manpath 2>/dev/null)"
+#    MANPATH="$HOME/opt/git-extras-man:$MANPATH"
+#    export MANPATH
+#fi
 
 # Tool to debug the path
 dump_path()

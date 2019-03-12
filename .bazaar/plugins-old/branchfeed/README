@@ -1,9 +1,0 @@
-Branch Feed generator
-_____________________
-
-This plugin creates a branch.atom file after every commit, push and pull. The
-amount of detail contained in the branch.atom file currently is always 20
-items, but it is planned to be made configurable.
-
-There is a bugtracker, specification tracker etc at
-https://launchpad.net/bzr-branchfeed/.

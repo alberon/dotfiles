@@ -1,23 +1,8 @@
-# Detect operating system
-WINDOWS=false
-CYGWIN=false
-MSYSGIT=false
-MAC=false
-
-case "$(uname)" in
-    CYGWIN*)  WINDOWS=true; CYGWIN=true ;;
-    MINGW32*) WINDOWS=true; MSYSGIT=true ;;
-    Darwin)   MAC=true ;;
-esac
-
-# Detect whether there's a terminal
-# - $TERM=dumb for scp command
-# - $BASH_EXECUTION_STRING is set for forced commands like gitolite
-# - [ -t 0 ] (open input file descriptor) is false when Vagrant runs salt-call
-if [ "$TERM" != "dumb" -a -z "$BASH_EXECUTION_STRING" -a -t 0 ]; then
-    HAS_TERMINAL=true
-else
-    HAS_TERMINAL=false
+# Google Cloud Shell (required)
+if $HAS_TERMINAL; then
+    if [ -f "/google/devshell/bashrc.google" ]; then
+        source "/google/devshell/bashrc.google"
+    fi
 fi
 
 # Standard config files, nicely split up
@@ -39,3 +24,8 @@ fi
 # Git Bash loads this file *and* .bash_profile so set a flag to tell
 # .bash_profile not to load .bashrc again
 BASHRC_DONE=true
+
+# Prevent Serverless Framework messing with the Bash config
+# https://github.com/serverless/serverless/issues/4069
+# tabtab source for serverless package
+# tabtab source for sls package

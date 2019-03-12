@@ -1,18 +1,14 @@
 #!/bin/bash
 
-# Go up the directory tree until we find the correct directory or reach /
-while [ ! -f artisan ]; do
-    if [ "`pwd`" = "/" ]; then
-        echo "You do not appear to be within a Laravel directory" >&2
-        exit 1
-    fi
-    cd ..
-done
-
-# Run artisan
-if [ $# = 0 ] && grep -q '@version\s\+3\.' artisan; then
-    # Laravel 3 doesn't list the commands by default, it just gives an error
-    exec php artisan help:commands
-else
-    exec php artisan "$@"
+if ! dir="$(findup -f artisan)"; then
+    echo "You do not appear to be within a Laravel directory" >&2
+    exit 1
 fi
+
+cd "$dir"
+
+if [ -x scripts/artisan.sh ]; then
+    exec scripts/artisan.sh "$@"
+fi
+
+exec php artisan "$@"
