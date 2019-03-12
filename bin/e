@@ -1,15 +1,15 @@
 #!/bin/bash
 
 # Get full path to the editor in case it's not in the path after running sudo
-editor=`which "$GEDITOR"`
+editor=$(command -v "$GEDITOR")
 
 [ -z "$editor" ] && editor="$GEDITOR"
 [ -z "$editor" ] && editor="$VISUAL"
 [ -z "$editor" ] && editor="$EDITOR"
 
 # 'e' or 'se'?
-if [ "`basename $0`" = "se" ]; then
-    sudo "$editor" "$@"
+if [ "$(basename $0)" = "se" ]; then
+    exec sudo "$editor" "$@"
 else
-    "$editor" "$@"
+    exec "$editor" "$@"
 fi

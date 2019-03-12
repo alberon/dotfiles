@@ -19,9 +19,9 @@ if [ ! -f ~/.bashrc_config ]; then
     ROOT=false
 
     case "$(uname)" in
-        CYGWIN*)  WINDOWS=true; CYGWIN=true ;;
-        MINGW32*) WINDOWS=true; MSYSGIT=true ;;
-        Darwin)   MAC=true ;;
+        CYGWIN*) WINDOWS=true; CYGWIN=true ;;
+        MINGW*)  WINDOWS=true; MSYSGIT=true ;;
+        Darwin)  MAC=true ;;
     esac
 
     if [ -d /var/cpanel ]; then
@@ -84,9 +84,9 @@ if [ ! -f ~/.bashrc_config ]; then
     ) > ~/.bashrc_config
 
     # Open in editor (if running interactively, not in a Vagrant provisioner)
-    if [ -t 0 -a "${1:-}" != "--unattended" ]; then
-        vim ~/.bashrc_config
-    fi
+    #if [ -t 0 -a "${1:-}" != "--unattended" ]; then
+    #    vim ~/.bashrc_config
+    #fi
 
 fi
 

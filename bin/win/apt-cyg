@@ -23,7 +23,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-mapfile usage <<+
+if [ ${BASH_VERSINFO}${BASH_VERSINFO[1]} -lt 42 ]
+then
+  echo 'Bash version 4.2+ required'
+  exit
+fi
+
+usage="\
 NAME
   apt-cyg - package manager utility
 
@@ -102,15 +108,15 @@ OPTIONS
 
   --version
     Display version and exit.
-+
+"
 
-mapfile version <<+
-apt-cyg version 0.59
+version="\
+apt-cyg version 1
 
 The MIT License (MIT)
 
 Copyright (c) 2005-9 Stephen Jungels
-+
+"
 
 function wget {
   if command wget -h &>/dev/null
@@ -128,11 +134,14 @@ function find-workspace {
   
   # work wherever setup worked last, if possible
   cache=$(awk '
-  /last-cache/ {
-    getline
-    print $1
+  BEGIN {
+    RS = "\n\\<"
+    FS = "\n\t"
   }
-  ' /etc/setup/setup.rc | cygpath -f-)
+  $1 == "last-cache" {
+    print $2
+  }
+  ' /etc/setup/setup.rc)
 
   mirror=$(awk '
   /last-mirror/ {
@@ -462,6 +471,7 @@ function apt-install {
   mv /etc/setup/installed.db /etc/setup/installed.db-save
   mv /tmp/awk.$$ /etc/setup/installed.db
 
+  [ -v nodeps ] && continue
   # recursively install required packages
 
   requires=$(awk '$1=="requires", $0=$2' FS=': ' desc)
@@ -488,7 +498,7 @@ function apt-install {
 
   # run all postinstall scripts
 
-  (( noscripts )) && continue
+  [ -v noscripts ] && continue
   find /etc/postinstall -name '*.sh' | while read script
   do
     echo Running $script
@@ -609,9 +619,14 @@ then
 fi
 
 # process options
-while (( $# ))
+until [ $# = 0 ]
 do
   case "$1" in
+
+    --nodeps)
+      nodeps=1
+      shift
+    ;;
 
     --noscripts)
       noscripts=1
@@ -619,7 +634,7 @@ do
     ;;
 
     --version)
-      printf %s "${version[@]}"
+      printf "$version"
       exit
     ;;
 
@@ -654,5 +669,5 @@ then
   readonly arch=${HOSTTYPE/i6/x}
   apt-$command
 else
-  printf %s "${usage[@]}"
+  printf "$usage"
 fi

@@ -4,18 +4,24 @@
 !/.bash_completion
 !/.bash_completion.d
 !/.bazaar
+!/.dotfiles
+!/.drush
 !/.elinks
 !/.gitattributes-global
 !/.gitconfig
 !/.gitignore
 !/.gitignore-global
+!/.grip
 !/.hgextensions
 !/.irbrc
 !/.minttyrc
 !/.railsrc
 !/.rdebugrc
+!/.rvm
+!/.ssh
 !/.tmux.conf
 !/.tmux_cheatsheet
+!/.vagrant.d
 !/.vim
 !/Dotfiles.sublime-project
 !/README.md
@@ -23,15 +29,7 @@
 !/lib
 !/opt
 
-# Composer - config only, not cache files
-!/.composer
-/.composer/*
-!/.composer/composer.json
-!/.composer/composer.lock
-!/.composer/packages
-
 # Drush - config, not cache
-!/.drush
 /.drush/cache
 
 # Elinks
@@ -41,25 +39,23 @@
 /.elinks/searchhist
 
 # Grip - config only, not cache & access token
-!/.grip
 /.grip/cache*
 /.grip/settings-local.py
 
 # RVM - after_cd hook only
-!/.rvm/
 /.rvm/*
 !/.rvm/hooks/
 /.rvm/hooks/*
 !/.rvm/hooks/after_cd_record_bash_lastdirectory
 
-# SSH - config & public key only
-!/.ssh
+# SSH - config & public keys only, but ignore per-account public keys
 /.ssh/*
 !/.ssh/config
 !/.ssh/*.pub
+/.ssh/google_compute_engine.pub
+/.ssh/id_rsa.pub
 
 # Vagrant
-!/.vagrant.d
 /.vagrant.d/*
 !/.vagrant.d/provision-*.sh
 !/.vagrant.d/Vagrantfile
@@ -73,10 +69,11 @@
 # Python compiled files
 *.pyc
 
-# cPanel executables
+# cPanel files
 /bin/pear
 /bin/peardev
 /bin/pecl
+.ea-php-cli.cache
 
 # gitolite executables
 /bin/gitolite*

@@ -1,3 +1,0 @@
-#!/bin/bash
-
-curl http://defunkt.io/hub/standalone -sLo ~/bin/hub

@@ -1,12 +1,14 @@
 #!/bin/bash
 
-# If we're in repo/ use repo/www/ as the root automatically
-# Can be overridden by passing another --path to it
-# Skip if there are no parameters else WP-CLI doesn't display help
-if [ $# -gt 0 -a ! -f wp-config.php -a -f www/wp-config.php ]; then
-    opt="--path=www/"
-else
-    opt=
+exe=vendor/bin/wp
+if dir="$(findup -f $exe)"; then
+    exec "$dir/$exe" "$@"
 fi
 
-exec $HOME/.composer/packages/vendor/bin/wp $opt "$@"
+dir=~/.config/composer
+if [ -f "$dir/$exe" ]; then
+    exec "$dir/$exe" "$@"
+fi
+
+echo "Cannot find $exe" >&2
+exit 1

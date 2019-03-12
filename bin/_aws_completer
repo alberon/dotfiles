@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# https://github.com/aws/aws-cli/issues/2947
+aws_completer | sed "s/ $//"

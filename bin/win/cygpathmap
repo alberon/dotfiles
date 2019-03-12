@@ -1,0 +1,17 @@
+#!/bin/bash
+set -o nounset -o pipefail -o errexit
+
+# Convert all parameters that map to real files/directories, but leave alone anything that doesn't
+
+# Usage example:
+# eval docker $(cygpathmap "$@")
+
+for arg in "$@"; do
+    if [ -e "$arg" ]; then
+        arg="$(cygpath -w -- "$arg")"
+    fi
+
+    printf '%q ' "$arg"
+done
+
+echo

@@ -1,15 +1,10 @@
 #!/bin/bash
 
-# Go up the directory tree until we find the correct directory or reach /
-while [ "`pwd`" != "/" -a ! -x "./symfony" -a ! -d "./symfony" ]
-do
-    cd ..
-done
-
-# Run symfony
-if [ -x "./symfony" -a ! -d "./symfony" ]
-then
-    ./symfony "$@"
-else
-    echo "You do not appear to be within a symfony directory" >&2
+if ! dir="$(findup -f symfony)"; then
+    echo "You do not appear to be within a Symfony directory" >&2
+    exit 1
 fi
+
+cd "$dir"
+
+exec ./symfony "$@"
