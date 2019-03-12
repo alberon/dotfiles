@@ -7,12 +7,21 @@ if [[ "false" != "$TRAVIS_PULL_REQUEST" ]]; then
 	exit
 fi
 
-if [[ "$TRAVIS_BRANCH" != "$DEPLOY_BRANCH" ]]; then
-	echo "Not on the '$DEPLOY_BRANCH' branch."
+if [ -z $DEPLOY_BRANCH ]; then
+	echo "Skipping deployment as DEPLOY_BRANCH is not set"
 	exit
 fi
 
-openssl aes-256-cbc -K $encrypted_a8125246a581_key -iv $encrypted_a8125246a581_iv -in ci/id_rsa.enc -out ~/.ssh/id_rsa -d
+if [[ "$TRAVIS_BRANCH" != "$DEPLOY_BRANCH" ]] && [[ ! "$TRAVIS_BRANCH" == "release-"* ]]; then
+	echo "Skipping deployment as '$TRAVIS_BRANCH' is not a deploy branch."
+	exit
+fi
+
+# Turn off command traces while dealing with the private key
+set +x
+
+# Get the encrypted private key from the repo settings
+echo $WP_CLI_REPO_DEPLOY_KEY | base64 --decode > ~/.ssh/id_rsa
 chmod 600 ~/.ssh/id_rsa
 
 # anyone can read the build log, so it MUST NOT contain any sensitive data
@@ -29,7 +38,11 @@ git config user.name "Travis CI"
 git config user.email "travis@travis-ci.org"
 git config push.default "current"
 
-fname="phar/wp-cli-nightly.phar"
+if [[ "$TRAVIS_BRANCH" == "release-"* ]]; then
+	fname="phar/wp-cli-release.phar"
+else
+	fname="phar/wp-cli-nightly.phar"
+fi
 
 mv /tmp/wp-cli-phar/wp $fname
 chmod -x $fname

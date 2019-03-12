@@ -122,17 +122,17 @@ class Git
 
                     if (!$bitbucketUtil->authorizeOAuth($match[1]) && $this->io->isInteractive()) {
                         $bitbucketUtil->authorizeOAuthInteractively($match[1], $message);
-                        $token = $bitbucketUtil->getToken();
-                        $this->io->setAuthentication($match[1], 'x-token-auth', $token['access_token']);
+                        $accessToken = $bitbucketUtil->getToken();
+                        $this->io->setAuthentication($match[1], 'x-token-auth', $accessToken);
                     }
                 } else { //We're authenticating with a locally stored consumer.
                     $auth = $this->io->getAuthentication($match[1]);
 
                     //We already have an access_token from a previous request.
                     if ($auth['username'] !== 'x-token-auth') {
-                        $token = $bitbucketUtil->requestToken($match[1], $auth['username'], $auth['password']);
-                        if (!empty($token)) {
-                            $this->io->setAuthentication($match[1], 'x-token-auth', $token['access_token']);
+                        $accessToken = $bitbucketUtil->requestToken($match[1], $auth['username'], $auth['password']);
+                        if (! empty($accessToken)) {
+                            $this->io->setAuthentication($match[1], 'x-token-auth', $accessToken);
                         }
                     }
                 }
@@ -165,7 +165,7 @@ class Git
                     $defaultUsername = null;
                     if (isset($authParts) && $authParts) {
                         if (false !== strpos($authParts, ':')) {
-                            list($defaultUsername,) = explode(':', $authParts, 2);
+                            list($defaultUsername, ) = explode(':', $authParts, 2);
                         } else {
                             $defaultUsername = $authParts;
                         }
@@ -228,6 +228,21 @@ class Git
         return true;
     }
 
+    public function fetchRefOrSyncMirror($url, $dir, $ref)
+    {
+        if (is_dir($dir) && 0 === $this->process->execute('git rev-parse --git-dir', $output, $dir) && trim($output) === '.') {
+            $escapedRef = ProcessExecutor::escape($ref.'^{commit}');
+            $exitCode = $this->process->execute(sprintf('git rev-parse --quiet --verify %s', $escapedRef), $output, $dir);
+            if ($exitCode === 0) {
+                return true;
+            }
+        }
+
+        $this->syncMirror($url, $dir);
+
+        return false;
+    }
+
     private function isAuthenticationFailure($url, &$match)
     {
         if (!preg_match('{(https?://)([^/]+)(.*)$}i', $url, $match)) {
@@ -238,7 +253,7 @@ class Git
             'fatal: Authentication failed',
             'remote error: Invalid username or password.',
             'error: 401 Unauthorized',
-            'fatal: unable to access'
+            'fatal: unable to access',
         );
 
         foreach ($authFailures as $authFailure) {
@@ -252,7 +267,7 @@ class Git
 
     public static function cleanEnv()
     {
-        if (ini_get('safe_mode') && false === strpos(ini_get('safe_mode_allowed_env_vars'), 'GIT_ASKPASS')) {
+        if (PHP_VERSION_ID < 50400 && ini_get('safe_mode') && false === strpos(ini_get('safe_mode_allowed_env_vars'), 'GIT_ASKPASS')) {
             throw new \RuntimeException('safe_mode is enabled and safe_mode_allowed_env_vars does not contain GIT_ASKPASS, can not set env var. You can disable safe_mode with "-dsafe_mode=0" when running composer');
         }
 

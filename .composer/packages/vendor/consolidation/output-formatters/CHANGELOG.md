@@ -1,5 +1,36 @@
 # Change Log
 
+### 3.1.13 - 29 November 2017
+
+- Allow XML output for RowsOfFields (#60).
+- Allow Symfony 4 components and add make tests run on three versions of Symfony.
+
+### 3.1.12 - 12 October 2017
+
+- Bugfix: Use InputOption::VALUE_REQUIRED instead of InputOption::VALUE_OPTIONAL
+  for injected options such as --format and --fields.
+- Bugfix: Ignore empty properties in the property parser.
+
+### 3.1.11 - 17 August 2017
+
+- Add ListDataFromKeys marker data type.
+
+### 3.1.10 - 6 June 2017
+
+- Typo in CalculateWidths::distributeLongColumns causes failure for some column width distributions
+
+### 3.1.9 - 8 May 2017
+
+- Improve wrapping algorithm
+
+### 3.1.7 - 20 Jan 2017
+
+- Add Windows testing
+
+### 3.1.6 - 8 Jan 2017
+
+- Move victorjonsson/markdowndocs to require-dev
+
 ### 3.1.5 - 23 November 2016
 
 - When converting from XML to an array, use the 'id' or 'name' element as the array key value.

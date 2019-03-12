@@ -186,7 +186,6 @@ class GitHubDriver extends VcsDriver
         $notFoundRetries = 2;
         while ($notFoundRetries) {
             try {
-
                 $resource = $this->getApiUrl() . '/repos/'.$this->owner.'/'.$this->repository.'/contents/' . $file . '?ref='.urlencode($identifier);
                 $resource = JsonFile::parseJson($this->getContents($resource));
                 if (empty($resource['content']) || $resource['encoding'] !== 'base64' || !($content = base64_decode($resource['content']))) {
@@ -202,6 +201,7 @@ class GitHubDriver extends VcsDriver
                 // TODO should be removed when possible
                 // retry fetching if github returns a 404 since they happen randomly
                 $notFoundRetries--;
+
                 return null;
             }
         }
@@ -212,13 +212,15 @@ class GitHubDriver extends VcsDriver
     /**
      * {@inheritdoc}
      */
-    public function getChangeDate($identifier) {
+    public function getChangeDate($identifier)
+    {
         if ($this->gitDriver) {
             return $this->gitDriver->getChangeDate($identifier);
         }
 
         $resource = $this->getApiUrl() . '/repos/'.$this->owner.'/'.$this->repository.'/commits/'.urlencode($identifier);
         $commit = JsonFile::parseJson($this->getContents($resource), $resource);
+
         return new \DateTime($commit['commit']['committer']['date']);
     }
 
@@ -359,7 +361,9 @@ class GitHubDriver extends VcsDriver
                         }
                     }
                     $scopesFailed = array_diff($scopesNeeded, $scopesIssued);
-                    if (!$headers || count($scopesFailed)) {
+                    // non-authenticated requests get no scopesNeeded, so ask for credentials
+                    // authenticated requests which failed some scopes should ask for new credentials too
+                    if (!$headers || !count($scopesNeeded) || count($scopesFailed)) {
                         $gitHubUtil->authorizeOAuthInteractively($this->originUrl, 'Your GitHub credentials are required to fetch private repository metadata (<info>'.$this->url.'</info>)');
                     }
 
@@ -510,8 +514,8 @@ class GitHubDriver extends VcsDriver
     {
         $headers = $this->remoteFilesystem->getLastHeaders();
         foreach ($headers as $header) {
-            if (substr($header, 0, 5) === 'Link:') {
-                $links = explode(',', substr($header, 5));
+            if (preg_match('{^link:\s*(.+?)\s*$}i', $header, $match)) {
+                $links = explode(',', $match[1]);
                 foreach ($links as $link) {
                     if (preg_match('{<(.+?)>; *rel="next"}', $link, $match)) {
                         return $match[1];

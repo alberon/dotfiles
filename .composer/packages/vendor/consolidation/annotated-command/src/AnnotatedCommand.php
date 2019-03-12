@@ -3,8 +3,6 @@ namespace Consolidation\AnnotatedCommand;
 
 use Consolidation\AnnotatedCommand\Hooks\HookManager;
 use Consolidation\AnnotatedCommand\Parser\CommandInfo;
-use Consolidation\OutputFormatters\FormatterManager;
-use Consolidation\OutputFormatters\Options\FormatterOptions;
 use Consolidation\AnnotatedCommand\Help\HelpDocumentAlter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -132,7 +130,17 @@ class AnnotatedCommand extends Command implements HelpDocumentAlter
         }
         $this->setCommandArguments($commandInfo);
         $this->setReturnType($commandInfo->getReturnType());
+        // Hidden commands available since Symfony 3.2
+        // http://symfony.com/doc/current/console/hide_commands.html
+        if (method_exists($this, 'setHidden')) {
+            $this->setHidden($commandInfo->getHidden());
+        }
         return $this;
+    }
+
+    public function getExampleUsages()
+    {
+        return $this->examples;
     }
 
     protected function addUsageOrExample($usage, $description)
@@ -220,8 +228,11 @@ class AnnotatedCommand extends Command implements HelpDocumentAlter
      */
     protected function checkUsesInputInterface($params)
     {
+        /** @var \ReflectionParameter $firstParam */
         $firstParam = reset($params);
-        return $firstParam instanceof InputInterface;
+        return $firstParam && $firstParam->getClass() && $firstParam->getClass()->implementsInterface(
+            '\\Symfony\\Component\\Console\\Input\\InputInterface'
+        );
     }
 
     /**
@@ -246,7 +257,11 @@ class AnnotatedCommand extends Command implements HelpDocumentAlter
         $index = $this->checkUsesInputInterface($params) ? 1 : 0;
         $this->usesOutputInterface =
             (count($params) > $index) &&
-            ($params[$index] instanceof OutputInterface);
+            $params[$index]->getClass() &&
+            $params[$index]->getClass()->implementsInterface(
+                '\\Symfony\\Component\\Console\\Output\\OutputInterface'
+            )
+        ;
         return $this;
     }
 
@@ -423,9 +438,14 @@ class AnnotatedCommand extends Command implements HelpDocumentAlter
         );
 
         $commandData->setUseIOInterfaces(
-            $this->usesOutputInterface,
-            $this->usesInputInterface
+            $this->usesInputInterface,
+            $this->usesOutputInterface
         );
+
+        // Allow the commandData to cache the list of options with
+        // special default values ('null' and 'true'), as these will
+        // need special handling. @see CommandData::options().
+        $commandData->cacheSpecialDefaults($this->getDefinition());
 
         return $commandData;
     }

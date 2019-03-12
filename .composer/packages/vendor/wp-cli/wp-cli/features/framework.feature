@@ -1,7 +1,7 @@
 Feature: Load WP-CLI
 
   Scenario: A plugin calling wp_signon() shouldn't fatal
-    Given a WP install
+    Given a WP installation
     And I run `wp user create testuser test@example.org --user_pass=testuser`
     And a wp-content/mu-plugins/test.php file:
       """
@@ -15,7 +15,7 @@ Feature: Load WP-CLI
     Then STDOUT should not be empty
 
   Scenario: A command loaded before WordPress then calls WordPress to load
-    Given a WP install
+    Given a WP installation
     And a custom-cmd.php file:
       """
       <?php
@@ -150,7 +150,7 @@ Feature: Load WP-CLI
       """
 
   Scenario: A plugin calling wp_redirect() shouldn't redirect
-    Given a WP install
+    Given a WP installation
     And a wp-content/mu-plugins/redirect.php file:
       """
       <?php
@@ -166,7 +166,7 @@ Feature: Load WP-CLI
       """
 
   Scenario: It should be possible to work on a site in maintenance mode
-    Given a WP install
+    Given a WP installation
     And a .maintenance file:
       """
       <?php
@@ -180,15 +180,11 @@ Feature: Load WP-CLI
       """
 
   Scenario: Handle error when WordPress cannot connect to the database host
-    Given a WP install
-    And a wp-debug.php file:
-      """
-      <?php
-      define( 'WP_DEBUG', true );
-      """
+    Given a WP installation
     And a invalid-host.php file:
       """
       <?php
+      error_reporting( error_reporting() & ~E_NOTICE );
       define( 'DB_HOST', 'localghost' );
       """
 
@@ -198,7 +194,7 @@ Feature: Load WP-CLI
       Error: Error establishing a database connection.
       """
 
-    When I try `wp --require=invalid-host.php --require=wp-debug.php option get home`
+    When I try `wp --require=invalid-host.php option get home`
     Then STDERR should contain:
       """
       Error: Error establishing a database connection.
@@ -224,3 +220,143 @@ Feature: Load WP-CLI
       bar
       """
     And STDERR should be empty
+
+  Scenario: WP-CLI sets $table_prefix appropriately on multisite
+    Given a WP multisite installation
+    And I run `wp site create --slug=first`
+
+    When I run `wp eval 'global $table_prefix; echo $table_prefix;'`
+    Then STDOUT should be:
+      """
+      wp_
+      """
+
+    When I run `wp eval 'global $blog_id; echo $blog_id;'`
+    Then STDOUT should be:
+      """
+      1
+      """
+
+    When I run `wp --url=example.com/first eval 'global $table_prefix; echo $table_prefix;'`
+    Then STDOUT should be:
+      """
+      wp_2_
+      """
+
+    When I run `wp --url=example.com/first eval 'global $blog_id; echo $blog_id;'`
+    Then STDOUT should be:
+      """
+      2
+      """
+
+  Scenario: Don't apply set_url_scheme because it will always be incorrect
+    Given a WP multisite installation
+    And I run `wp option update siteurl https://example.com`
+
+    When I run `wp option get siteurl`
+    Then STDOUT should be:
+      """
+      https://example.com
+      """
+
+    When I run `wp site list --field=url`
+    Then STDOUT should be:
+      """
+      https://example.com/
+      """
+
+  Scenario: Show error message when site isn't found and there aren't additional prefixes.
+    Given a WP installation
+    And I run `wp db reset --yes`
+
+    When I try `wp option get home`
+    Then STDERR should be:
+      """
+      Error: The site you have requested is not installed.
+      Run `wp core install` to create database tables.
+      """
+    And STDOUT should be empty
+
+  Scenario: Show potential table prefixes when site isn't found, single site.
+    Given a WP installation
+    And "$table_prefix = 'wp_';" replaced with "$table_prefix = 'cli_';" in the wp-config.php file
+
+    When I try `wp option get home`
+    Then STDERR should be:
+      """
+      Error: The site you have requested is not installed.
+      Your table prefix is 'cli_'. Found install with table prefix: wp_.
+      Or, run `wp core install` to create database tables.
+      """
+    And STDOUT should be empty
+
+    # Use try to cater for wp-db errors in old WPs.
+    When I try `wp core install --url=example.com --title=example --admin_user=wpcli --admin_email=wpcli@example.com`
+    Then STDOUT should contain:
+      """
+      Success:
+      """
+    And the return code should be 0
+
+    Given "$table_prefix = 'cli_';" replaced with "$table_prefix = 'test_';" in the wp-config.php file
+
+    When I try `wp option get home`
+    Then STDERR should be:
+      """
+      Error: The site you have requested is not installed.
+      Your table prefix is 'test_'. Found installs with table prefix: cli_, wp_.
+      Or, run `wp core install` to create database tables.
+      """
+    And STDOUT should be empty
+
+  @require-wp-3.9
+  Scenario: Display a more helpful error message when site can't be found
+    Given a WP multisite installation
+    And "define( 'DOMAIN_CURRENT_SITE', 'example.com' );" replaced with "define( 'DOMAIN_CURRENT_SITE', 'example.org' );" in the wp-config.php file
+
+    When I try `wp option get home`
+    Then STDERR should be:
+      """
+      Error: Site 'example.org/' not found. Verify DOMAIN_CURRENT_SITE matches an existing site or use `--url=<url>` to override.
+      """
+
+    When I try `wp option get home --url=example.io`
+    Then STDERR should be:
+      """
+      Error: Site 'example.io' not found. Verify `--url=<url>` matches an existing site.
+      """
+
+    Given "define( 'DOMAIN_CURRENT_SITE', 'example.org' );" replaced with " " in the wp-config.php file
+
+    When I run `cat wp-config.php`
+    Then STDOUT should not contain:
+      """
+      DOMAIN_CURRENT_SITE
+      """
+
+    When I try `wp option get home`
+    Then STDERR should be:
+      """
+      Error: Site not found. Define DOMAIN_CURRENT_SITE in 'wp-config.php' or use `--url=<url>` to override.
+      """
+
+    When I try `wp option get home --url=example.io`
+    Then STDERR should be:
+      """
+      Error: Site 'example.io' not found. Verify `--url=<url>` matches an existing site.
+      """
+
+  Scenario: Don't show 'sitecategories' table unless global terms are enabled
+    Given a WP multisite installation
+
+    When I run `wp db tables`
+    Then STDOUT should not contain:
+      """
+      wp_sitecategories
+      """
+
+    When I run `wp db tables --network`
+    Then STDOUT should not contain:
+      """
+      wp_sitecategories
+      """

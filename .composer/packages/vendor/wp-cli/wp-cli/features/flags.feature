@@ -1,7 +1,7 @@
 Feature: Global flags
 
   Scenario: Setting the URL
-    Given a WP install
+    Given a WP installation
 
     When I run `wp --url=localhost:8001 eval 'echo json_encode( $_SERVER );'`
     Then STDOUT should be JSON containing:
@@ -14,7 +14,7 @@ Feature: Global flags
       """
 
   Scenario: Setting the URL on multisite
-    Given a WP multisite install
+    Given a WP multisite installation
     And I run `wp site create --slug=foo`
 
     When I run `wp --url=example.com/foo option get home`
@@ -25,32 +25,37 @@ Feature: Global flags
 
   @require-wp-3.9
   Scenario: Invalid URL
-    Given a WP multisite install
+    Given a WP multisite installation
 
     When I try `wp post list --url=invalid.example.com`
     Then STDERR should be:
       """
-      Error: Site invalid.example.com not found.
+      Error: Site 'invalid.example.com' not found. Verify `--url=<url>` matches an existing site.
       """
 
   Scenario: Quiet run
-    Given a WP install
+    Given a WP installation
 
     When I try `wp non-existing-command --quiet`
     Then the return code should be 1
     And STDERR should be:
       """
-      Error: 'non-existing-command' is not a registered wp command. See 'wp help'.
+      Error: 'non-existing-command' is not a registered wp command. See 'wp help' for available commands.
       """
 
   Scenario: Debug run
-    Given a WP install
+    Given a WP installation
 
-    When I run `wp eval 'echo CONST_WITHOUT_QUOTES;'`
+    When I try `wp eval 'echo CONST_WITHOUT_QUOTES;'`
     Then STDOUT should be:
       """
       CONST_WITHOUT_QUOTES
       """
+    And STDERR should contain:
+      """
+      Use of undefined constant CONST_WITHOUT_QUOTES
+      """
+    And the return code should be 0
 
     When I try `wp eval 'echo CONST_WITHOUT_QUOTES;' --debug`
     Then the return code should be 0
@@ -64,7 +69,7 @@ Feature: Global flags
       """
 
   Scenario: Setting the WP user
-    Given a WP install
+    Given a WP installation
 
     When I run `wp eval 'echo (int) is_user_logged_in();'`
     Then STDOUT should be:
@@ -111,6 +116,8 @@ Feature: Global flags
       """
       log: called 'error' method
       """
+    And STDERR should be empty
+    And the return code should be 1
 
   Scenario: Using --require
     Given an empty directory
@@ -166,13 +173,45 @@ Feature: Global flags
       This is a custom command.
       """
 
+  Scenario: Using --require with globs
+    Given an empty directory
+    And a foober/foo.php file:
+      """
+      <?php echo basename(__FILE__) . "\n";
+      """
+    And a foober/bar.php file:
+      """
+      <?php echo basename(__FILE__) . "\n";
+      """
+    And a doobie/doo.php file:
+      """
+      <?php echo basename(__FILE__) . "\n";
+      """
+
+    And a wp-cli.yml file:
+      """
+      require: foober/*.php
+      """
+
+    When I run `wp`
+    Then STDOUT should contain:
+      """
+      bar.php
+      foo.php
+      """
+    When I run `wp --require=doobie/*.php`
+    Then STDOUT should contain:
+      """
+      doo.php
+      """
+
   Scenario: Enabling/disabling color
-    Given a WP install
+    Given a WP installation
 
     When I try `wp --no-color non-existent-command`
     Then STDERR should be:
       """
-      Error: 'non-existent-command' is not a registered wp command. See 'wp help'.
+      Error: 'non-existent-command' is not a registered wp command. See 'wp help' for available commands.
       """
 
     When I try `wp --color non-existent-command`
@@ -234,4 +273,25 @@ Feature: Global flags
     Then STDERR should be:
       """
       Error: RESTful WP-CLI needs to be installed. Try 'wp package install wp-cli/restful'.
+      """
+
+  Scenario: Strict args mode should be passed on to ssh
+    When I try `WP_CLI_STRICT_ARGS_MODE=1 wp --debug --ssh=/ --version`
+    Then STDERR should contain:
+      """
+      Running SSH command: ssh -q '' -T 'WP_CLI_STRICT_ARGS_MODE=1 wp
+      """
+
+  Scenario: SSH flag should support changing directories
+    When I try `wp --debug --ssh=wordpress:/my/path --version`
+    Then STDERR should contain:
+      """
+      Running SSH command: ssh -q 'wordpress' -T 'cd '\''/my/path'\''; wp
+      """
+
+  Scenario: SSH flag should support Docker
+    When I try `wp --debug --ssh=docker:user@wordpress --version`
+    Then STDERR should contain:
+      """
+      Running SSH command: docker exec --user 'user' 'wordpress' sh -c
       """

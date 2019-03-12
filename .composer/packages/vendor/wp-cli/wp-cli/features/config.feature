@@ -1,7 +1,7 @@
 Feature: Have a config file
 
   Scenario: No config file
-    Given a WP install
+    Given a WP installation
 
     When I run `wp --info`
     Then STDOUT should not contain:
@@ -13,7 +13,7 @@ Feature: Have a config file
     Then STDOUT should be empty
 
   Scenario: Config file in WP Root
-    Given a WP install
+    Given a WP installation
     And a sample.php file:
       """
       <?php
@@ -36,10 +36,10 @@ Feature: Have a config file
     Then STDOUT should not be empty
 
   Scenario: WP in a subdirectory
-    Given a WP install in 'core'
+    Given a WP installation in 'foo'
     And a wp-cli.yml file:
       """
-      path: core
+      path: foo
       """
 
     When I run `wp --info`
@@ -51,7 +51,7 @@ Feature: Have a config file
     When I run `wp core is-installed`
     Then STDOUT should be empty
 
-    When I run `wp core is-installed` from 'core/wp-content'
+    When I run `wp core is-installed` from 'foo/wp-content'
     Then STDOUT should be empty
 
     When I run `mkdir -p other/subdir`
@@ -59,18 +59,18 @@ Feature: Have a config file
     Then STDOUT should be empty
 
   Scenario: WP in a subdirectory (autodetected)
-    Given a WP install in 'core'
+    Given a WP installation in 'foo'
 
     Given an index.php file:
     """
-    require('./core/wp-blog-header.php');
+    require('./foo/wp-blog-header.php');
     """
     When I run `wp core is-installed`
     Then STDOUT should be empty
 
     Given an index.php file:
     """
-    require dirname(__FILE__) . '/core/wp-blog-header.php';
+    require dirname(__FILE__) . '/foo/wp-blog-header.php';
     """
     When I run `wp core is-installed`
     Then STDOUT should be empty
@@ -81,20 +81,20 @@ Feature: Have a config file
     Then STDOUT should be empty
 
   Scenario: Nested installs
-    Given a WP install
-    And a WP install in 'subsite'
+    Given a WP installation
+    And a WP install in 'foo'
     And a wp-cli.yml file:
       """
       """
 
-    When I run `wp --info` from 'subsite'
+    When I run `wp --info` from 'foo'
     Then STDOUT should not contain:
       """
       wp-cli.yml
       """
 
   Scenario: Disabled commands
-    Given a WP install
+    Given a WP installation
     And a config.yml file:
       """
       disabled_commands:
@@ -156,7 +156,7 @@ Feature: Have a config file
     Then STDOUT should not be empty
 
   Scenario: Persist positional parameters when defined in a config
-    Given a WP install
+    Given a WP installation
     And a wp-cli.yml file:
       """
       user create:
@@ -175,8 +175,23 @@ Feature: Have a config file
       administrator
       """
 
+    When I try `wp user create examplejane`
+    Then STDERR should be:
+      """
+      Error: Sorry, that email address is already used!
+      """
+
+    When I run `wp user create examplejane jane@example.com`
+    Then STDOUT should not be empty
+
+    When I run `wp user get examplejane --field=roles`
+    Then STDOUT should contain:
+      """
+      administrator
+      """
+
   Scenario: Command-specific configs
-    Given a WP install
+    Given a WP installation
     And a wp-cli.yml file:
       """
       eval:
@@ -220,9 +235,9 @@ Feature: Have a config file
 	  Then STDERR should be empty
 
   Scenario: Load WordPress with `--debug`
-    Given a WP install
+    Given a WP installation
 
-    When I run `wp option get home --debug`
+    When I try `wp option get home --debug`
     Then STDERR should contain:
       """
       No readable global config found
@@ -247,8 +262,9 @@ Feature: Have a config file
       """
       Running command: option get
       """
+    And the return code should be 0
 
-    When I run `wp option get home --debug=bootstrap`
+    When I try `wp option get home --debug=bootstrap`
     Then STDERR should contain:
       """
       No readable global config found
@@ -273,8 +289,9 @@ Feature: Have a config file
       """
       Running command: option get
       """
+    And the return code should be 0
 
-    When I run `wp option get home --debug=foo`
+    When I try `wp option get home --debug=foo`
     Then STDERR should not contain:
       """
       No readable global config found
@@ -299,6 +316,7 @@ Feature: Have a config file
       """
       Running command: option get
       """
+    And the return code should be 0
 
   Scenario: Missing required files should not fatal WP-CLI
     Given an empty directory
@@ -453,7 +471,7 @@ Feature: Have a config file
 
   @require-wp-3.9
   Scenario: WordPress install with local dev DOMAIN_CURRENT_SITE
-    Given a WP multisite install
+    Given a WP multisite installation
     And a local-dev.php file:
       """
       <?php
@@ -511,7 +529,7 @@ require_once(ABSPATH . 'wp-settings.php');
     When I try `wp option get home`
     Then STDERR should be:
       """
-      Error: Site example.dev/ not found.
+      Error: Site 'example.dev/' not found. Verify DOMAIN_CURRENT_SITE matches an existing site or use `--url=<url>` to override.
       """
 
     When I run `wp option get home --url=example.com`

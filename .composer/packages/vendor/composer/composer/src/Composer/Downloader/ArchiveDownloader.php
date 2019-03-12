@@ -91,10 +91,6 @@ abstract class ArchiveDownloader extends FileDownloader
 
             break;
         }
-
-        if ($output) {
-            $this->io->writeError('');
-        }
     }
 
     /**
@@ -103,32 +99,6 @@ abstract class ArchiveDownloader extends FileDownloader
     protected function getFileName(PackageInterface $package, $path)
     {
         return rtrim($path.'/'.md5($path.spl_object_hash($package)).'.'.pathinfo(parse_url($package->getDistUrl(), PHP_URL_PATH), PATHINFO_EXTENSION), '.');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function processUrl(PackageInterface $package, $url)
-    {
-        if ($package->getDistReference() && strpos($url, 'github.com')) {
-            if (preg_match('{^https?://(?:www\.)?github\.com/([^/]+)/([^/]+)/(zip|tar)ball/(.+)$}i', $url, $match)) {
-                // update legacy github archives to API calls with the proper reference
-                $url = 'https://api.github.com/repos/' . $match[1] . '/'. $match[2] . '/' . $match[3] . 'ball/' . $package->getDistReference();
-            } elseif ($package->getDistReference() && preg_match('{^https?://(?:www\.)?github\.com/([^/]+)/([^/]+)/archive/.+\.(zip|tar)(?:\.gz)?$}i', $url, $match)) {
-                // update current github web archives to API calls with the proper reference
-                $url = 'https://api.github.com/repos/' . $match[1] . '/'. $match[2] . '/' . $match[3] . 'ball/' . $package->getDistReference();
-            } elseif ($package->getDistReference() && preg_match('{^https?://api\.github\.com/repos/([^/]+)/([^/]+)/(zip|tar)ball(?:/.+)?$}i', $url, $match)) {
-                // update api archives to the proper reference
-                $url = 'https://api.github.com/repos/' . $match[1] . '/'. $match[2] . '/' . $match[3] . 'ball/' . $package->getDistReference();
-            }
-        } elseif ($package->getDistReference() && strpos($url, 'bitbucket.org')) {
-            if (preg_match('{^https?://(?:www\.)?bitbucket\.org/([^/]+)/([^/]+)/get/(.+)\.(zip|tar\.gz|tar\.bz2)$}i', $url, $match)) {
-                // update Bitbucket archives to the proper reference
-                $url = 'https://bitbucket.org/' . $match[1] . '/'. $match[2] . '/get/' . $package->getDistReference() . '.' . $match[4];
-            }
-        }
-
-        return parent::processUrl($package, $url);
     }
 
     /**
@@ -152,6 +122,7 @@ abstract class ArchiveDownloader extends FileDownloader
         $finder = Finder::create()
             ->ignoreVCS(false)
             ->ignoreDotFiles(false)
+            ->notName('.DS_Store')
             ->depth(0)
             ->in($dir);
 

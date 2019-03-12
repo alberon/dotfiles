@@ -21,7 +21,8 @@ class FileGetContents extends AbstractRetriever
     protected $messageBody;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \JsonSchema\Uri\Retrievers\UriRetrieverInterface::retrieve()
      */
     public function retrieve($uri)
@@ -38,19 +39,21 @@ class FileGetContents extends AbstractRetriever
         }
 
         if (false === $response) {
-            throw new ResourceNotFoundException('JSON schema not found at '.$uri);
+            throw new ResourceNotFoundException('JSON schema not found at ' . $uri);
         }
 
         if ($response == ''
             && substr($uri, 0, 7) == 'file://' && substr($uri, -1) == '/'
         ) {
-            throw new ResourceNotFoundException('JSON schema not found at '.$uri);
+            throw new ResourceNotFoundException('JSON schema not found at ' . $uri);
         }
 
         $this->messageBody = $response;
         if (!empty($http_response_header)) {
-            $this->fetchContentType($http_response_header);
-        } else {
+            // $http_response_header cannot be tested, because it's defined in the method's local scope
+            // See http://php.net/manual/en/reserved.variables.httpresponseheader.php for more info.
+            $this->fetchContentType($http_response_header); // @codeCoverageIgnore
+        } else {                                            // @codeCoverageIgnore
             // Could be a "file://" url or something else - fake up the response
             $this->contentType = null;
         }
@@ -60,7 +63,8 @@ class FileGetContents extends AbstractRetriever
 
     /**
      * @param array $headers HTTP Response Headers
-     * @return boolean Whether the Content-Type header was found or not
+     *
+     * @return bool Whether the Content-Type header was found or not
      */
     private function fetchContentType(array $headers)
     {
@@ -75,6 +79,7 @@ class FileGetContents extends AbstractRetriever
 
     /**
      * @param string $header
+     *
      * @return string|null
      */
     protected static function getContentTypeMatchInHeader($header)

@@ -51,6 +51,7 @@ class SelfUpdateCommand extends BaseCommand
                 new InputOption('stable', null, InputOption::VALUE_NONE, 'Force an update to the stable channel'),
                 new InputOption('preview', null, InputOption::VALUE_NONE, 'Force an update to the preview channel'),
                 new InputOption('snapshot', null, InputOption::VALUE_NONE, 'Force an update to the snapshot channel'),
+                new InputOption('set-channel-only', null, InputOption::VALUE_NONE, 'Only store the channel as the default one and then exit'),
             ))
             ->setHelp(<<<EOT
 The <info>self-update</info> command checks getcomposer.org for newer
@@ -85,6 +86,10 @@ EOT
             }
         }
 
+        if ($input->getOption('set-channel-only')) {
+            return 0;
+        }
+
         $cacheDir = $config->get('cache-dir');
         $rollbackDir = $config->get('data-dir');
         $home = $config->get('home');
@@ -100,6 +105,15 @@ EOT
         // check for permissions in local filesystem before start connection process
         if (!is_writable($tmpDir)) {
             throw new FilesystemException('Composer update failed: the "'.$tmpDir.'" directory used to download the temp file could not be written');
+        }
+
+        // check if composer is running as the same user that owns the directory root, only if POSIX is defined and callable
+        if (function_exists('posix_getpwuid') && function_exists('posix_geteuid')) {
+            $composeUser = posix_getpwuid(posix_geteuid());
+            $homeOwner = posix_getpwuid(fileowner($home));
+            if (isset($composeUser['name']) && isset($homeOwner['name']) && $composeUser['name'] !== $homeOwner['name']) {
+                $io->writeError('<warning>You are running composer as "'.$composeUser['name'].'", while "'.$home.'" is owned by "'.$homeOwner['name'].'"</warning>');
+            }
         }
 
         if ($input->getOption('rollback')) {
@@ -226,7 +240,10 @@ TAGSPUBKEY
         }
 
         if (file_exists($backupFile)) {
-            $io->writeError('Use <info>composer self-update --rollback</info> to return to version '.Composer::VERSION);
+            $io->writeError(sprintf(
+                'Use <info>composer self-update --rollback</info> to return to version <comment>%s</comment>',
+                Composer::VERSION
+            ));
         } else {
             $io->writeError('<warning>A backup of the current version could not be written to '.$backupFile.', no rollback possible</warning>');
         }

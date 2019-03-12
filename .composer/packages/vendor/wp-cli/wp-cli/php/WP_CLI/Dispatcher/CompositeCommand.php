@@ -117,7 +117,7 @@ class CompositeCommand {
 	 * @param string
 	 */
 	public function set_shortdesc( $shortdesc ) {
-		$this->shortdesc = $shortdesc;
+		$this->shortdesc = Utils\normalize_eols( $shortdesc );
 	}
 
 	/**
@@ -131,12 +131,12 @@ class CompositeCommand {
 	}
 
 	/**
-	 * Set the long description for this composite commmand
+	 * Set the long description for this composite command
 	 *
 	 * @param string
 	 */
 	public function set_longdesc( $longdesc ) {
-		$this->longdesc = $longdesc;
+		$this->longdesc = Utils\normalize_eols( $longdesc );
 	}
 
 	/**
@@ -157,7 +157,8 @@ class CompositeCommand {
 	 * @return string
 	 */
 	public function get_usage( $prefix ) {
-		return sprintf( "%s%s %s",
+		return sprintf(
+			'%s%s %s',
 			$prefix,
 			implode( ' ', get_path( $this ) ),
 			$this->get_synopsis()
@@ -213,7 +214,7 @@ class CompositeCommand {
 
 		$subcommands = $this->get_subcommands();
 
-		if ( !isset( $subcommands[ $name ] ) ) {
+		if ( ! isset( $subcommands[ $name ] ) ) {
 			$aliases = self::get_aliases( $subcommands );
 
 			if ( isset( $aliases[ $name ] ) ) {
@@ -221,8 +222,9 @@ class CompositeCommand {
 			}
 		}
 
-		if ( !isset( $subcommands[ $name ] ) )
+		if ( ! isset( $subcommands[ $name ] ) ) {
 			return false;
+		}
 
 		return $subcommands[ $name ];
 	}
@@ -239,8 +241,9 @@ class CompositeCommand {
 
 		foreach ( $subcommands as $name => $subcommand ) {
 			$alias = $subcommand->get_alias();
-			if ( $alias )
+			if ( $alias ) {
 				$aliases[ $alias ] = $name;
+			}
 		}
 
 		return $aliases;
@@ -265,28 +268,32 @@ class CompositeCommand {
 		$binding = array();
 		$binding['root_command'] = $root_command;
 
-		if (! $this->can_have_subcommands() || ( is_object( $this->parent ) && get_class( $this->parent ) == 'WP_CLI\Dispatcher\CompositeCommand' )) {
+		if ( ! $this->can_have_subcommands() || ( is_object( $this->parent ) && get_class( $this->parent ) == 'WP_CLI\Dispatcher\CompositeCommand' ) ) {
 			$binding['is_subcommand'] = true;
 		}
 
 		foreach ( \WP_CLI::get_configurator()->get_spec() as $key => $details ) {
-			if ( false === $details['runtime'] )
+			if ( false === $details['runtime'] ) {
 				continue;
+			}
 
-			if ( isset( $details['deprecated'] ) )
+			if ( isset( $details['deprecated'] ) ) {
 				continue;
+			}
 
-			if ( isset( $details['hidden'] ) )
+			if ( isset( $details['hidden'] ) ) {
 				continue;
+			}
 
-			if ( true === $details['runtime'] )
+			if ( true === $details['runtime'] ) {
 				$synopsis = "--[no-]$key";
-			else
+			} else {
 				$synopsis = "--$key" . $details['runtime'];
+			}
 
 			$binding['parameters'][] = array(
 				'synopsis' => $synopsis,
-				'desc' => $details['desc']
+				'desc' => $details['desc'],
 			);
 		}
 

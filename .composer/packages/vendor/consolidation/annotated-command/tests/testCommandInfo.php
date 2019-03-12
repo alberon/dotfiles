@@ -2,6 +2,8 @@
 namespace Consolidation\AnnotatedCommand;
 
 use Consolidation\AnnotatedCommand\Parser\CommandInfo;
+use Consolidation\AnnotatedCommand\Parser\CommandInfoSerializer;
+use Consolidation\AnnotatedCommand\Parser\CommandInfoDeserializer;
 
 class CommandInfoTests extends \PHPUnit_Framework_TestCase
 {
@@ -25,10 +27,24 @@ class CommandInfoTests extends \PHPUnit_Framework_TestCase
         $commandInfo = CommandInfo::create('\Consolidation\TestUtils\ExampleCommandFile', 'testArithmatic');
         $this->assertCommandInfoIsAsExpected($commandInfo);
 
-        $serialized = $commandInfo->serialize();
+        $serializer = new CommandInfoSerializer();
+        $serialized = $serializer->serialize($commandInfo);
 
-        $deserializedCommandInfo = CommandInfo::deserialize($serialized);
+        $deserializer = new CommandInfoDeserializer();
+
+        $deserializedCommandInfo = $deserializer->deserialize($serialized);
         $this->assertCommandInfoIsAsExpected($deserializedCommandInfo);
+    }
+
+    function testWithConfigImport()
+    {
+        $commandInfo = CommandInfo::create('\Consolidation\TestUtils\ExampleCommandFile', 'import');
+        $this->assertEquals('config:import', $commandInfo->getName());
+
+        $this->assertEquals(
+            'A config directory label (i.e. a key in \$config_directories array in settings.php).',
+            $commandInfo->arguments()->getDescription('label')
+        );
     }
 
     function assertCommandInfoIsAsExpected($commandInfo)
@@ -56,8 +72,24 @@ class CommandInfoTests extends \PHPUnit_Framework_TestCase
             $commandInfo->arguments()->getDescription('two')
         );
         $this->assertEquals(
+            '2',
+            $commandInfo->arguments()->get('two')
+        );
+        $this->assertEquals(
             'Whether or not the result should be negated.',
             $commandInfo->options()->getDescription('negate')
+        );
+        $this->assertEquals(
+            'bob',
+            $commandInfo->options()->get('unused')
+        );
+        $this->assertEquals(
+            'one,two',
+            $commandInfo->getAnnotation('dup')
+        );
+        $this->assertEquals(
+            ['one','two'],
+            $commandInfo->getAnnotationList('dup')
         );
     }
 

@@ -150,6 +150,14 @@ EOT
             $this->outputResult($this->checkVersion($config));
         }
 
+        $io->write(sprintf('Composer version: <comment>%s</comment>', Composer::VERSION));
+
+        $io->write(sprintf('PHP version: <comment>%s</comment>', PHP_VERSION));
+
+        if (defined('PHP_BINARY')) {
+            $io->write(sprintf('PHP binary path: <comment>%s</comment>', PHP_BINARY));
+        }
+
         return $this->exitCode;
     }
 
@@ -167,7 +175,7 @@ EOT
             $output = '';
             foreach ($messages as $style => $msgs) {
                 foreach ($msgs as $msg) {
-                    $output .=  '<' . $style . '>' . $msg . '</' . $style . '>' . PHP_EOL;
+                    $output .= '<' . $style . '>' . $msg . '</' . $style . '>' . PHP_EOL;
                 }
             }
 
@@ -390,6 +398,7 @@ EOT
         $io = $this->getIO();
         if (true === $result) {
             $io->write('<info>OK</info>');
+
             return;
         }
 
@@ -590,31 +599,31 @@ EOT
             foreach ($warnings as $warning => $current) {
                 switch ($warning) {
                     case 'apc_cli':
-                        $text  = "The apc.enable_cli setting is incorrect.".PHP_EOL;
+                        $text = "The apc.enable_cli setting is incorrect.".PHP_EOL;
                         $text .= "Add the following to the end of your `php.ini`:".PHP_EOL;
                         $text .= "  apc.enable_cli = Off";
                         $displayIniMessage = true;
                         break;
 
                     case 'zlib':
-                        $text  = 'The zlib extension is not loaded, this can slow down Composer a lot.'.PHP_EOL;
+                        $text = 'The zlib extension is not loaded, this can slow down Composer a lot.'.PHP_EOL;
                         $text .= 'If possible, enable it or recompile php with --with-zlib'.PHP_EOL;
                         $displayIniMessage = true;
                         break;
 
                     case 'sigchild':
-                        $text  = "PHP was compiled with --enable-sigchild which can cause issues on some platforms.".PHP_EOL;
+                        $text = "PHP was compiled with --enable-sigchild which can cause issues on some platforms.".PHP_EOL;
                         $text .= "Recompile it without this flag if possible, see also:".PHP_EOL;
                         $text .= "  https://bugs.php.net/bug.php?id=22999";
                         break;
 
                     case 'curlwrappers':
-                        $text  = "PHP was compiled with --with-curlwrappers which will cause issues with HTTP authentication and GitHub.".PHP_EOL;
+                        $text = "PHP was compiled with --with-curlwrappers which will cause issues with HTTP authentication and GitHub.".PHP_EOL;
                         $text .= " Recompile it without this flag if possible";
                         break;
 
                     case 'php':
-                        $text  = "Your PHP ({$current}) is quite old, upgrading to PHP 5.3.4 or higher is recommended.".PHP_EOL;
+                        $text = "Your PHP ({$current}) is quite old, upgrading to PHP 5.3.4 or higher is recommended.".PHP_EOL;
                         $text .= " Composer works with 5.3.2+ for most people, but there might be edge case issues.";
                         break;
 
@@ -628,12 +637,12 @@ EOT
                         break;
 
                     case 'xdebug_loaded':
-                        $text  = "The xdebug extension is loaded, this can slow down Composer a little.".PHP_EOL;
+                        $text = "The xdebug extension is loaded, this can slow down Composer a little.".PHP_EOL;
                         $text .= " Disabling it when using Composer is recommended.";
                         break;
 
                     case 'xdebug_profile':
-                        $text  = "The xdebug.profiler_enabled setting is enabled, this can slow down Composer a lot.".PHP_EOL;
+                        $text = "The xdebug.profiler_enabled setting is enabled, this can slow down Composer a lot.".PHP_EOL;
                         $text .= "Add the following to the end of your `php.ini` to disable it:".PHP_EOL;
                         $text .= "  xdebug.profiler_enabled = 0";
                         $displayIniMessage = true;

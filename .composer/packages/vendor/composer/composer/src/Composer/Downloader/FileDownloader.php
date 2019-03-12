@@ -22,6 +22,7 @@ use Composer\Plugin\PreFileDownloadEvent;
 use Composer\EventDispatcher\EventDispatcher;
 use Composer\Util\Filesystem;
 use Composer\Util\RemoteFilesystem;
+use Composer\Util\Url as UrlUtil;
 
 /**
  * Base downloader for files
@@ -84,13 +85,14 @@ class FileDownloader implements DownloaderInterface
         }
 
         if ($output) {
-            $this->io->writeError("  - Installing <info>" . $package->getName() . "</info> (<comment>" . $package->getFullPrettyVersion() . "</comment>)", false);
+            $this->io->writeError("  - Installing <info>" . $package->getName() . "</info> (<comment>" . $package->getFullPrettyVersion() . "</comment>): ", false);
         }
 
         $urls = $package->getDistUrls();
         while ($url = array_shift($urls)) {
             try {
-                return $this->doDownload($package, $path, $url);
+                $fileName = $this->doDownload($package, $path, $url);
+                break;
             } catch (\Exception $e) {
                 if ($this->io->isDebug()) {
                     $this->io->writeError('');
@@ -109,6 +111,8 @@ class FileDownloader implements DownloaderInterface
         if ($output) {
             $this->io->writeError('');
         }
+
+        return $fileName;
     }
 
     protected function doDownload(PackageInterface $package, $path, $url)
@@ -133,7 +137,7 @@ class FileDownloader implements DownloaderInterface
             // download if we don't have it in cache or the cache is invalidated
             if (!$this->cache || ($checksum && $checksum !== $this->cache->sha1($cacheKey)) || !$this->cache->copyTo($cacheKey, $fileName)) {
                 if (!$this->outputProgress) {
-                    $this->io->writeError(' Downloading', false);
+                    $this->io->writeError('Downloading', false);
                 }
 
                 // try to download 3 times then fail hard
@@ -153,12 +157,16 @@ class FileDownloader implements DownloaderInterface
                     }
                 }
 
+                if (!$this->outputProgress) {
+                    $this->io->writeError(' (<comment>100%</comment>)', false);
+                }
+
                 if ($this->cache) {
                     $this->lastCacheWrites[$package->getName()] = $cacheKey;
                     $this->cache->copyFrom($cacheKey, $fileName);
                 }
             } else {
-                $this->io->writeError(' Loading from cache', false);
+                $this->io->writeError('Loading from cache', false);
             }
 
             if (!file_exists($fileName)) {
@@ -206,7 +214,7 @@ class FileDownloader implements DownloaderInterface
         $from = $initial->getPrettyVersion();
         $to = $target->getPrettyVersion();
 
-        $this->io->writeError("  - Updating <info>" . $name . "</info> (<comment>" . $from . "</comment> => <comment>" . $to . "</comment>)", false);
+        $this->io->writeError("  - Updating <info>" . $name . "</info> (<comment>" . $from . "</comment> => <comment>" . $to . "</comment>): ", false);
 
         $this->remove($initial, $path, false);
         $this->download($target, $path, false);
@@ -251,6 +259,10 @@ class FileDownloader implements DownloaderInterface
     {
         if (!extension_loaded('openssl') && 0 === strpos($url, 'https:')) {
             throw new \RuntimeException('You must enable the openssl extension to download files via https');
+        }
+
+        if ($package->getDistReference()) {
+            $url = UrlUtil::updateDistReference($this->config, $url, $package->getDistReference());
         }
 
         return $url;

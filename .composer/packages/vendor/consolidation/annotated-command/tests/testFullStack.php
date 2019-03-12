@@ -13,6 +13,7 @@ use Consolidation\AnnotatedCommand\Hooks\ValidatorInterface;
 use Consolidation\AnnotatedCommand\Options\AlterOptionsCommandEvent;
 use Consolidation\AnnotatedCommand\Parser\CommandInfo;
 use Consolidation\OutputFormatters\FormatterManager;
+use Consolidation\TestUtils\TestTerminal;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -38,7 +39,7 @@ class FullStackTests extends \PHPUnit_Framework_TestCase
         $alterOptionsEventManager = new AlterOptionsCommandEvent($this->application);
         $eventDispatcher = new \Symfony\Component\EventDispatcher\EventDispatcher();
         $eventDispatcher->addSubscriber($this->commandFactory->commandProcessor()->hookManager());
-        $eventDispatcher->addSubscriber($alterOptionsEventManager);
+        $this->commandFactory->commandProcessor()->hookManager()->addCommandEvent($alterOptionsEventManager);
         $this->application->setDispatcher($eventDispatcher);
         $this->application->setAutoExit(false);
     }
@@ -61,7 +62,13 @@ class FullStackTests extends \PHPUnit_Framework_TestCase
         $formatter->addDefaultSimplifiers();
 
         $this->commandFactory->commandProcessor()->setFormatterManager($formatter);
-        $commandInfo = $this->commandFactory->createCommandInfo($commandFileInstance, 'exampleTable');
+        $this->assertAutomaticOptionsForCommand($commandFileInstance, 'exampleTable', 'example:table');
+        $this->assertAutomaticOptionsForCommand($commandFileInstance, 'exampleTableTwo', 'example:table2');
+    }
+
+    function assertAutomaticOptionsForCommand($commandFileInstance, $functionName, $commandName)
+    {
+        $commandInfo = $this->commandFactory->createCommandInfo($commandFileInstance, $functionName);
 
         $command = $this->commandFactory->createCommand($commandInfo, $commandFileInstance);
         $this->application->add($command);
@@ -71,7 +78,7 @@ class FullStackTests extends \PHPUnit_Framework_TestCase
             '--format[=FORMAT]  Format the result data. Available formats: csv,json,list,php,print-r,sections,string,table,tsv,var_export,xml,yaml [default: "table"]',
             '--fields[=FIELDS]  Available fields: I (first), II (second), III (third) [default: ""]',
         ];
-        $this->assertRunCommandViaApplicationContains('help example:table', $containsList);
+        $this->assertRunCommandViaApplicationContains('help ' . $commandName, $containsList);
     }
 
     function testCommandsAndHooks()
@@ -94,7 +101,10 @@ class FullStackTests extends \PHPUnit_Framework_TestCase
         $formatter->addDefaultSimplifiers();
         $hookManager = new HookManager();
         $terminalWidthOption = new PrepareTerminalWidthOption();
+        $terminalWidthOption->enableWrap(true);
         $terminalWidthOption->setApplication($this->application);
+        $testTerminal = new TestTerminal(0);
+        $terminalWidthOption->setTerminal($testTerminal);
         $commandProcessor = new CommandProcessor($hookManager);
         $commandProcessor->setFormatterManager($formatter);
         $commandProcessor->addPrepareFormatter($terminalWidthOption);
@@ -249,20 +259,21 @@ EOT;
         $this->assertRunCommandViaApplicationEquals('example:wrap', $expectedUnwrappedOutput);
 
         $expectedWrappedOutput = <<<EOT
- ------------------- --------------------
-  First               Second
- ------------------- --------------------
-  This is a really    This is the second
-  long cell that      column of the same
-  contains a lot of   table. It is also
-  data. When it is    very long, and
-  rendered, it        should be wrapped
-  should be wrapped   across multiple
-  across multiple     lines, just like
-  lines.              the first column.
- ------------------- --------------------
+ ------------------ --------------------
+  First              Second
+ ------------------ --------------------
+  This is a really   This is the second
+  long cell that     column of the same
+  contains a lot     table. It is also
+  of data. When it   very long, and
+  is rendered, it    should be wrapped
+  should be          across multiple
+  wrapped across     lines, just like
+  multiple lines.    the first column.
+ ------------------ --------------------
 EOT;
         $this->application->setWidthAndHeight(42, 24);
+        $testTerminal->setWidth(42);
         $this->assertRunCommandViaApplicationEquals('example:wrap', $expectedWrappedOutput);
     }
 
@@ -454,7 +465,7 @@ EOT;
 
     function simplifyWhitespace($data)
     {
-        return trim(preg_replace('#[ \t]+$#m', '', $data));
+        return trim(preg_replace('#\s+$#m', '', $data));
     }
 
     function callProtected($object, $method, $args = [])

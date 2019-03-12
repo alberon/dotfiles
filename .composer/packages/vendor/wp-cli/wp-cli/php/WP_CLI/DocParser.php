@@ -2,7 +2,7 @@
 
 namespace WP_CLI;
 
-use Spyc;
+use Mustangostang\Spyc;
 
 /**
  * Parse command attributes from its PHPdoc.
@@ -19,6 +19,8 @@ class DocParser {
 	 * @param string $docComment
 	 */
 	public function __construct( $docComment ) {
+		/* Make sure we have a known line ending in document */
+		$docComment = str_replace( "\r\n", "\n", $docComment );
 		$this->docComment = self::remove_decorations( $docComment );
 	}
 
@@ -42,8 +44,9 @@ class DocParser {
 	 * @return string
 	 */
 	public function get_shortdesc() {
-		if ( !preg_match( '|^([^@][^\n]+)\n*|', $this->docComment, $matches ) )
+		if ( ! preg_match( '|^([^@][^\n]+)\n*|', $this->docComment, $matches ) ) {
 			return '';
+		}
 
 		return $matches[1];
 	}
@@ -55,15 +58,17 @@ class DocParser {
 	 */
 	public function get_longdesc() {
 		$shortdesc = $this->get_shortdesc();
-		if ( !$shortdesc )
+		if ( ! $shortdesc ) {
 			return '';
+		}
 
 		$longdesc = substr( $this->docComment, strlen( $shortdesc ) );
 
 		$lines = array();
 		foreach ( explode( "\n", $longdesc ) as $line ) {
-			if ( 0 === strpos( $line, '@' ) )
+			if ( 0 === strpos( $line, '@' ) ) {
 				break;
+			}
 
 			$lines[] = $line;
 		}
@@ -79,8 +84,9 @@ class DocParser {
 	 * @return string
 	 */
 	public function get_tag( $name ) {
-		if ( preg_match( '|^@' . $name . '\s+([a-z-_]+)|m', $this->docComment, $matches ) )
+		if ( preg_match( '|^@' . $name . '\s+([a-z-_0-9]+)|m', $this->docComment, $matches ) ) {
 			return $matches[1];
+		}
 
 		return '';
 	}
@@ -91,8 +97,9 @@ class DocParser {
 	 * @return string
 	 */
 	public function get_synopsis() {
-		if ( !preg_match( '|^@synopsis\s+(.+)|m', $this->docComment, $matches ) )
+		if ( ! preg_match( '|^@synopsis\s+(.+)|m', $this->docComment, $matches ) ) {
 			return '';
+		}
 
 		return $matches[1];
 	}
@@ -155,10 +162,10 @@ class DocParser {
 	 * @return array|null Interpreted YAML document, or null.
 	 */
 	private function get_arg_or_param_args( $regex ) {
-		$bits = explode( PHP_EOL, $this->docComment );
+		$bits = explode( "\n", $this->docComment );
 		$within_arg = $within_doc = false;
 		$document = array();
-		foreach( $bits as $bit ) {
+		foreach ( $bits as $bit ) {
 			if ( preg_match( $regex, $bit ) ) {
 				$within_arg = true;
 			}
@@ -182,7 +189,7 @@ class DocParser {
 		}
 
 		if ( $document ) {
-			return Spyc::YAMLLoadString( implode( PHP_EOL, $document ) );
+			return Spyc::YAMLLoadString( implode( "\n", $document ) );
 		}
 		return null;
 	}

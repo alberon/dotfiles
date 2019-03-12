@@ -4,27 +4,28 @@ namespace Drupal\woot\Commands;
 use Consolidation\OutputFormatters\StructuredData\RowsOfFields;
 
 /**
- * For commands that are parts of modules, Drush expects to find commandfiles in
- * __MODULE__/src/Command, and the namespace is Drupal/__MODULE__/Command.
+ * Commandfiles must be listed in a module's drush.services.yml file.
  */
 class WootCommands
 {
     /**
      * Woot mightily.
      *
+     * @command woot
      * @aliases wt
      */
     public function woot()
     {
-      return 'Woot!';
+        return 'Woot!';
     }
 
     /**
      * This is the my-cat command
      *
-     * This command will concatinate two parameters. If the --flip flag
+     * This command will concatenate two parameters. If the --flip flag
      * is provided, then the result is the concatination of two and one.
      *
+     * @command my-cat
      * @param string $one The first parameter.
      * @param string $two The other parameter.
      * @option boolean $flip Whether or not the second parameter should come first in the result.
@@ -43,14 +44,20 @@ class WootCommands
     /**
      * Demonstrate formatters.  Default format is 'table'.
      *
+     * @command try:formatters
      * @field-labels
      *   first: I
      *   second: II
      *   third: III
      * @usage try:formatters --format=yaml
+     *   Emit yaml.
      * @usage try:formatters --format=csv
+     *   Emit CSV.
      * @usage try:formatters --fields=first,third
+     *   Emit some fields.
      * @usage try:formatters --fields=III,II
+     *   Emit other fields.
+     * @aliases try-formatters
      * @return \Consolidation\OutputFormatters\StructuredData\RowsOfFields
      */
     public function tryFormatters($options = ['format' => 'table', 'fields' => ''])

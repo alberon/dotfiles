@@ -6,6 +6,13 @@ set -ex
 
 WP_CLI_BIN_DIR=${WP_CLI_BIN_DIR-/tmp/wp-cli-phar}
 
+# Disable XDebug to speed up Composer and test suites.
+if [ -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini ]; then
+  phpenv config-rm xdebug.ini
+else
+  echo "xdebug.ini does not exist"
+fi
+
 composer install --no-interaction --prefer-source
 
 CLI_VERSION=$(head -n 1 VERSION)
@@ -17,7 +24,7 @@ then
 fi
 
 # the Behat test suite will pick up the executable found in $WP_CLI_BIN_DIR
-if [[ $BUILD == 'git' ]]
+if [[ $BUILD == 'git' || $BUILD == 'sniff' ]]
 then
 	echo $CLI_VERSION > VERSION
 else
@@ -28,9 +35,6 @@ else
 fi
 
 echo $CLI_VERSION > PHAR_BUILD_VERSION
-
-# Install CodeSniffer things
-./ci/prepare-codesniffer.sh
 
 mysql -e 'CREATE DATABASE wp_cli_test;' -uroot
 mysql -e 'GRANT ALL PRIVILEGES ON wp_cli_test.* TO "wp_cli_test"@"localhost" IDENTIFIED BY "password1"' -uroot

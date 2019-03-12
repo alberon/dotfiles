@@ -6,6 +6,7 @@ use \WP_CLI\FileCache;
 use \WP_CLI\Process;
 use \WP_CLI\WpHttpCacheManager;
 use \WP_CLI\Utils;
+use Mustangostang\Spyc;
 
 /**
  * Various utilities for WP-CLI commands.
@@ -19,6 +20,8 @@ class WP_CLI {
 	private static $hooks = array(), $hooks_passed = array();
 
 	private static $capture_exit = false;
+
+	private static $deferred_additions = array();
 
 	/**
 	 * Set the logger instance.
@@ -37,7 +40,7 @@ class WP_CLI {
 	public static function get_configurator() {
 		static $configurator;
 
-		if ( !$configurator ) {
+		if ( ! $configurator ) {
 			$configurator = new WP_CLI\Configurator( WP_CLI_ROOT . '/php/config-spec.php' );
 		}
 
@@ -47,7 +50,7 @@ class WP_CLI {
 	public static function get_root_command() {
 		static $root;
 
-		if ( !$root ) {
+		if ( ! $root ) {
 			$root = new Dispatcher\RootCommand;
 		}
 
@@ -57,7 +60,7 @@ class WP_CLI {
 	public static function get_runner() {
 		static $runner;
 
-		if ( !$runner ) {
+		if ( ! $runner ) {
 			$runner = new WP_CLI\Runner;
 		}
 
@@ -70,12 +73,8 @@ class WP_CLI {
 	public static function get_cache() {
 		static $cache;
 
-		if ( !$cache ) {
-			$home = getenv( 'HOME' );
-			if ( !$home ) {
-				// sometime in windows $HOME is not defined
-				$home = getenv( 'HOMEDRIVE' ) . getenv( 'HOMEPATH' );
-			}
+		if ( ! $cache ) {
+			$home = Utils\get_home_dir();
 			$dir = getenv( 'WP_CLI_CACHE_DIR' ) ? : "$home/.wp-cli/cache";
 
 			// 6 months, 300mb
@@ -83,9 +82,11 @@ class WP_CLI {
 
 			// clean older files on shutdown with 1/50 probability
 			if ( 0 === mt_rand( 0, 50 ) ) {
-				register_shutdown_function( function () use ( $cache ) {
-					$cache->clean();
-				} );
+				register_shutdown_function(
+					function () use ( $cache ) {
+						$cache->clean();
+					}
+				);
 			}
 		}
 
@@ -119,9 +120,9 @@ class WP_CLI {
 			$_SERVER['SERVER_NAME'] = $url_parts['host'];
 		}
 
-		$_SERVER['REQUEST_URI'] = $f('path') . ( isset( $url_parts['query'] ) ? '?' . $url_parts['query'] : '' );
+		$_SERVER['REQUEST_URI'] = $f( 'path' ) . ( isset( $url_parts['query'] ) ? '?' . $url_parts['query'] : '' );
 		$_SERVER['SERVER_PORT'] = \WP_CLI\Utils\get_flag_value( $url_parts, 'port', '80' );
-		$_SERVER['QUERY_STRING'] = $f('query');
+		$_SERVER['QUERY_STRING'] = $f( 'query' );
 	}
 
 	/**
@@ -130,7 +131,7 @@ class WP_CLI {
 	public static function get_http_cache_manager() {
 		static $http_cacher;
 
-		if ( !$http_cacher ) {
+		if ( ! $http_cacher ) {
 			$http_cacher = new WpHttpCacheManager( self::get_cache() );
 		}
 
@@ -182,7 +183,7 @@ class WP_CLI {
 	 * * %U => ['style' => 'underline'],
 	 * * %8 => ['style' => 'inverse'],
 	 * * %9 => ['style' => 'bright'],
-	 * * %_ => ['style' => 'bright')
+	 * * %_ => ['style' => 'bright']
 	 *
 	 * @access public
 	 * @category Output
@@ -202,14 +203,20 @@ class WP_CLI {
 	 *
 	 * WP-CLI hooks include:
 	 *
+	 * * `before_add_command:<command>` - Before the command is added.
+	 * * `after_add_command:<command>` - After the command was added.
 	 * * `before_invoke:<command>` - Just before a command is invoked.
-	 * * `after_invoke:<command>` - Just after a command is involved.
+	 * * `after_invoke:<command>` - Just after a command is invoked.
+	 * * `find_command_to_run_pre` - Just before WP-CLI finds the command to run.
 	 * * `before_wp_load` - Just before the WP load process begins.
 	 * * `before_wp_config_load` - After wp-config.php has been located.
 	 * * `after_wp_config_load` - After wp-config.php has been loaded into scope.
 	 * * `after_wp_load` - Just after the WP load process has completed.
 	 *
 	 * WP-CLI commands can create their own hooks with `WP_CLI::do_hook()`.
+	 *
+	 * If additional arguments are passed through the `WP_CLI::do_hook()` call,
+	 * these will be passed on to the callback provided by `WP_CLI::add_hook()`.
 	 *
 	 * ```
 	 * # `wp network meta` confirms command is executing in multisite context.
@@ -230,8 +237,9 @@ class WP_CLI {
 	 * @return null
 	 */
 	public static function add_hook( $when, $callback ) {
-		if ( in_array( $when, self::$hooks_passed ) )
-			call_user_func( $callback );
+		if ( array_key_exists( $when, self::$hooks_passed ) ) {
+			call_user_func_array( $callback, (array) self::$hooks_passed[ $when ] );
+		}
 
 		self::$hooks[ $when ][] = $callback;
 	}
@@ -246,22 +254,23 @@ class WP_CLI {
 	 * @category Registration
 	 *
 	 * @param string $when Identifier for the hook.
+	 * @param mixed ... Optional. Arguments that will be passed onto the
+	 *                  callback provided by `WP_CLI::add_hook()`.
 	 * @return null
 	 */
 	public static function do_hook( $when ) {
-		self::$hooks_passed[] = $when;
+		$args = func_num_args() > 1
+			? array_slice( func_get_args(), 1 )
+			: array();
 
-		if ( !isset( self::$hooks[ $when ] ) ) {
+		self::$hooks_passed[ $when ] = $args;
+
+		if ( ! isset( self::$hooks[ $when ] ) ) {
 			return;
 		}
 
 		foreach ( self::$hooks[ $when ] as $callback ) {
-			if ( func_num_args() > 1 ) {
-				$args = array_slice( func_get_args(), 1 );
-				call_user_func_array( $callback, $args );
-			} else {
-				call_user_func( $callback );
-			}
+			call_user_func_array( $callback, $args );
 		}
 	}
 
@@ -288,7 +297,10 @@ class WP_CLI {
 			add_filter( $tag, $function_to_add, $priority, $accepted_args );
 		} else {
 			$idx = self::wp_hook_build_unique_id( $tag, $function_to_add, $priority );
-			$wp_filter[$tag][$priority][$idx] = array('function' => $function_to_add, 'accepted_args' => $accepted_args);
+			$wp_filter[ $tag ][ $priority ][ $idx ] = array(
+				'function' => $function_to_add,
+				'accepted_args' => $accepted_args,
+			);
 			unset( $merged_filters[ $tag ] );
 		}
 
@@ -304,35 +316,39 @@ class WP_CLI {
 		global $wp_filter;
 		static $filter_id_count = 0;
 
-		if ( is_string($function) )
+		if ( is_string( $function ) ) {
 			return $function;
+		}
 
-		if ( is_object($function) ) {
+		if ( is_object( $function ) ) {
 			// Closures are currently implemented as objects
 			$function = array( $function, '' );
 		} else {
 			$function = (array) $function;
 		}
 
-		if (is_object($function[0]) ) {
+		if ( is_object( $function[0] ) ) {
 			// Object Class Calling
-			if ( function_exists('spl_object_hash') ) {
-				return spl_object_hash($function[0]) . $function[1];
-			} else {
-				$obj_idx = get_class($function[0]).$function[1];
-				if ( !isset($function[0]->wp_filter_id) ) {
-					if ( false === $priority )
-						return false;
-					$obj_idx .= isset($wp_filter[$tag][$priority]) ? count((array)$wp_filter[$tag][$priority]) : $filter_id_count;
-					$function[0]->wp_filter_id = $filter_id_count;
-					++$filter_id_count;
-				} else {
-					$obj_idx .= $function[0]->wp_filter_id;
-				}
-
-				return $obj_idx;
+			if ( function_exists( 'spl_object_hash' ) ) {
+				return spl_object_hash( $function[0] ) . $function[1];
 			}
-		} elseif ( is_string( $function[0] ) ) {
+
+			$obj_idx = get_class( $function[0] ) . $function[1];
+			if ( ! isset( $function[0]->wp_filter_id ) ) {
+				if ( false === $priority ) {
+					return false;
+				}
+				$obj_idx .= isset( $wp_filter[ $tag ][ $priority ] ) ? count( (array) $wp_filter[ $tag ][ $priority ] ) : $filter_id_count;
+				$function[0]->wp_filter_id = $filter_id_count;
+				++$filter_id_count;
+			} else {
+				$obj_idx .= $function[0]->wp_filter_id;
+			}
+
+			return $obj_idx;
+		}
+
+		if ( is_string( $function[0] ) ) {
 			// Static Calling
 			return $function[0] . '::' . $function[1];
 		}
@@ -351,8 +367,8 @@ class WP_CLI {
 	 * ```
 	 * # Register a custom 'foo' command to output a supplied positional param.
 	 * #
-	 * # $ wp foo bar
-	 * # Success: bar
+	 * # $ wp foo bar --append=qux
+	 * # Success: bar qux
 	 *
 	 * /**
 	 *  * My awesome closure command
@@ -360,10 +376,13 @@ class WP_CLI {
 	 *  * <message>
 	 *  * : An awesome message to display
 	 *  *
+	 *  * --append=<message>
+	 *  * : An awesome message to append to the original message.
+	 *  *
 	 *  * @when before_wp_load
 	 *  *\/
-	 * $foo = function( $args ) {
-	 *     WP_CLI::success( $args[0] );
+	 * $foo = function( $args, $assoc_args ) {
+	 *     WP_CLI::success( $args[0] . ' ' . $assoc_args['append'] );
 	 * };
 	 * WP_CLI::add_command( 'foo', $foo );
 	 * ```
@@ -371,25 +390,33 @@ class WP_CLI {
 	 * @access public
 	 * @category Registration
 	 *
-	 * @param string $name Name for the command (e.g. "post list" or "site empty").
-	 * @param string $callable Command implementation as a class, function or closure.
-	 * @param array $args {
-	 *      Optional An associative array with additional registration parameters.
-	 *      'before_invoke' => callback to execute before invoking the command,
-	 *      'after_invoke' => callback to execute after invoking the command,
-	 *      'shortdesc' => short description (80 char or less) for the command,
-	 *      'synopsis' => the synopsis for the command (string or array),
-	 *      'when' => execute callback on a named WP-CLI hook (e.g. before_wp_load),
+	 * @param string   $name Name for the command (e.g. "post list" or "site empty").
+	 * @param callable $callable Command implementation as a class, function or closure.
+	 * @param array    $args {
+	 *    Optional. An associative array with additional registration parameters.
+	 *
+	 *    @type callable $before_invoke Callback to execute before invoking the command.
+	 *    @type callable $after_invoke  Callback to execute after invoking the command.
+	 *    @type string   $shortdesc     Short description (80 char or less) for the command.
+	 *    @type string   $longdesc      Description of arbitrary length for examples, etc.
+	 *    @type string   $synopsis      The synopsis for the command (string or array).
+	 *    @type string   $when          Execute callback on a named WP-CLI hook (e.g. before_wp_load).
+	 *    @type bool     $is_deferred   Whether the command addition had already been deferred.
 	 * }
-	 * @return true True on success, hard error if registration failed.
+	 * @return true True on success, false if deferred, hard error if registration failed.
 	 */
 	public static function add_command( $name, $callable, $args = array() ) {
+		// Bail immediately if the WP-CLI executable has not been run.
+		if ( ! defined( 'WP_CLI' ) ) {
+			return false;
+		}
+
 		$valid = false;
 		if ( is_callable( $callable ) ) {
 			$valid = true;
-		} else if ( is_string( $callable ) && class_exists( (string) $callable ) ) {
+		} elseif ( is_string( $callable ) && class_exists( (string) $callable ) ) {
 			$valid = true;
-		} else if ( is_object( $callable ) ) {
+		} elseif ( is_object( $callable ) ) {
 			$valid = true;
 		}
 		if ( ! $valid ) {
@@ -397,10 +424,18 @@ class WP_CLI {
 				$callable[0] = is_object( $callable[0] ) ? get_class( $callable[0] ) : $callable[0];
 				$callable = array( $callable[0], $callable[1] );
 			}
-			WP_CLI::error( sprintf( "Callable %s does not exist, and cannot be registered as `wp %s`.", json_encode( $callable ), $name ) );
+			WP_CLI::error( sprintf( 'Callable %s does not exist, and cannot be registered as `wp %s`.', json_encode( $callable ), $name ) );
 		}
 
-		foreach( array( 'before_invoke', 'after_invoke' ) as $when ) {
+		$addition = new Dispatcher\CommandAddition();
+		self::do_hook( "before_add_command:{$name}", $addition );
+
+		if ( $addition->was_aborted() ) {
+			WP_CLI::warning( "Aborting the addition of the command '{$name}' with reason: {$addition->get_reason()}." );
+			return false;
+		}
+
+		foreach ( array( 'before_invoke', 'after_invoke' ) as $when ) {
 			if ( isset( $args[ $when ] ) ) {
 				self::add_hook( "{$when}:{$name}", $args[ $when ] );
 			}
@@ -413,15 +448,31 @@ class WP_CLI {
 
 		$command = self::get_root_command();
 
-		while ( !empty( $path ) ) {
+		while ( ! empty( $path ) ) {
 			$subcommand_name = $path[0];
+			$parent = implode( ' ', $path );
 			$subcommand = $command->find_subcommand( $path );
 
-			// create an empty container
-			if ( !$subcommand ) {
-				$subcommand = new Dispatcher\CompositeCommand( $command, $subcommand_name,
-					new \WP_CLI\DocParser( '' ) );
-				$command->add_subcommand( $subcommand_name, $subcommand );
+			// Parent not found. Defer addition or create an empty container as
+			// needed.
+			if ( ! $subcommand ) {
+				if ( isset( $args['is_deferred'] ) && $args['is_deferred'] ) {
+					$subcommand = new Dispatcher\CompositeCommand(
+						$command,
+						$subcommand_name,
+						new \WP_CLI\DocParser( '' )
+					);
+					$command->add_subcommand( $subcommand_name, $subcommand );
+				} else {
+					self::defer_command_addition(
+						$name,
+						$parent,
+						$callable,
+						$args
+					);
+
+					return false;
+				}
 			}
 
 			$command = $subcommand;
@@ -429,43 +480,58 @@ class WP_CLI {
 
 		$leaf_command = Dispatcher\CommandFactory::create( $leaf_name, $callable, $command );
 
+		if ( $leaf_command instanceof Dispatcher\CommandNamespace && array_key_exists( $leaf_name, $command->get_subcommands() ) ) {
+			return false;
+		}
+
 		if ( ! $command->can_have_subcommands() ) {
-			throw new Exception( sprintf( "'%s' can't have subcommands.",
-				implode( ' ' , Dispatcher\get_path( $command ) ) ) );
+			throw new Exception(
+				sprintf(
+					"'%s' can't have subcommands.",
+					implode( ' ' , Dispatcher\get_path( $command ) )
+				)
+			);
 		}
 
 		if ( isset( $args['shortdesc'] ) ) {
 			$leaf_command->set_shortdesc( $args['shortdesc'] );
 		}
 
+		if ( isset( $args['longdesc'] ) ) {
+			$leaf_command->set_longdesc( $args['longdesc'] );
+		}
+
 		if ( isset( $args['synopsis'] ) ) {
 			if ( is_string( $args['synopsis'] ) ) {
 				$leaf_command->set_synopsis( $args['synopsis'] );
-			} else if ( is_array( $args['synopsis'] ) ) {
+			} elseif ( is_array( $args['synopsis'] ) ) {
 				$synopsis = \WP_CLI\SynopsisParser::render( $args['synopsis'] );
 				$leaf_command->set_synopsis( $synopsis );
 				$long_desc = '';
 				$bits = explode( ' ', $synopsis );
-				foreach( $args['synopsis'] as $key => $arg ) {
-					$long_desc .= $bits[ $key ] . PHP_EOL;
+				foreach ( $args['synopsis'] as $key => $arg ) {
+					$long_desc .= $bits[ $key ] . "\n";
 					if ( ! empty( $arg['description'] ) ) {
-						$long_desc .= ': ' . $arg['description'] . PHP_EOL;
+						$long_desc .= ': ' . $arg['description'] . "\n";
 					}
 					$yamlify = array();
-					foreach( array( 'default', 'options' ) as $key ) {
+					foreach ( array( 'default', 'options' ) as $key ) {
 						if ( isset( $arg[ $key ] ) ) {
 							$yamlify[ $key ] = $arg[ $key ];
 						}
 					}
 					if ( ! empty( $yamlify ) ) {
-						$long_desc .= \Spyc::YAMLDump( $yamlify );
-						$long_desc .= '---' . PHP_EOL;
+						$long_desc .= Spyc::YAMLDump( $yamlify );
+						$long_desc .= '---' . "\n";
 					}
-					$long_desc .= PHP_EOL;
+					$long_desc .= "\n";
 				}
 				if ( ! empty( $long_desc ) ) {
-					$long_desc = rtrim( $long_desc, PHP_EOL );
-					$long_desc = '## OPTIONS' . PHP_EOL . PHP_EOL . $long_desc;
+					$long_desc = rtrim( $long_desc, "\r\n" );
+					$long_desc = '## OPTIONS' . "\n\n" . $long_desc;
+					if ( ! empty( $args['longdesc'] ) ) {
+						$long_desc .= "\n\n" . ltrim( $args['longdesc'], "\r\n" );
+					}
 					$leaf_command->set_longdesc( $long_desc );
 				}
 			}
@@ -476,7 +542,63 @@ class WP_CLI {
 		}
 
 		$command->add_subcommand( $leaf_name, $leaf_command );
+
+		self::do_hook( "after_add_command:{$name}" );
 		return true;
+	}
+
+	/**
+	 * Defer command addition for a sub-command if the parent command is not yet
+	 * registered.
+	 *
+	 * @param string $name     Name for the sub-command.
+	 * @param string $parent   Name for the parent command.
+	 * @param string $callable Command implementation as a class, function or closure.
+	 * @param array  $args     Optional. See `WP_CLI::add_command()` for details.
+	 */
+	private static function defer_command_addition( $name, $parent, $callable, $args = array() ) {
+		$args['is_deferred'] = true;
+		self::$deferred_additions[ $name ] = array(
+			'parent'   => $parent,
+			'callable' => $callable,
+			'args'     => $args,
+		);
+		self::add_hook(
+			"after_add_command:$parent",
+			function () use ( $name ) {
+				$deferred_additions = WP_CLI::get_deferred_additions();
+
+				if ( ! array_key_exists( $name, $deferred_additions ) ) {
+					return;
+				}
+
+				$callable = $deferred_additions[ $name ]['callable'];
+				$args     = $deferred_additions[ $name ]['args'];
+				WP_CLI::remove_deferred_addition( $name );
+
+				WP_CLI::add_command( $name, $callable, $args );
+			}
+		);
+	}
+
+	/**
+	 * Get the list of outstanding deferred command additions.
+	 *
+	 * @return array Array of outstanding command additions.
+	 */
+	public static function get_deferred_additions() {
+		return self::$deferred_additions;
+	}
+
+	/**
+	 * Remove a command addition from the list of outstanding deferred additions.
+	 */
+	public static function remove_deferred_addition( $name ) {
+		if ( ! array_key_exists( $name, self::$deferred_additions ) ) {
+			WP_CLI::warning( "Trying to remove a non-existent command addition '{$name}'." );
+		}
+
+		unset( self::$deferred_additions[ $name ] );
 	}
 
 	/**
@@ -552,7 +674,7 @@ class WP_CLI {
 	 * ```
 	 * # Called in `WP_CLI\Runner::set_wp_root()`.
 	 * private static function set_wp_root( $path ) {
-	 *     define( 'ABSPATH', rtrim( $path, '/' ) . '/' );
+	 *     define( 'ABSPATH', Utils\trailingslashit( $path ) );
 	 *     WP_CLI::debug( 'ABSPATH defined: ' . ABSPATH );
 	 *     $_SERVER['DOCUMENT_ROOT'] = realpath( $path );
 	 * }
@@ -587,8 +709,8 @@ class WP_CLI {
 	 * $status = $this->get_status( $plugin->file );
 	 * // Network-active is the highest level of activation status
 	 * if ( 'active-network' === $status ) {
-	 * 	WP_CLI::warning( "Plugin '{$plugin->name}' is already network active." );
-	 * 	continue;
+	 *   WP_CLI::warning( "Plugin '{$plugin->name}' is already network active." );
+	 *   continue;
 	 * }
 	 * ```
 	 *
@@ -626,7 +748,7 @@ class WP_CLI {
 	 * @return null
 	 */
 	public static function error( $message, $exit = true ) {
-		if ( ! isset( self::get_runner()->assoc_args[ 'completions' ] ) ) {
+		if ( ! isset( self::get_runner()->assoc_args['completions'] ) ) {
 			self::$logger->error( self::error_to_string( $message ) );
 		}
 
@@ -673,7 +795,7 @@ class WP_CLI {
 	 * @param array $message Multi-line error message to be displayed.
 	 */
 	public static function error_multi_line( $message_lines ) {
-		if ( ! isset( self::get_runner()->assoc_args[ 'completions' ] ) && is_array( $message_lines ) ) {
+		if ( ! isset( self::get_runner()->assoc_args['completions'] ) && is_array( $message_lines ) ) {
 			self::$logger->error_multi_line( array_map( array( __CLASS__, 'error_to_string' ), $message_lines ) );
 		}
 	}
@@ -698,12 +820,13 @@ class WP_CLI {
 	 */
 	public static function confirm( $question, $assoc_args = array() ) {
 		if ( ! \WP_CLI\Utils\get_flag_value( $assoc_args, 'yes' ) ) {
-			fwrite( STDOUT, $question . " [y/n] " );
+			fwrite( STDOUT, $question . ' [y/n] ' );
 
 			$answer = strtolower( trim( fgets( STDIN ) ) );
 
-			if ( 'y' != $answer )
+			if ( 'y' != $answer ) {
 				exit;
+			}
 		}
 	}
 
@@ -781,13 +904,22 @@ class WP_CLI {
 			return $errors;
 		}
 
+		// Only json_encode() the data when it needs it
+		$render_data = function( $data ) {
+			if ( is_array( $data ) || is_object( $data ) ) {
+				return json_encode( $data );
+			}
+
+			return '"' . $data . '"';
+		};
+
 		if ( is_object( $errors ) && is_a( $errors, 'WP_Error' ) ) {
 			foreach ( $errors->get_error_messages() as $message ) {
 				if ( $errors->get_error_data() ) {
-					return $message . ' ' . json_encode( $errors->get_error_data() );
-				} else {
-					return $message;
+					return $message . ' ' . $render_data( $errors->get_error_data() );
 				}
+
+				return $message;
 			}
 		}
 	}
@@ -813,6 +945,7 @@ class WP_CLI {
 	 * @return int|ProcessRun The command exit status, or a ProcessRun object for full details.
 	 */
 	public static function launch( $command, $exit_on_error = true, $return_detailed = false ) {
+		Utils\check_proc_available( 'launch' );
 
 		$proc = Process::create( $command );
 		$results = $proc->run();
@@ -821,14 +954,15 @@ class WP_CLI {
 			self::warning( "Spawned process returned exit code {$results->return_code}, which could be caused by a custom compiled version of PHP that uses the --enable-sigchild option." );
 		}
 
-		if ( $results->return_code && $exit_on_error )
+		if ( $results->return_code && $exit_on_error ) {
 			exit( $results->return_code );
+		}
 
 		if ( $return_detailed ) {
 			return $results;
-		} else {
-			return $results->return_code;
 		}
+
+		return $results->return_code;
 	}
 
 	/**
@@ -863,18 +997,19 @@ class WP_CLI {
 		foreach ( $reused_runtime_args as $key ) {
 			if ( isset( $runtime_args[ $key ] ) ) {
 				$assoc_args[ $key ] = $runtime_args[ $key ];
-			} else if ( $value = self::get_runner()->config[ $key ] )
+			} elseif ( $value = self::get_runner()->config[ $key ] ) {
 				$assoc_args[ $key ] = $value;
+			}
 		}
 
-		$php_bin = self::get_php_binary();
+		$php_bin = escapeshellarg( Utils\get_php_binary() );
 
 		$script_path = $GLOBALS['argv'][0];
 
 		if ( getenv( 'WP_CLI_CONFIG_PATH' ) ) {
 			$config_path = getenv( 'WP_CLI_CONFIG_PATH' );
 		} else {
-			$config_path = getenv( 'HOME' ) . '/.wp-cli/config.yml';
+			$config_path = Utils\get_home_dir() . '/.wp-cli/config.yml';
 		}
 		$config_path = escapeshellarg( $config_path );
 
@@ -891,22 +1026,15 @@ class WP_CLI {
 	 *
 	 * Environment values permit specific binaries to be indicated.
 	 *
+	 * Note: moved to Utils, left for BC.
+	 *
 	 * @access public
 	 * @category System
 	 *
 	 * @return string
 	 */
 	public static function get_php_binary() {
-		if ( defined( 'PHP_BINARY' ) )
-			return PHP_BINARY;
-
-		if ( getenv( 'WP_CLI_PHP_USED' ) )
-			return getenv( 'WP_CLI_PHP_USED' );
-
-		if ( getenv( 'WP_CLI_PHP' ) )
-			return getenv( 'WP_CLI_PHP' );
-
-		return 'php';
+		return Utils\get_php_binary();
 	}
 
 	/**
@@ -930,7 +1058,7 @@ class WP_CLI {
 			return self::get_runner()->config;
 		}
 
-		if ( !isset( self::get_runner()->config[ $key ] ) ) {
+		if ( ! isset( self::get_runner()->config[ $key ] ) ) {
 			self::warning( "Unknown config option '$key'." );
 			return null;
 		}
@@ -941,18 +1069,20 @@ class WP_CLI {
 	/**
 	 * Run a WP-CLI command.
 	 *
-	 * Launch a new child process, or run the command in the current process.
+	 * Launches a new child process to run a specified WP-CLI command.
 	 * Optionally:
+	 *
+	 * * Run the command in an existing process.
 	 * * Prevent halting script execution on error.
 	 * * Capture and return STDOUT, or full details about command execution.
 	 * * Parse JSON output if the command rendered it.
 	 *
 	 * ```
 	 * $options = array(
-	 *   'return'     => true,  // Return 'STDOUT'; use 'all' for full object.
-	 *   'parse'      => 'json' // Parse captured STDOUT to JSON array.
-	 *   'launch'     => false, // Reuse the current process.
-	 *   'exit_error' => true,  // Halt script execution on error.
+	 *   'return'     => true,   // Return 'STDOUT'; use 'all' for full object.
+	 *   'parse'      => 'json', // Parse captured STDOUT to JSON array.
+	 *   'launch'     => false,  // Reuse the current process.
+	 *   'exit_error' => true,   // Halt script execution on error.
 	 * );
 	 * $plugins = WP_CLI::runcommand( 'plugin list --format=json', $options );
 	 * ```
@@ -978,21 +1108,23 @@ class WP_CLI {
 		$parse = $options['parse'];
 		$retval = null;
 		if ( $launch ) {
+			Utils\check_proc_available( 'launch option' );
+
+			$descriptors = array(
+				0 => STDIN,
+				1 => STDOUT,
+				2 => STDERR,
+			);
+
 			if ( $return ) {
 				$descriptors = array(
 					0 => STDIN,
 					1 => array( 'pipe', 'w' ),
 					2 => array( 'pipe', 'w' ),
 				);
-			} else {
-				$descriptors = array(
-					0 => STDIN,
-					1 => STDOUT,
-					2 => STDERR,
-				);
 			}
 
-			$php_bin = self::get_php_binary();
+			$php_bin = escapeshellarg( Utils\get_php_binary() );
 			$script_path = $GLOBALS['argv'][0];
 
 			// Persist runtime arguments unless they've been specified otherwise.
@@ -1000,7 +1132,7 @@ class WP_CLI {
 			$argv = array_slice( $GLOBALS['argv'], 1 );
 			list( $_, $_, $runtime_config ) = $configurator->parse_args( $argv );
 			foreach ( $runtime_config as $k => $v ) {
-				if ( preg_match( "|^--{$key}=?$|", $command ) ) {
+				if ( preg_match( "|^--{$k}=?$|", $command ) ) {
 					unset( $runtime_config[ $k ] );
 				}
 			}
@@ -1008,22 +1140,7 @@ class WP_CLI {
 
 			$runcommand = "{$php_bin} {$script_path} {$runtime_config} {$command}";
 
-			$env_vars = array(
-				'HOME',
-				'WP_CLI_AUTO_CHECK_UPDATE_DAYS',
-				'WP_CLI_CACHE_DIR',
-				'WP_CLI_CONFIG_PATH',
-				'WP_CLI_DISABLE_AUTO_CHECK_UPDATE',
-				'WP_CLI_PACKAGES_DIR',
-				'WP_CLI_PHP_USED',
-				'WP_CLI_PHP',
-				'WP_CLI_STRICT_ARGS_MODE',
-			);
-			$env = array();
-			foreach( $env_vars as $var ) {
-				$env[ $var ] = getenv( $var );
-			}
-			$proc = proc_open( $runcommand, $descriptors, $pipes, getcwd(), $env );
+			$proc = Utils\proc_open_compat( $runcommand, $descriptors, $pipes, getcwd() );
 
 			if ( $return ) {
 				$stdout = stream_get_contents( $pipes[1] );
@@ -1033,17 +1150,17 @@ class WP_CLI {
 			}
 			$return_code = proc_close( $proc );
 			if ( -1 == $return_code ) {
-				self::warning( "Spawned process returned exit code -1, which could be caused by a custom compiled version of PHP that uses the --enable-sigchild option." );
-			} else if ( $return_code && $exit_error ) {
+				self::warning( 'Spawned process returned exit code -1, which could be caused by a custom compiled version of PHP that uses the --enable-sigchild option.' );
+			} elseif ( $return_code && $exit_error ) {
 				exit( $return_code );
 			}
 			if ( true === $return || 'stdout' === $return ) {
 				$retval = trim( $stdout );
-			} else if ( 'stderr' === $return ) {
+			} elseif ( 'stderr' === $return ) {
 				$retval = trim( $stderr );
-			} else if ( 'return_code' === $return ) {
+			} elseif ( 'return_code' === $return ) {
 				$retval = $return_code;
-			} else if ( 'all' === $return ) {
+			} elseif ( 'all' === $return ) {
 				$retval = (object) array(
 					'stdout'      => trim( $stdout ),
 					'stderr'      => trim( $stderr ),
@@ -1055,31 +1172,36 @@ class WP_CLI {
 			$argv = Utils\parse_str_to_argv( $command );
 			list( $args, $assoc_args, $runtime_config ) = $configurator->parse_args( $argv );
 			if ( $return ) {
-				ob_start();
 				$existing_logger = self::$logger;
 				self::$logger = new WP_CLI\Loggers\Execution;
+				self::$logger->ob_start();
 			}
 			if ( ! $exit_error ) {
 				self::$capture_exit = true;
 			}
 			try {
-				self::get_runner()->run_command( $args, $assoc_args, array( 'back_compat_conversions' => true ) );
+				self::get_runner()->run_command(
+					$args, $assoc_args, array(
+						'back_compat_conversions' => true,
+					)
+				);
 				$return_code = 0;
-			} catch( ExitException $e ) {
+			} catch ( ExitException $e ) {
 				$return_code = $e->getCode();
 			}
 			if ( $return ) {
 				$execution_logger = self::$logger;
+				$execution_logger->ob_end();
 				self::$logger = $existing_logger;
-				$stdout = trim( ob_get_clean() );
+				$stdout = $execution_logger->stdout;
 				$stderr = $execution_logger->stderr;
 				if ( true === $return || 'stdout' === $return ) {
 					$retval = trim( $stdout );
-				} else if ( 'stderr' === $return ) {
+				} elseif ( 'stderr' === $return ) {
 					$retval = trim( $stderr );
-				} else if ( 'return_code' === $return ) {
+				} elseif ( 'return_code' === $return ) {
 					$retval = $return_code;
-				} else if ( 'all' === $return ) {
+				} elseif ( 'all' === $return ) {
 					$retval = (object) array(
 						'stdout'      => trim( $stdout ),
 						'stderr'      => trim( $stderr ),
@@ -1138,10 +1260,14 @@ class WP_CLI {
 	}
 
 	// back-compat
+	// @codingStandardsIgnoreLine
 	public static function addCommand( $name, $class ) {
-		trigger_error( sprintf( 'wp %s: %s is deprecated. use WP_CLI::add_command() instead.',
-			$name, __FUNCTION__ ), E_USER_WARNING );
+		trigger_error(
+			sprintf(
+				'wp %s: %s is deprecated. use WP_CLI::add_command() instead.',
+				$name, __FUNCTION__
+			), E_USER_WARNING
+		);
 		self::add_command( $name, $class );
 	}
 }
-

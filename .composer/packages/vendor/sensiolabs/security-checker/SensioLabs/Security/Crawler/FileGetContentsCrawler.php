@@ -33,9 +33,9 @@ class FileGetContentsCrawler extends BaseCrawler
                 'follow_location' => true,
                 'max_redirects' => 3,
                 'timeout' => $this->timeout,
+                'user_agent' => 'SecurityChecker-CLI/3 FGC PHP',
             ),
             'ssl' => array(
-                'cafile' => $certFile,
                 'verify_peer' => 1,
                 'verify_host' => 2,
             ),

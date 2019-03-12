@@ -11,7 +11,7 @@ class SampleArrayAccess implements ArrayAccess
 
     public function __construct()
     {
-        $this->container = array();
+        $this->container = [];
     }
     public function offsetSet($offset, $value)
     {
@@ -31,6 +31,6 @@ class SampleArrayAccess implements ArrayAccess
     }
     public function offsetGet($offset)
     {
-        return isset($this->container[$offset]) ? $this->container[$offset] : null;
+        return $this->container[$offset] ?? null;
     }
 }

@@ -9,6 +9,7 @@ namespace PhpParser;
 use PhpParser\Node\Name;
 use PhpParser\Node\Param;
 use PhpParser\Node\Scalar\LNumber;
+use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassConst;
 use PhpParser\Node\Stmt\ClassMethod;
@@ -314,7 +315,11 @@ abstract class ParserAbstract implements Parser
                             //$this->traceShift($this->errorSymbol);
                             ++$this->stackPos;
                             $stateStack[$this->stackPos] = $state = $action;
-                            $this->endAttributes = $this->endAttributeStack[$this->stackPos];
+
+                            // We treat the error symbol as being empty, so we reset the end attributes
+                            // to the end attributes of the last non-error symbol
+                            $this->endAttributeStack[$this->stackPos] = $this->endAttributeStack[$this->stackPos - 1];
+                            $this->endAttributes = $this->endAttributeStack[$this->stackPos - 1];
                             break;
 
                         case 3:
@@ -440,6 +445,7 @@ abstract class ParserAbstract implements Parser
                 if ($stmt instanceof Node\Stmt\Namespace_) {
                     $afterFirstNamespace = true;
                 } elseif (!$stmt instanceof Node\Stmt\HaltCompiler
+                        && !$stmt instanceof Node\Stmt\Nop
                         && $afterFirstNamespace && !$hasErrored) {
                     $this->emitError(new Error(
                         'No code may exist outside of namespace {}', $stmt->getAttributes()));
@@ -524,6 +530,7 @@ abstract class ParserAbstract implements Parser
             'string'   => true,
             'iterable' => true,
             'void'     => true,
+            'object'   => true,
         ];
 
         if (!$name->isUnqualified()) {
@@ -552,6 +559,19 @@ abstract class ParserAbstract implements Parser
             // Use dummy value
             return new LNumber(0, $attributes);
         }
+    }
+
+    protected function parseNumString($str, $attributes) {
+        if (!preg_match('/^(?:0|-?[1-9][0-9]*)$/', $str)) {
+            return new String_($str, $attributes);
+        }
+
+        $num = +$str;
+        if (!is_int($num)) {
+            return new String_($str, $attributes);
+        }
+
+        return new LNumber($num, $attributes);
     }
 
     protected function checkModifier($a, $b, $modifierPos) {

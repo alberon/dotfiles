@@ -26,6 +26,7 @@ class PerforceDriver extends VcsDriver
     protected $branch;
     /** @var Perforce */
     protected $perforce;
+
     /**
      * {@inheritDoc}
      */
@@ -57,7 +58,6 @@ class PerforceDriver extends VcsDriver
         $this->perforce = Perforce::create($repoConfig, $this->getUrl(), $repoDir, $this->process, $this->io);
     }
 
-
     /**
      * {@inheritdoc}
      */
@@ -87,9 +87,7 @@ class PerforceDriver extends VcsDriver
      */
     public function getBranches()
     {
-        $branches = $this->perforce->getBranches();
-
-        return $branches;
+        return $this->perforce->getBranches();
     }
 
     /**
@@ -97,9 +95,7 @@ class PerforceDriver extends VcsDriver
      */
     public function getTags()
     {
-        $tags = $this->perforce->getTags();
-
-        return $tags;
+        return $this->perforce->getTags();
     }
 
     /**
@@ -116,10 +112,10 @@ class PerforceDriver extends VcsDriver
     public function getSource($identifier)
     {
         $source = array(
-            'type'      => 'perforce',
-            'url'       => $this->repoConfig['url'],
+            'type' => 'perforce',
+            'url' => $this->repoConfig['url'],
             'reference' => $identifier,
-            'p4user'    => $this->perforce->getUser(),
+            'p4user' => $this->perforce->getUser(),
         );
 
         return $source;

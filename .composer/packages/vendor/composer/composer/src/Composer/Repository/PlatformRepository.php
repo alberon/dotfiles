@@ -24,7 +24,7 @@ use Composer\Util\Silencer;
  */
 class PlatformRepository extends ArrayRepository
 {
-    const PLATFORM_PACKAGE_REGEX = '{^(?:php(?:-64bit|-ipv6|-zts|-debug)?|hhvm|(?:ext|lib)-[^/]+)$}i';
+    const PLATFORM_PACKAGE_REGEX = '{^(?:php(?:-64bit|-ipv6|-zts|-debug)?|hhvm|(?:ext|lib)-[^/ ]+)$}i';
 
     private $versionParser;
 
@@ -266,7 +266,7 @@ class PlatformRepository extends ArrayRepository
     /**
      * Parses the version and adds a new package to the repository
      *
-     * @param string $name
+     * @param string      $name
      * @param null|string $prettyVersion
      */
     private function addExtension($name, $prettyVersion)

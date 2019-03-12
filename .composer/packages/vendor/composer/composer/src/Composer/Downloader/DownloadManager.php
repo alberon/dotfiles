@@ -28,7 +28,7 @@ class DownloadManager
     private $preferSource = false;
     private $packagePreferences = array();
     private $filesystem;
-    private $downloaders  = array();
+    private $downloaders = array();
 
     /**
      * Initializes download manager.
@@ -160,8 +160,8 @@ class DownloadManager
 
         if ($installationSource !== $downloader->getInstallationSource()) {
             throw new \LogicException(sprintf(
-                'Downloader "%s" is a %s type downloader and can not be used to download %s',
-                get_class($downloader), $downloader->getInstallationSource(), $installationSource
+                'Downloader "%s" is a %s type downloader and can not be used to download %s for package %s',
+                get_class($downloader), $downloader->getInstallationSource(), $installationSource, $package
             ));
         }
 
@@ -181,8 +181,8 @@ class DownloadManager
     public function download(PackageInterface $package, $targetDir, $preferSource = null)
     {
         $preferSource = null !== $preferSource ? $preferSource : $this->preferSource;
-        $sourceType   = $package->getSourceType();
-        $distType     = $package->getDistType();
+        $sourceType = $package->getSourceType();
+        $distType = $package->getDistType();
 
         $sources = array();
         if ($sourceType) {
@@ -248,10 +248,10 @@ class DownloadManager
 
         if ('dist' === $installationSource) {
             $initialType = $initial->getDistType();
-            $targetType  = $target->getDistType();
+            $targetType = $target->getDistType();
         } else {
             $initialType = $initial->getSourceType();
-            $targetType  = $target->getSourceType();
+            $targetType = $target->getSourceType();
         }
 
         // upgrading from a dist stable package to a dev package, force source reinstall

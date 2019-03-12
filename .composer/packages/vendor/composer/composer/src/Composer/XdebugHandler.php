@@ -67,6 +67,7 @@ class XdebugHandler
                 $command = $this->getCommand();
                 $this->restart($command);
             }
+
             return;
         }
 
@@ -138,11 +139,6 @@ class XdebugHandler
         $iniPaths = IniHelper::getAll();
         $additional = count($iniPaths) > 1;
 
-        if (empty($iniPaths[0])) {
-            // There is no loaded ini
-            array_shift($iniPaths);
-        }
-
         if ($this->writeTmpIni($iniPaths)) {
             return $this->setEnvironment($additional, $iniPaths);
         }
@@ -155,24 +151,31 @@ class XdebugHandler
      *
      * The filename is passed as the -c option when the process restarts.
      *
-     * @param array $iniFiles The php.ini locations
+     * @param array $iniPaths Locations reported by the current process
      *
      * @return bool
      */
-    private function writeTmpIni(array $iniFiles)
+    private function writeTmpIni(array $iniPaths)
     {
         if (!$this->tmpIni = tempnam(sys_get_temp_dir(), '')) {
             return false;
         }
 
+        // $iniPaths has at least one item and it may be empty
+        if (empty($iniPaths[0])) {
+            array_shift($iniPaths);
+        }
+
         $content = '';
         $regex = '/^\s*(zend_extension\s*=.*xdebug.*)$/mi';
 
-        foreach ($iniFiles as $file) {
+        foreach ($iniPaths as $file) {
             $data = preg_replace($regex, ';$1', file_get_contents($file));
             $content .= $data.PHP_EOL;
         }
 
+        $content .= 'allow_url_fopen='.ini_get('allow_url_fopen').PHP_EOL;
+        $content .= 'disable_functions="'.ini_get('disable_functions').'"'.PHP_EOL;
         $content .= 'memory_limit='.ini_get('memory_limit').PHP_EOL;
 
         if (defined('PHP_WINDOWS_VERSION_BUILD')) {
@@ -199,8 +202,8 @@ class XdebugHandler
     /**
      * Returns true if the restart environment variables were set
      *
-     * @param bool $additional Whether there were additional inis
-     * @param array $iniPaths Locations used by the current prcoess
+     * @param bool  $additional Whether there were additional inis
+     * @param array $iniPaths   Locations reported by the current process
      *
      * @return bool
      */
@@ -249,7 +252,7 @@ class XdebugHandler
         }
 
         if ($this->output->isDecorated()) {
-            $offset = count($args) > 1 ? 2: 1;
+            $offset = count($args) > 1 ? 2 : 1;
             array_splice($args, $offset, 0, '--ansi');
         }
 
@@ -262,8 +265,8 @@ class XdebugHandler
      * From https://github.com/johnstevenson/winbox-args
      * MIT Licensed (c) John Stevenson <john-stevenson@blueyonder.co.uk>
      *
-     * @param string $arg The argument to be escaped
-     * @param bool $meta Additionally escape cmd.exe meta characters
+     * @param string $arg  The argument to be escaped
+     * @param bool   $meta Additionally escape cmd.exe meta characters
      *
      * @return string The escaped argument
      */

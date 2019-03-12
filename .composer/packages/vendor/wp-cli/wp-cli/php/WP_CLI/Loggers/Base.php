@@ -32,6 +32,10 @@ abstract class Base {
 	 * @param string $group Organize debug message to a specific group.
 	 */
 	public function debug( $message, $group = false ) {
+		static $start_time = null;
+		if ( null === $start_time ) {
+			$start_time = microtime( true );
+		}
 		$debug = $this->get_runner()->config['debug'];
 		if ( ! $debug ) {
 			return;
@@ -39,7 +43,7 @@ abstract class Base {
 		if ( true !== $debug && $group !== $debug ) {
 			return;
 		}
-		$time = round( microtime( true ) - WP_CLI_START_MICROTIME, 3 );
+		$time = round( microtime( true ) - ( defined( 'WP_CLI_START_MICROTIME' ) ? WP_CLI_START_MICROTIME : $start_time ), 3 );
 		$prefix = 'Debug';
 		if ( $group && true === $debug ) {
 			$prefix = 'Debug (' . $group . ')';
@@ -66,7 +70,11 @@ abstract class Base {
 	 * @param resource $handle Resource to write to. Defaults to STDOUT.
 	 */
 	protected function _line( $message, $label, $color, $handle = STDOUT ) {
-		$label = \cli\Colors::colorize( "$color$label:%n", $this->in_color );
+		if ( class_exists( 'cli\Colors' ) ) {
+			$label = \cli\Colors::colorize( "$color$label:%n", $this->in_color );
+		} else {
+			$label = "$label:";
+		}
 		$this->write( $handle, "$label $message\n" );
 	}
 

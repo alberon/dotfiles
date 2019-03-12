@@ -2,6 +2,8 @@
 
 namespace WP_CLI;
 
+use Mustangostang\Spyc;
+
 /**
  * Handles file- and runtime-based configuration values.
  *
@@ -32,7 +34,7 @@ class Configurator {
 	/**
 	 * @var string ALIAS_REGEX Regex pattern used to define an alias
 	 */
-	const ALIAS_REGEX = '^@[A-Za-z0-9-_]+$';
+	const ALIAS_REGEX = '^@[A-Za-z0-9-_\.\-]+$';
 
 	/**
 	 * @var array ALIAS_SPEC Arguments that can be used in an alias
@@ -48,7 +50,7 @@ class Configurator {
 	/**
 	 * @param string $path Path to config spec file.
 	 */
-	function __construct( $path ) {
+	public function __construct( $path ) {
 		$this->spec = include $path;
 
 		$defaults = array(
@@ -71,7 +73,7 @@ class Configurator {
 	 *
 	 * @return array
 	 */
-	function to_array() {
+	public function to_array() {
 		return array( $this->config, $this->extra_config );
 	}
 
@@ -80,7 +82,7 @@ class Configurator {
 	 *
 	 * @return array
 	 */
-	function get_spec() {
+	public function get_spec() {
 		return $this->spec;
 	}
 
@@ -89,13 +91,13 @@ class Configurator {
 	 *
 	 * @return array
 	 */
-	function get_aliases() {
+	public function get_aliases() {
 		if ( $runtime_alias = getenv( 'WP_CLI_RUNTIME_ALIAS' ) ) {
 			$returned_aliases = array();
-			foreach( json_decode( $runtime_alias, true ) as $key => $value ) {
+			foreach ( json_decode( $runtime_alias, true ) as $key => $value ) {
 				if ( preg_match( '#' . self::ALIAS_REGEX . '#', $key ) ) {
 					$returned_aliases[ $key ] = array();
-					foreach( self::$alias_spec as $i ) {
+					foreach ( self::$alias_spec as $i ) {
 						if ( isset( $value[ $i ] ) ) {
 							$returned_aliases[ $key ][ $i ] = $value[ $i ];
 						}
@@ -103,9 +105,9 @@ class Configurator {
 				}
 			}
 			return $returned_aliases;
-		} else {
-			return $this->aliases;
 		}
+
+		return $this->aliases;
 	}
 
 	/**
@@ -149,10 +151,9 @@ class Configurator {
 				} else {
 					$global_assoc[] = $assoc_arg;
 				}
-			} else if ( ! is_null( $positional ) ) {
+			} elseif ( ! is_null( $positional ) ) {
 				$positional_args[] = $positional;
 			}
-
 		}
 
 		return array( $positional_args, $assoc_args, $global_assoc, $local_assoc );
@@ -168,20 +169,20 @@ class Configurator {
 		$assoc_args = $runtime_config = array();
 
 		if ( getenv( 'WP_CLI_STRICT_ARGS_MODE' ) ) {
-			foreach( $global_assoc as $tmp ) {
+			foreach ( $global_assoc as $tmp ) {
 				list( $key, $value ) = $tmp;
-				if ( isset( $this->spec[ $key ] ) && $this->spec[ $key ]['runtime'] !== false ) {
+				if ( isset( $this->spec[ $key ] ) && false !== $this->spec[ $key ]['runtime'] ) {
 					$this->assoc_arg_to_runtime_config( $key, $value, $runtime_config );
 				}
 			}
-			foreach( $local_assoc as $tmp ) {
+			foreach ( $local_assoc as $tmp ) {
 				$assoc_args[ $tmp[0] ] = $tmp[1];
 			}
 		} else {
 			foreach ( $mixed_args as $tmp ) {
 				list( $key, $value ) = $tmp;
 
-				if ( isset( $this->spec[ $key ] ) && $this->spec[ $key ]['runtime'] !== false ) {
+				if ( isset( $this->spec[ $key ] ) && false !== $this->spec[ $key ]['runtime'] ) {
 					$this->assoc_arg_to_runtime_config( $key, $value, $runtime_config );
 				} else {
 					$assoc_args[ $key ] = $value;
@@ -218,12 +219,17 @@ class Configurator {
 		if ( ! empty( $yaml['_']['inherit'] ) ) {
 			$this->merge_yml( $yaml['_']['inherit'], $current_alias );
 		}
+		// Prepare the base path for absolutized alias paths
+		$yml_file_dir = $path ? dirname( $path ) : false;
 		foreach ( $yaml as $key => $value ) {
 			if ( preg_match( '#' . self::ALIAS_REGEX . '#', $key ) ) {
 				$this->aliases[ $key ] = array();
 				$is_alias = false;
-				foreach( self::$alias_spec as $i ) {
+				foreach ( self::$alias_spec as $i ) {
 					if ( isset( $value[ $i ] ) ) {
+						if ( 'path' === $i && ! isset( $value['ssh'] ) ) {
+							self::absolutize( $value[ $i ], $yml_file_dir );
+						}
 						$this->aliases[ $key ][ $i ] = $value[ $i ];
 						$is_alias = true;
 					}
@@ -231,14 +237,14 @@ class Configurator {
 				// If it's not an alias, it might be a group of aliases
 				if ( ! $is_alias && is_array( $value ) ) {
 					$alias_group = array();
-					foreach( $value as $i => $k ) {
+					foreach ( $value as $i => $k ) {
 						if ( preg_match( '#' . self::ALIAS_REGEX . '#', $k ) ) {
 							$alias_group[] = $k;
 						}
 					}
 					$this->aliases[ $key ] = $alias_group;
 				}
-			} elseif ( !isset( $this->spec[ $key ] ) || false === $this->spec[ $key ]['file'] ) {
+			} elseif ( ! isset( $this->spec[ $key ] ) || false === $this->spec[ $key ]['file'] ) {
 				if ( isset( $this->extra_config[ $key ] )
 					&& ! empty( $yaml['_']['merge'] )
 					&& is_array( $this->extra_config[ $key ] )
@@ -269,6 +275,10 @@ class Configurator {
 			if ( false !== $details['runtime'] && isset( $config[ $key ] ) ) {
 				$value = $config[ $key ];
 
+				if ( 'require' == $key ) {
+					$value = \WP_CLI\Utils\expand_globs( $value );
+				}
+
 				if ( $details['multiple'] ) {
 					self::arrayify( $value );
 					$this->config[ $key ] = array_merge( $this->config[ $key ], $value );
@@ -286,22 +296,42 @@ class Configurator {
 	 * @return array $config Declared configuration values
 	 */
 	private static function load_yml( $yml_file ) {
-		if ( !$yml_file )
+		if ( ! $yml_file ) {
 			return array();
+		}
 
-		$config = spyc_load_file( $yml_file );
+		$config = Spyc::YAMLLoad( $yml_file );
 
 		// Make sure config-file-relative paths are made absolute.
 		$yml_file_dir = dirname( $yml_file );
 
-		if ( isset( $config['path'] ) )
+		if ( isset( $config['path'] ) ) {
 			self::absolutize( $config['path'], $yml_file_dir );
+		}
 
 		if ( isset( $config['require'] ) ) {
 			self::arrayify( $config['require'] );
+			$config['require'] = \WP_CLI\Utils\expand_globs( $config['require'] );
 			foreach ( $config['require'] as &$path ) {
 				self::absolutize( $path, $yml_file_dir );
 			}
+		}
+
+		// Backwards compat
+		// 'core config' -> 'config create'
+		if ( isset( $config['core config'] ) ) {
+			$config['config create'] = $config['core config'];
+			unset( $config['core config'] );
+		}
+		// 'checksum core' -> 'core verify-checksums'
+		if ( isset( $config['checksum core'] ) ) {
+			$config['core verify-checksums'] = $config['checksum core'];
+			unset( $config['checksum core'] );
+		}
+		// 'checksum plugin' -> 'plugin verify-checksums'
+		if ( isset( $config['checksum plugin'] ) ) {
+			$config['plugin verify-checksums'] = $config['checksum plugin'];
+			unset( $config['checksum plugin'] );
 		}
 
 		return $config;
@@ -313,9 +343,7 @@ class Configurator {
 	 * @param mixed $val A string or an array
 	 */
 	private static function arrayify( &$val ) {
-		if ( !is_array( $val ) ) {
-			$val = array( $val );
-		}
+		$val = (array) $val;
 	}
 
 	/**
@@ -325,7 +353,7 @@ class Configurator {
 	 * @param string $base Base path to prepend.
 	 */
 	private static function absolutize( &$path, $base ) {
-		if ( !empty( $path ) && !\WP_CLI\Utils\is_path_absolute( $path ) ) {
+		if ( ! empty( $path ) && ! \WP_CLI\Utils\is_path_absolute( $path ) ) {
 			$path = $base . DIRECTORY_SEPARATOR . $path;
 		}
 	}
