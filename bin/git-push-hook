@@ -14,6 +14,22 @@
 
 pre_hook=.git/hooks/pre-receive
 post_hook=.git/hooks/post-receive
+replacement_script=scripts/deploy/install-push-hook.sh
+
+source $HOME/.bash/colors.sh
+
+if [ -f "$replacement_script" ]; then
+    red bold "This script is deprecated and has been superceeded for this project." >&2
+    echo >&2
+    black bold "Please run this script instead:" >&2
+    white bold "$replacement_script" >&2
+    exit 1
+fi
+
+yellow bold "WARNING: This script is deprecated - you should add these scripts from the PHP Site Templates repo instead:"
+white bold "$replacement_script"
+white bold "scripts/deploy/_after-deploy.sh"
+echo
 
 if [ "$1" != "-f" ]; then
 
@@ -41,3 +57,5 @@ cp -f ~/lib/git-push-hook/post-receive.sh $post_hook
 chmod +x $pre_hook $post_hook
 
 git config receive.denyCurrentBranch ignore
+
+echo "Push hook installed."
