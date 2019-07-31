@@ -1,1 +1,0 @@
-alias pu='phpunit'
