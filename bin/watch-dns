@@ -1,0 +1,202 @@
+#!/usr/bin/env php
+<?php
+
+$opt = getopt('d:e:v', [
+    'expect:',
+    'domain:',
+    'delay:',
+    'notify:',
+    'type:',
+]);
+if (isset($opt['v']) && is_array($opt['v'])) {
+    define('VERBOSITY', count($opt['v']));
+} elseif(isset($opt['v'])) {
+    define('VERBOSITY', 1);
+} else {
+    define('VERBOSITY', 0);
+}
+
+function getTLD($domain) {
+    $suffix_url = 'https://publicsuffix.org/list/public_suffix_list.dat';
+    $suffix_cache = getenv( 'HOME' ) . '/.suffix_list';
+    if (file_exists($suffix_cache)) {
+        $mod = filemtime($suffix_cache);
+    } else {
+        $mod = 0;
+    }
+
+    if (date('Y-m-d') !== date('Y-m-d', $mod)) {
+        copy( $suffix_url, $suffix_cache );
+    }
+
+    $match = '';
+    $handle = fopen($suffix_cache, 'r');
+    while($line = fgets($handle)) {
+        $line = trim($line);
+        if ($line === '') {
+            continue;
+        }
+
+        if ( strpos( $line, '//' ) === 0 ) {
+            continue;
+        }
+
+        if (strlen($line) > strlen($match) && substr($domain, strlen($domain) - strlen($line)) === $line) {
+            $match = $line;
+        }
+    }
+    fclose($handle);
+
+    if ($match === '') {
+        $parts = explode( '.', $domain);
+        $tld = array_pop($parts);
+        return array_pop($parts).'.'.$tld;
+    }
+
+    $domain = substr($domain, 0, strlen($domain) - strlen($match));
+    $parts = explode( '.', $domain);
+    $domain = array_pop($parts);
+    if ($domain === '') {
+        $domain = array_pop( $parts );
+    }
+
+    return $domain.'.'.$match;
+}
+
+function getNameservers($domain) {
+    $cmd = 'dig +short NS ' . escapeshellarg($domain);
+    if (VERBOSITY > 0) {
+        echo "\e[0;33m".$cmd."\e[0m\n";
+    }
+
+    exec($cmd, $servers);
+    sort($servers);
+
+    return $servers;
+}
+
+function getDNS($domain, $server = '8.8.8.8') {
+    global $type;
+
+    $server = escapeshellarg('@'.$server);
+    $cmd = 'dig +short '.$type.' '.$server.' '.escapeshellarg($domain);
+    if (VERBOSITY > 0) {
+        echo "\e[0;33m".$cmd."\e[0m\n";
+    }
+    exec($cmd, $ips);
+    sort($ips);
+
+    return $ips;
+}
+
+function notify($recipient, $message) {
+    if ($recipient === '') {
+        return;
+    }
+
+    if (VERBOSITY > 0) {
+        echo "\e[0;33mnotifying $recipient\e[0m\n";
+    }
+    mail($recipient, 'DNS Propagation notification', $message);
+}
+
+function showHelp() {
+    echo "\e[1;30m";
+    echo str_pad( '', 80, '*' ) . "\n";
+    echo "* DNS Propagation Watcher\n";
+    echo "* (c) 2018 Danny Cain\n";
+    echo "* \e[0musage: watch-dns --domain {domain} [--type {type}] [--expect {ip}] [--delay {seconds}] [--notify {email}] [-v]\e[1;30m\n";
+    echo str_pad( '', 80, '*' ) . "\n";
+    exit;
+}
+
+if (isset($opt['d'])) {
+    $domain = $opt['d'];
+}
+elseif(isset($opt['domain'])) {
+    $domain = $opt['domain'];
+}
+else {
+    showHelp();
+    exit;
+}
+
+if (isset($opt['expect'])) {
+    $expect = explode( ',', $opt['expect'] );
+}
+elseif(isset($opt['e'])) {
+    $expect = explode( ',', $opt['e'] );
+}
+else {
+    $expect = [];
+}
+
+if (isset($opt['delay'])) {
+    $delay = (int) $opt['delay'];
+} else {
+    $delay = 10;
+}
+
+if(isset($opt['notify'])) {
+    $notify = $opt['notify'];
+} else {
+    $notify = '';
+}
+
+if (isset($opt['type']) && in_array(strtoupper($opt['type']), ['A', 'AAAA', 'MX', 'TXT', 'NS', 'PTR'])) {
+    $type = strtoupper($opt['type']);
+} else {
+    $type = 'A';
+}
+
+sort($expect);
+$updated_at_server = false;
+$propagated = false;
+
+$tld = getTLD($domain);
+$nameservers = getNameservers($tld);
+
+echo 'Checking for propagation of ' . $domain . "\n";
+echo "\tdomain: ".$tld."\n";
+echo "\tnameservers: ".implode( ', ', $nameservers) . "\n";
+if (count($nameservers) === 0){
+    echo "\e[0;31mNo nameservers\e[0m\n";
+    exit;
+}
+while(!$propagated) {
+    if (count($expect) === 0) {
+        $ips = getDNS($domain);
+        echo implode( ',', $ips) . "\n";
+        sleep($delay);
+        continue;
+    }
+
+    if (!$updated_at_server) {
+        $updated = true;
+        foreach($nameservers as $ns) {
+            $actual = getDNS($domain, $ns);
+            if ($actual !== $expect) {
+                $updated = false;
+            }
+        }
+        if ($updated) {
+            $updated_at_server = true;
+            echo "\e[1;34m".date('H:i')." Updated at authoritative nameserver\e[0m\n";
+            notify($notify, 'DNS updated at nameserver' );
+        } else {
+            echo "\e[1;30m".date('H:i')." Not yet updated at nameserver\e[0m\n";
+        }
+        sleep($delay);
+    } else {
+        $actual = getDNS($domain);
+        if ($actual === $expect) {
+            echo "\e[1;34m".date('H:i')." Propagated\e[0m\n";
+            $propagated = true;
+            notify($notify, 'DNS Propagated' );
+        } else {
+            echo "\e[1;34m".date('H:i')." Not propagated\e[0m\n";
+        }
+        sleep($delay);
+    }
+
+}

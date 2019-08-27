@@ -44,11 +44,11 @@
     conf         = config --global --edit
     cp           = cherry-pick
     d            = diff --find-copies --irreversible-delete
-    dn           = diff --stat
+    df           = diff --stat
     dw           = diff --ignore-all-space --find-copies --irreversible-delete
     dww          = diff --ignore-all-space --find-copies --irreversible-delete --word-diff=color
     dc           = diff --cached --find-copies --irreversible-delete
-    dcn          = diff --cached --stat
+    dcf          = diff --cached --stat
     dcw          = diff --cached --ignore-all-space --find-copies --irreversible-delete
     dcww         = diff --cached --ignore-all-space --find-copies --irreversible-delete --word-diff=color
     edit         = commit --amend --reset-author

@@ -8,10 +8,10 @@ if $HAS_TERMINAL; then
         if [ -f ~/.hostname ]; then
             # Custom hostname
             cat ~/.hostname
-        elif $WINDOWS; then
-            # Titlecase hostname on Windows
+        elif $WINDOWS || $WSL; then
+            # Titlecase hostname on Windows (no .localdomain)
             #hostname | sed 's/\(.\)\(.*\)/\u\1\L\2/'
-            # Lowercase hostname on Windows
+            # Lowercase hostname on Windows (no .localdomain)
             hostname | tr '[:upper:]' '[:lower:]'
         else
             # FQDN hostname on Linux

@@ -8,26 +8,15 @@ fi
 # Install new .bashrc configuration
 if [ ! -f ~/.bashrc_config ]; then
 
-    # Check for cPanel server
-    # Detect operating system
-    WINDOWS=false
-    CYGWIN=false
-    MSYSGIT=false
-    MAC=false
+    # Detect operating system and other attributes
+    source .bash/000-vars.bash
+
     CPANEL=false
-    VAGRANT=false
-    ROOT=false
-
-    case "$(uname)" in
-        CYGWIN*) WINDOWS=true; CYGWIN=true ;;
-        MINGW*)  WINDOWS=true; MSYSGIT=true ;;
-        Darwin)  MAC=true ;;
-    esac
-
     if [ -d /var/cpanel ]; then
         CPANEL=true
     fi
 
+    VAGRANT=false
     if [ -d /vagrant -o -d /home/vagrant ]; then
         # The /vagrant directory doesn't always exist at this point, due to
         # https://github.com/npm/npm/issues/3670#issuecomment-82825408
@@ -35,6 +24,7 @@ if [ ! -f ~/.bashrc_config ]; then
         VAGRANT=true
     fi
 
+    ROOT=false
     if [ "$(id -u)" = 0 ]; then
         ROOT=true
     fi
@@ -65,6 +55,9 @@ if [ ! -f ~/.bashrc_config ]; then
         if $VAGRANT; then
             # Vagrant - Shared directory
             echo "www_dir=/vagrant"
+        elif $WSL; then
+            # WSL - My Documents
+            echo "www_dir=$WIN_MYDOCS_UNIX"
         elif $CYGWIN; then
             # Cygwin - My Documents
             echo "www_dir=$(cygpath --mydocs)"
@@ -89,6 +82,11 @@ if [ ! -f ~/.bashrc_config ]; then
     #fi
 
 fi
+
+# Create .sudo_as_admin_successful to stop the help message at login
+#if [ ! -f ~/.sudo_as_admin_successful ] && groups | grep '\bsudo\b' >/dev/null; then
+#    touch ~/.sudo_as_admin_successful
+#fi
 
 # No need to check for updates
 echo "$(date +%Y%m%d)" > ~/.cfg_last_update

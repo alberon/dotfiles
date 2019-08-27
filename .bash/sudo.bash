@@ -10,27 +10,25 @@ if $HAS_TERMINAL && ! $WINDOWS; then
         fi
     }
 
-    # apt-get
+    # apt (formerly apt-get and apt-cache)
     if [ $UID -eq 0 ]; then
-        alias agi='apt-get install'
-        alias agr='apt-get remove'
-        alias agar='apt-get autoremove'
-        alias agu='apt-get update && apt-get upgrade'
-        alias agdu='apt-get dist-upgrade'
-        alias agupdate='apt-get update'
-        alias agupgrade='apt-get upgrade'
+        alias agi='apt install'
+        alias agr='apt remove'
+        alias agar='apt autoremove'
+        alias agu='apt update && apt full-upgrade'
+        alias agupdate='apt update'
+        alias agupgrade='apt upgrade'
     else
-        alias agi='sudo apt-get install'
-        alias agr='sudo apt-get remove'
-        alias agar='sudo apt-get autoremove'
-        alias agu='sudo apt-get update && sudo apt-get upgrade'
-        alias agdu='sudo apt-get dist-upgrade'
-        alias agupdate='sudo apt-get update'
-        alias agupgrade='sudo apt-get upgrade'
+        alias agi='sudo apt install'
+        alias agr='sudo apt remove'
+        alias agar='sudo apt autoremove'
+        alias agu='sudo apt update && sudo apt full-upgrade'
+        alias agupdate='sudo apt update'
+        alias agupgrade='sudo apt upgrade'
     fi
 
-    alias acs='apt-cache search'
-    alias acsh='apt-cache show'
+    alias acs='apt search'
+    alias acsh='apt show'
 
     # Power aliases
     if [ $UID -eq 0 ]; then
@@ -62,6 +60,7 @@ if $HAS_TERMINAL && ! $WINDOWS; then
         alias service='sudo service'
         alias snap='sudo snap'
         alias ufw='sudo ufw'
+        alias updatedb='sudo updatedb'
         alias useradd='sudo useradd'
         alias userdel='sudo userdel'
         alias usermod='sudo usermod'

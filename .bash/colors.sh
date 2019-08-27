@@ -129,14 +129,16 @@ colorize() {
 
             --)
                 shift
-                echo "$@"
+                echo -n "$@"
                 resetAll
+                echo
                 return
                 ;;
 
             *)
-                echo "$@"
+                echo -n "$@"
                 resetAll
+                echo
                 return
                 ;;
 

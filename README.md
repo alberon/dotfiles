@@ -44,14 +44,53 @@ wget alberon.uk/cfg
 
 That's it. (See https://alberon.uk/cfg for the script source - don't execute scripts from the internet without knowing what they do!)
 
-### Installing on Windows:
+### Installing on Windows Subsystem for Linux (WSL)
+
+Install the [Fixedsys Excelsior Mono](http://askubuntu.com/a/725445) font (which is the regular Fixedsys font plus unicode characters).
+
+Click Start, search for `features` and select "Turn Windows features on or off". Tick "Windows Subsystem for Linux" and click OK. Reboot.
+
+Click Start, search for `ubuntu`, go to the Windows Store and install Ubuntu. Run it, wait while it completes setup, set a username and password when prompted, then run:
+
+```bash
+cd
+wget alberon.uk/cfg
+. cfg
+```
+
+[Install WSLtty](https://github.com/mintty/wsltty). (Note: If you installed it *before* setting up Ubuntu, run "configure WSL shortcuts" to add the shortcuts.)
+
+[Install VcXsrv](https://sourceforge.net/projects/vcxsrv/), then run XLaunch from the Start Menu. Accept the default settings except untick "Primary Selection". Save the configuration into the `shell:startup` folder so it's started automatically.
+
+Run "Ubuntu Terminal" from the start menu. Optionally install updates and some additional packages:
+
+```bash
+agu
+agar
+agi dos2unix php-cli tree unzip whois zip
+```
+
+Finally - optional, but it removes the annoying green background in `ls`:
+
+```bash
+se /etc/wsl.conf
+
+# Add:
+[automount]
+options = "umask=0022"
+```
+
+(Note: Adding `fmask=0111` to remove the `x` bit prevents WSL running Windows `.exe` commands - so don't do that!)
+
+**Tip:** To reinstall Ubuntu without re-downloading it, launch Command Prompt and run `wslconfig /u ubuntu`, then re-launch Ubuntu from the Start Menu. It will take a few minutes to reinstall.
+
+### Installing on Cygwin (Windows):
 
 Install the [Fixedsys Excelsior Mono](http://askubuntu.com/a/725445) font (which is the regular Fixedsys font plus unicode characters).
 
 [Install Cygwin](https://cygwin.com/install.html) - select [any local mirror](https://cygwin.com/mirrors.html) (e.g. `mirrorservice.org` for UK), and when prompted add these packages:
 
 - `git`
-- `vim`
 - `wget`
 
 **Tip:** Select View > Full mode, then use the search box to find them.
@@ -76,7 +115,7 @@ Close and re-open Cygwin Terminal to reload the configuration. (**Note:** When t
 Then run this to install some additional useful packages:
 
 ```bash
-apt-cyg install bash-completion bind-utils chere curl dos2unix git-completion inetutils less links make ncurses procps-ng tmux tree unzip whois xinit
+apt-cyg install bash-completion bind-utils chere curl dos2unix git-completion inetutils less links make ncurses procps-ng tmux tree unzip vim whois xinit
 ```
 
 (They can also be installed from the GUI - but it's much more tedious to find them all!)
@@ -85,16 +124,6 @@ And run this to add Cygwin to Explorer's right-click menu:
 
 ```bash
 chere -icmf -t mintty -s bash -e 'Open with Cygwin'
-```
-
-### Installing on Git for Windows (formerly mSysGit):
-
-I don't recommend [Git for Windows](https://msysgit.github.io/) any more, but it should still work:
-
-```bash
-cd
-curl alberon.uk/cfg > cfg
-. cfg
 ```
 
 ## Upgrading
@@ -219,7 +248,7 @@ Combined with the `v` alias above, these make easy to type Vagrant commands, e.g
 | `rebuild`  | `destroy && box update && up`                 |                                                          |
 | `hosts`    | `hostmanager`                                 | [Update /etc/hosts files](https://github.com/smdahlen/vagrant-hostmanager) |
 | `x`/`exec` | `ssh -c "cd /vagrant; $*"`                    | Run a command on the guest machine without opening Bash  |
-| `h`/`tmux` | `ssh -- -t 'tmux attach \|\| tmux new'`       | More or less - see source for the full command!          |
+| `h`/`tmux` | `ssh -- -t 'tmux new -A'`                     | More or less - see source for the full command!          |
 | `uh`       | `up && tmux`                                  |                                                          |
 
 Note: Since Vagrant doesn't really support aliases, this is actually a [Bash function](.bash/vagrant.bash) sitting in front of the real Vagrant.
