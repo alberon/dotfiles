@@ -36,6 +36,15 @@ cg() {
     fi
 }
 
+# 'gs' typo -> 'g s'
+gs() {
+    if [ $# -eq 0 ]; then
+        g s
+    else
+        command gs "$@"
+    fi
+}
+
 # Workaround for Git hanging when using Composer
 # Currently disabled because it doesn't work in Vagrant provisioner, and I don't
 # need it right now because I disabled ControlMaster as it's not supported in Cygwin
