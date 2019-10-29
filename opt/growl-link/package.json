@@ -6,6 +6,6 @@
   "dependencies": {
     "growler": "betamos/Node-Growler#9ec202b162f8e160cb270f3e66d28d4befc93bfe",
     "js-yaml": "^3.0.2",
-    "lodash": "^2.4.1"
+    "lodash": "^4.17.15"
   }
 }
