@@ -1,21 +1,33 @@
 #!/bin/bash
 
-# 'a' = Asset builder (Awe, Gulp or npm as appropriate)
+# 'a' = Asset builder (webpack, Gulp, Awe or npm as appropriate)
 
-# Gulp
-if dir="$(findup -e gulpfile.js -o -e gulpfile.coffee)"; then
-    exec gulp "$@"
+if dir="$(findup -f scripts/webpack.js -o -e gulpfile.js -o -e gulpfile.coffee -o -f awe.yaml -o -f package.json)"; then
+
+    # webpack
+    if [ -f scripts/webpack.js ]; then
+        exec scripts/webpack.js "$@"
+    fi
+
+    # Gulp
+    if [ -e gulpfile.js -o -e gulpfile.coffee ]; then
+        exec gulp "$@"
+    fi
+
+    # Awe (http://awe.alberon.co.uk/ - Deprecated)
+    if [ -f awe.yaml ]; then
+        exec awe "$@"
+    fi
+
+    # npm
+    if [ -f package.json ]; then
+        exec npm run "$@"
+    fi
+
+    echo "LOGIC ERROR" >&2
+    exit 1
+
 fi
 
-# Awe (http://awe.alberon.co.uk/ - Deprecated)
-if dir="$(findup -f awe.yaml)"; then
-    exec awe "$@"
-fi
-
-# npm
-if dir="$(findup -f package.json)"; then
-    exec npm run "$@"
-fi
-
-echo "Cannot find gulpfile.js, awe.yaml or package.json" >&2
+echo "Cannot find scripts/webpack.js, gulpfile.js, awe.yaml or package.json" >&2
 exit 1

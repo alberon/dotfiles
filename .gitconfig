@@ -21,6 +21,7 @@
 
 [push]
     default = tracking
+    followTags = true
 
 [alias]
     addremove    = -A "$@"
