@@ -9,7 +9,7 @@ FontHeight=12
 FontIsBold=no
 FontSmoothing=default
 BoldAsColour=yes
-AllowBlinking=no
+AllowBlinking=yes
 Locale=en_GB
 Charset=UTF-8
 
