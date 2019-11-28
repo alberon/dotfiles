@@ -38,11 +38,11 @@ if $HAS_TERMINAL; then
     # Git/Mercurial prompt
     vcsprompt()
     {
-        # Walk up the tree looking for a .git or .hg directory
+        # Walk up the tree looking for a .git directory
         # This is faster than trying each in turn and means we get the one
         # that's closer to us if they're nested
         root=$(pwd 2>/dev/null)
-        while [ ! -e "$root/.git" -a ! -e "$root/.hg" ]; do
+        while [ ! -e "$root/.git" ]; do
             if [ "$root" = "" ]; then break; fi
             root=${root%/*}
         done
@@ -72,22 +72,8 @@ if $HAS_TERMINAL; then
                 echo -e "\033[30;1m at \033[35;1m$tag \033[0m(git)\033[30;1m"
                 #        ^grey       ^pink        ^light grey  ^ grey
             fi
-        elif [ -e "$root/.hg" ]; then
-            HgPrompt=`hg prompt "{root}@@@\033[30;1m on \033[35;1m{branch} \033[0m(hg)\033[30;1m" 2>/dev/null`
-            #                             ^grey       ^pink            ^light grey  ^ grey
-            if [ $? -eq 0 ]; then
-                # A bit of hackery so we don't have to run hg prompt twice (it's slow)
-                root=${HgPrompt/@@@*}
-                prompt=${HgPrompt/*@@@}
-                relative=${PWD#$root}
-                echo -e "$root\033[0;1m$relative$prompt"
-                #        ^yellow     ^white
-            else
-                # Probably hg prompt isn't installed
-                echo $PWD
-            fi
         else
-            # No .git or .hg found
+            # No .git found
             echo $PWD
         fi
     }
@@ -157,22 +143,19 @@ if $HAS_TERMINAL; then
         # Set the prompt
         PS1="${TitlebarCode}\n"                     # Titlebar (see above)
         PS1="${PS1}${MessageCode}"                  # Message (see above)
-        PS1="${PS1}\[\033[30;1m\]["                 # [                             Grey
-        PS1="${PS1}\[\033[31;1m\]\u"                # Username                      Red
-        PS1="${PS1}\[\033[30;1m\]@"                 # @                             Grey
-        PS1="${PS1}\[\033[32;1m\]$(prompthostname)" # Hostname                      Green
-        PS1="${PS1}\[\033[30;1m\]:"                 # :                             Grey
-        # Note: \$(...) doesn't work in Git for Windows (4 Mar 2018)
-        PS1="${PS1}\[\033[33;1m\]\`vcsprompt\`"     # Working directory / Git / Hg  Yellow
-        PS1="${PS1}\[\033[30;1m\]\`venvprompt\`"    # Python virtual env            Grey
-        PS1="${PS1}\[\033[30;1m\] at "              # at                            Grey
-        PS1="${PS1}\[\033[37;0m\]\D{%T}"            # Time                          Light grey
-        #PS1="${PS1}\[\033[30;1m\] on "              # on                            Grey
-        #PS1="${PS1}\[\033[30;1m\]\D{%d/%m/%Y}"      # Date                          Light grey
-        PS1="${PS1}\[\033[30;1m\]]"                 # ]                             Grey
-        PS1="${PS1}\[\033[1;35m\]\$KeyStatus"       # SSH key status                Pink
+        PS1="${PS1}\[\033[30;1m\]["                 # [                         Grey
+        PS1="${PS1}\[\033[31;1m\]\u"                # Username                  Red
+        PS1="${PS1}\[\033[30;1m\]@"                 # @                         Grey
+        PS1="${PS1}\[\033[32;1m\]$(prompthostname)" # Hostname                  Green
+        PS1="${PS1}\[\033[30;1m\]:"                 # :                         Grey
+        PS1="${PS1}\[\033[33;1m\]\`vcsprompt\`"     # Working directory / Git   Yellow
+        PS1="${PS1}\[\033[30;1m\]\`venvprompt\`"    # Python virtual env        Grey
+        PS1="${PS1}\[\033[30;1m\] at "              # at                        Grey
+        PS1="${PS1}\[\033[37;0m\]\D{%T}"            # Time                      Light grey
+        PS1="${PS1}\[\033[30;1m\]]"                 # ]                         Grey
+        PS1="${PS1}\[\033[1;35m\]\$KeyStatus"       # SSH key status            Pink
         PS1="${PS1}\n"                              # (New line)
-        PS1="${PS1}\[\033[31;1m\]\\\$"              # $                             Red
+        PS1="${PS1}\[\033[31;1m\]\\\$"              # $                         Red
         PS1="${PS1}\[\033[0m\] "
     }
 
