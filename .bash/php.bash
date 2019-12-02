@@ -20,7 +20,7 @@ php() {
 }
 
 hackit() {
-    # Has to be a function because it deleted the working directory
+    # Has to be a function because it deletes the working directory
     if [ "$(basename "$(dirname "$(dirname "$PWD")")")" != "vendor" ]; then
         echo "Not in a Composer vendor directory" >&2
         return 1
