@@ -1,4 +1,4 @@
-# See ~/bin/phpunit
+alias com='composer'
 alias ide='t ide-helper'
 alias mfs='art migrate:fresh --seed'
 alias pu='phpunit'
