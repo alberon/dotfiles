@@ -27,5 +27,6 @@ if [ -n "$(git status --porcelain)" ]; then
 fi
 
 # Pull changes, but don't merge
-echo "Updating configuration files..."
-git pull --ff-only
+echo "Updating configuration files in the background..."
+echo
+git pull -q --ff-only &
