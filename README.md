@@ -25,10 +25,14 @@
 To update your fork with the latest changes:
 
 ```bash
-git pull alberon master
+g pl alberon master
 ```
 
-If there are any conficts, fix them conflicts, add the files (`g a <filename>`) and commit (`g ci`), then push (`g p`).
+If there are any conficts, fix them conflicts, add the files (`g a <filename>`) and commit (`g ci`), then push your updated version to GitHub:
+
+```bash
+g p
+```
 
 ## Installing
 
