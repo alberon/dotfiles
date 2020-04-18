@@ -20,10 +20,13 @@ echo "$today" > ~/.cfg_last_update
 
 # Make sure there are no local changes we might overwrite
 if [ -n "$(git status --porcelain)" ]; then
-    echo "Not updating configuration files because there are local changes."
+    echo -e "\e[37;1;41m                                                                     \e[0m"
+    echo -e "\e[37;1;41m  Not updating configuration files because there are local changes.  \e[0m"
+    echo -e "\e[37;1;41m                                                                     \e[0m"
     exit
 fi
 
 # Pull changes, but don't merge
-echo "Updating configuration files..."
-git pull --ff-only
+echo "Updating configuration files in the background..."
+echo
+git pull -q --ff-only &

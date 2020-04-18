@@ -6,7 +6,7 @@ exec >&2
 echo "Not installed - try this instead:"
 echo
 
-if ! which icotool >/dev/null 2>&1; then
+if ! command -v icotool &>/dev/null; then
     echo "  sudo apt-get install icoutils"
 fi
 

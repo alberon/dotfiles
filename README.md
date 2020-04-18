@@ -1,12 +1,11 @@
 # Dotfiles
 
-[These dotfiles](https://github.com/alberon/dotfiles) are a fork of [Dave's](https://github.com/davejamesmiller/dotfiles), suitable for use on shared accounts.
+[These dotfiles](https://github.com/alberon/dotfiles) are for use on shared Alberon accounts. You can also fork them to make your own copy.
 
 ## How to fork it
 
 - Fork the repo on GitHub
-- Ask Dave to add you to the [`djm.me/cfg`](https://djm.me/cfg) script
-- Install as normal
+- Install as normal (see below)
 - Put your public key in `~/.ssh/<name>.pub` (e.g. `~/.ssh/dave.pub`)
 - Uncomment `IdentityFile` and `IdentitiesOnly` in `~/.ssh/config`
 - Use `g gi alberon` (i.e. `git grep -i alberon`) to find all the places to replace with your own name / email address - currently this includes:
@@ -26,10 +25,14 @@
 To update your fork with the latest changes:
 
 ```bash
-git pull alberon master
+g pl alberon master
 ```
 
-If there are any conficts, fix them any conflicts, add the files (`g a <filename>`) and commit (`g ci`).
+If there are any conficts, fix them conflicts, add the files (`g a <filename>`) and commit (`g ci`), then push your updated version to GitHub:
+
+```bash
+g p
+```
 
 ## Installing
 
@@ -39,21 +42,62 @@ You need to have `git` and `wget` installed - e.g. `sudo apt-get install git wge
 
 ```bash
 cd
-wget djm.me/cfg
+wget alberon.uk/cfg
 . cfg
 ```
 
-That's it. (See https://djm.me/cfg for the script source - don't execute scripts from the internet without knowing what they do!)
+That's it. (See https://alberon.uk/cfg for the script source - don't execute scripts from the internet without knowing what they do!)
 
-### Installing on Windows:
+### Installing on Windows Subsystem for Linux (WSL)
+
+Install the [Fixedsys Excelsior Mono](http://askubuntu.com/a/725445) font (which is the regular Fixedsys font plus unicode characters).
+
+Click Start, search for `features` and select "Turn Windows features on or off". Tick "Windows Subsystem for Linux" and click OK. Reboot.
+
+Click Start, search for `ubuntu`, go to the Windows Store and install Ubuntu. Run it, wait while it completes setup, set a username and password when prompted, then run:
+
+```bash
+cd
+wget alberon.uk/cfg
+. cfg
+```
+
+[Install WSLtty](https://github.com/mintty/wsltty). (Note: If you installed it *before* setting up Ubuntu, run "configure WSL shortcuts" to add the shortcuts.)
+
+[Install VcXsrv](https://sourceforge.net/projects/vcxsrv/), then run XLaunch from the Start Menu. Accept the default settings except untick "Primary Selection". Save the configuration into the `shell:startup` folder so it's started automatically.
+
+Run "Ubuntu Terminal" from the start menu. Optionally install updates and some additional packages:
+
+```bash
+agu
+agar
+agi dos2unix php-cli tree unzip whois zip
+```
+
+Finally - optional, but it removes the annoying green background in `ls`:
+
+```bash
+se /etc/wsl.conf
+
+# Add:
+[automount]
+options = "umask=0022"
+```
+
+(Note: Adding `fmask=0111` to remove the `x` bit prevents WSL running Windows `.exe` commands - so don't do that!)
+
+**Tip:** To reinstall Ubuntu without re-downloading it, launch Command Prompt and run `wslconfig /u ubuntu`, then re-launch Ubuntu from the Start Menu. It will take a few minutes to reinstall.
+
+### Installing on Cygwin (Windows):
+
+Install the [Fixedsys Excelsior Mono](http://askubuntu.com/a/725445) font (which is the regular Fixedsys font plus unicode characters).
 
 [Install Cygwin](https://cygwin.com/install.html) - select [any local mirror](https://cygwin.com/mirrors.html) (e.g. `mirrorservice.org` for UK), and when prompted add these packages:
 
-- git
-- vim
-- wget
+- `git`
+- `wget`
 
-**Tip:** Click the "View" button in the top-right corner to select "Full" mode, then use the search box.
+**Tip:** Select View > Full mode, then use the search box to find them.
 
 Once it's installed, run Cygwin Terminal and run this to set the same home directory in Cygwin and Windows:
 
@@ -66,7 +110,7 @@ Then install dotfiles as above:
 
 ```bash
 cd
-wget djm.me/cfg
+wget alberon.uk/cfg
 . cfg
 ```
 
@@ -75,17 +119,15 @@ Close and re-open Cygwin Terminal to reload the configuration. (**Note:** When t
 Then run this to install some additional useful packages:
 
 ```bash
-apt-cyg install bash-completion bind-utils curl dos2unix git-completion less links ncurses tmux tree whois
+apt-cyg install bash-completion bind-utils chere curl dos2unix git-completion inetutils less links make ncurses procps-ng tmux tree unzip vim whois xinit
 ```
 
-### Installing on Git for Windows (formerly mSysGit):
+(They can also be installed from the GUI - but it's much more tedious to find them all!)
 
-I don't recommend [Git for Windows](https://msysgit.github.io/) any more, but it should still work:
+And run this to add Cygwin to Explorer's right-click menu:
 
 ```bash
-cd
-curl djm.me/cfg > cfg
-. cfg
+chere -icmf -t mintty -s bash -e 'Open with Cygwin'
 ```
 
 ## Upgrading
@@ -136,52 +178,84 @@ I'm lazy so I have a lot of Bash aliases and short commands - here are the most 
 | `dus`      | `du -sh`                                      | Also sorts files/directories by size                     |
 | `pow`      | `sudo poweroff`                               |                                                          |
 | `reload`   | `exec bash -l`                                | Run this after modifying any Bash config file            |
+| `d`        | `docker`                                      |                                                          |
+| `dc`       | `docker-compose`                              |                                                          |
+| `db`       | `docker build`                                |                                                          |
+| `dr`       | `docker run`                                  |                                                          |
+| `dri`      | `docker run -it`                              | Run interactively, e.g. `dri ubuntu`                     |
+| `dsh`      | `docker run ... /bin/bash`                    | Run /bun/bash in the container (with agent forwarding)   |
+| `dresume`  | `docker start -ai "$(docker ps ...)"`         | Resume most recently stopped container                   |
+| `dstop`    | `docker stop $(docker ps -ql)`                | Stop most recent container                               |
+| `dstopall` | `docker stop $(docker ps -q)`                 | Stop all running containers                              |
+| `dkill`    | `docker kill $(docker ps -ql)`                | Kill most recent container                               |
+| `dkillall` | `docker kill $(docker ps -q)`                 | Kill all running containers                              |
+| `dclean`   | `docker container prune; docker image prune`  | Clean up stopped containers and untagged images          |
 
-**Note:** Expansions are simplified in the list above - e.g. `l` is actually aliased to `ls -hFl --color=always --hide=*.pyc --hide=*.sublime-workspace` on Linux or `LSCOLORS=ExGxFxDaCaDaDahbaDacec ls -hFlG` on Mac.
+**Note:** Some expansions are simplified in the list above - e.g. `l` is actually aliased to `ls -hFl --color=always --hide=*.pyc --hide=*.sublime-workspace` on Linux or `LSCOLORS=ExGxFxDaCaDaDahbaDacec ls -hFlG` on Mac.
 
 ## Git aliases
 
 Combined with the `g` alias above, these make easy to type Git commands, e.g. `g s` instead of `git status`:
 
+| Alias        | Expansion                                         | Comments                                                 |
+|--------------|---------------------------------------------------|----------------------------------------------------------|
+| `g s`        | `git status`                                      |                                                          |
+| `g a`        | `git add -A`                                      | Adds *and* removes files                                 |
+| `g d`        | `git diff`                                        |                                                          |
+| `g dc`       | `git diff --cached`                               | Shows diff for staged files                              |
+| `g c`        | `git commit -m`                                   | e.g. `g c "Commit message"`                              |
+| `g amend`    | `git commit --amend --no-edit`                    | Modify the previous commit, keep the same message        |
+| `g edit`     | `git commit --amend`                              | Modify the previous commit, edit the message             |
+| `g l`        | `git log --name-status`                           | Includes list of modified files                          |
+| `g l1`       | `git log --name-status --pretty=...`              | Single-line format                                       |
+| `g lg`       | `git log --graph`                                 |                                                          |
+| `g lg1`      | `git log --graph --pretty=...`                    | Single-line format                                       |
+| `g ll`       | `git log`                                         | Without list of modified files                           |
+| `g lp`       | `git log --patch`                                 | Displays diff with each log entry                        |
+| `g lpw`      | `git log --patch --ignore-all-space`              | Displays diff excluding whitespace changes               |
+| `g in`       | `git log origin/master..`                         | Lists commits incoming from the default remote           |
+| `g io`       | `git log --left-right origin/master..HEAD`        | Lists commits incoming & outgoing to the default remote  |
+| `g out`      | `git log ..origin/master`                         | Lists commits outgoing to the default remote             |
+| `g f`        | `git fetch`                                       |                                                          |
+| `g p`        | `git push`                                        |                                                          |
+| `g pt`       | `git push --tags`                                 |                                                          |
+| `g pu`       | `git push -u origin HEAD`                         | Push and set upstream                                    |
+| `g b`        | `git branch`                                      |                                                          |
+| `g ba`       | `git branch -a`                                   |                                                          |
+| `g co`       | `git checkout`                                    |                                                          |
+| `g g`        | `git grep`                                        |                                                          |
+| `g g3`       | `git grep --context=3`                            | Also `g6` and `g9`                                       |
+| `g gi`       | `git grep --ignore-case`                          |                                                          |
+| `g gi3`      | `git grep --ignore-case --context=3`              | Also `gi6` and `gi9`                                     |
+| `g todo`     | `git grep 'TODO\|XXX\|FIXME'`                     |                                                          |
+| `g cls`      | `git grep -i "class\s\+$1\b"`                     | Search for class definition                              |
+| `g fun`      | `git grep -i "function\s\+$1\b"`                  | Search for function definition                           |
+| `g cp`       | `git cherry-pick`                                 |                                                          |
+| `g m`        | `git merge`                                       |                                                          |
+| `g mt`       | `git mergetool`                                   |                                                          |
+| `g sub`      | `git submodule`                                   |                                                          |
+| `g sync`     | `git submodule sync; submodule update --init`     |                                                          |
+| `g files`    | `git ls-files \| grep`                            | Find file by name                                        |
+
+## Vagrant shortcuts
+
+Combined with the `v` alias above, these make easy to type Vagrant commands, e.g. `v s` instead of `vagrant status`:
+
 | Alias      | Expansion                                     | Comments                                                 |
 |------------|-----------------------------------------------|----------------------------------------------------------|
 | `s`        | `status`                                      |                                                          |
-| `a`        | `add -A`                                      | Adds *and* removes files                                 |
-| `d`        | `diff`                                        |                                                          |
-| `dc`       | `diff --cached`                               | Shows diff for staged files                              |
-| `c`        | `commit -m`                                   | e.g. `g c "Commit message"`                              |
-| `amend`    | `commit --amend --no-edit`                    | Modify the previous commit, keep the same message        |
-| `edit`     | `commit --amend`                              | Modify the previous commit, edit the message             |
-| `l`        | `log --name-status`                           | Includes list of modified files                          |
-| `l1`       | `log --name-status --pretty=...`              | Single-line format                                       |
-| `lg`       | `log --graph`                                 |                                                          |
-| `lg1`      | `log --graph --pretty=...`                    | Single-line format                                       |
-| `ll`       | `log`                                         | Without list of modified files                           |
-| `lp`       | `log --patch`                                 | Displays diff with each log entry                        |
-| `lpw`      | `log --patch --ignore-all-space`              | Displays diff excluding whitespace changes               |
-| `in`       | `log origin/master..`                         | Lists commits incoming from the default remote           |
-| `io`       | `log --left-right origin/master..HEAD`        | Lists commits incoming & outgoing to the default remote  |
-| `out`      | `log ..origin/master`                         | Lists commits outgoing to the default remote             |
-| `f`        | `fetch`                                       |                                                          |
-| `p`        | `push`                                        |                                                          |
-| `pt`       | `push --tags`                                 |                                                          |
-| `pu`       | `push -u origin HEAD`                         | Push and set upstream                                    |
-| `b`        | `branch`                                      |                                                          |
-| `ba`       | `branch -a`                                   |                                                          |
-| `co`       | `checkout`                                    |                                                          |
-| `g`        | `grep`                                        |                                                          |
-| `g3`       | `grep --context=3`                            | Also `g6` and `g9`                                       |
-| `gi`       | `grep --ignore-case`                          |                                                          |
-| `gi3`      | `grep --ignore-case --context=3`              | Also `gi6` and `gi9`                                     |
-| `todo`     | `grep 'TODO\|XXX\|FIXME'`                     |                                                          |
-| `cls`      | `grep -i "class\s\+$1\b"`                     | Search for class definition                              |
-| `fun`      | `grep -i "function\s\+$1\b"`                  | Search for function definition                           |
-| `cp`       | `cherry-pick`                                 |                                                          |
-| `m`        | `merge`                                       |                                                          |
-| `mt`       | `mergetool`                                   |                                                          |
-| `sub`      | `submodule`                                   |                                                          |
-| `sync`     | `submodule sync; submodule update --init`     |                                                          |
-| `files`    | `ls-files | grep`                             | Find file by name                                        |
+| `gs`       | `global-status`                               |                                                          |
+| `u`        | `up`                                          |                                                          |
+| `p`        | `provision`                                   |                                                          |
+| `d`/`down` | `suspend`                                     |                                                          |
+| `bu`       | `box update`                                  |                                                          |
+| `rebuild`  | `destroy && box update && up`                 |                                                          |
+| `hosts`    | `hostmanager`                                 | [Update /etc/hosts files](https://github.com/smdahlen/vagrant-hostmanager) |
+| `x`/`exec` | `ssh -c "cd /vagrant; $*"`                    | Run a command on the guest machine without opening Bash  |
+| `h`/`tmux` | `ssh -- -t 'tmux new -A'`                     | More or less - see source for the full command!          |
+| `uh`       | `up && tmux`                                  |                                                          |
+
+Note: Since Vagrant doesn't really support aliases, this is actually a [Bash function](.bash/vagrant.bash) sitting in front of the real Vagrant.
 
 ## Automatic sudo
 

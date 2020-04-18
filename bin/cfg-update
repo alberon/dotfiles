@@ -1,9 +1,6 @@
 #!/bin/bash
 
-# If this is run manually, not as a Git hook, we may be in the wrong directory
-if [ -z "$GIT_DIR" ]; then
-    cd $(dirname "$0")/..
-fi
+cd $HOME
 
 # Delete old .hg directory if necessary
 # Note: This is because Mercurial writes to the .hg/dirstate after it is
@@ -33,7 +30,7 @@ fi
 
 # Create local MySQL settings file, and chmod to ensure any passwords are protected
 if [ ! -e .my.cnf ]; then
-    echo -e "[client]\n;user=\n;password=\n\n[mysql]\ndatabase=" > .my.cnf
+    echo -e "[client]\n;user=''\n;password=''\n\n[mysql]\ndatabase=''" > .my.cnf
     chmod 600 .my.cnf
 fi
 
@@ -89,7 +86,8 @@ for i in \
     node_modules                    \
     opt/boris                       \
     opt/git-extras                  \
-    opt/icdiff
+    opt/icdiff                      \
+    yankring_history_v2.txt
 do
     if [ -e "$i" -o -L "$i" ]; then
         rm -rf "$i"

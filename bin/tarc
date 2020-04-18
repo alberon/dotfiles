@@ -7,30 +7,31 @@ source_dir="${1%/}"
 source_name="`basename "$source_dir"`"
 
 # Compress if possible
-if which bzip2 >/dev/null
-then
-    flags=jcf
-    ext=.bz2
-elif which gzip >/dev/null
-then
-    flags=zcf
-    ext=.gz
+if command -v 7z &>/dev/null; then
+    cmd="7z a"
+    ext=".7z"
+elif command -v bzip2 &>/dev/null; then
+    cmd="tar jcvf"
+    ext=".tar.bz2"
+elif command -v gzip &>/dev/null; then
+    cmd="tar zcvf"
+    ext=".tar.gz"
 else
-    flags=cf
-    ext=
+    cmd="tar cvf"
+    ext=".tar"
 fi
 
 # $target_file = Name of the target file
 target="$2"
 if [ -z "$target" ]
 then
-    target="$source_name.tar$ext"
+    target="$source_name$ext"
 fi
 
 # Make $target_file absolute not relative (unless it is already)
 if [ "${target_file:0:1}" != "/" ]
 then
-    target="`pwd`/$target"
+    target="$(pwd)/$target"
 fi
 
 # Go to the parent of the source directory, so all file names in the archive are relative to there
@@ -38,4 +39,4 @@ cd "$source_dir/.."
 
 # Create the archive
 echo "Writing to $target..."
-tar $flags "$target" "$source_name"
+$cmd "$target" "$source_name"

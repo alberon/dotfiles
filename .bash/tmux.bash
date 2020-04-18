@@ -1,26 +1,83 @@
-# Workaround for losing SSH agent connection when reconnecting tmux: update a
-# symlink to the socket each time we reconnect and use that as the socket in
-# every session. First we make sure there's a valid socket connecting us to the
-# agent and it's not already pointing to the symlink, and there's no existing
-# working symlink:
-link="$HOME/.ssh/ssh_auth_sock"
-if [ "$SSH_AUTH_SOCK" != "$link" -a -S "$SSH_AUTH_SOCK" -a ! -S "$link" ]; then
-    # We also check if the agent has any keys loaded - PuTTY will still open an
-    # agent connection even if we used password authentication
-    if ssh-add -l >/dev/null 2>&1; then
-        ln -nsf "$SSH_AUTH_SOCK" "$HOME/.ssh/ssh_auth_sock"
-    fi
+# Currently not working on Mac
+# But not using tmux on Mac anyway so it'll do for now!
+if ! $MAC; then
+
+    # tmux attach (local)
+    tm() {
+        local name="${1:-default}"
+
+        if [ -z "$TMUX" ] && [[ "$TERM" != screen* ]]; then
+            tmux -2 new -A -s "$name"
+        else
+            tmux -2 new -d -s "$name" 2>/dev/null
+            tmux -2 switch -t "$name"
+        fi
+    }
+
+    # ssh + tmux ('h' for 'ssH', because 's' is in use)
+    h() {
+        local host="$1"
+        local name="${2:-default}"
+        local path="${3:-.}"
+
+        # Special case for 'h vagrant' / 'h v' ==> 'v h' => 'vagrant tmux' (see vagrant.bash)
+        if [ "$host" = "v" -o "$host" = "vagrant" ] && [ $# -eq 1 ]; then
+            vagrant tmux
+            return
+        fi
+
+        # For 'h user@host ^', upload SSH public key - easier than retyping it
+        if [ $# -eq 2 -a "$name" = "^" ]; then
+            ssh-copy-id "$host"
+            return
+        fi
+
+        # For 'h user@host X', close the master connection
+        if [ $# -eq 2 -a "$name" = "X" ]; then
+            ssh -O stop "$host"
+            return
+        fi
+
+        # Not running tmux
+        if [ -z "$TMUX" ] && [[ "$TERM" != screen* ]]; then
+
+            local server="${host#*@}"
+
+            case $server in
+                # Run tmux on the local machine, as it's not available on the remote server
+                a|aria|b|baritone|d|dragon|f|forte|t|treble)
+
+                    # The name defaults to the host name given, rather than 'default'
+                    name="${2:-$host}"
+
+                    # Create a detached session (if there isn't one already)
+                    tmux -2 new -s "$name" -d "ssh -o ForwardAgent=yes -t '$host' 'cd \"$path\"; bash -l'"
+
+                    # Set the default command for new windows to connect to the same server, so we can have multiple panes
+                    tmux set -t "$name" default-command "ssh -o ForwardAgent=yes -t '$host' 'cd \"$path\"; bash -l'"
+
+                    # Connect to the session
+                    tmux -2 attach -t "$name"
+
+                    ;;
+
+                # Run tmux on the remote server
+                *)
+                    ssh -o ForwardAgent=yes -t "$host" "cd '$path'; command -v tmux &>/dev/null && tmux -2 new -A -s '$name' || bash -l"
+                    ;;
+            esac
+
+            return
+        fi
+
+        # Already running tmux *and* the user tried to specify a session name
+        if [ $# -ge 2 ]; then
+            echo 'sessions should be nested with care, unset $TMUX to force' >&2
+            return 1
+        fi
+
+        # Already running tmux so connect without it
+        ssh -o ForwardAgent=yes "$host"
+    }
+
 fi
-
-# Now that's done we can use the symlink for every session
-export SSH_AUTH_SOCK="$HOME/.ssh/ssh_auth_sock"
-
-# tmux attach (local)
-alias tm='tmux -2 attach || tmux -2 new -s default'
-
-# ssh + tmux ('h' for 'host' or 'ssH', because 's' and 't' are in use)
-h() {
-    host="$1"
-    name="${2:-default}"
-    ssh -t "$host" "which tmux >/dev/null 2>&1 && { tmux -2 attach -t '$name' || tmux -2 new -s '$name'; } || bash -l"
-}

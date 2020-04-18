@@ -22,9 +22,11 @@ if has("win32")
 endif
 
 " If the file is already open, switch to it
-if !exists("*EditExisting")
-    runtime macros/editexisting.vim
-endif
+" Removed Sat 14 May 2016 because it conflicts in Vim 7.4 (Ubunti 16.04) and
+" I'm not sure why - but I don't use Vim enough to spend any longer fixing it
+"if !exists("*EditExisting")
+"    runtime macros/editexisting.vim
+"endif
 
 " Change out of the c:\windows\system32 directory because NERDtree seems to
 " fail to load (or loads *really* slowly) in that directory
