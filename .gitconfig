@@ -113,6 +113,7 @@
     t            = tag
     tags         = tag
     todo         = grep --untracked --line-number 'TODO\\|XXX\\|FIXME'
+    unshallow    = fetch --unshallow
     up           = !git pull --rebase --prune $@ && git submodule update --init --recursive
     web          = instaweb
     wipe         = !git add -A && git commit -qm 'WIPE SAVEPOINT' && git reset HEAD~1 --hard

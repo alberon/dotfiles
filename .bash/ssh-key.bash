@@ -22,7 +22,7 @@ if $WSL; then
         rm -f "$WIN_TEMP_UNIX/wsl-ssh-pageant.exe" "$WIN_TEMP_UNIX/wsl-ssh-pageant.sock" 2>/dev/null && \
         cp $HOME/opt/wsl-ssh-pageant/wsl-ssh-pageant-amd64.exe "$WIN_TEMP_UNIX/wsl-ssh-pageant.exe"
 
-        "$WIN_TEMP_UNIX/wsl-ssh-pageant.exe" --wsl "$WIN_TEMP/wsl-ssh-pageant.sock" 2>/dev/null &
+        "$WIN_TEMP_UNIX/wsl-ssh-pageant.exe" --wsl "$WIN_TEMP/wsl-ssh-pageant.sock" &>/dev/null &
     fi
 
     export SSH_AUTH_SOCK="$WIN_TEMP_UNIX/wsl-ssh-pageant.sock"
@@ -112,10 +112,9 @@ fi
 if ! $MAC && ! $MSYSGIT && ! $WSL; then
 
     # First we make sure there's a valid socket connecting us to the agent and
-    # it's not already pointing to the symlink, and there's no existing
-    # working symlink.
+    # it's not already pointing to the symlink.
     link="$HOME/.ssh/ssh_auth_sock"
-    if [ "$SSH_AUTH_SOCK" != "$link" -a -S "$SSH_AUTH_SOCK" -a ! -S "$link" ]; then
+    if [ "$SSH_AUTH_SOCK" != "$link" -a -S "$SSH_AUTH_SOCK" ]; then
         # We also check if the agent has any keys loaded - PuTTY will still open an
         # agent connection even if we used password authentication
         if ssh-add -l >/dev/null 2>&1; then

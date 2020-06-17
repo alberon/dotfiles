@@ -74,7 +74,7 @@
     echo
     echo 'Fetching Git repository...'
     echo
-    git fetch origin || exit 8
+    git fetch --depth=1 origin || exit 8
 
     # Update the working directory
     # Delete or move any conflicting files (usually .bashrc and .bash_logout)
