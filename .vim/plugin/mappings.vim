@@ -2,6 +2,10 @@
 nnoremap ; :
 vnoremap ; :
 
+" Browse current directory
+nmap - :Explore<CR>
+nmap _ :Vexplore!<CR>
+
 " Ctrl+tab to switch windows
 nnoremap <C-Tab> <C-w>w
 nnoremap <C-S-Tab> <C-w>p
