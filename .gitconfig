@@ -37,6 +37,7 @@
     branches     = branch -avv
     c            = commit -m
     ca           = !git add -A && git commit -m
+    ce           = commit --amend --reset-author
     ci           = commit
     cim          = commit -m
     changedfiles = diff --name-only
