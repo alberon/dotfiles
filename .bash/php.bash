@@ -86,3 +86,19 @@ hacked() {
     cd "$pwd"
     OLDPWD="$oldpwd"
 }
+
+xdebug() {
+    if [[ ${1:-} = 'on' ]]; then
+        export XDEBUG_SESSION=${2:-1}
+    elif [[ ${1:-} = 'off' ]]; then
+        unset XDEBUG_SESSION
+    fi
+
+    if [[ ${XDEBUG_SESSION:-} = 1 ]]; then
+        echo "Xdebug step debugging is enabled"
+    elif [[ -n ${XDEBUG_SESSION:-} ]]; then
+        echo "Xdebug step debugging is enabled (trigger_value=$XDEBUG_SESSION)"
+    else
+        echo "Xdebug step debugging is disabled"
+    fi
+}
