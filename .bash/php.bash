@@ -1,6 +1,6 @@
 alias com='composer'
 alias ide='t ide-helper'
-alias mfs='art migrate:fresh --seed'
+alias mfs='art migrate:fresh --drop-views --seed'
 alias pu='phpunit'
 
 composer() {
