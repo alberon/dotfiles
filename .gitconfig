@@ -23,6 +23,9 @@
     default = tracking
     followTags = true
 
+[pull]
+    rebase = false
+
 [alias]
     addremove    = -A "$@"
     amend        = commit --amend --no-edit --reset-author
