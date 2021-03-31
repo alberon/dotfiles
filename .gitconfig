@@ -18,6 +18,7 @@
 [pager]
     ls-files = true
     status = true
+    tag = false
 
 [push]
     default = tracking
@@ -140,3 +141,6 @@
 
 [rerere]
     enabled = true
+
+[tag]
+    sort = version:refname
