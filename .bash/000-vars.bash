@@ -20,7 +20,7 @@ else
     case "$(uname -a)" in
         CYGWIN*) WINDOWS=true; CYGWIN=true ;;
         MINGW*)  WINDOWS=true; MSYSGIT=true ;;
-        Darwin)  MAC=true ;;
+        Darwin*)  MAC=true ;;
     esac
 fi
 
