@@ -4,6 +4,8 @@
 
 if dir="$(findup -f scripts/webpack.sh -o -f scripts/webpack.js -o -e gulpfile.js -o -e gulpfile.coffee -o -f awe.yaml -o -f package.json)"; then
 
+    cd "$dir"
+
     # webpack
     if [ -f scripts/webpack.sh ]; then
         exec scripts/webpack.sh "$@"
