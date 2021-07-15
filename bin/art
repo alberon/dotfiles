@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if ! dir="$(findup -f artisan)"; then
+if ! dir="$(findup -f artisan -o -f scripts/artisan.sh)"; then
     echo "You do not appear to be within a Laravel directory" >&2
     exit 1
 fi

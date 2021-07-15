@@ -76,6 +76,8 @@ if $HAS_TERMINAL && ! $WINDOWS; then
         fi
     }
 
+    alias sc='systemctl'
+
     # Add sbin folder to my path so they can be auto-completed
     PATH="$PATH:/usr/local/sbin:/usr/sbin:/sbin"
 
