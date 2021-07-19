@@ -18,10 +18,14 @@
 [pager]
     ls-files = true
     status = true
+    tag = false
 
 [push]
     default = tracking
     followTags = true
+
+[pull]
+    rebase = false
 
 [alias]
     addremove    = -A "$@"
@@ -37,6 +41,7 @@
     branches     = branch -avv
     c            = commit -m
     ca           = !git add -A && git commit -m
+    ce           = commit --amend --reset-author
     ci           = commit
     cim          = commit -m
     changedfiles = diff --name-only
@@ -139,3 +144,6 @@
 
 [rerere]
     enabled = true
+
+[tag]
+    sort = version:refname

@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# No parameters - just display the version
+if [ $# -eq 0 ]; then
+    exec tmux -V
+fi
+
+# Accept 'lt', 'gt', etc. to avoid needing to quote '<', '>'
+case "$1" in
+    gt) op='>'  ; shift ;;
+    ge) op='>=' ; shift ;;
+    lt) op='<'  ; shift ;;
+    le) op='<=' ; shift ;;
+    *)  op='='          ;;
+esac
+
+# See ~/.tmux.conf
+# Example: tmux-version lt 2.9
+tmux -V | cut -d' ' -f2 | awk "{ exit \$1 $op $1 ? 0 : 1 }"

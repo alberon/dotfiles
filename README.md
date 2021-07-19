@@ -25,10 +25,13 @@
 To update your fork with the latest changes:
 
 ```bash
+cd
 g pl alberon master
 ```
 
-If there are any conficts, fix them conflicts, add the files (`g a <filename>`) and commit (`g ci`), then push your updated version to GitHub:
+If there are any conficts, fix them, add the files (`g a <filename>`) and commit (`g ci`).
+
+Then push your updated version to GitHub:
 
 ```bash
 g p
