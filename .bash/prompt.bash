@@ -35,6 +35,161 @@ if $HAS_TERMINAL; then
             ;;
     esac
 
+  ######################################################################################################################
+  # All the git_prompt_* stuff is basically just recycled https://github.com/twolfson/sexy-bash-prompt
+  # renamed to give it more meaningful context here
+  ######################################################################################################################
+  # Set up symbols
+  git_prompt_synced_symbol=""
+  git_prompt_dirty_synced_symbol="*"
+  git_prompt_unpushed_symbol="△"
+  git_prompt_dirty_unpushed_symbol="▲"
+  git_prompt_unpulled_symbol="▽"
+  git_prompt_dirty_unpulled_symbol="▼"
+  git_prompt_unpushed_unpulled_symbol="⬡"
+  git_prompt_dirty_unpushed_unpulled_symbol="⬢"
+
+  function git_prompt_get_git_progress() {
+    # Detect in-progress actions (e.g. merge, rebase)
+    # https://github.com/git/git/blob/v1.9-rc2/wt-status.c#L1199-L1241
+    git_dir="$(git rev-parse --git-dir)"
+
+    # git merge
+    if [[ -f "$git_dir/MERGE_HEAD" ]]; then
+      echo -n " [merge]"
+    elif [[ -d "$git_dir/rebase-apply" ]]; then
+      # git am
+      if [[ -f "$git_dir/rebase-apply/applying" ]]; then
+        echo -n " [am]"
+      # git rebase
+      else
+        echo -n " [rebase]"
+      fi
+    elif [[ -d "$git_dir/rebase-merge" ]]; then
+      # git rebase --interactive/--merge
+      echo -n " [rebase]"
+    elif [[ -f "$git_dir/CHERRY_PICK_HEAD" ]]; then
+      # git cherry-pick
+      echo -n " [cherry-pick]"
+    fi
+    if [[ -f "$git_dir/BISECT_LOG" ]]; then
+      # git bisect
+      echo -n " [bisect]"
+    fi
+    if [[ -f "$git_dir/REVERT_HEAD" ]]; then
+      # git revert --no-commit
+      echo -n " [revert]"
+    fi
+  }
+
+  function git_prompt_get_git_status() {
+    # Grab the git dirty and git behind
+    dirty_branch="$(git_prompt_parse_git_dirty)"
+    branch_ahead="$(git_prompt_parse_git_ahead)"
+    branch_behind="$(git_prompt_parse_git_behind)"
+
+    # Iterate through all the cases and if it matches, then echo
+    if [[ "$dirty_branch" == 1 && "$branch_ahead" == 1 && "$branch_behind" == 1 ]]; then
+      echo "$git_prompt_dirty_unpushed_unpulled_symbol"
+    elif [[ "$branch_ahead" == 1 && "$branch_behind" == 1 ]]; then
+      echo "$git_prompt_unpushed_unpulled_symbol"
+    elif [[ "$dirty_branch" == 1 && "$branch_ahead" == 1 ]]; then
+      echo "$git_prompt_dirty_unpushed_symbol"
+    elif [[ "$branch_ahead" == 1 ]]; then
+      echo "$git_prompt_unpushed_symbol"
+    elif [[ "$dirty_branch" == 1 && "$branch_behind" == 1 ]]; then
+      echo "$git_prompt_dirty_unpulled_symbol"
+    elif [[ "$branch_behind" == 1 ]]; then
+      echo "$git_prompt_unpulled_symbol"
+    elif [[ "$dirty_branch" == 1 ]]; then
+      echo "$git_prompt_dirty_synced_symbol"
+    else # clean
+      echo "$git_prompt_synced_symbol"
+    fi
+  }
+
+  function git_prompt_get_git_branch() {
+    # On branches, this will return the branch name
+    # On non-branches, (no branch)
+    ref="$(git symbolic-ref HEAD 2> /dev/null | sed -e 's/refs\/heads\///')"
+    if [[ "$ref" != "" ]]; then
+      echo "$ref"
+    else
+      echo "(no branch)"
+    fi
+  }
+
+  git_prompt_is_branch1_behind_branch2 () {
+    # $ git log origin/master..master -1
+    # commit 4a633f715caf26f6e9495198f89bba20f3402a32
+    # Author: Todd Wolfson <todd@twolfson.com>
+    # Date:   Sun Jul 7 22:12:17 2013 -0700
+    #
+    #     Unsynced commit
+
+    # Find the first log (if any) that is in branch1 but not branch2
+    first_log="$(git log $1..$2 -1 2> /dev/null)"
+
+    # Exit with 0 if there is a first log, 1 if there is not
+    [[ -n "$first_log" ]]
+  }
+
+  git_prompt_branch_exists () {
+    # List remote branches           | # Find our branch and exit with 0 or 1 if found/not found
+    git branch --remote 2> /dev/null | grep --quiet "$1"
+  }
+
+  git_prompt_parse_git_ahead () {
+    # Grab the local and remote branch
+    branch="$(git_prompt_get_git_branch)"
+    remote="$(git config --get "branch.${branch}.remote" || echo -n "origin")"
+    remote_branch="$remote/$branch"
+
+    # $ git log origin/master..master
+    # commit 4a633f715caf26f6e9495198f89bba20f3402a32
+    # Author: Todd Wolfson <todd@twolfson.com>
+    # Date:   Sun Jul 7 22:12:17 2013 -0700
+    #
+    #     Unsynced commit
+
+    # If the remote branch is behind the local branch
+    # or it has not been merged into origin (remote branch doesn't exist)
+    if (git_prompt_is_branch1_behind_branch2 "$remote_branch" "$branch" ||
+        ! git_prompt_branch_exists "$remote_branch"); then
+      # echo our character
+      echo 1
+    fi
+  }
+
+  git_prompt_parse_git_behind () {
+    # Grab the branch
+    branch="$(git_prompt_get_git_branch)"
+    remote="$(git config --get "branch.${branch}.remote" || echo -n "origin")"
+    remote_branch="$remote/$branch"
+
+    # $ git log master..origin/master
+    # commit 4a633f715caf26f6e9495198f89bba20f3402a32
+    # Author: Todd Wolfson <todd@twolfson.com>
+    # Date:   Sun Jul 7 22:12:17 2013 -0700
+    #
+    #     Unsynced commit
+
+    # If the local branch is behind the remote branch
+    if git_prompt_is_branch1_behind_branch2 "$branch" "$remote_branch"; then
+      # echo our character
+      echo 1
+    fi
+  }
+
+  function git_prompt_parse_git_dirty() {
+    # If the git status has *any* changes (e.g. dirty), echo our character
+    if [[ -n "$(git status --porcelain 2> /dev/null)" ]]; then
+      echo 1
+    fi
+  }
+
+  ######################################################################################################################
+
     # Git/Mercurial prompt
     vcsprompt()
     {
@@ -98,6 +253,18 @@ if $HAS_TERMINAL; then
         if [ -n "$VIRTUAL_ENV" ]; then
             echo -e " ENV=${VIRTUAL_ENV##*/}"
         fi
+    }
+
+    git_status() {
+      if [ -e "$PWD/.git" ]; then
+        git_prompt_get_git_status
+      fi
+    }
+
+    git_progress() {
+      if [ -e "$PWD/.git" ]; then
+        git_prompt_get_git_progress
+      fi
     }
 
     # Function to update the prompt with a given message (makes it easier to distinguish between different windows)
@@ -170,6 +337,11 @@ if $HAS_TERMINAL; then
         #PS1="${PS1}\[\033[30;1m\] on "              # on                            Grey
         #PS1="${PS1}\[\033[30;1m\]\D{%d/%m/%Y}"      # Date                          Light grey
         PS1="${PS1}\[\033[30;1m\]]"                 # ]                             Grey
+
+        PS1="${PS1}\[\033[40m\]\[\033[32m\] \`git_status\`"
+        PS1="${PS1} \`git_progress\`"
+        PS1="${PS1}\[\033[40m\]\033[K" # force colour to end of line
+
         PS1="${PS1}\[\033[1;35m\]\$KeyStatus"       # SSH key status                Pink
         PS1="${PS1}\n"                              # (New line)
         PS1="${PS1}\[\033[31;1m\]\\\$"              # $                             Red
