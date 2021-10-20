@@ -89,7 +89,7 @@ do
 done
 
 # Create post-merge hook
-ln -nsf ../../bin/cfg-update .git/hooks/post-merge
+ln -nsf ../../.dotfiles/post-update .git/hooks/post-merge
 
 # Add/update remote repositories
 git remote add alberon git://github.com/alberon/dotfiles.git 2>/dev/null

@@ -69,13 +69,10 @@
 # Python compiled files
 *.pyc
 
-# cPanel files
-/bin/pear
-/bin/peardev
-/bin/pecl
-.ea-php-cli.cache
+# This is required until all accounts have updated to the new structure
+!/bin
+/bin/*
+!/bin/cfg-update
 
-# gitolite executables
-/bin/gitolite*
-/bin/gl-*
-/bin/sshkeys-lint
+# cPanel files
+.ea-php-cli.cache
