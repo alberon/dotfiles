@@ -55,6 +55,8 @@
 /.ssh/google_compute_engine.pub
 /.ssh/id_rsa.pub
 
+!/.sudo_as_admin_successful
+
 # Vagrant
 /.vagrant.d/*
 !/.vagrant.d/provision-*.sh
