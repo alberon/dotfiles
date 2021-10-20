@@ -3,6 +3,7 @@
 !/.bash
 !/.bash_completion
 !/.bash_completion.d
+!/.bin
 !/.dotfiles
 !/.drush
 !/.elinks
@@ -23,7 +24,6 @@
 !/.vagrant.d
 !/.vim
 !/Dotfiles.sublime-project
-!/bin
 !/lib
 !/opt
 
