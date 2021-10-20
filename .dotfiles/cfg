@@ -1,13 +1,24 @@
 #!/bin/bash
 
 #================================================================================
+#
 # USAGE:
-# wget alberon.uk/cfg
-# . cfg
+#   wget alberon.uk/cfg
+#   . cfg
+#
+# MORE INFORMATION:
+#   https://github.com/alberon/dotfiles
+#
 #================================================================================
 
-# Run this in a sub-process, so there's no variables left over at the end
+# Run this in a sub-process
 (
+    set -o errexit -o pipefail -o nounset
+
+    # Settings
+    # If you want to make your own copy of this script on your own domain, set this to your GitHub username
+    user=''
+    branch='master'
 
     # Should be in home directory anyway, but just in case...
     cd
@@ -15,81 +26,106 @@
     # WSL defaults to umask 000
     umask 022
 
-    # Make sure this file is in the home directory
-    if [ ! -f cfg ]; then
-        echo 'Script must be named ~/cfg' >&2
+    # Helpers
+    say() {
+        echo -en "\e[94m" # Light blue
+        echo -n "$1"
+        echo -e "\e[0m"
+    }
+
+    error() {
+        echo >&2 -en "\e[91m" # Light red
+        echo >&2 -n "$1"
+        echo >&2 -e "\e[0m"
+    }
+
+    fail() {
+        error "$1"
         exit 1
-    fi
+    }
+
+    # Sanity checks
+    [[ -f cfg ]] || fail 'This script must be named ~/cfg'
+    [[ -d .git ]] && fail '~/.git already exists'
 
     # Check git is available
     if ! command -v git >/dev/null; then
-        echo 'Git is not installed' >&2
-        exit 2
-    fi
-
-    # Check .git doesn't exist
-    if [ -d .git ]; then
-        echo '~/.git exists' >&2
-        exit 3
+        # Attempt to install it if not
+        say 'Installing Git...'
+        if ! (sudo apt-get update && sudo apt-get install -y git); then
+            fail 'Git could not be installed'
+        fi
     fi
 
     # Ask which repository to use
-    echo
-    echo 'Please enter the GitHub username to use.'
-    echo 'For a shared account please accept the default (alberon).'
-    echo 'To set up your own Dotfiles see https://github.com/alberon/dotfiles.'
-    echo
-    user=
-    while [ -z "$user" ]; do
-        read -p '> [alberon] ' answer || exit 4
+    if [[ -z $user ]]; then
+        echo
+        say 'Please enter the GitHub username to use'
+        echo 'For a shared account please accept the default (alberon).'
+        echo 'To set up your own Dotfiles see https://github.com/alberon/dotfiles.'
+        echo
+        while [[ -z $user ]]; do
+            read -p '> [alberon] ' answer || exit 4
 
-        # Default
-        if [ -z "$answer" ]; then
-            answer="alberon"
-        fi
+            # Default
+            if [ -z "$answer" ]; then
+                answer="alberon"
+            fi
 
-        # Make sure it exists
-        if git ls-remote "git://github.com/$answer/dotfiles.git" >/dev/null; then
-            user="$answer"
-        else
-            echo
-            echo "Cannot find repo at https://github.com/$answer/dotfiles"
-            echo "Please check and try again"
-            echo
-        fi
-    done
-    echo
+            # Make sure it exists
+            if git ls-remote "git://github.com/$answer/dotfiles.git" >/dev/null; then
+                user="$answer"
+            else
+                echo
+                error "Cannot find repo at https://github.com/$answer/dotfiles"
+                echo "Please check and try again"
+                echo
+            fi
+        done
+        echo
+    fi
 
     # Download the repository
-    echo 'Initialising Git repository...'
-    echo
-    git init || exit 5
-    git remote add origin "https://github.com/$user/dotfiles.git" || exit 6
-    git remote set-url --push origin "git@github.com:$user/dotfiles.git" || exit 7
+    say 'Downloading dotfiles repository...'
+    git init || fail 'Failed to initialise the Git repo'
+    git remote add origin "https://github.com/$user/dotfiles.git" || fail 'Failed to configure the Git remote'
+    git remote set-url --push origin "git@github.com:$user/dotfiles.git" || fail 'Failed to configure the Git push URL'
+    git remote add dave 'https://git.djm.me/dave/dotfiles.git' || true
 
-    if [ "$user" != "alberon" ]; then
+    if [[ $user != 'alberon' ]]; then
         git remote add alberon https://github.com/alberon/dotfiles.git
     fi
 
+    git fetch --depth=1 origin || fail 'Failed to download the Git repository'
+
+    # Automatically delete known skeleton files
     echo
-    echo 'Fetching Git repository...'
-    echo
-    git fetch --depth=1 origin || exit 8
+    say 'Checking for known skeleton files...'
+    if [[ -f .bashrc ]]; then
+        md5="$(md5sum .bashrc | cut -d' ' -f1)"
+        if [[ $md5 = 'cf277664b1771217d7006acdea006db1' ]] || [[ $md5 = '1f98b8f3f3c8f8927eca945d59dcc1c6' ]]; then
+            # cf277664b1771217d7006acdea006db1 = Ubuntu 18.04, 19.10 (DigitalOcean)
+            # 1f98b8f3f3c8f8927eca945d59dcc1c6 = Ubuntu 18.04 (Multipass)
+            echo 'Deleting .bashrc'
+            rm -f .bashrc
+        else
+            echo "Skipping unknown .bashrc (MD5=$md5)"
+        fi
+    fi
 
     # Update the working directory
     # Delete or move any conflicting files (usually .bashrc and .bash_logout)
     echo
-    echo 'Updating working directory...'
-    echo
+    say 'Updating working directory...'
     i=0
     while true; do
 
         # Try to update
-        result="$(git checkout origin/master -b master 2>&1)"
+        result="$(git checkout "origin/$branch" -b "$branch" 2>&1)"
 
         # If it succeeds, we're done
-        if [ $? -eq 0 ]; then
-            if [ $i -gt 0 ]; then
+        if [[ $? -eq 0 ]]; then
+            if [[ $i -gt 0 ]]; then
                 echo
             fi
             echo "$result"
@@ -99,11 +135,11 @@
         # If it fails, move or delete the conflicting file
         # Old versions of git have this message:
         file="$(echo "$result" | sed -n "/error: Untracked working tree file/ { s/error: Untracked working tree file '\\(.*\\)' would be overwritten by merge./\\1/; p; q }")"
-        if [ -z "$file" ]; then
+        if [[ -z $file ]]; then
             # Newer versions of git have a different message, split across two lines:
             file="$(echo "$result" | sed -n "/error: The following untracked working tree files would be overwritten by checkout:/ { n; s/\\s\\+\\(.*\\)/\\1/; p; q }")"
         fi
-        if [ -n "$file" ] && [ "$file" != "$result" ]; then
+        if [[ -n $file ]] && [[ $file != $result ]]; then
 
             read -p "Backup $file? [y/N] " answer
             case $answer in
@@ -129,7 +165,7 @@
 
         # Prevent infinite loop - just in case
         ((i++))
-        if [ $i -ge 100 ]; then
+        if [[ $i -ge 100 ]]; then
             echo
             echo 'Detected possible infinite loop - giving up' >&2
             exit 10
@@ -141,27 +177,9 @@
 
     # Remove this script
     # (Note: $0 is not set because we 'source' this file)
-    if [ -f cfg ]; then
-        rm -f cfg
-    fi
-
-)
-
-ret=$?
-if [ $ret == 0 ]; then
+    say "Removing the 'cfg' bootstrap script..."
+    rm -f cfg
 
     # Run any post-install commands, e.g. prepare config file
-    [ -x ~/bin/cfg-install ] && ~/bin/cfg-install
-
-    # Run post-update script
-    [ -x ~/bin/cfg-update ] && ~/bin/cfg-update
-
-    # Load the new bash config
-    exec bash -l
-
-else
-
-    echo
-    echo "SETUP FAILED with error code $ret" >&2
-
-fi
+    say 'Running post-install script...'
+) && exec ~/.dotfiles/post-install

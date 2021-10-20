@@ -1,15 +1,21 @@
 #!/bin/bash
+set -o errexit -o nounset -o pipefail
+
+# Make sure Bash gets reloaded no matter what
+trap 'exec bash -l' EXIT
+
+source ~/.bash/color.bash
 
 # -f to delete the existing configuration
-if [ "$1" = "-f" ]; then
-    rm ~/.bashrc_config
+if [ "${1-}" = "-f" ]; then
+    rm -f ~/.bashrc_config
 fi
 
 # Install new .bashrc configuration
 if [ ! -f ~/.bashrc_config ]; then
 
     # Detect operating system and other attributes
-    source .bash/000-vars.bash
+    source ~/.bash/000-vars.bash
 
     CPANEL=false
     if [ -d /var/cpanel ]; then
@@ -90,3 +96,11 @@ fi
 
 # No need to check for updates
 echo "$(date +%Y%m%d)" > ~/.cfg_last_update
+
+# Run the post-update script too
+color lblue 'Running post-update script...'
+~/.dotfiles/post-update
+
+# Reload Bash
+color lblue 'Reloading Bash...'
+# See EXIT trap above

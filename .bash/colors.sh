@@ -1,3 +1,5 @@
+# LEGACY - See color.bash for the new version
+
 colorize() {
     while [ $# -gt 0 ]; do
         case "$1" in
