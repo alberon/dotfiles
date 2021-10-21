@@ -40,7 +40,6 @@ export PATH
 # Add extra man pages
 #if command -v manpath &>/dev/null; then
 #    MANPATH="$(manpath 2>/dev/null)"
-#    MANPATH="$HOME/opt/git-extras-man:$MANPATH"
 #    export MANPATH
 #fi
 

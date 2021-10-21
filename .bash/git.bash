@@ -6,8 +6,7 @@ git() {
     if [ $# -gt 0 ]; then
         command git "$@"
     else
-        command git status &&
-        command git repl
+        command git status
     fi
 }
 

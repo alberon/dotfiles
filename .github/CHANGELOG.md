@@ -11,6 +11,9 @@ This is a major update that includes the following changes:
 - Removed Bazaar (`bzr`) and Mercurial (`hg`) scripts and configuration files.
   This will probably cause some merge conflicts.
 
+- Removed (very old version of) [Git Extras](https://github.com/tj/git-extras).
+  (If you use any of the scripts and want them back, let me know.)
+
 Less important changes include:
 
 - Moved `bin/cfg-install` and `bin/cfg-update` scripts to
@@ -22,3 +25,5 @@ Less important changes include:
 - Moved `README.md` to `.github/` directory so it's hidden.
 
 - Disabled the default `sudo` notifications for new users.
+
+--Dave
