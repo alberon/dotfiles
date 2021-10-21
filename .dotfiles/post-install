@@ -94,8 +94,8 @@ fi
 #    touch ~/.sudo_as_admin_successful
 #fi
 
-# No need to check for updates
-echo "$(date +%Y%m%d)" > ~/.cfg_last_update
+# No need to check for updates today
+date +%Y%m%d > ~/.local/dotfiles-last-auto-update
 
 # Run the post-update script too
 color lblue 'Running post-update script...'

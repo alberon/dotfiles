@@ -8,7 +8,7 @@ if $HAS_TERMINAL; then
     trap 'echo' INT
 
     # Run the auto-update
-    ~/.bin/cfg-auto-update
+    ~/.dotfiles/auto-update
 
     trap - INT
 

@@ -46,3 +46,12 @@ fi
 if [[ -f .hgrc_local ]] && [[ -z "$(cat .hgrc_local)" ]]; then
     rm -f .hgrc_local
 fi
+
+# Move files that used to clutter the home directory
+if [[ -f .cfg_last_update ]]; then
+    if [[ -f .local/dotfiles-last-auto-update ]]; then
+        rm .cfg_last_update
+    else
+        mv .cfg_last_update .local/dotfiles-last-auto-update
+    fi
+fi
