@@ -13,10 +13,8 @@
 !/.gitignore
 !/.gitignore-global
 !/.grip
-!/.irbrc
 !/.minttyrc
 !/.railsrc
-!/.rdebugrc
 !/.rvm
 !/.ssh
 !/.tmux.conf
