@@ -1,0 +1,24 @@
+# Changelog
+
+## Dotfiles Version 2 (Oct 2021)
+
+This is a major update that includes the following changes:
+
+- Moved `~/bin` to `~/.bin`, so it's hidden from regular directory listings. If
+  you have any custom scripts in `bin/`, move them to `.bin/`. (**Note:** Leave
+  `bin/cfg-update` in place until you have updated *all* servers/accounts.)
+
+- Removed Bazaar (`bzr`) and Mercurial (`hg`) scripts and configuration files.
+  This will probably cause some merge conflicts.
+
+Less important changes include:
+
+- Moved `bin/cfg-install` and `bin/cfg-update` scripts to
+  `.dotfiles/post-install` and `.dotfiles/post-update` respectively. (They're
+  hooks, not meant to be run manually. **Note:** `bin/cfg-update` is now a
+  symlink for backwards-compatibility. It can be removed once *all*
+  servers/accounts have been updated to the new version.)
+
+- Moved `README.md` to `.github/` directory so it's hidden.
+
+- Disabled the default `sudo` notifications for new users.
