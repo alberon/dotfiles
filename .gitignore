@@ -11,8 +11,6 @@
 !/.azure-shell/shell-config
 
 !/.bash
-!/.bash_completion
-!/.bash_completion.d
 !/.bin
 !/.dotfiles
 !/.drush
@@ -32,6 +30,14 @@
 !/.vim
 !/lib
 !/opt
+
+!/.local
+/.local/*
+!/.local/share/
+/.local/share/*
+!/.local/share/bash-completion/
+/.local/share/bash-completion/*
+!/.local/share/bash-completion/completions/
 
 # Drush - config, not cache
 /.drush/cache
