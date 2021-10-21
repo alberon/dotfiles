@@ -18,7 +18,6 @@
 !/.rvm
 !/.ssh
 !/.tmux.conf
-!/.tmux_cheatsheet
 !/.vagrant.d
 !/.vim
 !/Dotfiles.sublime-project
