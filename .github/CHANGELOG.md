@@ -18,6 +18,10 @@ This is a major update that includes the following changes:
   (If you use any of them and want them back, let me know and I can update them
   instead.)
 
+- Simplified Vim configuration. Packages are now installed on first launch by
+  [vim-plug](https://github.com/junegunn/vim-plug) instead of being in this
+  repo. (Press `,pu` in Vim to upgrade plugins.)
+
 Less important changes include:
 
 - Moved `bin/cfg-install` and `bin/cfg-update` scripts to

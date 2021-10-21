@@ -48,6 +48,18 @@ if [[ -f .hgrc_local ]] && [[ -z "$(cat .hgrc_local)" ]]; then
 fi
 
 # Move files that used to clutter the home directory
+if [[ -d tmp/vim && ! -d .cache/vim ]]; then
+    mkdir -p .cache
+    mv tmp/vim .cache/vim
+    rm -f .cache/vim/.gitkeep
+    chmod 700 .cache/vim
+    rmdir --ignore-fail-on-non-empty tmp
+fi
+
+if [[ -f .vim/.netrwhist && ! -f .cache/vim/.netrwhist ]]; then
+    mv .vim/.netrwhist .cache/vim/.netrwhist
+fi
+
 if [[ -f .cfg_last_update ]]; then
     if [[ -f .local/dotfiles-last-auto-update ]]; then
         rm .cfg_last_update

@@ -1,3 +1,0 @@
-http://www.vim.org/scripts/script.php?script_id=2540
-https://github.com/honza/snipmate-snippets
-https://github.com/scrooloose/snipmate-snippets
