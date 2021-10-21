@@ -11,8 +11,12 @@ This is a major update that includes the following changes:
 - Removed Bazaar (`bzr`) and Mercurial (`hg`) scripts and configuration files.
   This will probably cause some merge conflicts.
 
-- Removed (very old version of) [Git Extras](https://github.com/tj/git-extras).
-  (If you use any of the scripts and want them back, let me know.)
+- Removed (rather old versions of)
+  [Git Extras](https://github.com/tj/git-extras),
+  [icdiff](https://www.jefftk.com/icdiff) and
+  [mdview](https://pypi.org/project/mdview/).
+  (If you use any of them and want them back, let me know and I can update them
+  instead.)
 
 Less important changes include:
 

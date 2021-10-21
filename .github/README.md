@@ -165,7 +165,6 @@ I'm lazy so I have a lot of Bash aliases and short commands - here are the most 
 | `art`      | `php artisan`                                 | For Laravel (searches parent directories too)            |
 | `sf`       | `./symfony`                                   | For Symfony (searches parent directories too)            |
 | `t`        | `find scripts/ -type f`                       | Searches parent directories too                          |
-| `t -h`     | `mdview scripts/README.md`                    | Searches parent directories too                          |
 | `t <name>` | `scripts/<name>.sh` (or other extension)      | Searches parent directories too                          |
 | `pu`       | `vendor/bin/phpunit` or `phpunit` (global)    | Searches parent directories too                          |
 | `redis`    | `redis-cli`                                   |                                                          |
