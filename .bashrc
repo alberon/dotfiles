@@ -338,18 +338,6 @@ dump-path() {
     echo -e "${PATH//:/\\n}"
 }
 
-for-intranet-laravel() (
-    # This has to be a function not a command so it can call other functions like 'art', 'com' and 'g'
-    # Note: It can't call aliases - they need to be converted to functions instead
-    #       "For almost every purpose, aliases are superseded by shell functions"
-    for app in cases intranet kb ops passwords php sync users wol; do
-        echo
-        command cd "/home/www/$app.$(hostname -f)/repo"
-        color magenta bold "$PWD"
-        "$@" || return
-    done
-)
-
 g() {
     git "$@"
 }
