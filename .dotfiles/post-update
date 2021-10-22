@@ -75,3 +75,8 @@ if [[ -f .bash_lastdirectory ]]; then
         mv .bash_lastdirectory .local/bash-last-directory
     fi
 fi
+
+# Clean up files that were previously ignored
+if [[ -d .vim/bundle ]]; then
+    rm -rf .vim/bundle
+fi
