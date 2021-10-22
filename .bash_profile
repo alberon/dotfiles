@@ -123,16 +123,15 @@ if is-wsl 1; then
     temp=$(wsl-temp-path)
     export SSH_AUTH_SOCK="$temp/wsl-ssh-pageant.sock"
 
-    if ! pgrep -l wsl-ssh-pageant >/dev/null; then
-
-        # WSL won't run a Windows app that's inside the Linux filesystem, so copy it to a temp directory first
-        # This sometimes fails even when pgrep doesn't think it's running, but that's generally OK
+    if [[ $(tasklist.exe /FI "IMAGENAME EQ wsl-ssh-pageant.exe" /FO CSV | tail +2 | wc -l) -eq 0 ]]; then
         rm -f "$temp/wsl-ssh-pageant.exe" "$SSH_AUTH_SOCK" 2>/dev/null && \
             cp ~/.ssh/wsl-ssh-pageant.exe "$temp/wsl-ssh-pageant.exe"
 
-        # The brackets prevent "There are running jobs" when exiting
-        # (I tried "nohup", but that caused it to stop working when WSL is restarted)
-        ("$temp/wsl-ssh-pageant.exe" --force --wsl "$(wslpath -w "$temp")\\wsl-ssh-pageant.sock" &>/dev/null &)
+        # This is a bit convoluted, but if wsl-ssh-pageant.exe is started as a
+        # sub-process then as soon as WSL is closed it jumps to 100% CPU. This
+        # way it runs outside the WSL process tree, so it keeps working.
+        temp_win=$(wslpath -w "$temp")
+        cmd.exe /c start /b "$temp_win\\wsl-ssh-pageant.exe" --force --wsl "$temp_win\\wsl-ssh-pageant.sock" &>/dev/null
     fi
 
 elif is-wsl 2; then
