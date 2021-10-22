@@ -43,7 +43,11 @@ call plug#begin('~/.vim/plugged')
 call plug#end()
 
 " Core plugins
-packadd matchit " Make % jump between XML tags as well as normal brackets
+if version >= 800
+    packadd matchit " Make % jump between XML tags as well as normal brackets
+else
+    runtime macros/matchit.vim
+endif
 
 
 "===============================================================================
