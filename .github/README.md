@@ -89,7 +89,7 @@ Run "Ubuntu Terminal" from the start menu. Run:
 
 ```bash
 cd
-wget alberon.uk/cfg
+wget djm.me/cfg
 . cfg
 ```
 
