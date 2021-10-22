@@ -49,7 +49,7 @@ wget alberon.uk/cfg
 
 That's it. (See [https://alberon.uk/cfg](https://alberon.uk/cfg) for the script source - don't execute scripts from the internet without knowing what they do!)
 
-### Installing on Windows Subsystem for Linux (WSL)
+### Installing on Windows Subsystem for Linux (WSL) with Windows Terminal
 
 Install the [Fira Code](https://github.com/tonsky/FiraCode) font.
 
@@ -72,6 +72,36 @@ wget alberon.uk/cfg
 ```
 
 **Tip:** To reinstall Ubuntu without re-downloading it, open a Command Prompt tab (or PowerShell) and run `wslconfig /u Ubuntu`, then re-launch Ubuntu from the Start Menu. It will take a few minutes to reinstall.
+
+### Installing on Windows Subsystem for Linux (WSL) with WSLtty
+
+Install the [Fixedsys Excelsior Mono](http://askubuntu.com/a/725445) font (which is the regular Fixedsys font plus unicode characters).
+
+Click Start, search for `features` and select "Turn Windows features on or off". Tick "Windows Subsystem for Linux" and click OK. Reboot.
+
+[Install Ubuntu](https://www.microsoft.com/en-us/p/ubuntu/9nblggh4msv6?activetab=pivot:overviewtab). Run it, wait while it completes setup, set a username and password when prompted, then quit.
+
+[Install WSLtty](https://github.com/mintty/wsltty) (`x86_64`). (Note: If you installed it *before* setting up Ubuntu, run "configure WSL shortcuts" to add the shortcuts.)
+
+[Install VcXsrv](https://sourceforge.net/projects/vcxsrv/), then run XLaunch from the Start Menu. Accept the default settings except untick "Primary Selection". Save the configuration into the `shell:startup` folder so it's started automatically.
+
+Run "Ubuntu Terminal" from the start menu. Run:
+
+```bash
+cd
+wget alberon.uk/cfg
+. cfg
+```
+
+Close and re-open Ubuntu Terminal to reload the WSLtty configuration.
+
+Optionally, install updates and some additional packages:
+
+```bash
+agu
+agar
+agi dos2unix php-cli tree unzip whois zip
+```
 
 ### Installing on Cygwin (Windows)
 
