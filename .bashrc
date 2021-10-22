@@ -53,7 +53,7 @@ if [[ -s ~/.rvm/scripts/rvm ]]; then
 fi
 
 # The Fuck
-command -v thefuck &>/dev/null && eval $(thefuck --alias; thefuck --alias doh)
+command -v thefuck &>/dev/null && eval $(thefuck --alias; echo ';'; thefuck --alias doh)
 
 
 #===============================================================================
