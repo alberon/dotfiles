@@ -737,24 +737,24 @@ _ls-current-directory() {
 }
 
 _prompt-before() {
+    local status=$?
+
     # Save (append) the Bash history after every command, instead of waiting until exit
     history -a
 
     # Update the window title (no output)
     _prompt-titlebar
 
-    # Leave a blank line between the previous command's output and this one
-    # (Not part of '_prompt' so it's not triggered by Ctrl-L or tab completion)
-    echo
-}
-
-_prompt() {
-    # Exit status for the previous command
-    local status=$?
+    # Show the exit status for the previous command if it failed
     if [[ $status -gt 0 ]]; then
         color bg-lred black "Exited with code $status"
     fi
 
+    # Leave a blank line between the previous command's output and this one
+    echo
+}
+
+_prompt() {
     # Message
     local message="${prompt_message:-$prompt_default}"
     if [[ -n $message ]]; then
