@@ -75,7 +75,7 @@ wget alberon.uk/cfg
 
 ### Installing on Windows Subsystem for Linux (WSL) with WSLtty
 
-Install the [Fixedsys Excelsior Mono](http://askubuntu.com/a/725445) font (which is the regular Fixedsys font plus unicode characters).
+Install the [Fira Code](https://github.com/tonsky/FiraCode) font.
 
 Click Start, search for `features` and select "Turn Windows features on or off". Tick "Windows Subsystem for Linux" and click OK. Reboot.
 
@@ -107,7 +107,7 @@ agi dos2unix php-cli tree unzip whois zip
 
 ***This is not actively tested - WSL is recommended.***
 
-Install the [Fixedsys Excelsior Mono](https://askubuntu.com/a/725445) font (which is the regular Fixedsys font plus unicode characters).
+Install the [Fira Code](https://github.com/tonsky/FiraCode) font.
 
 [Install Cygwin](https://cygwin.com/install.html) - select [any local mirror](https://cygwin.com/mirrors.html) (e.g. `mirrorservice.org` for UK), and when prompted add these packages:
 
