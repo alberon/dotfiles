@@ -182,6 +182,28 @@ fi
 
 
 #---------------------------------------
+# SSH config
+#---------------------------------------
+
+# Dynamically generate some of the SSH config
+(
+    if is-cygwin; then
+        echo '# ControlMaster is not supported in Cygwin'
+        echo '# https://stackoverflow.com/a/21439862/167815'
+    else
+        echo 'Host *'
+        echo '    # Reuse connections'
+        echo '    ControlMaster auto'
+        echo '    ControlPath ~/.ssh/control-master-%r@%h:%p'
+        echo '    ControlPersist 1m'
+    fi
+
+    echo
+    echo '# vim:ft=sshconfig'
+) > ~/.ssh/config-dynamic
+
+
+#---------------------------------------
 # Custom settings / functions
 #---------------------------------------
 
