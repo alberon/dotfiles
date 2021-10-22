@@ -195,7 +195,7 @@ fi
         echo '    # Reuse connections'
         echo '    ControlMaster auto'
         echo '    ControlPath ~/.ssh/control-master-%r@%h:%p'
-        echo '    ControlPersist 1m'
+        echo '    ControlPersist 10s'
     fi
 
     echo
