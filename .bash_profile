@@ -130,7 +130,9 @@ if is-wsl 1; then
         rm -f "$temp/wsl-ssh-pageant.exe" "$SSH_AUTH_SOCK" 2>/dev/null && \
             cp ~/.ssh/wsl-ssh-pageant.exe "$temp/wsl-ssh-pageant.exe"
 
-        "$temp/wsl-ssh-pageant.exe" --force --wsl "$(wslpath -w "$temp")\\wsl-ssh-pageant.sock" &>/dev/null a&
+        # The brackets prevent "There are running jobs" when exiting
+        # (I tried "nohup", but that caused it to stop working when WSL is restarted)
+        ("$temp/wsl-ssh-pageant.exe" --force --wsl "$(wslpath -w "$temp")\\wsl-ssh-pageant.sock" &>/dev/null &)
     fi
 
 elif is-wsl 2; then
@@ -153,7 +155,7 @@ elif is-wsl 2; then
         fi
         if ! ss -a | grep -q $SSH_AUTH_SOCK; then
             rm -f $SSH_AUTH_SOCK
-            setsid --fork nohup socat UNIX-LISTEN:$SSH_AUTH_SOCK,fork EXEC:$HOME/.ssh/wsl2-ssh-pageant.exe >/dev/null 2>&1
+            setsid --fork nohup socat UNIX-LISTEN:$SSH_AUTH_SOCK,fork EXEC:$HOME/.ssh/wsl2-ssh-pageant.exe &>/dev/null
         fi
     fi
 
