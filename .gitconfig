@@ -121,4 +121,5 @@
     name = Alberon Ltd.
 
 [include]
+    path = .gitconfig_personal
     path = .gitconfig_local

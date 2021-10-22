@@ -29,11 +29,10 @@
 /.elinks/*
 !/.elinks/elinks.conf
 
-!/.gitattributes-global
 !/.gitconfig
+!/.gitconfig_personal
 !/.github
 !/.gitignore
-!/.gitignore-global
 
 !/.grip
 /.grip/cache*
