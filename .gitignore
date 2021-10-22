@@ -54,6 +54,7 @@
 !/.ssh
 /.ssh/*
 !/.ssh/config
+!/.ssh/config_personal
 !/.ssh/*.pub
 /.ssh/google_compute_engine.pub
 /.ssh/id_rsa.pub

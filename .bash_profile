@@ -200,7 +200,7 @@ fi
 
     echo
     echo '# vim:ft=sshconfig'
-) > ~/.ssh/config-dynamic
+) > ~/.ssh/config_dynamic
 
 
 #---------------------------------------
