@@ -69,20 +69,28 @@ alias a2dissite="$sudo a2dissite"
 alias a2enconf="$sudo a2enconf"
 alias a2enmod="$sudo a2enmod"
 alias a2ensite="$sudo a2ensite"
-alias aar="$sudo add-apt-repository"
-alias acs='command apt search'
-alias acsh='command apt show'
 alias addgroup="$sudo addgroup"
 alias adduser="$sudo adduser"
-alias agac="$sudo apt autoclean"
-alias agi="$sudo apt install"
-alias agr="$sudo apt remove"
-alias agar="$sudo apt autoremove"
-alias agu="$sudo apt update && $sudo apt full-upgrade"
-alias agupdate="$sudo apt update"
-alias agupgrade="$sudo apt upgrade"
-alias apt="$sudo apt"
-alias apt-add-repository="$sudo apt-add-repository"
+
+if is-cygwin; then
+    alias agi='apt-cyg install'
+    alias agr='apt-cyg remove'
+    alias agu='apt-cyg update'
+    alias acs='apt-cyg searchall'
+else
+    alias aar="$sudo add-apt-repository"
+    alias acs='command apt search'
+    alias acsh='command apt show'
+    alias agac="$sudo apt autoclean"
+    alias agi="$sudo apt install"
+    alias agr="$sudo apt remove"
+    alias agar="$sudo apt autoremove"
+    alias agu="$sudo apt update && $sudo apt full-upgrade"
+    alias agupdate="$sudo apt update"
+    alias agupgrade="$sudo apt upgrade"
+    alias apt="$sudo apt"
+    alias apt-add-repository="$sudo apt-add-repository"
+fi
 
 alias b='c -'
 
