@@ -116,7 +116,6 @@ if is-wsl 1; then
     if [[ ! -f ~/.ssh/wsl-ssh-pageant.exe ]]; then
         echo
         color lblue 'Downloading wsl-ssh-pageant...'
-        mkdir -p ~/.ssh
         curl -L 'https://github.com/benpye/wsl-ssh-pageant/releases/download/20201121.2/wsl-ssh-pageant-amd64.exe' > ~/.ssh/wsl-ssh-pageant.exe
     fi
 
@@ -140,7 +139,6 @@ elif is-wsl 2; then
     if [[ ! -f ~/.ssh/wsl2-ssh-pageant.exe ]]; then
         echo
         color lblue 'Downloading wsl2-ssh-pageant...'
-        mkdir -p ~/.ssh
         curl -L 'https://github.com/BlackReloaded/wsl2-ssh-pageant/releases/download/v1.3.0/wsl2-ssh-pageant.exe' > ~/.ssh/wsl2-ssh-pageant.exe
     fi
 
@@ -157,6 +155,18 @@ elif is-wsl 2; then
             setsid --fork nohup socat UNIX-LISTEN:$SSH_AUTH_SOCK,fork EXEC:$HOME/.ssh/wsl2-ssh-pageant.exe &>/dev/null
         fi
     fi
+
+elif is-cygwin; then
+
+    # ssh-pageant - https://github.com/cuviper/ssh-pageant
+    if [[ ! -f ~/.ssh/ssh-pageant.exe ]]; then
+        echo
+        color lblue 'Downloading ssh-pageant...'
+        wget -O - https://github.com/cuviper/ssh-pageant/archive/refs/tags/v1.4-prebuilt-cygwin64.tar.gz | tar -zxO ssh-pageant-1.4-prebuilt-cygwin64/ssh-pageant.exe > ~/.ssh/ssh-pageant.exe
+        chmod +x ~/.ssh/ssh-pageant.exe
+    fi
+
+    eval $(~/.ssh/ssh-pageant.exe -r -a "$HOME/.ssh/ssh_auth_sock")
 
 else
 
