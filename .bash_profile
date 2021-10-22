@@ -157,9 +157,13 @@ fi
 
 
 #---------------------------------------
-# Local settings / functions
+# Custom settings / functions
 #---------------------------------------
 
+# Personal settings, for use in forks
+[[ -f ~/.bash_profile_personal ]] && source ~/.bash_profile_personal
+
+# Local settings, not committed to Git
 [[ -f ~/.bash_profile_local ]] && source ~/.bash_profile_local
 
 

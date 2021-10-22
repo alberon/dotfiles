@@ -11,6 +11,10 @@
 !/.azure-shell/shell-config
 
 !/.bash
+!/.bash_profile
+!/.bash_profile_personal
+!/.bashrc
+!/.bashrc_personal
 !/.bin
 
 !/.cache

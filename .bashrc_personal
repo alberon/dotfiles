@@ -1,0 +1,5 @@
+#
+# This file is executed when Bash is loaded, but ONLY in an interactive session
+#
+
+# Add your own customisations here...
