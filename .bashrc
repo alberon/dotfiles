@@ -53,7 +53,7 @@ if [[ -s ~/.rvm/scripts/rvm ]]; then
 fi
 
 # The Fuck
-command -v thefuck &>/dev/null && eval $(thefuck --alias)
+command -v thefuck &>/dev/null && eval $(thefuck --alias; thefuck --alias doh)
 
 
 #===============================================================================
@@ -69,10 +69,12 @@ alias a2dissite="$sudo a2dissite"
 alias a2enconf="$sudo a2enconf"
 alias a2enmod="$sudo a2enmod"
 alias a2ensite="$sudo a2ensite"
+alias aar="$sudo add-apt-repository"
 alias acs='command apt search'
 alias acsh='command apt show'
 alias addgroup="$sudo addgroup"
 alias adduser="$sudo adduser"
+alias agac="$sudo apt autoclean"
 alias agi="$sudo apt install"
 alias agr="$sudo apt remove"
 alias agar="$sudo apt autoremove"
@@ -95,6 +97,7 @@ alias dpkg-reconfigure="$sudo dpkg-reconfigure"
 alias dr='docker run'
 alias dri='docker run -it'
 
+alias gcm='g co master'
 alias grep="$(command -v grep-less)" # command -v makes it work with sudo
 alias groupadd="$sudo groupadd"
 alias groupdel="$sudo groupdel"
@@ -139,6 +142,7 @@ alias s='sudo '
 alias service="$sudo service"
 alias shutdown="$sudo poweroff"
 alias snap="$sudo snap"
+alias sshak='ssh -o StrictHostKeyChecking=accept-new'
 alias sshstop='ssh -O stop'
 alias storm='phpstorm'
 alias sudo='sudo ' # Expand aliases
