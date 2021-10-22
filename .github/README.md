@@ -73,6 +73,52 @@ wget alberon.uk/cfg
 
 **Tip:** To reinstall Ubuntu without re-downloading it, open a Command Prompt tab (or PowerShell) and run `wslconfig /u Ubuntu`, then re-launch Ubuntu from the Start Menu. It will take a few minutes to reinstall.
 
+### Installing on Cygwin (Windows)
+
+***This is not actively tested - WSL is recommended.***
+
+Install the [Fixedsys Excelsior Mono](https://askubuntu.com/a/725445) font (which is the regular Fixedsys font plus unicode characters).
+
+[Install Cygwin](https://cygwin.com/install.html) - select [any local mirror](https://cygwin.com/mirrors.html) (e.g. `mirrorservice.org` for UK), and when prompted add these packages:
+
+- `git`
+- `wget`
+
+**Tip:** Select View > Full mode, then use the search box to find them.
+
+Once it's installed, run Cygwin Terminal and run this:
+
+```bash
+cd /
+mv $HOME $HOME.bak && ln -s "$(cygpath "$USERPROFILE")" $HOME
+```
+
+Then install dotfiles as above:
+
+```bash
+cd
+wget djm.me/cfg
+. cfg
+```
+
+Close and re-open Cygwin Terminal to reload the configuration. (**Note:** When testing I had to reload it *twice* before it picked up the changed font.)
+
+Then run this to install some additional useful packages:
+
+```bash
+wget -O /bin/apt-cyg https://rawgit.com/transcode-open/apt-cyg/master/apt-cyg
+chmod +x /bin/apt-cyg
+apt-cyg install bash-completion bind-utils chere curl dos2unix git-completion inetutils less links make ncurses procps-ng tmux tree unzip vim whois xinit
+```
+
+(They can also be installed from the GUI - but it's much more tedious to find them all!)
+
+And run this to add Cygwin to Explorer's right-click menu:
+
+```bash
+chere -icmf -t mintty -s bash -e 'Open in Cygwin Terminal'
+```
+
 ## Upgrading
 
 When you log in, a maximum of once per day, dotfiles will automatically check for and install any updates from the configured upstream repo.
