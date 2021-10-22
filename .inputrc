@@ -14,6 +14,10 @@ set show-all-if-ambiguous on
 set show-all-if-unmodified on
 set visible-stats on
 
+# For Cygwin
+"\e[7~": beginning-of-line
+"\e[8~": end-of-line
+
 # To get keycodes, run "read" then press the key, but replace "^[" with "\e"
 $if mode=emacs
 
