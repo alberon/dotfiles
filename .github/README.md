@@ -130,75 +130,123 @@ To upgrade manually, run `cfg pull` (or, equivalently, `cd; git pull`).
 
 **Note:** If you have forked the repo, it won't check the `alberon` repo automatically - see above.
 
-## Bash aliases
+## Bash aliases and commands
 
 There are lots of aliases and commands. Here are the most useful ones:
 
-| Alias      | Expansion                                     | Comments                                                 |
-|------------|-----------------------------------------------|----------------------------------------------------------|
-| `c`        | `cd && ls`                                    | Change directory then list files                         |
-| `u`        | `cd ..`                                       | Go Up                                                    |
-| `uu`       | `cd ../..`                                    | Repeat `u` up to 6 times to go up 6 levels               |
-| `b`        | `cd -`                                        | Go Back                                                  |
-| `cg`       | `cd <git root>`                               | Go to Git repository root                                |
-| `cw`       | `cd $www_dir`                                 | Go to WWW root - set in `~/.bashrc_config`               |
-| `cwc`      | `cd wp-content/`                              | Go to WordPress content directory                        |
-| `cwp`      | `cd wp-content/plugins/`                      | Go to WordPress plugins directory                        |
-| `cwt`      | `cd wp-content/themes/<theme>/`               | Go to WordPress theme directory                          |
-| `l`        | `ls -l`                                       |                                                          |
-| `la`       | `ls -lA`                                      | List with hidden files (except `.` and `..`)             |
-| `lsa`      | `ls -A`                                       |                                                          |
-| `md`       | `mkdir && cd`                                 |                                                          |
-| `g`        | `git`                                         | See below for a list of Git aliases                      |
-| `e`        | `vim`                                         | Editor                                                   |
-| `xe`       | `vim && chmod +x`                             | Create new executable file and edit it                   |
-| `v`        | `vagrant`                                     |                                                          |
-| `art`      | `php artisan`                                 | For Laravel (searches parent directories too)            |
-| `sf`       | `./symfony`                                   | For Symfony (searches parent directories too)            |
-| `t`        | `find scripts/ -type f`                       | Searches parent directories too                          |
-| `t <name>` | `scripts/<name>.sh` (or other extension)      | Searches parent directories too                          |
-| `pu`       | `vendor/bin/phpunit` or `phpunit` (global)    | Searches parent directories too                          |
-| `redis`    | `redis-cli`                                   |                                                          |
-| `s`        | `sudo`                                        |                                                          |
-| `se`       | `sudo vim`                                    |                                                          |
-| `sl`       | `sudo ls`                                     |                                                          |
-| `agi`      | `sudo apt-get install`                        |                                                          |
-| `agr`      | `sudo apt-get remove`                         |                                                          |
-| `agar`     | `sudo apt-get autoremove`                     |                                                          |
-| `agu`      | `sudo apt-get update && sudo apt-get upgrade` |                                                          |
-| `acs`      | `apt-cache search`                            |                                                          |
-| `acsh`     | `apt-cache show`                              |                                                          |
-| `dus`      | `du -sh`                                      | Also sorts files/directories by size                     |
-| `pow`      | `sudo poweroff`                               |                                                          |
-| `reload`   | `exec bash -l`                                | Run this after modifying any Bash config file            |
-| `d`        | `docker`                                      |                                                          |
-| `dc`       | `docker-compose`                              |                                                          |
-| `db`       | `docker build`                                |                                                          |
-| `dr`       | `docker run`                                  |                                                          |
-| `dri`      | `docker run -it`                              | Run interactively, e.g. `dri ubuntu`                     |
-| `dsh`      | `docker run ... /bin/bash`                    | Run /bun/bash in the container (with agent forwarding)   |
-| `dresume`  | `docker start -ai "$(docker ps ...)"`         | Resume most recently stopped container                   |
-| `dstop`    | `docker stop $(docker ps -ql)`                | Stop most recent container                               |
-| `dstopall` | `docker stop $(docker ps -q)`                 | Stop all running containers                              |
-| `dkill`    | `docker kill $(docker ps -ql)`                | Kill most recent container                               |
-| `dkillall` | `docker kill $(docker ps -q)`                 | Kill all running containers                              |
-| `dclean`   | `docker container prune; docker image prune`  | Clean up stopped containers and untagged images          |
+| Alias        | Expansion                                     | Comments                                                 |
+|--------------|-----------------------------------------------|----------------------------------------------------------|
+| `a`          | `webpack`, `gulp` or `npm run`                | Asset builder                                            |
+| `acsq`       | `apt search`                                  | } Originally `apt-cache ...`                             |
+| `acsh`       | `apt show`                                    | }                                                        |
+| `agac`       | `sudo apt autoclean`                          | } Originally `apt-get ...`                               |
+| `agar`       | `sudo apt autoremove`                         | }                                                        |
+| `agi`        | `sudo apt install`                            | }                                                        |
+| `agr`        | `sudo apt remove`                             | }                                                        |
+| `agu`        | `sudo apt update && sudo apt-get upgrade`     | }                                                        |
+| `art`        | `php artisan`                                 | For Laravel (searches parent directories too)            |
+| `b`          | `cd -`                                        | Go Back                                                  |
+| `c`          | `cd && ls`                                    | Change directory then list files                         |
+| `cfg`        | `cd $HOME && git ...`                         | Run a `git` command on the Dotfiles                      |
+| `cg`         | `cd <git root>`                               | Go to Git repository root                                |
+| `com`        | `composer`                                    |                                                          |
+| `cv`         | `cd vendor/alberon/`                          | You can also pass in a package name                      |
+| `cw`         | `cd <web root>`                               | Go to web root                                           |
+| `cwc`        | `cd wp-content/`                              | Go to WordPress content directory                        |
+| `cwp`        | `cd wp-content/plugins/`                      | Go to WordPress plugins directory                        |
+| `cwt`        | `cd wp-content/themes/<theme>/`               | Go to WordPress theme directory                          |
+| `cy`         | `cypress`                                     |                                                          |
+| `d`          | `docker`                                      |                                                          |
+| `db`         | `docker build`                                |                                                          |
+| `dc`         | `docker-compose`                              |                                                          |
+| `dclean`     | `docker container prune; docker image prune`  | Clean up stopped containers and untagged images          |
+| `dev`        | `a h` and `phpstorm` in Tmux split panes      | Tmux must already be running                             |
+| `dkill`      | `docker kill $(docker ps -ql)`                | Kill most recent container                               |
+| `dkillall`   | `docker kill $(docker ps -q)`                 | Kill all running containers                              |
+| `dr`         | `docker run`                                  |                                                          |
+| `dresume`    | `docker start -ai "$(docker ps ...)"`         | Resume most recently stopped container                   |
+| `dri`        | `docker run -it`                              | Run interactively, e.g. `dri ubuntu`                     |
+| `dsh`        | `docker run ... /bin/bash`                    | Run /bun/bash in the container (with agent forwarding)   |
+| `dstop`      | `docker stop $(docker ps -ql)`                | Stop most recent container                               |
+| `dstopall`   | `docker stop $(docker ps -q)`                 | Stop all running containers                              |
+| `dus`        | `du -sh`                                      | Also sorts files/directories by size                     |
+| `e`          | `vim`                                         | Editor                                                   |
+| `g`          | `git`                                         | See below for a list of Git aliases                      |
+| `h`          | `ssh $1 tmux ...`                             | Connect to remote server and run Tmux on it              |
+| `ide`        | `scripts/ide-helper.sh`                       | Laravel [IDE Helper](https://github.com/barryvdh/laravel-ide-helper) |
+| `l`          | `ls -l`                                       |                                                          |
+| `la`         | `ls -lA`                                      | List with hidden files                                   |
+| `lsa`        | `ls -A`                                       |                                                          |
+| `m`          | `exec tmux ...`                               | Launch Tmux or switch sessions                           |
+| `mark`       |                                               | Creates an alias for the current directory (`cd $PWD`)   |
+| `marks`      |                                               | List current directory aliases                           |
+| `md`         | `mkdir && cd`                                 |                                                          |
+| `mfs`        | `php artisan migrate:fresh --seed`            |                                                          |
+| `mp`         | `multipass`                                   | [Multipass](https://multipass.run/)                      |
+| `mux`        | `tmuxinator`                                  | [Tmuxinator](https://github.com/tmuxinator/tmuxinator)   |
+| `myip`       | `curl ipinfo.io`                              | Show your current public IP address info                 |
+| `pow`        | `sudo poweroff`                               |                                                          |
+| `pping`      |                                               | Pretty Ping (visual `ping`)                              |
+| `pu`         | `phpunit`                                     |                                                          |
+| `pwgen`      |                                               | Password generator                                       |
+| `redis`      | `redis-cli`                                   |                                                          |
+| `reload`     | `exec bash -l`                                | Run this after modifying any Bash config file            |
+| `s`          | `sudo`                                        |                                                          |
+| `sc`         | `systemctl`                                   |                                                          |
+| `se`         | `sudo vim`                                    |                                                          |
+| `sf`         | `./symfony`                                   | For Symfony (searches parent directories too)            |
+| `sl`         | `sudo ls`                                     |                                                          |
+| `sls`        | `serverless`                                  | [Serverless Framework](https://www.serverless.com/)      |
+| `storm`      | `phpstorm`                                    |                                                          |
+| `t`          |                                               | See below for details about the `t` script runner        |
+| `tarc`       | `tar jcvf ...` or `7z a ...`                  | Zip up the given directory                               |
+| `tf`         | `terraform`                                   |                                                          |
+| `u`          | `cd ..`                                       | Go Up                                                    |
+| `uu`         | `cd ../..`                                    | Repeat `u` up to 6 times to go up 6 levels               |
+| `unmark`     |                                               | Delete a directory alias (see `mark`)                    |
+| `v`          | `vagrant`                                     |                                                          |
+| `xdebug on`  | export XDEBUG_SESSION=1                       | Enable Xdebug step debugging for CLI scripts             |
+| `xdebug off` | unset XDEBUG_SESSION                          | Disable Xdebug step debugging                            |
+| `xe`         | `vim && chmod +x`                             | Create new executable file and edit it                   |
+| `xp`         | `explorer.exe`                                | Run Windows Explorer from WSL / Cygwin                   |
 
 **Note:** Some expansions are simplified in the list above - e.g. `l` is actually aliased to `ls -hFl --color=always --hide=*.pyc --hide=*.sublime-workspace` on Linux or `LSCOLORS=ExGxFxDaCaDaDahbaDacec ls -hFlG` on Mac.
 
-## Git aliases
+There are also two custom key combinations:
+
+- `Ctrl-Alt-Left`: `prevd` - Go back a directory (like `b` or `cd -`, but it can be repeated several times like in a web browser)
+- `Ctrl-Alt-Right`: `nextd` - Go forward a directory
+
+## Git aliases and custom subcommands
 
 Combined with the `g` alias above, these make easy to type Git commands, e.g. `g s` instead of `git status`:
 
 | Alias        | Expansion                                         | Comments                                                 |
 |--------------|---------------------------------------------------|----------------------------------------------------------|
-| `g s`        | `git status`                                      |                                                          |
 | `g a`        | `git add -A`                                      | Adds *and* removes files                                 |
-| `g d`        | `git diff`                                        |                                                          |
-| `g dc`       | `git diff --cached`                               | Shows diff for staged files                              |
+| `g b`        | `git branch`                                      |                                                          |
+| `g ba`       | `git branch -a`                                   |                                                          |
+| `g bclean`   | `git branch -d ...`                               | Delete branches that have been merged into `master`      |
 | `g c`        | `git commit -m`                                   | e.g. `g c "Commit message"`                              |
 | `g ca`       | `git commit --amend --no-edit`                    | Modify the previous commit, keep the same message        |
 | `g ce`       | `git commit --amend`                              | Modify the previous commit, edit the message             |
+| `g cls`      | `git grep -i "class\s\+$1\b"`                     | Search for class definition                              |
+| `g co`       | `git checkout`                                    |                                                          |
+| `g cp`       | `git cherry-pick`                                 |                                                          |
+| `g d`        | `git diff`                                        |                                                          |
+| `g dc`       | `git diff --cached`                               | Shows diff for staged files                              |
+| `g f`        | `git fetch`                                       |                                                          |
+| `g files`    | `git ls-files \| grep`                            | Find file by name                                        |
+| `g fun`      | `git grep -i "function\s\+$1\b"`                  | Search for function definition                           |
+| `g g`        | `git grep`                                        |                                                          |
+| `g g3`       | `git grep --context=3`                            | Also `g6` and `g9`                                       |
+| `g ga`       | `git rev-list | grep ...`                         | Grep all files in the Git history                        |
+| `g gc-all`   | `git gc ...`                                      | Run garbage collection on everything possible            |
+| `g gf`       | `git ls-files | grep ...`                         | Find files by name                                       |
+| `g gi`       | `git grep --ignore-case`                          |                                                          |
+| `g gi3`      | `git grep --ignore-case --context=3`              | Also `gi6` and `gi9`                                     |
+| `g in`       | `git log origin/master..`                         | Lists commits incoming from the default remote           |
+| `g io`       | `git log --left-right origin/master..HEAD`        | Lists commits incoming & outgoing to the default remote  |
 | `g l`        | `git log --name-status`                           | Includes list of modified files                          |
 | `g l1`       | `git log --name-status --pretty=...`              | Single-line format                                       |
 | `g lg`       | `git log --graph`                                 |                                                          |
@@ -206,51 +254,54 @@ Combined with the `g` alias above, these make easy to type Git commands, e.g. `g
 | `g ll`       | `git log`                                         | Without list of modified files                           |
 | `g lp`       | `git log --patch`                                 | Displays diff with each log entry                        |
 | `g lpw`      | `git log --patch --ignore-all-space`              | Displays diff excluding whitespace changes               |
-| `g in`       | `git log origin/master..`                         | Lists commits incoming from the default remote           |
-| `g io`       | `git log --left-right origin/master..HEAD`        | Lists commits incoming & outgoing to the default remote  |
+| `g m`        | `git merge`                                       |                                                          |
+| `g mi`       | `git checkout $1 && git merge <old> && ...`       | Merge the current branch into the target branch          |
+| `g mt`       | `git mergetool`                                   |                                                          |
 | `g out`      | `git log ..origin/master`                         | Lists commits outgoing to the default remote             |
-| `g f`        | `git fetch`                                       |                                                          |
 | `g p`        | `git push`                                        |                                                          |
 | `g pt`       | `git push --tags`                                 |                                                          |
 | `g pu`       | `git push -u origin HEAD`                         | Push and set upstream                                    |
-| `g b`        | `git branch`                                      |                                                          |
-| `g ba`       | `git branch -a`                                   |                                                          |
-| `g co`       | `git checkout`                                    |                                                          |
-| `g g`        | `git grep`                                        |                                                          |
-| `g g3`       | `git grep --context=3`                            | Also `g6` and `g9`                                       |
-| `g gi`       | `git grep --ignore-case`                          |                                                          |
-| `g gi3`      | `git grep --ignore-case --context=3`              | Also `gi6` and `gi9`                                     |
-| `g todo`     | `git grep 'TODO\|XXX\|FIXME'`                     |                                                          |
-| `g cls`      | `git grep -i "class\s\+$1\b"`                     | Search for class definition                              |
-| `g fun`      | `git grep -i "function\s\+$1\b"`                  | Search for function definition                           |
-| `g cp`       | `git cherry-pick`                                 |                                                          |
-| `g m`        | `git merge`                                       |                                                          |
-| `g mt`       | `git mergetool`                                   |                                                          |
+| `g s`        | `git status`                                      |                                                          |
 | `g sub`      | `git submodule`                                   |                                                          |
 | `g sync`     | `git submodule sync; submodule update --init`     |                                                          |
-| `g files`    | `git ls-files \| grep`                            | Find file by name                                        |
+| `g todo`     | `git grep 'TODO\|XXX\|FIXME'`                     |                                                          |
 
 ## Automatic sudo
 
 These commands will automatically be prefixed with `sudo`:
 
+- `a2disconf`
 - `a2dismod`
+- `a2dissite`
+- `a2enconf`
 - `a2enmod`
+- `a2ensite`
 - `addgroup`
 - `adduser`
+- `apt`
+- `apt-add-repository`
 - `dpkg-reconfigure`
 - `groupadd`
 - `groupdel`
 - `groupmod`
 - `php5dismod`
 - `php5enmod`
+- `phpdismod`
+- `phpenmod`
 - `poweroff`
 - `reboot`
 - `service`
 - `shutdown`
+- `snap`
+- `systemctl` (unless `--user` flag is given)
+- `ufw`
+- `updatedb`
 - `useradd`
 - `userdel`
 - `usermod`
+- `yum`
+
+If you want to force them to run under the current user, prefix them with `command` (bypasses the alias).
 
 ## Script runner (`t` command)
 
@@ -289,8 +340,6 @@ You can also:
 - Type `t <name> [args...]` to run a script with arguments
 - Type `t` alone to list all the scripts available
 - Type `t <dir>` to list all the scripts in a subdirectory (e.g. `t download`)
-- Type `t -h` (for *help*) to display the contents of the `scripts/README.md` file (which will be syntax-highlighted if Node.js is installed)
-- Type `t <dir> -h` to display the contents of `scripts/<dir>/README.md`
 - Use tab-completion (e.g. `t d<tab> s<tab>` is 7 keys instead of 18)
 
 ## How to fork Dotfiles
