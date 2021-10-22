@@ -84,7 +84,7 @@ export PGDATABASE='postgres'
 export VISUAL="$EDITOR"
 
 if [[ -z $DISPLAY ]]; then
-    if is-wsl 1; then
+    if is-wsl 1 || is-cygwin; then
         export DISPLAY='localhost:0'
     elif is-wsl 2; then
         # https://blog.nimamoh.net/wsl2-and-vcxsrv/
@@ -99,9 +99,9 @@ if [[ ${LANG:-} = 'C.UTF-8' ]]; then
     export LANG='en_US.UTF-8'
 fi
 
-if [ -z "$XAUTHORITY" ]; then
-    export XAUTHORITY="$HOME/.Xauthority"
-fi
+#if [ -z "$XAUTHORITY" ]; then
+#    export XAUTHORITY="$HOME/.Xauthority"
+#fi
 
 
 #---------------------------------------
