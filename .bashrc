@@ -1062,14 +1062,16 @@ fi
 #---------------------------------------
 
 # The WSLtty config file is stored outside the Git repo
-WIN_APPDATA="$(command cd /mnt/c && cmd.exe /C 'echo %APPDATA%' | tr -d '\r')"
-WIN_APPDATA_UNIX="$(wslpath "$WIN_APPDATA")"
+if is-wsl; then
+    WIN_APPDATA="$(command cd /mnt/c && cmd.exe /C 'echo %APPDATA%' | tr -d '\r')"
+    WIN_APPDATA_UNIX="$(wslpath "$WIN_APPDATA")"
 
-if is-wsl && [[ -d $WIN_APPDATA_UNIX/wsltty ]] && ! cmp -s $WIN_APPDATA_UNIX/wsltty/config $HOME/.minttyrc; then
-    rm -f $WIN_APPDATA_UNIX/wsltty/config
-    cp $HOME/.minttyrc $WIN_APPDATA_UNIX/wsltty/config
-    echo
-    color bg-yellow black 'WSLtty config updated - please reload it'
+    if [[ -f $WIN_APPDATA_UNIX/wsltty/config ]] && ! cmp -s $WIN_APPDATA_UNIX/wsltty/config $HOME/.minttyrc; then
+        rm -f $WIN_APPDATA_UNIX/wsltty/config
+        cp $HOME/.minttyrc $WIN_APPDATA_UNIX/wsltty/config
+        echo
+        color bg-yellow black 'WSLtty config updated - please reload it'
+    fi
 fi
 
 
