@@ -1,41 +1,8 @@
 # Dotfiles
 
-[These dotfiles](https://github.com/alberon/dotfiles) are for use on shared Alberon accounts. You can also fork them to make your own copy.
+[These dotfiles](https://github.com/alberon/dotfiles) are for use on shared or personal Alberon accounts.
 
-## How to fork it
-
-- Fork the repo on GitHub
-- Install as normal (see below)
-- Put your public key in `~/.ssh/<name>.pub` (e.g. `~/.ssh/dave.pub`)
-- Uncomment `IdentityFile` and `IdentitiesOnly` in `~/.ssh/config`
-- Use `g gi alberon` (i.e. `git grep -i alberon`) to find all the places to replace with your own name / email address - currently this includes:
-    - `.bash/userinfo.bash`
-    - `.bazaar/bazaar.conf`
-    - `.gitconfig`
-    - `.grip/settings.py`
-    - `.vagrant.d/provision-dotfiles.sh`
-    - `bin/bzr-install`
-- And optionally change the name in:
-    - `.vim/plugin/snipmate-config.vim`
-    - `bin/generate-mit-license`
-- Commit those changes
-
-### How to update your fork
-
-To update your fork with the latest changes:
-
-```bash
-cd
-g pl alberon master
-```
-
-If there are any conficts, fix them, add the files (`g a <filename>`) and commit (`g ci`).
-
-Then push your updated version to GitHub:
-
-```bash
-g p
-```
+You can also fork them to make your own copy, which you can customise to your liking (see below).
 
 ## Installation
 
@@ -47,7 +14,13 @@ wget alberon.uk/cfg
 . cfg
 ```
 
-That's it. (See [https://alberon.uk/cfg](https://alberon.uk/cfg) for the script source - don't execute scripts from the internet without knowing what they do!)
+If you are installing the main Alberon dotfiles (not a fork) on a personal account (not shared), set your name and email address:
+
+```bash
+setup-identity 'Your Name' 'yourname@alberon.co.uk'
+```
+
+(This will write to `~/.gitconfig_local`.)
 
 ### Installing on Windows Subsystem for Linux (WSL) with Windows Terminal
 
@@ -319,3 +292,40 @@ You can also:
 - Type `t -h` (for *help*) to display the contents of the `scripts/README.md` file (which will be syntax-highlighted if Node.js is installed)
 - Type `t <dir> -h` to display the contents of `scripts/<dir>/README.md`
 - Use tab-completion (e.g. `t d<tab> s<tab>` is 7 keys instead of 18)
+
+## How to fork Dotfiles
+
+This is only necessary if you want to customise your Dotfiles.
+
+- Fork the repo on GitHub
+- Install as normal (see above), OR (if you have already installed the Alberon Dotfiles), switch to your fork:
+  ```bash
+  git remote set-url origin https://github.com/YOURUSERNAME/dotfiles.git
+  git remote set-url --push origin git@github.com:YOURUSERNAME/dotfiles.git
+  git remote add alberon https://github.com/alberon/dotfiles.git
+  git fetch
+  ```
+- Set your name and email in `~/.gitconfig_personal`
+- Optional:
+  - Put your public key in `~/.ssh/id_rsa.pub`
+  - Add any personal servers/accounts to `~/.ssh/config_personal`
+  - Add any custom Bash configuration to `~/.bashrc` and `~/.bash_profile`
+- Commit and push those changes
+
+### How to update your fork
+
+To update your fork with the latest changes:
+
+```bash
+cd
+g pl alberon master
+```
+
+If there are any conficts, fix them, add the files (`g a <filename>`) and commit (`g ci`).
+
+Then push your updated version to GitHub:
+
+```bash
+g p
+```
+
