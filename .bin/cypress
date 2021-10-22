@@ -1,0 +1,16 @@
+#!/bin/bash
+
+exe=scripts/cypress.sh
+if dir="$(findup -f $exe)"; then
+    cd "$dir"
+    exec $exe "$@"
+fi
+
+exe=node_modules/.bin/cypress
+if dir="$(findup -f $exe)"; then
+    cd "$dir"
+    exec $exe "$@"
+fi
+
+echo "You do not appear to be within a project with Cypress installed ($exe)" >&2
+exit 1

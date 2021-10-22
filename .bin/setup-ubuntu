@@ -1,0 +1,23 @@
+#!/bin/bash
+set -o errexit -o pipefail -o nounset
+
+source /etc/lsb-release
+source ~/.bash/color.bash
+
+color lblue 'Downloading APT package information'
+sudo apt update
+
+color lblue 'Upgrading installed packages'
+sudo apt full-upgrade -y
+
+color lblue 'Installing additional packages'
+# Note: vim-gtk adds X11 clipboard support - but it takes much longer to install :(
+packages='curl dos2unix httpie moreutils net-tools php-cli rename tree tmux unzip vim-gtk whois zip'
+if apt show fzf &>/dev/null; then
+    # fzf is only included in Ubuntu 20.04+
+    packages="$packages fzf"
+fi
+sudo apt install -y $packages || true
+
+color lblue 'Removing unneeded packages'
+sudo apt autoremove -y

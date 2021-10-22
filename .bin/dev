@@ -1,0 +1,17 @@
+#!/bin/bash
+set -o errexit -o nounset -o pipefail
+
+num_panes=$(tmux display-message -p '#{window_panes}')
+
+# If this is the only tmux pane in the current window
+if [[ $num_panes -eq 1 ]]; then
+
+    # Open a new pane at the top running webpack/Gulp
+    tmux split-window -v -b -l 15 "bash -c 'a h'"
+
+    # Put the focus back on the bottom pane
+    tmux select-pane -D
+fi
+
+# Run PhpStorm, if it's not already running
+phpstorm "$PWD" &>> ~/.cache/phpstorm.log &

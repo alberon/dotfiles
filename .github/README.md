@@ -20,7 +20,7 @@
     - `bin/generate-mit-license`
 - Commit those changes
 
-## How to update your fork
+### How to update your fork
 
 To update your fork with the latest changes:
 
@@ -37,79 +37,33 @@ Then push your updated version to GitHub:
 g p
 ```
 
-## Installing
+## Installation
 
 ### Installing on Linux
 
-You need to have `git` and `wget` installed - e.g. `sudo apt-get install git wget` or `sudo yum install git wget`.
-
 ```bash
 cd
 wget alberon.uk/cfg
 . cfg
 ```
 
-That's it. (See https://alberon.uk/cfg for the script source - don't execute scripts from the internet without knowing what they do!)
+That's it. (See [https://alberon.uk/cfg](https://alberon.uk/cfg) for the script source - don't execute scripts from the internet without knowing what they do!)
 
 ### Installing on Windows Subsystem for Linux (WSL)
 
-Install the [Fixedsys Excelsior Mono](http://askubuntu.com/a/725445) font (which is the regular Fixedsys font plus unicode characters).
+Install the [Fira Code](https://github.com/tonsky/FiraCode) font.
+
+[Install Windows Terminal](https://www.microsoft.com/en-gb/p/windows-terminal/9n0dx20hk701#activetab=pivot:overviewtab). (Note: If you installed it *before* setting up Ubuntu, run "configure WSL shortcuts" to add the shortcuts.)
 
 Click Start, search for `features` and select "Turn Windows features on or off". Tick "Windows Subsystem for Linux" and click OK. Reboot.
 
-Click Start, search for `ubuntu`, go to the Windows Store and install Ubuntu. Run it, wait while it completes setup, set a username and password when prompted, then run:
-
-```bash
-cd
-wget alberon.uk/cfg
-. cfg
-```
-
-[Install WSLtty](https://github.com/mintty/wsltty). (Note: If you installed it *before* setting up Ubuntu, run "configure WSL shortcuts" to add the shortcuts.)
+[Install Ubuntu](https://www.microsoft.com/en-us/p/ubuntu/9nblggh4msv6?activetab=pivot:overviewtab). Run it, wait while it completes setup, set a username and password when prompted, then quit.
 
 [Install VcXsrv](https://sourceforge.net/projects/vcxsrv/), then run XLaunch from the Start Menu. Accept the default settings except untick "Primary Selection". Save the configuration into the `shell:startup` folder so it's started automatically.
 
-Run "Ubuntu Terminal" from the start menu. Optionally install updates and some additional packages:
+Launch Windows Terminal from the start menu, click the tab dropdown menu, then Ubuntu.
 
-```bash
-agu
-agar
-agi dos2unix php-cli tree unzip whois zip
-```
-
-Finally - optional, but it removes the annoying green background in `ls`:
-
-```bash
-se /etc/wsl.conf
-
-# Add:
-[automount]
-options = "umask=0022"
-```
-
-(Note: Adding `fmask=0111` to remove the `x` bit prevents WSL running Windows `.exe` commands - so don't do that!)
-
-**Tip:** To reinstall Ubuntu without re-downloading it, launch Command Prompt and run `wslconfig /u ubuntu`, then re-launch Ubuntu from the Start Menu. It will take a few minutes to reinstall.
-
-### Installing on Cygwin (Windows):
-
-Install the [Fixedsys Excelsior Mono](http://askubuntu.com/a/725445) font (which is the regular Fixedsys font plus unicode characters).
-
-[Install Cygwin](https://cygwin.com/install.html) - select [any local mirror](https://cygwin.com/mirrors.html) (e.g. `mirrorservice.org` for UK), and when prompted add these packages:
-
-- `git`
-- `wget`
-
-**Tip:** Select View > Full mode, then use the search box to find them.
-
-Once it's installed, run Cygwin Terminal and run this to set the same home directory in Cygwin and Windows:
-
-```bash
-cd /
-mv $HOME $HOME.bak && ln -s "$(cygpath "$USERPROFILE")" $HOME
-```
-
-Then install dotfiles as above:
+Run:
 
 ```bash
 cd
@@ -117,31 +71,19 @@ wget alberon.uk/cfg
 . cfg
 ```
 
-Close and re-open Cygwin Terminal to reload the configuration. (**Note:** When testing I had to reload it *twice* before it picked up the changed font.)
-
-Then run this to install some additional useful packages:
-
-```bash
-apt-cyg install bash-completion bind-utils chere curl dos2unix git-completion inetutils less links make ncurses procps-ng tmux tree unzip vim whois xinit
-```
-
-(They can also be installed from the GUI - but it's much more tedious to find them all!)
-
-And run this to add Cygwin to Explorer's right-click menu:
-
-```bash
-chere -icmf -t mintty -s bash -e 'Open with Cygwin'
-```
+**Tip:** To reinstall Ubuntu without re-downloading it, open a Command Prompt tab (or PowerShell) and run `wslconfig /u Ubuntu`, then re-launch Ubuntu from the Start Menu. It will take a few minutes to reinstall.
 
 ## Upgrading
 
-When you log in, a maximum of once per day, dotfiles will automatically check for and install any updates.
+When you log in, a maximum of once per day, dotfiles will automatically check for and install any updates from the configured upstream repo.
 
 To upgrade manually, run `cfg pull` (or, equivalently, `cd; git pull`).
 
+**Note:** If you have forked the repo, it won't check the `alberon` repo automatically - see above.
+
 ## Bash aliases
 
-I'm lazy so I have a lot of Bash aliases and short commands - here are the most useful ones:
+There are lots of aliases and commands. Here are the most useful ones:
 
 | Alias      | Expansion                                     | Comments                                                 |
 |------------|-----------------------------------------------|----------------------------------------------------------|
@@ -206,8 +148,8 @@ Combined with the `g` alias above, these make easy to type Git commands, e.g. `g
 | `g d`        | `git diff`                                        |                                                          |
 | `g dc`       | `git diff --cached`                               | Shows diff for staged files                              |
 | `g c`        | `git commit -m`                                   | e.g. `g c "Commit message"`                              |
-| `g amend`    | `git commit --amend --no-edit`                    | Modify the previous commit, keep the same message        |
-| `g edit`     | `git commit --amend`                              | Modify the previous commit, edit the message             |
+| `g ca`       | `git commit --amend --no-edit`                    | Modify the previous commit, keep the same message        |
+| `g ce`       | `git commit --amend`                              | Modify the previous commit, edit the message             |
 | `g l`        | `git log --name-status`                           | Includes list of modified files                          |
 | `g l1`       | `git log --name-status --pretty=...`              | Single-line format                                       |
 | `g lg`       | `git log --graph`                                 |                                                          |
@@ -238,26 +180,6 @@ Combined with the `g` alias above, these make easy to type Git commands, e.g. `g
 | `g sub`      | `git submodule`                                   |                                                          |
 | `g sync`     | `git submodule sync; submodule update --init`     |                                                          |
 | `g files`    | `git ls-files \| grep`                            | Find file by name                                        |
-
-## Vagrant shortcuts
-
-Combined with the `v` alias above, these make easy to type Vagrant commands, e.g. `v s` instead of `vagrant status`:
-
-| Alias      | Expansion                                     | Comments                                                 |
-|------------|-----------------------------------------------|----------------------------------------------------------|
-| `s`        | `status`                                      |                                                          |
-| `gs`       | `global-status`                               |                                                          |
-| `u`        | `up`                                          |                                                          |
-| `p`        | `provision`                                   |                                                          |
-| `d`/`down` | `suspend`                                     |                                                          |
-| `bu`       | `box update`                                  |                                                          |
-| `rebuild`  | `destroy && box update && up`                 |                                                          |
-| `hosts`    | `hostmanager`                                 | [Update /etc/hosts files](https://github.com/smdahlen/vagrant-hostmanager) |
-| `x`/`exec` | `ssh -c "cd /vagrant; $*"`                    | Run a command on the guest machine without opening Bash  |
-| `h`/`tmux` | `ssh -- -t 'tmux new -A'`                     | More or less - see source for the full command!          |
-| `uh`       | `up && tmux`                                  |                                                          |
-
-Note: Since Vagrant doesn't really support aliases, this is actually a [Bash function](.bash/vagrant.bash) sitting in front of the real Vagrant.
 
 ## Automatic sudo
 
@@ -321,13 +243,3 @@ You can also:
 - Type `t -h` (for *help*) to display the contents of the `scripts/README.md` file (which will be syntax-highlighted if Node.js is installed)
 - Type `t <dir> -h` to display the contents of `scripts/<dir>/README.md`
 - Use tab-completion (e.g. `t d<tab> s<tab>` is 7 keys instead of 18)
-
-## Supported operating systems
-
-These scripts have been tested on various platforms at various times:
-
-- Linux - Debian, Ubuntu, CentOS
-- Windows - Cygwin, Git for Windows
-- Mac OS X
-
-However, I no longer use Git for Windows or Mac OS X, so there could be bugs.

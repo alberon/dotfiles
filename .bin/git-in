@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# Incoming commits
+if [ $# -eq 0 ]; then
+    remote=$(git for-each-ref --format='%(upstream:short)' "$(git symbolic-ref -q HEAD)")
+else
+    remote="$1"
+    shift
+fi
+
+git log --no-merges "$@" "..$remote"

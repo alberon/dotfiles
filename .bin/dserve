@@ -1,0 +1,6 @@
+#!/bin/bash
+set -o nounset -o pipefail -o errexit
+
+# Serve a directory of files over HTTP for quick local sharing
+# https://github.com/halverneus/static-file-server
+exec docker run -v "${1:-PWD}:/web" -p 80:8080 halverneus/static-file-server

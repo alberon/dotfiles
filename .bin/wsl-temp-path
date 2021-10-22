@@ -1,0 +1,6 @@
+#!/bin/bash
+set -o nounset -o pipefail -o errexit
+
+winpath="$(cd /mnt/c && cmd.exe /C 'echo %TEMP%' | tr -d '\r')"
+
+exec wslpath "$winpath"

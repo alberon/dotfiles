@@ -111,7 +111,7 @@ display_help() {
         output {
             output_title()
 
-            # Basic Markdown support (Note: "mdview" command is too slow for this)
+            # Basic Markdown support
             text = $0
 
             # Remove comment markers

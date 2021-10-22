@@ -1,0 +1,6 @@
+#!/bin/bash
+set -o nounset -o pipefail -o errexit
+
+# Clean up stopped Docker containers and dangling (untagged) images
+docker container prune
+docker image prune

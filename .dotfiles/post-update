@@ -67,3 +67,11 @@ if [[ -f .cfg_last_update ]]; then
         mv .cfg_last_update .local/dotfiles-last-auto-update
     fi
 fi
+
+if [[ -f .bash_lastdirectory ]]; then
+    if [[ -f .local/bash-last-directory ]]; then
+        rm .bash_lastdirectory
+    else
+        mv .bash_lastdirectory .local/bash-last-directory
+    fi
+fi

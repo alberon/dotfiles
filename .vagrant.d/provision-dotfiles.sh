@@ -5,8 +5,8 @@ set -eu
 # Settings
 #===============================================================================
 
-github_user=alberon
-public_key=~/.ssh/alberon.pub
+github_user='alberon'
+public_key="$HOME/.ssh/id_rsa.pub"
 
 #===============================================================================
 # Helpers
@@ -178,8 +178,7 @@ if [ ! -d "$HOME/.git" ]; then
     git fetch -q origin
     rm -f .bashrc .bash_profile
     git checkout origin/master -b master >/dev/null 2>&1
-    ~/bin/cfg-install
-    ~/bin/cfg-update
+    ~/.dotfiles/post-install
 
 fi
 
@@ -201,8 +200,7 @@ if [ $UID -ne 0 ]; then
             git fetch -q origin
             rm -f .bashrc .bash_profile
             git checkout origin/master -b master >/dev/null 2>&1
-            ~/bin/cfg-install
-            ~/bin/cfg-update
+            ~/.dotfiles/post-install
         fi
 END
 

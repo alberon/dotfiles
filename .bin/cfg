@@ -4,7 +4,6 @@ cd
 if [ $# -gt 0 ]; then
     exec git "$@"
 else
-    git status &&
-    exec git repl
+    exec git status
 fi
 

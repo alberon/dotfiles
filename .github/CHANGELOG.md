@@ -18,11 +18,17 @@ This is a major update that includes the following changes:
   (If you use any of them and want them back, let me know and I can update them
   instead.)
 
+- Local SSH keys (`.ssh/id_rsa`) are no longer loaded automatically, since this
+  is generally handled by the operating system (Ubuntu, macOS) or Pageant.
+
+- A load of changes to Git and Bash aliases. I didn't make a list of them all,
+  so let me know if anything you use no longer works as expected!
+
+Less important changes include:
+
 - Simplified Vim configuration. Packages are now installed on first launch by
   [vim-plug](https://github.com/junegunn/vim-plug) instead of being in this
   repo. (Press `,pu` in Vim to upgrade plugins.)
-
-Less important changes include:
 
 - Moved `bin/cfg-install` and `bin/cfg-update` scripts to
   `.dotfiles/post-install` and `.dotfiles/post-update` respectively. (They're

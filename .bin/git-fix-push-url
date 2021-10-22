@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Change push URL from HTTP(S) to Git protocol
 remote="${1:-origin}"
 
 url="$(git config --get "remote.$remote.url")"

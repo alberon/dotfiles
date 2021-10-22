@@ -1,12 +1,16 @@
 #!/bin/bash
 
-exe=vendor/bin/phpunit
-
-if ! dir="$(findup -f $exe)"; then
-    echo "You do not appear to be within a project with PHPUnit installed ($exe)" >&2
-    exit 1
+exe=scripts/phpunit.sh
+if dir="$(findup -f $exe)"; then
+    cd "$dir"
+    exec $exe "$@"
 fi
 
-cd "$dir"
+exe=vendor/bin/phpunit
+if dir="$(findup -f $exe)"; then
+    cd "$dir"
+    exec $exe "$@"
+fi
 
-exec $exe "$@"
+echo "You do not appear to be within a project with PHPUnit installed ($exe)" >&2
+exit 1

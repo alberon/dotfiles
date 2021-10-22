@@ -12,24 +12,30 @@
 
 !/.bash
 !/.bin
+
+!/.cache
+/.cache/*
+
 !/.dotfiles
+
 !/.drush
+/.drush/cache
+
 !/.elinks
+/.elinks/*
+!/.elinks/elinks.conf
+
 !/.gitattributes-global
 !/.gitconfig
 !/.github
 !/.gitignore
 !/.gitignore-global
+
 !/.grip
-!/.minttyrc
-!/.railsrc
-!/.rvm
-!/.ssh
-!/.tmux.conf
-!/.vagrant.d
-!/.vim
-!/lib
-!/opt
+/.grip/cache*
+/.grip/settings-local.py
+
+!/.hushlogin
 
 !/.local
 /.local/*
@@ -39,26 +45,9 @@
 /.local/share/bash-completion/*
 !/.local/share/bash-completion/completions/
 
-# Drush - config, not cache
-/.drush/cache
+!/.multipass
 
-# Elinks
-/.elinks/bookmarks
-/.elinks/cookies
-/.elinks/globhist
-/.elinks/searchhist
-
-# Grip - config only, not cache & access token
-/.grip/cache*
-/.grip/settings-local.py
-
-# RVM - after_cd hook only
-/.rvm/*
-!/.rvm/hooks/
-/.rvm/hooks/*
-!/.rvm/hooks/after_cd_record_bash_lastdirectory
-
-# SSH - config & public keys only, but ignore per-account public keys
+!/.ssh
 /.ssh/*
 !/.ssh/config
 !/.ssh/*.pub
@@ -66,19 +55,19 @@
 /.ssh/id_rsa.pub
 
 !/.sudo_as_admin_successful
+!/.tmux.conf
+!/.tmux_cheatsheet
 
-# Vagrant
+!/.vagrant.d
 /.vagrant.d/*
 !/.vagrant.d/provision-*.sh
 !/.vagrant.d/Vagrantfile
 
-# Vim - ignore history
-/.vim/.netrwhist
+!/.vim
+/.vim/autoload/plug.vim.old
+/.vim/plugged/
 
-# Vim plugins - ignore tags files
-/.vim/bundle/*/doc/tags
-
-# Python compiled files
+.ea-php-cli.cache
 *.pyc
 
 # This is required until all accounts have updated to the new structure
@@ -86,5 +75,4 @@
 /bin/*
 !/bin/cfg-update
 
-# cPanel files
-.ea-php-cli.cache
+!.gitkeep

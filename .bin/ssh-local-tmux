@@ -1,0 +1,19 @@
+#!/bin/bash
+set -o errexit -o nounset -o pipefail
+
+if [[ $# -lt 1 ]]; then
+    echo 'Usage: ssh-local-tmux <host> [session]' >&2
+    exit 1
+fi
+
+host=$1
+session=${2:-$host}
+
+# Create a detached session (if there isn't one already)
+tmux -2 new -s "$session" -d bash -l -c "h $host" || true 2>/dev/null
+
+# Set the default command for new windows to connect to the same server
+tmux set -t "$session" default-command "bash -l -c \"h $host\""
+
+# Connect to the session
+exec tmux -2 attach -t "$session"

@@ -1,5 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 
+# Make origin the upstream of master
 if [ $# -ge 1 ]; then
     git remote rm origin 2>/dev/null
     git remote add -f origin "$1"
