@@ -962,7 +962,8 @@ _update-dpi
 #---------------------------------------
 
 PROMPT_COMMAND='_prompt-before'
-PS1='$(_prompt)\n\[\e[91m\]$\[\e[0m\] '
+# Note: $() doesn't work here in Git Bash
+PS1='`_prompt`\n\[\e[91m\]$\[\e[0m\] '
 
 prompt_color=''
 prompt_command=''

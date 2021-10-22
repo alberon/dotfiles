@@ -187,8 +187,8 @@ fi
 
 # Dynamically generate some of the SSH config
 (
-    if is-cygwin; then
-        echo '# ControlMaster is not supported in Cygwin'
+    if is-cygwin || is-gitforwindows; then
+        echo '# ControlMaster is not supported in Cygwin / Git for Windows'
         echo '# https://stackoverflow.com/a/21439862/167815'
     else
         echo 'Host *'
