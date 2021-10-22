@@ -113,10 +113,24 @@ source ~/.bash/color.bash
 if is-wsl 1; then
 
     # wsl-ssh-pageant - https://github.com/benpye/wsl-ssh-pageant
-    # Must be running already
+    if [[ ! -f ~/.ssh/wsl-ssh-pageant.exe ]]; then
+        echo
+        color lblue 'Downloading wsl-ssh-pageant...'
+        mkdir -p ~/.ssh
+        curl -L 'https://github.com/benpye/wsl-ssh-pageant/releases/download/20201121.2/wsl-ssh-pageant-amd64.exe' > ~/.ssh/wsl-ssh-pageant.exe
+    fi
+
     temp=$(wsl-temp-path)
-    if [ -f "$temp/wsl-ssh-pageant.sock" ]; then
-        export SSH_AUTH_SOCK="$temp/wsl-ssh-pageant.sock"
+    export SSH_AUTH_SOCK="$temp/wsl-ssh-pageant.sock"
+
+    if ! pgrep -l wsl-ssh-pageant >/dev/null; then
+
+        # WSL won't run a Windows app that's inside the Linux filesystem, so copy it to a temp directory first
+        # This sometimes fails even when pgrep doesn't think it's running, but that's generally OK
+        rm -f "$temp/wsl-ssh-pageant.exe" "$SSH_AUTH_SOCK" 2>/dev/null && \
+            cp ~/.ssh/wsl-ssh-pageant.exe "$temp/wsl-ssh-pageant.exe"
+
+        "$temp/wsl-ssh-pageant.exe" --force --wsl "$(wslpath -w "$temp")\\wsl-ssh-pageant.sock" &>/dev/null a&
     fi
 
 elif is-wsl 2; then
