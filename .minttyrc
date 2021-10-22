@@ -1,0 +1,19 @@
+BoldAsFont=no
+Font=Fira Code Medium
+CursorType=block
+RightClickAction=paste
+Term=xterm-256color
+ConfirmExit=no
+Scrollbar=none
+FontHeight=11
+FontIsBold=no
+FontSmoothing=default
+FontWeight=500
+BoldAsColour=yes
+AllowBlinking=yes
+Locale=en_GB
+Charset=UTF-8
+
+# Make dark blue readable
+Blue=59,72,227
+BoldBlue=125,135,236

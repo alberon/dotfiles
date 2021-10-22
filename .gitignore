@@ -49,6 +49,7 @@
 /.local/share/bash-completion/*
 !/.local/share/bash-completion/completions/
 
+!/.minttyrc
 !/.multipass
 
 !/.ssh

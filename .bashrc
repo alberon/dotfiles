@@ -1049,6 +1049,17 @@ if [ -d "$HOME/.marks" ]; then
     done
 fi
 
+#---------------------------------------
+# WSLtty configuration
+#---------------------------------------
+
+# The WSLtty config file is stored outside the Git repo
+if is-wsl && [[ -f $WIN_APPDATA_UNIX/wsltty ]] && ! cmp -s $WIN_APPDATA_UNIX/wsltty/config $HOME/.minttyrc; then
+    cp -f $HOME/.minttyrc $WIN_APPDATA_UNIX/wsltty/config
+    echo
+    color bg-yellow black 'WSLtty config updated - please reload it'
+fi
+
 
 #---------------------------------------
 # Working directory
