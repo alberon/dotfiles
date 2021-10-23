@@ -357,7 +357,6 @@ This is only necessary if you want to customise your Dotfiles.
 - Set your name and email in `~/.gitconfig_personal`
 - Optional:
   - Configure your personal accounts/servers in `~/.ssh/config_personal`
-  - Put your public key in `~/.ssh/id_rsa.pub`
   - Add any custom Bash configuration to `~/.bashrc` and `~/.bash_profile`
 - Commit and push those changes
 
