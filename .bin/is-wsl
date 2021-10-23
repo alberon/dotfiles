@@ -1,6 +1,11 @@
 #!/bin/bash
 set -o errexit -o nounset -o pipefail
 
+if [[ ! -f /proc/version ]]; then
+    # Probably macOS
+    exit 1
+fi
+
 if ! grep -iq 'microsoft' /proc/version; then
     # Not WSL
     exit 1

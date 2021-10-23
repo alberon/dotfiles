@@ -86,10 +86,8 @@ color() {
             bg-?|bg-??|bg-???)      echo -en "\e[48;5;${1:3}m" ;;
             bg-??????)              echo -en "\e[48;2;$(_color-hex-to-ansi "${1:3}")m" ;;
 
-            --)
-                shift
-                ;& # Fall through
             *)
+                [[ $1 = '--' ]] && shift
                 #echo -en "\002"
                 echo -n "$@"
                 #echo -en "\001\e[0m\002"
