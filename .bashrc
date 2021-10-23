@@ -834,7 +834,7 @@ _prompt-pwd-git() {
             color -n fg-111 ' (stashed)'
         else
             local ahead behind
-            read -r ahead behind < <(echo "$gstatus" | sed -nE 's/^# branch\.ab \+([0-9]+) \-([0-9]+)$/\1\t\2/p')
+            read -r ahead behind <<< $(echo "$gstatus" | sed -nE 's/^# branch\.ab \+([0-9]+) \-([0-9]+)$/\1\t\2/p')
 
             if [[ $ahead -gt 0 ]]; then
                 if [[ $behind -gt 0 ]]; then
