@@ -1,0 +1,16 @@
+#!/bin/bash
+
+exe=scripts/jest.sh
+if dir="$(findup -f $exe)"; then
+    cd "$dir"
+    exec $exe "$@"
+fi
+
+exe=node_modules/.bin/jest
+if dir="$(findup -f $exe)"; then
+    cd "$dir"
+    exec $exe "$@"
+fi
+
+echo "You do not appear to be within a project with Jest installed ($exe)" >&2
+exit 1

@@ -1,0 +1,9 @@
+#!/bin/bash
+set -o errexit -o nounset -o pipefail
+
+if command -v hostname &>/dev/null; then
+    (hostname -f 2>/dev/null || hostname) | tr '[:upper:]' '[:lower:]'
+else
+    # This way works even if the 'hostname' command is not installed, but doesn't always give the FQDN
+    cat /proc/sys/kernel/hostname | tr '[:upper:]' '[:lower:]'
+fi

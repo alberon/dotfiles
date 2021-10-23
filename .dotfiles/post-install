@@ -1,0 +1,41 @@
+#!/bin/bash
+set -o errexit -o nounset -o pipefail
+
+# Make sure Bash gets reloaded no matter what
+trap 'exec bash -l' EXIT
+
+PATH="$HOME/.bin:$PATH"
+
+source ~/.bash/color.bash
+
+# Reload tmux config
+if [[ -n ${TMUX:-} ]]; then
+    tmux move-window -t 1 2>/dev/null || true # Change from 0 to 1
+
+    if [[ $TERM = 'screen' ]]; then
+        export TERM='xterm-256color'
+    fi
+fi
+
+# No need to check for updates today
+date +%Y%m%d > ~/.local/dotfiles-last-auto-update
+
+# Run the post-update script too
+color lblue 'Running post-update script...'
+~/.dotfiles/post-update
+
+# Fix WSL permissions (defaults to umask 000)
+if is-wsl; then
+    color lblue 'Fixing WSL permissions'
+    umask 002
+    chmod o-w -R "$HOME"
+
+    sudo tee /etc/wsl.conf >/dev/null <<END
+[automount]
+options = "metadata,umask=0022"
+END
+fi
+
+# Reload Bash
+color lblue 'Reloading Bash...'
+# See EXIT trap above

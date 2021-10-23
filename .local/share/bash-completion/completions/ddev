@@ -1,0 +1,3 @@
+if [[ -f /home/linuxbrew/.linuxbrew/etc/bash_completion.d/ddev ]]; then
+    source /home/linuxbrew/.linuxbrew/etc/bash_completion.d/ddev
+fi

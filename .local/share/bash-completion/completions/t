@@ -1,0 +1,45 @@
+_t_completion()
+{
+    trap "$(shopt -p failglob)" RETURN
+    shopt -u failglob
+
+    compopt +o default
+
+    # Locate the scripts directory
+    local root=$(findup -d scripts) || return
+    local scripts="$root/scripts"
+
+    # Subdirectory?
+    for ((i = 1; i < $COMP_CWORD; i++)); do
+        scripts="$scripts/${COMP_WORDS[$i]}"
+    done
+
+    # Not a directory? Fall back to regular filename completion
+    # https://stackoverflow.com/a/19062943/167815
+    if [[ ! -d $scripts ]]; then
+        compopt -o default
+        COMPREPLY=()
+        return
+    fi
+
+    # List matching scripts
+    COMPREPLY=()
+
+    local input="${COMP_WORDS[$COMP_CWORD]}"
+    for file in "$scripts/$input"*; do
+        [[ -e $file ]] || continue
+
+        name="$(basename "$file")" # Remove path
+        name="${name%%.*}"         # Remove extension
+        if [[ $name == _* && $input != _* ]]; then
+            : # Skip includes (files starting with "_")
+        elif [[ "$name" == *" "* ]]; then
+            # Quote anything with spaces in the name
+            COMPREPLY+=("'$name'")
+        else
+            COMPREPLY+=("$name")
+        fi
+    done
+}
+
+complete -F _t_completion t

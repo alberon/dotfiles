@@ -1,5 +1,0 @@
-#!/bin/bash
-
-# Find files by name
-git ls-files | grep-less "$@"
-

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# Add
+git add -A "$@" && git --no-pager status

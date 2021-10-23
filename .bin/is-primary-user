@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Root user
+is-root-user && exit 0
+
+# First non-root user + in the sudo group
+[[ $EUID -eq 1000 ]] && groups | grep -q '\bsudo\b'

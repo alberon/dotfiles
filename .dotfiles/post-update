@@ -1,0 +1,82 @@
+#!/bin/bash
+set -o errexit -o nounset -o pipefail
+
+cd
+
+# Reload tmux config
+if [[ -n ${TMUX:-} ]]; then
+    tmux source ~/.tmux.conf
+fi
+
+# Create/update the post-merge hook
+ln -nsf ../../.dotfiles/post-update .git/hooks/post-merge
+
+# Create a template MySQL settings file, and chmod to ensure any passwords are protected
+if [[ ! -e .my.cnf ]]; then
+    echo -e "[client]\n;user=''\n;password=''\n\n[mysql]\ndatabase=''" > .my.cnf
+    chmod 600 .my.cnf
+fi
+
+# Check permissions on the .ssh/ directory
+chmod 700 .ssh
+chmod 600 .ssh/* 2>/dev/null
+chmod 700 .ssh/*.exe 2>/dev/null || true
+
+# Add known host keys for various Git servers
+if [[ ! -f .ssh/known_hosts ]]; then
+    touch .ssh/known_hosts
+    chmod 600 .ssh/known_hosts
+fi
+
+if ! grep -q ^github.com .ssh/known_hosts; then
+    echo "github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==" >> .ssh/known_hosts
+fi
+
+if ! grep -q ^gitlab.com .ssh/known_hosts; then
+    echo "gitlab.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFSMqzJeV9rUzU4kWitGjeR4PWSa29SPqJ1fVkhtj3Hw9xjLVXVYrU9QlYWrOLXBpQ6KWjbjTDTdDkoohFzgbEY=" >> .ssh/known_hosts
+    echo "gitlab.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAfuCHKVTjquxvt6CM6tdG4SLp1Btn/nOeHHE5UOzRdf" >> .ssh/known_hosts
+    echo "gitlab.com ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCsj2bNKTBSpIYDEGk9KxsGh3mySTRgMtXL583qmBpzeQ+jqCMRgBqB98u3z++J1sKlXHWfM9dyhSevkMwSbhoR8XIq/U0tCNyokEi/ueaBMCvbcTHhO7FcwzY92WK4Yt0aGROY5qX2UKSeOvuP4D6TPqKF1onrSzH9bx9XUf2lEdWT/ia1NEKjunUqu1xOB/StKDHMoX4/OKyIzuS0q/T1zOATthvasJFoPrAjkohTyaDUz2LN5JoH839hViyEG82yB+MjcFV5MU3N1l1QL3cVUCh93xSaua1N85qivl+siMkPGbO5xR/En4iEY6K2XPASUEMaieWVNTRCtJ4S8H+9" >> .ssh/known_hosts
+fi
+
+if ! grep -q ^bitbucket.org .ssh/known_hosts; then
+    echo "bitbucket.org ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAubiN81eDcafrgMeLzaFPsw2kNvEcqTKl/VqLat/MaB33pZy0y3rJZtnqwR2qOOvbwKZYKiEO1O6VqNEBxKvJJelCq0dTXWT5pbO2gDXC6h6QDXCaHo6pOHGPUy+YBaGQRGuSusMEASYiWunYN0vCAI8QaXnWMXNMdFP3jHAJH0eDsoiGnLPBlBp4TNm6rYI74nMzgz3B9IikW4WVK+dc8KZJZWYjAuORU3jc1c/NPskD2ASinf8v3xnfXeukU0sJ5N6m5E8VLjObPEO+mN2t/FZTMZLiFqPWc/ALSqnMnnhwrNi2rbfg/rd/IpL8Le3pSBne8+seeFVBoGqzHM9yXw==" >> .ssh/known_hosts
+fi
+
+# Remove old Mercurial local config file if it's empty
+if [[ -f .hgrc_local ]] && [[ -z "$(cat .hgrc_local)" ]]; then
+    rm -f .hgrc_local
+fi
+
+# Move files that used to clutter the home directory
+if [[ -d tmp/vim && ! -d .cache/vim ]]; then
+    mkdir -p .cache
+    mv tmp/vim .cache/vim
+    rm -f .cache/vim/.gitkeep
+    chmod 700 .cache/vim
+    rmdir --ignore-fail-on-non-empty tmp
+fi
+
+if [[ -f .vim/.netrwhist && ! -f .cache/vim/.netrwhist ]]; then
+    mv .vim/.netrwhist .cache/vim/.netrwhist
+fi
+
+if [[ -f .cfg_last_update ]]; then
+    if [[ -f .local/dotfiles-last-auto-update ]]; then
+        rm .cfg_last_update
+    else
+        mv .cfg_last_update .local/dotfiles-last-auto-update
+    fi
+fi
+
+if [[ -f .bash_lastdirectory ]]; then
+    if [[ -f .local/bash-last-directory ]]; then
+        rm .bash_lastdirectory
+    else
+        mv .bash_lastdirectory .local/bash-last-directory
+    fi
+fi
+
+# Clean up files that were previously ignored
+if [[ -d .vim/bundle ]]; then
+    rm -rf .vim/bundle
+fi

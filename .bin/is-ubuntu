@@ -1,0 +1,5 @@
+#!/bin/sh
+
+test -f /etc/lsb-release && \
+    . /etc/lsb-release && \
+    test "${DISTRIB_ID:-}" = "Ubuntu"

@@ -1,8 +1,0 @@
-#!/bin/bash
-
-if [ $# != 1 ]; then
-    echo "Usage: svn-edit-log <revnum>" >&2
-    exit 1
-fi
-
-svn propedit svn:log --revprop -r$1

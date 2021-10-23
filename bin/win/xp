@@ -1,6 +1,0 @@
-#!/bin/bash
-
-# Default to the current directory
-path="${1:-.}"
-
-exec explorer "$(cygpath -w "$path")"

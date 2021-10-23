@@ -1,7 +1,0 @@
-# Fix scrolling up in PuTTY
-# http://www.samsarin.com/blog/2007/03/11/gnu-screen-working-with-the-scrollback-buffer/#comment-52
-termcapinfo xterm* ti@:te@
-
-# Allow scrolling 10,000 lines (in screen using C-a [, not in PuTTY)
-# http://www.samsarin.com/blog/2007/03/11/gnu-screen-working-with-the-scrollback-buffer/#comment-52
-defscrollback 10000

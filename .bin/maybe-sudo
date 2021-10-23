@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [[ $EUID -gt 0 ]] && command -v sudo &>/dev/null; then
+    exec sudo "$@"
+fi
+
+exec "$@"

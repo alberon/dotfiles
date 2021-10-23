@@ -1,0 +1,96 @@
+#!/bin/bash
+set -o nounset -o pipefail -o errexit
+
+source "$HOME/.bash/color.bash"
+
+colors='black red green yellow blue magenta cyan white'
+
+heading() {
+    echo
+    color lyellow underline -- "$(printf ' %-142s ' "$1")"
+    echo
+}
+
+color-range() {
+    local prefix=${1:-}
+    shift || true
+
+    for color in $colors; do
+        echo -n ' '
+        color=$prefix$color
+        color -n "$@" "$color" -- "$(printf '%-11s' "$color")"
+    done
+}
+
+heading 'Foreground'
+color-range '' bg-auto
+echo " - $(color lyellow -- bg-auto)"
+color-range 'l' bg-auto
+echo
+
+heading 'Background'
+color-range 'bg-' fg-auto
+echo " - $(color lyellow -- fg-auto)"
+color-range 'bg-l' fg-auto
+echo
+
+heading 'Styles'
+for style in bold dim underline blink rapidblink reverse hide strike; do
+    color-range '' bg-auto $style
+    echo -n ' - '
+    color lyellow -- "$(printf '%-10s' $style)"
+done
+
+color-cube() {
+    local type=$1
+    shift
+
+    for color in $@; do
+        color -n fg-auto bg-auto $type-$color -- "$(printf ' %-6s ' "$type-$color")"
+    done
+    echo
+}
+
+heading '256 colors (text)'
+color-cube fg {0..7}
+color-cube fg {8..15}
+echo
+color-cube fg  {16..21}   {52..57}   {88..93}
+color-cube fg  {22..27}   {58..63}   {94..99}
+color-cube fg  {28..33}   {64..69}  {100..105}
+color-cube fg  {34..39}   {70..75}  {106..111}
+color-cube fg  {40..45}   {76..81}  {112..117}
+color-cube fg  {46..51}   {82..87}  {118..123}
+color-cube fg {124..129} {160..165} {196..201}
+color-cube fg {130..135} {166..171} {202..207}
+color-cube fg {136..141} {172..177} {208..213}
+color-cube fg {142..147} {178..183} {214..219}
+color-cube fg {148..153} {184..189} {220..225}
+color-cube fg {154..159} {190..195} {226..231}
+echo
+color-cube fg {232..243}
+color-cube fg {244..255}
+
+heading '256 colors (background)'
+color-cube bg {0..7}
+color-cube bg {8..15}
+echo
+color-cube bg  {16..21}   {52..57}   {88..93}
+color-cube bg  {22..27}   {58..63}   {94..99}
+color-cube bg  {28..33}   {64..69}  {100..105}
+color-cube bg  {34..39}   {70..75}  {106..111}
+color-cube bg  {40..45}   {76..81}  {112..117}
+color-cube bg  {46..51}   {82..87}  {118..123}
+color-cube bg {124..129} {160..165} {196..201}
+color-cube bg {130..135} {166..171} {202..207}
+color-cube bg {136..141} {172..177} {208..213}
+color-cube bg {142..147} {178..183} {214..219}
+color-cube bg {148..153} {184..189} {220..225}
+color-cube bg {154..159} {190..195} {226..231}
+echo
+color-cube bg {232..243}
+color-cube bg {244..255}
+
+heading '24-bit color'
+color-cube fg 000000 203000 306010 407020 508030 609040 70a050 80b060 90c070 a0d080 ffffff
+color-cube bg 000000 203000 306010 407020 508030 609040 70a050 80b060 90c070 a0d080 ffffff

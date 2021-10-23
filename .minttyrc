@@ -1,13 +1,14 @@
 BoldAsFont=no
-Font=Fixedsys Excelsior 3.01-L2 Mono
+Font=Fira Code Medium
 CursorType=block
 RightClickAction=paste
 Term=xterm-256color
 ConfirmExit=no
 Scrollbar=none
-FontHeight=12
+FontHeight=11
 FontIsBold=no
 FontSmoothing=default
+FontWeight=500
 BoldAsColour=yes
 AllowBlinking=yes
 Locale=en_GB

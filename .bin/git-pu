@@ -1,0 +1,13 @@
+#!/bin/bash
+set -o errexit -o nounset -o pipefail
+
+# git pu = Push Upstream (push current branch and set as upstream)
+url="${1:-}"
+
+if [[ -n $url ]]; then
+    # Set origin to the specified URL
+    git remote rm origin 2>/dev/null || true
+    git remote add origin "$url"
+fi
+
+exec git push -u origin HEAD

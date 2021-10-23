@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# Grep all history
+git rev-list --all | xargs git grep --break --heading --line-number "$@"

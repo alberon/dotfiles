@@ -1,0 +1,36 @@
+#!/bin/bash
+set -o errexit -o nounset -o pipefail
+
+cd
+source .bash/color.bash
+
+today=$(date +%Y%m%d)
+
+# Check if this has already been run today
+# Only run it once per day because it can be slow
+if [[ -f .local/dotfiles-last-auto-update ]]; then
+    last_update=$(cat .local/dotfiles-last-auto-update)
+    if [[ $last_update = $today ]]; then
+        exit
+    fi
+fi
+
+# Record the last run date
+# Note: Update this even if we don't actually run the update because of local
+# changes, because if there are local changes then I will manually do a pull.
+echo "$today" > .local/dotfiles-last-auto-update
+
+# Make sure there are no local changes we might overwrite
+if [[ -n "$(git status --porcelain)" ]]; then
+    echo
+    color lwhite bg-red '                                                                     '
+    color lwhite bg-red '  Not updating configuration files because there are local changes.  '
+    color lwhite bg-red '                                                                     '
+    echo
+    exit
+fi
+
+# Pull changes, but don't merge
+echo "Updating configuration files in the background..."
+echo
+git pull -q --ff-only &

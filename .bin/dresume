@@ -1,0 +1,13 @@
+#!/bin/bash
+set -o nounset -o pipefail -o errexit
+
+# Resume the last stopped Docker image
+# https://stackoverflow.com/a/37886136/167815
+container="$(docker ps -qlf status=exited)"
+
+if [[ -n $container ]]; then
+    exec docker start -ai "$container"
+else
+    echo "No stopped images found." >&2
+    return 1
+fi
