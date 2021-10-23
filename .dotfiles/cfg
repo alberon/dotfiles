@@ -182,4 +182,14 @@
 
     # Run any post-install commands, e.g. prepare config file
     say 'Running post-install script...'
-) && exec ~/.dotfiles/post-install
+) || return
+
+# Current version (Oct 2021)
+if [[ -f ~/.dotfiles/post-install ]]; then
+    exec ~/.dotfiles/post-install
+fi
+
+# Legacy version
+[[ -x ~/bin/cfg-install ]] && ~/bin/cfg-install
+[[ -x ~/bin/cfg-update ]] && ~/bin/cfg-update
+exec bash -l
