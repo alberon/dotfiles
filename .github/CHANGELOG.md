@@ -27,9 +27,6 @@ This is a major update that includes the following changes:
 - A load of changes to Git and Bash aliases. I didn't make a list of them all,
   so let me know if anything you use no longer works as expected!
 
-- Removed all macOS references. Since I haven't used it in many years, I doubt it
-  worked anyway! (If you'd like it to work, let me know.)
-
 **Expect some merge conflicts!**
 
 Less important changes include:

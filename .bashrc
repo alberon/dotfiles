@@ -124,10 +124,17 @@ alias kg='kubectl get'
 alias kns='kubectl config set-context --current --namespace'
 alias krm='kubectl delete'
 
-alias l="ls -hFl --color=always --hide='*.pyc' --hide='*.sublime-workspace'"
-alias la="ls -hFlA --color=always --hide='*.pyc' --hide='*.sublime-workspace'"
-alias ls="ls -hF --color=always --hide='*.pyc' --hide='*.sublime-workspace'"
-alias lsa="ls -hFA --color=always --hide='*.pyc' --hide='*.sublime-workspace'"
+if is-mac; then
+    alias l="ls -hGFl"
+    alias la="ls -hGFlA"
+    alias ls="ls -hGF"
+    alias lsa="ls -hGFA"
+else
+    alias l="ls -hFl --color=always --hide='*.pyc' --hide='*.sublime-workspace'"
+    alias la="ls -hFlA --color=always --hide='*.pyc' --hide='*.sublime-workspace'"
+    alias ls="ls -hF --color=always --hide='*.pyc' --hide='*.sublime-workspace'"
+    alias lsa="ls -hFA --color=always --hide='*.pyc' --hide='*.sublime-workspace'"
+fi
 
 alias mux='tmuxinator'
 
@@ -474,9 +481,11 @@ mark() {
 }
 
 marks() {
-    command ls -l --color=always --classify "$HOME/.marks" |
-        sed '1d;s/  / /g' |
-        cut -d' ' -f9-
+    if is-mac; then
+        CLICOLOR_FORCE=1 command ls -lF "$HOME/.marks" | sed '1d;s/  / /g' | cut -d' ' -f9-
+    else
+        command ls -l --color=always "$HOME/.marks" | sed '1d;s/  / /g' | cut -d' ' -f9-
+    fi
 }
 
 md() {
@@ -729,7 +738,7 @@ _find-wp-content() {
 _ls-current-directory() {
     echo
     color lwhite underline -- "$PWD"
-    ls -hF --color=always --hide='*.pyc' --hide='*.sublime-workspace'
+    ls
 }
 
 _prompt-before() {

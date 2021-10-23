@@ -122,6 +122,28 @@ And run this to add Cygwin to Explorer's right-click menu:
 chere -icmf -t mintty -s bash -e 'Open in Cygwin Terminal'
 ```
 
+## Installing on macOS
+
+***This is not actively tested - YMMV!***
+
+Upgrade Bash:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+brew install bash coreutils
+exec bash -l
+echo '/usr/local/bin/bash' | sudo tee -a /etc/shells
+chsh -s /usr/local/bin/bash
+```
+
+Then install Dotfiles as normal:
+
+```bash
+cd
+wget djm.me/cfg
+. cfg
+```
+
 ## Upgrading
 
 When you log in, a maximum of once per day, dotfiles will automatically check for and install any updates from the configured upstream repo.
