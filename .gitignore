@@ -63,11 +63,6 @@
 !/.tmux.conf
 !/.tmux_cheatsheet
 
-!/.vagrant.d
-/.vagrant.d/*
-!/.vagrant.d/provision-*.sh
-!/.vagrant.d/Vagrantfile
-
 !/.vim
 /.vim/autoload/plug.vim.old
 /.vim/plugged/
