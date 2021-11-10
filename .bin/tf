@@ -1,0 +1,31 @@
+#!/bin/bash
+set -o errexit -o nounset -o pipefail
+
+case "${1:-}" in
+
+    a) # Apply
+        shift
+        exec terraform apply "$@"
+        ;;
+
+    i) # Init
+        shift
+        exec terraform init "$@"
+        ;;
+
+    p) # Plan
+        shift
+        exec terraform plan "$@"
+        ;;
+
+    v) # Validate
+        shift
+        exec terraform validate "$@"
+        ;;
+
+    *)
+        exec terraform "$@"
+        ;;
+
+esac
+
