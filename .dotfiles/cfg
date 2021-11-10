@@ -87,15 +87,9 @@
 
     # Download the repository
     say 'Downloading dotfiles repository...'
-    git init || fail 'Failed to initialise the Git repo'
+    git init --initial-branch "$branch" 2>/dev/null || git init || fail 'Failed to initialise the Git repo'
     git remote add origin "https://github.com/$user/dotfiles.git" || fail 'Failed to configure the Git remote'
     git remote set-url --push origin "git@github.com:$user/dotfiles.git" || fail 'Failed to configure the Git push URL'
-    git remote add dave 'https://git.djm.me/dave/dotfiles.git' || true
-
-    if [[ $user != 'alberon' ]]; then
-        git remote add alberon https://github.com/alberon/dotfiles.git
-    fi
-
     git fetch --depth=1 origin || fail 'Failed to download the Git repository'
 
     # Automatically delete known skeleton files

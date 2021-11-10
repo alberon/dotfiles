@@ -76,6 +76,19 @@ if [[ -f .bash_lastdirectory ]]; then
     fi
 fi
 
+# Add/update remote repositories
+if [[ $(git config remote.origin.url) = 'https://github.com/alberon/dotfiles.git' ]]; then
+    git remote rm alberon 2>/dev/null
+
+    git remote add dave 'https://github.com/davejamesmiller/dotfiles.git' 2>/dev/null || \
+        git remote set-url dave 'https://github.com/davejamesmiller/dotfiles.git' 2>/dev/null || \
+        true
+else
+    git remote add alberon 'https://github.com/alberon/dotfiles.git' 2>/dev/null || \
+        git remote set-url alberon 'https://github.com/alberon/dotfiles.git' 2>/dev/null || \
+        true
+fi
+
 # Clean up files that were previously ignored
 if [[ -d .vim/bundle ]]; then
     rm -rf .vim/bundle
