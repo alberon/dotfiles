@@ -208,6 +208,8 @@ fi
     echo '# vim:ft=sshconfig'
 ) > ~/.ssh/config_dynamic
 
+chmod 600 ~/.ssh/config_dynamic
+
 
 #---------------------------------------
 # Custom settings / functions

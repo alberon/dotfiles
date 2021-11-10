@@ -12,6 +12,10 @@ autocmd!
 " Plugins
 "===============================================================================
 
+" Reduce the number of parallel installs because Guru servers limit the number
+" of processes & memory we can use
+let g:plug_threads = 4
+
 " Automatically install vim-plug
 if empty(glob('~/.vim/autoload/plug.vim'))
     silent !echo "Downloading vim-plug..."; curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
