@@ -162,7 +162,6 @@ alias sshstop='ssh -O stop'
 alias storm='phpstorm'
 alias sudo='sudo ' # Expand aliases
 
-alias tf='terraform'
 alias tree='tree -C'
 
 alias u='c ..'
