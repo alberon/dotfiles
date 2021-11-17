@@ -1,0 +1,9 @@
+if ! declare -f _complete_alias &>/dev/null; then
+    source $HOME/.bash/_complete_alias
+fi
+
+__load_completion systemctl
+
+if declare -f _systemctl &>/dev/null; then
+    complete -F _systemctl sc
+fi

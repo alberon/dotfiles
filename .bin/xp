@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Note: If Explorer is given a path to a file, it launches itself in Documents
+# instead, but if it's given a filename in the current directory it works OK.
+if [[ $# -eq 0 ]]; then
+    exec explorer.exe .
+elif [[ -d $1 ]]; then
+    cd "$1"
+    exec explorer.exe .
+elif [[ -f $1 ]]; then
+    cd $(dirname "$1")
+    exec explorer.exe $(basename "$1")
+else
+    exec "$@"
+fi
+

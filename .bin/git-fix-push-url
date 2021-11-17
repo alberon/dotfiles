@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Change push URL from HTTP(S) to Git protocol
+remote="${1:-origin}"
+
+url="$(git config --get "remote.$remote.url")"
+
+if [ -z "$url" ]; then
+    echo "Could not get remote.$remote.url" >&2
+    exit 1
+fi
+
+pushurl="$(echo "$url" | sed -E 's#^(https|http|git)://([^/@]+@)?([^/]+)/#git@\3:#')"
+
+if [ "$pushurl" = "$url" ]; then
+    echo "Don't know how to fix '$url'" >&2
+    exit 2
+fi
+
+echo "Pull: $url"
+echo "Push: $pushurl"
+git config "remote.$remote.url" "$pushurl"

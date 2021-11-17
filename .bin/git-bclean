@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# Branch clean
+target="${1:-master}"
+
+git branch --merged "${target}" | grep -v " ${target}$" | xargs -r git branch -d

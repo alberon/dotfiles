@@ -1,7 +1,0 @@
-#!/bin/bash
-
-echo "120c120
-<                 if num!=2: raise IOError, (num, msg)
----
->                 if num!=2 and num!=0: raise IOError, (num, msg)
-" | patch /usr/lib/python2.5/site-packages/Crypto/Util/randpool.py

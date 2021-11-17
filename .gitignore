@@ -1,81 +1,78 @@
 # Ignore everything in the root except the specified files
 /*
-!/.bash
-!/.bash_completion
-!/.bash_completion.d
-!/.bazaar
-!/.dotfiles
-!/.drush
-!/.elinks
-!/.gitattributes-global
-!/.gitconfig
-!/.gitignore
-!/.gitignore-global
-!/.grip
-!/.hgextensions
-!/.irbrc
-!/.minttyrc
-!/.railsrc
-!/.rdebugrc
-!/.rvm
-!/.ssh
-!/.tmux.conf
-!/.tmux_cheatsheet
-!/.vagrant.d
-!/.vim
-!/Dotfiles.sublime-project
-!/README.md
-!/bin
-!/lib
-!/opt
 
-# Drush - config, not cache
+!/.azure
+/.azure/*
+!/.azure/alias
+!/.azure/config
+
+!/.azure-shell
+/.azure-shell/*
+!/.azure-shell/shell-config
+
+!/.bash
+!/.bash_profile
+!/.bash_profile_personal
+!/.bashrc
+!/.bashrc_personal
+!/.bin
+
+!/.cache
+/.cache/*
+
+!/.dotfiles
+
+!/.drush
 /.drush/cache
 
-# Elinks
-/.elinks/bookmarks
-/.elinks/cookies
-/.elinks/globhist
-/.elinks/searchhist
+!/.elinks
+/.elinks/*
+!/.elinks/elinks.conf
 
-# Grip - config only, not cache & access token
+!/.gitconfig
+!/.gitconfig_personal
+!/.github
+!/.gitignore
+
+!/.grip
 /.grip/cache*
 /.grip/settings-local.py
 
-# RVM - after_cd hook only
-/.rvm/*
-!/.rvm/hooks/
-/.rvm/hooks/*
-!/.rvm/hooks/after_cd_record_bash_lastdirectory
+!/.hushlogin
 
-# SSH - config & public keys only, but ignore per-account public keys
+!/.local
+/.local/*
+!/.local/share/
+/.local/share/*
+!/.local/share/bash-completion/
+/.local/share/bash-completion/*
+!/.local/share/bash-completion/completions/
+
+!/.minttyrc
+!/.multipass
+
+!/.ssh
 /.ssh/*
 !/.ssh/config
+!/.ssh/config_personal
 !/.ssh/*.pub
 /.ssh/google_compute_engine.pub
 /.ssh/id_rsa.pub
 
-# Vagrant
-/.vagrant.d/*
-!/.vagrant.d/provision-*.sh
-!/.vagrant.d/Vagrantfile
+!/.sudo_as_admin_successful
+!/.tmux.conf
+!/.tmux_cheatsheet
 
-# Vim - ignore history
-/.vim/.netrwhist
+!/.vim
+/.vim/autoload/plug.vim.old
+/.vim/plugged/
 
-# Vim plugins - ignore tags files
-/.vim/bundle/*/doc/tags
-
-# Python compiled files
+.ea-php-cli.cache
 *.pyc
 
-# cPanel files
-/bin/pear
-/bin/peardev
-/bin/pecl
-.ea-php-cli.cache
+# This is required until all accounts have updated to the new structure
+!/bin
+/bin/*
+!/bin/cfg-update
 
-# gitolite executables
-/bin/gitolite*
-/bin/gl-*
-/bin/sshkeys-lint
+!.gitkeep

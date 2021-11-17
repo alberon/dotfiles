@@ -1,0 +1,15 @@
+#!/bin/bash
+
+export GIT_PAGER='cat'
+
+for dir in */; do
+    echo
+    echo -en "\e[95m"
+    echo -n "$dir"
+    echo -e "\e[0m"
+    if [[ -d $dir/.git ]]; then
+        (cd "$dir" && git "$@")
+    else
+        echo -e "\e[90mNo Git repo found.\e[0m"
+    fi
+done

@@ -1,0 +1,19 @@
+#!/bin/bash
+set -o errexit -o nounset -o pipefail
+
+if [[ $# -ne 2 ]]; then
+    echo 'Usage: setup-identity <name> <email>' >&2
+    exit 1
+fi
+
+name="$1"
+email="$2"
+vim='vim:'
+
+cat >~/.gitconfig_local <<END
+[user]
+    email = $email
+    name = $name
+
+# $vim ft=gitconfig
+END

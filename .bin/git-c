@@ -1,0 +1,12 @@
+#!/bin/sh
+set -eu
+
+# Commit
+if [ $# -eq 0 ]; then
+    git commit -v
+else
+    git commit -m "$@"
+fi
+
+echo
+exec git --no-pager status

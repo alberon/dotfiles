@@ -1,63 +1,32 @@
-#===============================================================================
-# Defaults from /etc/inputrc
-#===============================================================================
+$include /etc/inputrc
 
-# Be 8 bit clean.
-set input-meta on
-set output-meta on
+set colored-completion-prefix on
+set colored-stats on
+set completion-ignore-case on
+set completion-map-case on
+#set enable-bracketed-paste on
+set mark-symlinked-directories on
+set match-hidden-files off
+set menu-complete-display-prefix on
+set page-completions off
+set revert-all-at-newline on
+set show-all-if-ambiguous on
+set show-all-if-unmodified on
+set visible-stats on
 
-# some defaults / modifications for the emacs mode
+# For Cygwin
+"\e[7~": beginning-of-line
+"\e[8~": end-of-line
+
+# To get keycodes, run "read" then press the key, but replace "^[" with "\e"
 $if mode=emacs
 
-    # allow the use of the Home/End keys
-    "\e[1~": beginning-of-line
-    "\e[4~": end-of-line
+    # Up/Down
+    "\e[A": history-search-backward
+    "\e[B": history-search-forward
 
-    # allow the use of the Delete/Insert keys
-    "\e[3~": delete-char
-    "\e[2~": quoted-insert
+    # Tab/Shift-Tab
+    Tab: menu-complete
+    "\e[Z": menu-complete-backward
 
-    # mappings for Ctrl-left-arrow and Ctrl-right-arrow for word moving
-    "\e[1;5C": forward-word
-    "\e[1;5D": backward-word
-    "\e[5C": forward-word
-    "\e[5D": backward-word
-    "\e\e[C": forward-word
-    "\e\e[D": backward-word
-
-    $if term=rxvt
-        "\e[8~": end-of-line
-        "\eOc": forward-word
-        "\eOd": backward-word
-    $endif
-
-$endif
-
-#===============================================================================
-# Custom settings
-#===============================================================================
-
-# Turn off the annoying and pointless beeping
-set bell-style none
-
-# Start typing then use Up/Down to see *matching* history items only
-"\e[5~": history-search-backward
-"\e[6~": history-search-forward
-
-# Tab & shift-tab to run through all options instead of showing a list
-TAB: menu-complete
-"\e[Z": "\e-1\C-i"
-
-# Ignore case when doing so
-set completion-ignore-case on
-
-# Don't tab-complete hidden files (unless the . is typed)
-set match-hidden-files off
-
-# Add the / to completed symlinks to directories
-set mark-symlinked-directories on
-
-# Expand history immediately (press space)
-$if Bash
-    Space: magic-space
 $endif

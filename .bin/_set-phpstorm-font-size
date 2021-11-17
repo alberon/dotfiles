@@ -1,0 +1,53 @@
+#!/usr/bin/env php
+<?php
+
+$HOME = $_SERVER['HOME'];
+
+if ($argc !== 3) {
+    $name = basename(__FILE__);
+    echo "Usage: $name <ui-font-size> <code-font-size>";
+}
+
+[, $uiFontSize, $codeFontSize] = $argv;
+
+// UI font size
+foreach (glob("$HOME/.config/JetBrains/*/options/other.xml") as $file) {
+    $xml = simplexml_load_file($file);
+
+    $uiSettings = $xml->xpath('component[@name="NotRoamableUiSettings"]')[0] ?? null;
+    if (!$uiSettings) {
+        $uiSettings = $xml->addChild('component');
+        $uiSettings['name'] = 'NotRoamableUiSettings';
+    }
+
+    $fontSize = $uiSettings->xpath('option[@name="fontSize"]')[0] ?? null;
+    if (!$fontSize) {
+        $fontSize = $uiSettings->addChild('option');
+        $fontSize['name'] = 'fontSize';
+    }
+
+    $fontSize['value'] = $uiFontSize;
+
+    $xml->saveXML($file);
+}
+
+// Code font size
+foreach (glob("$HOME/.config/JetBrains/*/jba_config/editor.xml") as $file) {
+    $xml = simplexml_load_file($file);
+
+    $defaultFont = $xml->xpath('component[@name="DefaultFont"]')[0] ?? null;
+    if (!$defaultFont) {
+        $defaultFont = $xml->addChild('DefaultFont');
+        $defaultFont['name'] = 'NotRoamableUiSettings';
+    }
+
+    $fontSize = $defaultFont->xpath('option[@name="FONT_SIZE"]')[0] ?? null;
+    if (!$fontSize) {
+        $fontSize = $defaultFont->addChild('option');
+        $fontSize['name'] = 'FONT_SIZE';
+    }
+
+    $fontSize['value'] = $codeFontSize;
+
+    $xml->saveXML($file);
+}

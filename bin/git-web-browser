@@ -1,7 +1,0 @@
-#!/bin/bash
-
-echo "The Git web interface is now running at:"
-echo "  $1" | sed "s/127.0.0.1/`hostname -f`/"
-echo
-echo "To stop the web server run:"
-echo "  git web stop"

@@ -1,0 +1,2 @@
+#!/bin/bash
+exec test $EUID -eq 0

@@ -1,0 +1,14 @@
+[DEFAULT]
+firsttime = no
+style = default
+
+[Help Files]
+command = help_dump.json
+history = history.txt
+frequency = frequency.json
+
+[Layout]
+command_description = yes
+param_description = yes
+examples = yes
+

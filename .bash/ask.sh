@@ -1,9 +1,4 @@
-# This is a general-purpose function to ask Yes/No questions in Bash, either
-# with or without a default answer. It keeps repeating the question until it
-# gets a valid answer.
-
 ask() {
-    # https://djm.me/ask
     local prompt default reply
 
     while true; do

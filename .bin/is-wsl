@@ -1,0 +1,27 @@
+#!/bin/bash
+set -o errexit -o nounset -o pipefail
+
+if [[ ! -f /proc/version ]]; then
+    # Probably macOS
+    exit 1
+fi
+
+if ! grep -iq 'microsoft' /proc/version; then
+    # Not WSL
+    exit 1
+fi
+
+if [[ -z ${1:-} ]]; then
+    # Any version is fine
+    exit 0
+fi
+
+# Check version
+# https://github.com/microsoft/WSL/issues/4555#issuecomment-539674785
+if [[ $(grep -oE 'gcc version ([0-9]+)' /proc/version | awk '{print $3}') -gt 5 ]]; then
+    version=2
+else
+    version=1
+fi
+
+[[ $1 = $version ]]

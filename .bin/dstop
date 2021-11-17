@@ -1,0 +1,12 @@
+#!/bin/bash
+set -o nounset -o pipefail -o errexit
+
+# Stop most recent Docker container
+container="${1:-}"
+if [[ -z $container ]]; then
+    container="$(docker ps -qlf status=running)"
+fi
+
+if [[ -n $container ]]; then
+    exec docker stop $container
+fi
