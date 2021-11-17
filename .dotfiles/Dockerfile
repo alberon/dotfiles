@@ -1,39 +1,43 @@
 FROM ubuntu
 
-ENV HOME /home/test
+# Set the timezone
+ENV TZ Europe/London
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Install dependencies
-RUN apt-get update && apt-get install -y \
-    git \
-    nano \
-    ssh \
-    sudo \
-    tmux \
-    vim \
-    wget
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+        ca-certificates \
+        git \
+        locales-all \
+        ssh \
+        sudo \
+        tmux \
+        vim \
+        wget
 
 # Configure sudo to allow testing 'agi' (apt-get install) and friends
 ADD sudoers /etc/sudoers
 
-# Create a non-root test user
-RUN useradd --create-home --home-dir $HOME --shell /bin/bash --groups sudo test
+# Create a non-root user
+RUN useradd \
+    --create-home --home-dir /home/test \
+    --shell /bin/bash \
+    --groups sudo \
+    test
 
 # The first time Bash is run, automatically run the config file
-RUN echo "if [ ! -d ~/.git ]; then cd; . cfg; fi" >> /etc/bash.bashrc
-
-# Disable the sudo tutorial
-USER test
-RUN touch $HOME/.sudo_as_admin_successful
+RUN echo "[ ! -d ~/.git ] && cd && . cfg" >> /etc/bash.bashrc
 
 # Copy the cfg script
-USER test
-COPY cfg $HOME/cfg
+COPY cfg /root/cfg
 
-USER root
-COPY cfg $HOME/cfg
+USER test
+COPY cfg /home/test/cfg
+
+ENV LANG en_GB.UTF-8
 
 # Run Bash when the image is run, starting in the current user's home directory
 # (either /root or /home/test depending on the -u option)
-USER test
 WORKDIR /home/test
 ENTRYPOINT cd && bash

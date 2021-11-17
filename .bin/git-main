@@ -1,0 +1,16 @@
+#!/bin/bash
+set -o errexit -o nounset -o pipefail
+
+source ~/.bash/color.bash
+
+color blue bold 'Checking out master...'
+git checkout master
+echo
+color blue bold 'Renaming to main...'
+git branch -m master main
+echo
+color blue bold 'Fetching origin (if configured)...'
+git fetch origin
+echo
+color blue bold 'Setting upstream branch (if configured)...'
+git branch -u origin/main

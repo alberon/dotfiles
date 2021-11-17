@@ -1,0 +1,8 @@
+#!/bin/bash
+set -o errexit -o nounset -o pipefail
+
+if [[ -x /usr/local/bin/kubectl ]]; then
+    exec /usr/local/bin/kubectl "$@"
+fi
+
+exec kubectl.exe "$@"

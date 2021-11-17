@@ -1,0 +1,129 @@
+#!/bin/bash
+set -o nounset -o pipefail -o errexit
+
+source $HOME/.bash/color.bash
+
+list-instances() {
+    instances=$(multipass list)
+    color lwhite -- "$(echo "$instances" | head -n1)"
+    echo "$instances" | tail -n+2
+}
+
+primary-name() {
+    multipass get client.primary-name | tr -d '\r'
+}
+
+read-name() {
+    name="${1:-}"
+
+    if [[ -z $name ]]; then
+        name="$(primary-name)"
+
+        if [[ -z $name ]]; then
+            echo 'Cannot get the primary instance name' >&2
+            exit 1
+        fi
+    fi
+
+    [[ $# -gt 0 ]]
+}
+
+case "${1:-}" in
+
+    '') # Help
+        color lcyan 'Multipass Shortcuts'
+        echo "$(color lwhite 'mp l  [name]')  Launch a new instance with sensible defaults"
+        echo "$(color lwhite 'mp h  [name]')  SSH to the given instance"
+        echo "$(color lwhite 'mp d  [name]')  Suspend a running instance (down)"
+        echo "$(color lwhite 'mp u  [name]')  Resume a stopped instance (up)"
+        echo "$(color lwhite 'mp rm [name]')  Delete & purge instance (or --all)"
+        echo
+        echo "The default name is '$(color lwhite 'primary')'."
+        echo
+        echo "To list other commands run '$(color lwhite 'mp help')'."
+        echo
+        color lcyan 'Current instances'
+        list-instances
+        ;;
+
+    d|down) # Down
+        shift
+        multipass suspend "$@"
+        list-instances
+        ;;
+
+    h|ssh) # SSH
+        cmd="$1"
+        shift
+
+        read-name "$@" && shift
+
+        ip=$(multipass list --format csv | awk -F , -v name="$name" 'NR > 1 && $1 == name { print $3 }')
+
+        if [[ -n $ip ]] && [[ $ip != '--' ]] && [[ $ip != 'UNKNOWN' ]]; then
+            # Remove the IP from the known hosts file because IPs are reused
+            ssh-keygen -f ~/.ssh/known_hosts -R "$ip" &>/dev/null
+
+            # Connect via regular WSL SSH not Windows SSH, and launch tmux
+            exec $cmd "ubuntu@$ip" "$@"
+        fi
+
+        if [[ "$ip" = 'UNKNOWN' ]]; then
+            echo >&2 "Cannot determine the IP of '$name'."
+            echo >&2
+            echo >&2 'Maybe disable and reenable the vEthernet adapter...'
+            echo >&2 '    https://github.com/canonical/multipass/issues/706'
+            echo >&2 'Or try creating a new instance and then restarting this one...'
+            echo >&2 '    https://github.com/canonical/multipass/issues/1052'
+            echo >&2
+            echo >&2 'These are the running VMs:'
+        else
+            echo >&2 "Cannot determine the IP of '$name'. These are the running VMs:"
+        fi
+
+        echo >&2
+        list-instances
+        ;;
+
+    l) # Launch
+        shift
+
+        read-name "$@" && shift
+
+        multipass launch \
+            --cloud-init ~/.multipass/cloud-config.yaml \
+            --cpus 4 \
+            --disk 5G \
+            --mem 2G \
+            --name "$name" \
+            "${1:-focal}"
+
+        echo
+        list-instances
+        ;;
+
+    rm) # Delete & purge
+        shift
+
+        read-name "$@" && shift
+
+        multipass delete --purge "$name" "$@"
+        echo 'Instance deleted.'
+        ;;
+
+    scp) # Transfer
+        shift
+        exec multipass transfer "$@"
+        ;;
+
+    u|up) # Up
+        shift
+        multipass start "$@"
+        list-instances
+        ;;
+
+    *)
+        exec multipass "$@"
+        ;;
+
+esac

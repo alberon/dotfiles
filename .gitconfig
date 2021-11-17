@@ -1,16 +1,99 @@
-[user]
-    name = Pete Wond
-    email = pete@alberon.co.uk
-
-[core]
-    excludesfile = ~/.gitignore-global
-    attributesfile = ~/.gitattributes-global
+[alias]
+    ai           = add --interactive
+    amend        = !git commit --amend --no-edit --reset-author && echo && git --no-pager status
+    ap           = add --patch
+    b            = branch
+    ba           = branch -avv
+    bm           = branch --merged
+    bnm          = branch --no-merged
+    ca           = !git commit --amend --no-edit --reset-author && echo && git --no-pager status
+    ce           = !git commit --amend --reset-author && echo && git --no-pager status
+    ci           = commit
+    changed      = diff --name-only
+    co           = checkout
+    cob          = checkout -b
+    cp           = cherry-pick
+    d            = diff --find-copies
+    da           = diff --find-copies --text
+    dc           = diff --cached --find-copies
+    dca          = diff --cached --find-copies --text
+    dcf          = diff --cached --stat
+    dcw          = diff --cached --ignore-all-space --find-copies
+    dcwa         = diff --cached --ignore-all-space --find-copies --text
+    dcww         = diff --cached --ignore-all-space --find-copies --word-diff=color
+    df           = diff --stat
+    dw           = diff --ignore-all-space --find-copies
+    dwa          = diff --ignore-all-space --find-copies --text
+    dww          = diff --ignore-all-space --find-copies --word-diff=color
+    f            = fetch -v --prune
+    fe           = fetch -v --prune
+    g            = grep --untracked --break --heading --line-number
+    g3           = grep --untracked --break --heading --line-number -C3
+    g6           = grep --untracked --break --heading --line-number -C6
+    g9           = grep --untracked --break --heading --line-number -C9
+    ga3          = ga -C3
+    ga6          = ga -C6
+    ga9          = ga -C9
+    gi           = grep --untracked --break --heading --line-number --ignore-case
+    gi3          = grep --untracked --break --heading --line-number --ignore-case -C3
+    gi6          = grep --untracked --break --heading --line-number --ignore-case -C6
+    gi9          = grep --untracked --break --heading --line-number --ignore-case -C9
+    gil          = grep --untracked --break --heading --line-number --ignore-case --name-only
+    gl           = grep --untracked --break --heading --line-number --name-only
+    ignored      = ls-files --others -i --exclude-standard --directory
+    l            = log --decorate --name-status
+    l1           = log --pretty=format:'%C(red)%h%C(reset) -%C(yellow)%d%C(reset) %s %C(green)(%ci) %C(bold blue)<%an>%C(reset)'
+    lg           = log --decorate --graph
+    lg1          = log --graph --pretty=format:'%C(red)%h%C(reset) -%C(yellow)%d%C(reset) %s %C(green)(%ci) %C(bold blue)<%an>%C(reset)'
+    ll           = log --decorate
+    lp           = log --decorate -p
+    lpa          = log --decorate -p -a
+    lpaw         = log --decorate -p -a --ignore-all-space
+    lpf          = log --decorate -p --follow
+    lpw          = log --decorate -p --ignore-all-space
+    lpwa         = log --decorate -p -a --ignore-all-space
+    m            = merge
+    mt           = mergetool
+    p            = push
+    pl           = pull
+    plr          = pull --rebase
+    r            = remote
+    rb           = rebase
+    rba          = rebase --abort
+    rbc          = rebase --continue
+    rbi          = rebase --interactive
+    rbs          = rebase --skip
+    remotes      = remote -v
+    rl           = reflog
+    rmc          = rm --cached -r
+    root         = rev-parse --show-toplevel
+    rv           = revert
+    s            = status
+    sa           = all status --short
+    sub          = submodule
+    sync         = !git submodule sync --recursive && git submodule update --init --recursive
+    t            = tag
+    todo         = grep --untracked --line-number 'TODO\\|XXX\\|FIXME'
+    unshallow    = fetch --unshallow
 
 [color]
     branch = auto
-    status = auto
     diff = auto
     grep = auto
+    status = auto
+
+[commit]
+    verbose = 2
+
+[init]
+    defaultBranch = master
+
+[merge]
+    conflictstyle = diff3
+    tool = vimdiff3
+
+[mergetool]
+    keepBackup = false
 
 [pack]
     threads = 0
@@ -20,130 +103,23 @@
     status = true
     tag = false
 
-[push]
-    default = tracking
-    followTags = true
-
 [pull]
     rebase = false
 
-[alias]
-    addremove    = -A "$@"
-    amend        = commit --amend --no-edit --reset-author
-    ap           = add --patch
-    ar           = add -A
-    authors      = shortlog -sn
-    b            = branch
-    ba           = branch -a
-    bclean       = "!f() { git branch --merged ${1-master} | grep -v " ${1-master}$" | xargs -r git branch -d; }; f"
-    bm           = branch --merged
-    bnm          = branch --no-merged
-    branches     = branch -avv
-    c            = commit -m
-    ca           = !git add -A && git commit -m
-    ce           = commit --amend --reset-author
-    ci           = commit
-    cim          = commit -m
-    changedfiles = diff --name-only
-    co           = checkout
-    cob          = checkout -b
-    conf         = config --global --edit
-    cp           = cherry-pick
-    d            = diff --find-copies --irreversible-delete
-    da           = diff --find-copies --irreversible-delete --text
-    dc           = diff --cached --find-copies --irreversible-delete
-    dca          = diff --cached --find-copies --irreversible-delete --text
-    dcf          = diff --cached --stat
-    dcw          = diff --cached --ignore-all-space --find-copies --irreversible-delete
-    dcwa         = diff --cached --ignore-all-space --find-copies --irreversible-delete --text
-    dcww         = diff --cached --ignore-all-space --find-copies --irreversible-delete --word-diff=color
-    df           = diff --stat
-    dw           = diff --ignore-all-space --find-copies --irreversible-delete
-    dwa          = diff --ignore-all-space --find-copies --irreversible-delete --text
-    dww          = diff --ignore-all-space --find-copies --irreversible-delete --word-diff=color
-    edit         = commit --amend --reset-author
-    f            = fetch -v --prune
-    fe           = fetch -v --prune
-    file         = files
-    g3           = g -C3
-    g6           = g -C6
-    g9           = g -C9
-    ga           = !git rev-list --all | xargs git grep --break --heading --line-number
-    ga3          = !git rev-list --all | xargs git grep --break --heading --line-number -C3
-    ga6          = !git rev-list --all | xargs git grep --break --heading --line-number -C6
-    ga9          = !git rev-list --all | xargs git grep --break --heading --line-number -C9
-    gi           = g --ignore-case
-    gi3          = g --ignore-case -C3
-    gi6          = g --ignore-case -C6
-    gi9          = g --ignore-case -C9
-    id           = log --pretty=format:'ID:    %h%nDate:  %aD%nRefs:%d' --abbrev-commit --date=short -1
-    ignored      = ls-files --others -i --exclude-standard --directory
-    in           = incoming
-    io           = inout
-    l            = log --decorate --name-status
-    l1           = log --pretty=format:'%C(red)%h%C(reset) -%C(yellow)%d%C(reset) %s %C(green)(%ci) %C(bold blue)<%an>%C(reset)'
-    lf           = log --decorate --name-status
-    lg           = log --decorate --graph
-    lg1          = log --graph --pretty=format:'%C(red)%h%C(reset) -%C(yellow)%d%C(reset) %s %C(green)(%ci) %C(bold blue)<%an>%C(reset)'
-    ll           = log --decorate
-    lp           = log --decorate -p
-    lpw          = log --decorate -p --ignore-all-space
-    m            = merge
-    mi           = merge-into
-    mt           = mergetool
-    out          = outgoing
-    p            = push
-    pl           = pull
-    plr          = pull --rebase
-    praise       = blame
-    pt           = push --tags
-    r            = remote
-    rb           = rebase
-    rba          = rebase --abort
-    rbc          = rebase --continue
-    rbs          = rebase --skip
-    recent       = for-each-ref --count=10 --sort=-committerdate refs/heads/ --format="%(refname:short)"
-    remotes      = remote -v
-    rl           = reflog
-    rmc          = rm --cached -r
-    root         = rev-parse --show-toplevel
-    rv           = revert
-    s            = status
-    serve        = instaweb
-    sh           = repl
-    sq           = squash
-    st           = status
-    sub          = submodule
-    sync         = !git submodule sync && git submodule update --init
-    t            = tag
-    tags         = tag
-    todo         = grep --untracked --line-number 'TODO\\|XXX\\|FIXME'
-    unshallow    = fetch --unshallow
-    up           = !git pull --rebase --prune $@ && git submodule update --init --recursive
-    web          = instaweb
-    wipe         = !git add -A && git commit -qm 'WIPE SAVEPOINT' && git reset HEAD~1 --hard
-    wt           = worktree
-
-[github]
-    user = jagfiend
-
-[browser "none"]
-    cmd = git-web-browser
-
-[instaweb]
-    httpd = apache2
-    browser = none
-
-[merge]
-    conflictstyle = diff3
-    tool = kdiff3
-
-[mergetool]
-    # Also in kdiff3: Settings > Configure > Directory > Uncheck "Backup files (.orig)"
-    keepBackup = false
+[push]
+    default = upstream
+    followTags = true
 
 [rerere]
     enabled = true
 
 [tag]
     sort = version:refname
+
+[user]
+    email = info@alberon.co.uk
+    name = Alberon Ltd.
+
+[include]
+    path = .gitconfig_personal
+    path = .gitconfig_local

@@ -1,0 +1,18 @@
+#!/bin/bash
+set -o nounset -o pipefail -o errexit
+
+# Docker Shell
+
+# Set up SSH agent forwarding
+if [[ -n $SSH_AUTH_SOCK ]]; then
+    opt=(--volume $SSH_AUTH_SOCK:/tmp/ssh-agent --env SSH_AUTH_SOCK=/tmp/ssh-agent)
+else
+    opt=()
+fi
+
+# Build the command to run a shell on the specified image
+image="${1:-ubuntu}"
+entrypoint="${2:-/bin/bash}"
+shift $(($# > 2 ? 2 : $#))
+
+exec docker run "${opt[@]}" -it "$@" --entrypoint "$entrypoint" "$image"

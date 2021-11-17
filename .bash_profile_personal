@@ -1,0 +1,10 @@
+#
+# This file is executed every time Bash is loaded, even if it is NOT an interactive session
+#
+
+# Add your own customisations here...
+
+# Setting PATH for Python 3.8
+# The original version is saved in .bash_profile.pysave
+PATH="/Library/Frameworks/Python.framework/Versions/3.8/bin:${PATH}"
+export PATH

@@ -1,0 +1,5 @@
+#!/bin/bash
+set -o errexit -o nounset -o pipefail
+
+curl ipinfo.io
+echo # Add missing trailing new line

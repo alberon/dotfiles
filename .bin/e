@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Get full path to the editor in case it's not in the path after running sudo
+editor=$(command -v "$EDITOR")
+
+if [ "$(basename $0)" = "se" ]; then
+    exec sudo "$editor" "$@"
+fi
+
+exec "$editor" "$@"

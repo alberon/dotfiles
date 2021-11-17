@@ -1,0 +1,19 @@
+#!/bin/bash
+set -o nounset -o pipefail -o errexit
+
+# ssh + tmux ('h' for 'ssH', because 's' is in use)
+host="$1"
+name="${2:-\$USER}"
+
+# For 'h user@host ^', upload SSH public key - easier than retyping it
+if [[ $# -eq 2 ]] && [[ "$name" = '^' ]]; then
+    exec ssh-copy-id "$host"
+fi
+
+# For 'h user@host X', close the master connection
+if [[ $# -eq 2 ]] && [[ "$name" = 'X' ]]; then
+    exec ssh -O stop "$host"
+fi
+
+exec ssh -o ForwardAgent=yes -o StrictHostKeyChecking=accept-new "$host" \
+    -t "command -v tmux &>/dev/null && tmux -2 new -A -s \"$name\" || bash -l"

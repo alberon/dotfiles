@@ -1,0 +1,9 @@
+#!/bin/bash
+set -o nounset -o pipefail -o errexit
+
+# Stop all containers
+containers="$(docker ps -qf status=running)"
+
+if [[ -n $containers ]]; then
+    exec docker stop $containers
+fi

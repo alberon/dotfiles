@@ -1,0 +1,21 @@
+#!/bin/bash
+set -o errexit -o nounset -o pipefail
+
+if ! dir="$(findup -f artisan)"; then
+    echo "You do not appear to be within a Laravel directory" >&2
+    exit 1
+fi
+
+cd "$dir"
+
+source $HOME/.bash/ask.sh
+
+if ! ask 'This will drop and rebuild the database - are you sure?'; then
+    exit 1
+fi
+
+artisan migrate:fresh --drop-views --seed
+
+if [[ -x scripts/ide-helper.sh ]]; then
+    scripts/ide-helper.sh
+fi

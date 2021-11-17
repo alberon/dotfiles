@@ -1,0 +1,13 @@
+#!/bin/bash
+set -o errexit -o nounset -o pipefail
+
+# Push the current branch
+git push
+
+# Create a new tag, if given
+if [[ $# -gt 0 ]]; then
+    git tag "$1"
+fi
+
+# Push tags
+exec git push --tags
