@@ -103,6 +103,7 @@ fi
 # Using en_US instead of en_GB to stop Vim and less complaining
 if [[ ${LANG:-} = 'C.UTF-8' ]]; then
     export LANG='en_US.UTF-8'
+    export LC_ALL='en_US.UTF-8'
 fi
 
 #if [ -z "$XAUTHORITY" ]; then
