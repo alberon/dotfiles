@@ -8,6 +8,11 @@ case "${1:-}" in
         exec terraform apply "$@"
         ;;
 
+    ar) # Apply Refresh
+        shift
+        exec terraform apply -refresh-only "$@"
+        ;;
+
     i) # Init
         shift
         exec terraform init "$@"
