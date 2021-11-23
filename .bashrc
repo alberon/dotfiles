@@ -469,17 +469,20 @@ man() {
 mark() {
     mkdir -p $HOME/.marks
     local mark="${1:-$(basename "$PWD")}"
+    local target="${2:-$PWD}"
 
     if ! [[ $mark =~ ^[a-zA-Z0-9_-]+$ ]]; then
         echo "Invalid mark name"
         return 1
     fi
 
-    ln -sn "$(pwd)" "$HOME/.marks/$mark" &&
-        alias $mark="c -P '$mark'"
+    ln -nsf "$target" "$HOME/.marks/$mark" &&
+        alias $mark="c -P '$target'"
 }
 
 marks() {
+    mkdir -p $HOME/.marks
+
     if is-mac; then
         CLICOLOR_FORCE=1 command ls -lF "$HOME/.marks" | sed '1d;s/  / /g' | cut -d' ' -f9-
     else
@@ -651,13 +654,15 @@ systemctl() {
 }
 
 unmark() {
-    local mark="${1:-$(basename "$PWD")}"
+    local marks="${@:-$(basename "$PWD")}"
 
-    if [[ -L $HOME/.marks/$mark ]]; then
-        rm -f "$HOME/.marks/$mark" && unalias $mark
-    else
-        echo "No such mark: $mark" >&2
-    fi
+    for mark in $marks; do
+        if [[ -L $HOME/.marks/$mark ]]; then
+            rm -f "$HOME/.marks/$mark" && unalias $mark
+        else
+            echo "No such mark: $mark" >&2
+        fi
+    done
 }
 
 xdebug() {
