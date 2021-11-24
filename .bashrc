@@ -90,6 +90,7 @@ else
     alias agupgrade="$sudo apt upgrade"
     alias apt="$sudo apt"
     alias apt-add-repository="$sudo apt-add-repository"
+    alias apt-mark="$sudo apt-mark"
 fi
 
 alias b='c -'
