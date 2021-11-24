@@ -643,11 +643,11 @@ systemctl() {
     elif [[ ${1:-} = 'log' ]]; then
         # Custom command: sc log [unit] [grep]
         if [[ -n ${3:-} ]]; then
-            maybe-sudo journalctl --follow --unit "$2" --grep "$3"
+            maybe-sudo journalctl --lines 100 --follow --unit "$2" --grep "$3"
         elif [[ -n ${2:-} ]]; then
-            maybe-sudo journalctl --follow --unit "$2"
+            maybe-sudo journalctl --lines 100 --follow --unit "$2"
         else
-            maybe-sudo journalctl --follow
+            maybe-sudo journalctl --lines 100 --follow
         fi
     else
         maybe-sudo systemctl "$@"
