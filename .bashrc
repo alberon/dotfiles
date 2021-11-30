@@ -538,8 +538,8 @@ phpstorm() {
     # Automatically launch the current project, if possible, and run in the background
     if [ $# -gt 0 ]; then
         command phpstorm "$@" &>> ~/.cache/phpstorm.log &
-    elif [ -d .idea ]; then
-        command phpstorm "$PWD" &>> ~/.cache/phpstorm.log &
+    elif local path=$(findup -d .idea); then
+        command phpstorm "$path" &>> ~/.cache/phpstorm.log &
     else
         command phpstorm &>> ~/.cache/phpstorm.log &
     fi
