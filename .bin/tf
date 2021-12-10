@@ -18,6 +18,11 @@ case "${1:-}" in
         exec terraform init "$@"
         ;;
 
+    mv) # State Move
+        shift
+        exec terraform state mv "$@"
+        ;;
+
     o) # Output
         shift
         exec terraform output "$@"
