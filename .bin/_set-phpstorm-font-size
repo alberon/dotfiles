@@ -32,13 +32,13 @@ foreach (glob("$HOME/.config/JetBrains/*/options/other.xml") as $file) {
 }
 
 // Code font size
-foreach (glob("$HOME/.config/JetBrains/*/jba_config/editor.xml") as $file) {
+foreach (glob("$HOME/.config/JetBrains/*/options/editor-font.xml") as $file) {
     $xml = simplexml_load_file($file);
 
     $defaultFont = $xml->xpath('component[@name="DefaultFont"]')[0] ?? null;
     if (!$defaultFont) {
-        $defaultFont = $xml->addChild('DefaultFont');
-        $defaultFont['name'] = 'NotRoamableUiSettings';
+        $defaultFont = $xml->addChild('component');
+        $defaultFont['name'] = 'DefaultFont';
     }
 
     $fontSize = $defaultFont->xpath('option[@name="FONT_SIZE"]')[0] ?? null;
