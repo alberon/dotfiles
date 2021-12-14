@@ -11,6 +11,7 @@
 !/.azure-shell/shell-config
 
 !/.bash
+!/.bash_completion
 !/.bash_profile
 !/.bash_profile_personal
 !/.bashrc
@@ -39,6 +40,7 @@
 /.grip/settings-local.py
 
 !/.hushlogin
+!/.inputrc
 
 !/.local
 /.local/*
@@ -60,12 +62,15 @@
 /.ssh/id_rsa.pub
 
 !/.sudo_as_admin_successful
+!/.sqliterc
 !/.tmux.conf
 !/.tmux_cheatsheet
 
 !/.vim
 /.vim/autoload/plug.vim.old
 /.vim/plugged/
+
+!/.vimrc
 
 .ea-php-cli.cache
 *.pyc

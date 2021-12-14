@@ -90,6 +90,7 @@ else
     alias agupgrade="$sudo apt upgrade"
     alias apt="$sudo apt"
     alias apt-add-repository="$sudo apt-add-repository"
+    alias apt-mark="$sudo apt-mark"
 fi
 
 alias b='c -'
@@ -162,7 +163,6 @@ alias sshstop='ssh -O stop'
 alias storm='phpstorm'
 alias sudo='sudo ' # Expand aliases
 
-alias tf='terraform'
 alias tree='tree -C'
 
 alias u='c ..'
@@ -470,17 +470,20 @@ man() {
 mark() {
     mkdir -p $HOME/.marks
     local mark="${1:-$(basename "$PWD")}"
+    local target="${2:-$PWD}"
 
     if ! [[ $mark =~ ^[a-zA-Z0-9_-]+$ ]]; then
         echo "Invalid mark name"
         return 1
     fi
 
-    ln -sn "$(pwd)" "$HOME/.marks/$mark" &&
-        alias $mark="c -P '$mark'"
+    ln -nsf "$target" "$HOME/.marks/$mark" &&
+        alias $mark="c -P '$target'"
 }
 
 marks() {
+    mkdir -p $HOME/.marks
+
     if is-mac; then
         CLICOLOR_FORCE=1 command ls -lF "$HOME/.marks" | sed '1d;s/  / /g' | cut -d' ' -f9-
     else
@@ -535,8 +538,8 @@ phpstorm() {
     # Automatically launch the current project, if possible, and run in the background
     if [ $# -gt 0 ]; then
         command phpstorm "$@" &>> ~/.cache/phpstorm.log &
-    elif [ -d .idea ]; then
-        command phpstorm "$PWD" &>> ~/.cache/phpstorm.log &
+    elif local path=$(findup -d .idea); then
+        command phpstorm "$path" &>> ~/.cache/phpstorm.log &
     else
         command phpstorm &>> ~/.cache/phpstorm.log &
     fi
@@ -640,11 +643,11 @@ systemctl() {
     elif [[ ${1:-} = 'log' ]]; then
         # Custom command: sc log [unit] [grep]
         if [[ -n ${3:-} ]]; then
-            maybe-sudo journalctl --follow --unit "$2" --grep "$3"
+            maybe-sudo journalctl --lines 100 --follow --unit "$2" --grep "$3"
         elif [[ -n ${2:-} ]]; then
-            maybe-sudo journalctl --follow --unit "$2"
+            maybe-sudo journalctl --lines 100 --follow --unit "$2"
         else
-            maybe-sudo journalctl --follow
+            maybe-sudo journalctl --lines 100 --follow
         fi
     else
         maybe-sudo systemctl "$@"
@@ -652,13 +655,15 @@ systemctl() {
 }
 
 unmark() {
-    local mark="${1:-$(basename "$PWD")}"
+    local marks="${@:-$(basename "$PWD")}"
 
-    if [[ -L $HOME/.marks/$mark ]]; then
-        rm -f "$HOME/.marks/$mark" && unalias $mark
-    else
-        echo "No such mark: $mark" >&2
-    fi
+    for mark in $marks; do
+        if [[ -L $HOME/.marks/$mark ]]; then
+            rm -f "$HOME/.marks/$mark" && unalias $mark
+        else
+            echo "No such mark: $mark" >&2
+        fi
+    done
 }
 
 xdebug() {

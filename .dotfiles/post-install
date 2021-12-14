@@ -1,15 +1,23 @@
 #!/bin/bash
 set -o errexit -o nounset -o pipefail
 
+# Support for non-interactive installs (Ansible)
+interactive=true
+if [[ ${1:-} = '--unattended' ]]; then
+    interactive=false
+fi
+
 # Make sure Bash gets reloaded no matter what
-trap 'exec bash -l' EXIT
+if $interactive; then
+    trap 'exec bash -l' EXIT
+fi
 
 PATH="$HOME/.bin:$PATH"
 
 source ~/.bash/color.bash
 
 # Reload tmux config
-if [[ -n ${TMUX:-} ]]; then
+if $interactive && [[ -n ${TMUX:-} ]]; then
     tmux move-window -t 1 2>/dev/null || true # Change from 0 to 1
 
     if [[ $TERM = 'screen' ]]; then
@@ -22,7 +30,7 @@ date +%Y%m%d > ~/.local/dotfiles-last-auto-update
 
 # Run the post-update script too
 color lblue 'Running post-update script...'
-~/.dotfiles/post-update
+~/.dotfiles/post-update "$@"
 
 # Fix WSL permissions (defaults to umask 000)
 if is-wsl; then
@@ -37,5 +45,7 @@ END
 fi
 
 # Reload Bash
-color lblue 'Reloading Bash...'
-# See EXIT trap above
+if $interactive; then
+    color lblue 'Reloading Bash...'
+    # See EXIT trap above
+fi
