@@ -2,8 +2,13 @@
 set -o nounset -o pipefail -o errexit
 
 # ssh + tmux ('h' for 'ssH', because 's' is in use)
-host="$1"
+host="${1:-}"
 name="${2:-\$USER}"
+
+if [[ -z $host ]]; then
+    echo "Usage: h <host> [session]" >&2
+    exit 1
+fi
 
 # For 'h user@host ^', upload SSH public key - easier than retyping it
 if [[ $# -eq 2 ]] && [[ "$name" = '^' ]]; then
