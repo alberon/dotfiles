@@ -1,10 +1,12 @@
 #!/bin/bash
 
 if [ $# == 0 ]; then
-    du -sh -- *
+    find . -mindepth 1 -maxdepth 1 -exec du -sh -- '{}' +
 else
     du -sh "$@"
-fi | perl -e 'sub h{%h=(K=>10,M=>20,G=>30);($n,$u)=shift=~/([0-9.]+)(\D)/; return $n*2**$h{$u}}print sort{h($a)<=>h($b)}<>;'
+fi \
+    | perl -e 'sub h{%h=(K=>10,M=>20,G=>30);($n,$u)=shift=~/([0-9.]+)(\D)/; return $n*2**$h{$u}}print sort{h($a)<=>h($b)}<>;' \
+    | sed 's#\t\./#\t#'
 
 # Reversed $a and $b at the end to get biggest last, and smallest will scroll off the screen
 
