@@ -155,6 +155,7 @@ alias reload='exec bash -l'
 alias rm='rm -i'
 
 alias s='sudo '
+alias scra="$sudo systemctl reload apache2 && $sudo systemctl status apache2"
 alias service="$sudo service"
 alias shutdown="$sudo poweroff"
 alias snap="$sudo snap"
