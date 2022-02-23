@@ -688,6 +688,7 @@ yarn() {
     case $1 in
         in|ins) shift; command yarn install "$@" ;;
         out) shift; command yarn outdated "$@" ;;
+        re|rem) shift; command yarn remove "$@" ;;
         up|update) shift; command yarn upgrade "$@" ;;
         *) command yarn "$@" ;;
     esac
