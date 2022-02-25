@@ -5,15 +5,20 @@ if [ -f "$dir/www/includes/bootstrap.inc" ]; then
     args="--root=$dir/www"
 fi
 
-exe1=vendor/bin/drush
+exe1=scripts/drush.sh
 if dir="$(findup -f $exe1)"; then
     exec "$dir/$exe1" $args "$@"
 fi
 
-exe2=www/vendor/bin/drush
-if dir="$(findup -f $exe2)"; then
+exe2=vendor/bin/drush
+if dir="$(findup -f $exe1)"; then
     exec "$dir/$exe2" $args "$@"
 fi
 
-echo "You do not appear to be within a project with Drush installed ($exe1 or $exe2)" >&2
+exe3=www/vendor/bin/drush
+if dir="$(findup -f $exe2)"; then
+    exec "$dir/$exe3" $args "$@"
+fi
+
+echo "You do not appear to be within a project with Drush installed ($exe1, $exe2 or $exe3)" >&2
 exit 1
