@@ -6,6 +6,11 @@ if [[ ! -f /proc/version ]]; then
     exit 1
 fi
 
+if is-docker; then
+    # Could be Docker running on WSL, which is not the same as WSL itself
+    exit 1
+fi
+
 if ! grep -iq 'microsoft' /proc/version; then
     # Not WSL
     exit 1
