@@ -16,7 +16,9 @@
 !/.bash_profile_personal
 !/.bashrc
 !/.bashrc_personal
+
 !/.bin
+/.bin/local/*
 
 !/.cache
 /.cache/*

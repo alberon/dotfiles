@@ -44,10 +44,14 @@ PATH="$HOME/.composer/vendor/bin:$PATH"
 PATH="$HOME/.composer/packages/vendor/bin:$PATH"
 
 PATH="$HOME/.bin:$PATH"
+PATH="$HOME/.bin/personal:$PATH"
+PATH="$HOME/.bin/local:$PATH"
 
 if is-wsl; then
     # Note: Can't use aliases because they interfere with _complete_alias
     PATH="$HOME/.bin/windows:$PATH"
+    PATH="$HOME/.bin/personal/windows:$PATH"
+    PATH="$HOME/.bin/local/windows:$PATH"
 fi
 
 # For tab completion with sudo
