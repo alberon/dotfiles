@@ -97,9 +97,10 @@
     say 'Checking for known skeleton files...'
     if [[ -f .bashrc ]]; then
         md5="$(md5sum .bashrc | cut -d' ' -f1)"
-        if [[ $md5 = 'cf277664b1771217d7006acdea006db1' ]] || [[ $md5 = '1f98b8f3f3c8f8927eca945d59dcc1c6' ]]; then
+        if [[ $md5 = 'cf277664b1771217d7006acdea006db1' || $md5 = '1f98b8f3f3c8f8927eca945d59dcc1c6' || $md5 = '62514b3a2327c6b090c546e0cc9d89d4' ]]; then
             # cf277664b1771217d7006acdea006db1 = Ubuntu 18.04, 19.10 (DigitalOcean)
             # 1f98b8f3f3c8f8927eca945d59dcc1c6 = Ubuntu 18.04 (Multipass)
+            # 62514b3a2327c6b090c546e0cc9d89d4 = Ubuntu 20.04 (Multipass)
             echo 'Deleting .bashrc'
             rm -f .bashrc
         else
