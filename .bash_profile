@@ -101,7 +101,7 @@ fi
 # Stop Perl complaining on cPanel servers
 # I did set in MinTTY, but it's not picked up
 # Using en_US instead of en_GB to stop Vim and less complaining
-if [[ ${LANG:-} = 'C.UTF-8' ]]; then
+if [[ ${LANG:-} = 'C.UTF-8' ]] && locale -a | grep en_US.utf8 >/dev/null; then
     export LANG='en_US.UTF-8'
     export LC_ALL='en_US.UTF-8'
 fi
