@@ -104,7 +104,7 @@ alias db='docker build'
 alias dc='docker-compose'
 alias dpkg-reconfigure="$sudo dpkg-reconfigure"
 alias dr='docker run'
-alias dri='docker run -it'
+alias dri='docker run -it --rm'
 
 alias gcm='g co master'
 alias grep="$(command -v grep-less)" # command -v makes it work with sudo
