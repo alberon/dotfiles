@@ -24,7 +24,7 @@ setup-identity 'Your Name' 'yourname@alberon.co.uk'
 
 ### Installing on Windows Subsystem for Linux (WSL) with Windows Terminal
 
-Install the [Fira Code](https://github.com/tonsky/FiraCode) font.
+Optionally install the [Fira Code](https://github.com/tonsky/FiraCode) font.
 
 [Install Windows Terminal](https://www.microsoft.com/en-gb/p/windows-terminal/9n0dx20hk701#activetab=pivot:overviewtab). (Note: If you installed it *before* setting up Ubuntu, run "configure WSL shortcuts" to add the shortcuts.)
 
@@ -32,7 +32,14 @@ Click Start, search for `features` and select "Turn Windows features on or off".
 
 [Install Ubuntu](https://www.microsoft.com/en-us/p/ubuntu/9nblggh4msv6?activetab=pivot:overviewtab). Run it, wait while it completes setup, set a username and password when prompted, then quit.
 
-[Install VcXsrv](https://sourceforge.net/projects/vcxsrv/), then run XLaunch from the Start Menu. Accept the default settings except untick "Primary Selection". Save the configuration into the `shell:startup` folder so it's started automatically.
+If you are using WSL 1, [install VcXsrv](https://sourceforge.net/projects/vcxsrv/), then run XLaunch from the Start Menu. Accept the default settings except untick "Primary Selection". Save the configuration into the `shell:startup` folder so it's started automatically.
+
+If you are using WSL 2, [WSLg](https://github.com/microsoft/wslg) is installed automatically. If you prefer, you can install VcXsrv instead (see above) and disable WSLg by putting [this](https://github.com/microsoft/wslg/discussions/523#discussioncomment-1505900) in `c:\Users\<Username>\.wslconfig`:
+
+```ini
+[wsl2]
+guiApplications=false
+```
 
 Launch Windows Terminal from the start menu, click the tab dropdown menu, then Ubuntu.
 
