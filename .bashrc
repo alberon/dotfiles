@@ -101,7 +101,7 @@ alias cy='cypress'
 
 alias d='docker'
 alias db='docker build'
-alias dc='docker compose'
+alias dc='docker-compose'
 alias dpkg-reconfigure="$sudo dpkg-reconfigure"
 alias dr='docker run'
 alias dri='docker run -it --rm'
