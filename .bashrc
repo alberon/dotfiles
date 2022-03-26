@@ -686,12 +686,18 @@ xdebug() {
 yarn() {
     # Make 'yarn' more like 'composer'
     case $1 in
-        in|ins) shift; command yarn install "$@" ;;
-        out) shift; command yarn outdated "$@" ;;
-        re|rem) shift; command yarn remove "$@" ;;
-        up|update) shift; command yarn upgrade "$@" ;;
-        *) command yarn "$@" ;;
+        in|ins) shift; args=(install) ;;
+        out) shift; args=(outdated) ;;
+        re|rem) shift; args=(remove) ;;
+        up|update) shift; args=(upgrade) ;;
+        *) args=() ;;
     esac
+
+    if dir="$(findup -x scripts/yarn.sh)"; then
+        "$dir/scripts/yarn.sh" "${args[@]}" "$@"
+    else
+        command yarn "${args[@]}" "$@"
+    fi
 }
 
 
