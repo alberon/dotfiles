@@ -1,0 +1,24 @@
+#!/bin/bash
+set -o errexit -o nounset -o pipefail
+
+# Updates ~/.config/user-dirs.dirs
+# https://askubuntu.com/a/1336990/29806
+xdg-user-dirs-update --set DESKTOP $HOME
+xdg-user-dirs-update --set DOWNLOAD $HOME
+xdg-user-dirs-update --set TEMPLATES $HOME
+xdg-user-dirs-update --set PUBLICSHARE $HOME
+xdg-user-dirs-update --set DOCUMENTS $HOME
+xdg-user-dirs-update --set MUSIC $HOME
+xdg-user-dirs-update --set PICTURES $HOME
+xdg-user-dirs-update --set VIDEOS $HOME
+
+# Remove the existing directories (as long as they are empty)
+rmdir \
+    $HOME/Desktop \
+    $HOME/Downloads \
+    $HOME/Templates \
+    $HOME/Public \
+    $HOME/Documents \
+    $HOME/Music \
+    $HOME/Pictures \
+    $HOME/Videos
