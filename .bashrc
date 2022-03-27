@@ -536,14 +536,28 @@ php() {
 }
 
 phpstorm() {
-    # Automatically launch the current project, if possible, and run in the background
-    if [ $# -gt 0 ]; then
-        command phpstorm "$@" &>> ~/.cache/phpstorm.log &
-    elif local path=$(findup -d .idea); then
-        command phpstorm "$path" &>> ~/.cache/phpstorm.log &
-    else
-        command phpstorm &>> ~/.cache/phpstorm.log &
+    args=()
+
+    if [[ $# -eq 0 ]] && local path=$(findup -d .idea); then
+
+        # Automatically launch the current project
+        if is-wsl; then
+            path=$(wslpath -aw "$path" | sed 's/\\\\wsl.localhost\\/\\\\wsl$\\/')
+        fi
+
+        args=($path)
+
+    elif [[ -d ${1:-} ]] && is-wsl; then
+
+        # Convert the path to WSL format
+        path=$(wslpath -aw "$1" | sed 's/\\\\wsl.localhost\\/\\\\wsl$\\/')
+        shift
+        args=($path)
+
     fi
+
+    # Run PhpStorm in the background
+    command phpstorm "${args[@]}" "$@" &>> ~/.cache/phpstorm.log &
 }
 
 prevd() {

@@ -1,0 +1,15 @@
+#!/bin/bash
+set -o errexit -o nounset -o pipefail
+shopt -s nullglob
+
+file=
+for file in $(wsl-localappdata-path)/JetBrains/Toolbox/apps/PhpStorm/ch-0/*/bin/PhpStorm64.exe; do
+    : # We generally want the last version
+done
+
+if [[ -z $file ]]; then
+    echo "PhpStorm64.exe not found" >&2
+    exit 1
+fi
+
+exec "$file" "$@"

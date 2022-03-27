@@ -1,0 +1,6 @@
+#!/bin/bash
+set -o nounset -o pipefail -o errexit
+
+winpath="$(powershell.exe -Command "[Environment]::GetFolderPath('LocalApplicationData')" | tr -d '\r')"
+
+exec wslpath "$winpath"
