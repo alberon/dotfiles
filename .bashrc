@@ -342,6 +342,14 @@ cwt() {
     fi
 }
 
+docker-compose() {
+    if dir="$(findup -x scripts/docker-compose.sh)"; then
+        "$dir/scripts/docker-compose.sh" "$@"
+    else
+        command docker-compose "$@"
+    fi
+}
+
 dump-path() {
     echo -e "${PATH//:/\\n}"
 }
