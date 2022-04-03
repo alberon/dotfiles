@@ -548,9 +548,10 @@ php() {
 }
 
 phpstorm() {
-    args=()
+    local args=()
+    local path
 
-    if [[ $# -eq 0 ]] && local path=$(findup -d .idea); then
+    if [[ $# -eq 0 ]] && path=$(findup -d .idea); then
 
         # Automatically launch the current project
         if is-wsl; then
