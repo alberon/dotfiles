@@ -12,7 +12,7 @@ fi
 
 # Build the command to run a shell on the specified image
 image="${1:-ubuntu}"
-entrypoint="${2:-/bin/bash}"
+entrypoint="${2:-/bin/sh}"
 shift $(($# > 2 ? 2 : $#))
 
-exec docker run "${opt[@]}" -it "$@" --entrypoint "$entrypoint" "$image"
+exec docker run --rm -it "${opt[@]}" "$@" --entrypoint "$entrypoint" "$image"
