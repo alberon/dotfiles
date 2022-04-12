@@ -73,7 +73,7 @@
             fi
 
             # Make sure it exists
-            if git ls-remote "git://github.com/$answer/dotfiles.git" >/dev/null; then
+            if git ls-remote "https://github.com/$answer/dotfiles.git" >/dev/null; then
                 user="$answer"
             else
                 echo
