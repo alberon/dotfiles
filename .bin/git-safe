@@ -1,0 +1,8 @@
+#!/bin/bash
+set -o errexit -o nounset -o pipefail
+
+source $HOME/.bash/ask.sh
+
+if ask "Mark $PWD as safe in .gitconfig_local?"; then
+    git config -f ~/.gitconfig_local --add safe.directory $PWD
+fi
