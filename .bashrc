@@ -834,7 +834,17 @@ _prompt-pwd-git() {
     fi
 
     # Branch/tag/commit
-    local branch=$(command git branch --no-color 2>/dev/null | sed -nE 's/^\* (.*)$/\1/p')
+    # This must be split into two lines to get the exit code
+    # https://unix.stackexchange.com/a/346880/14368
+    local branch_output
+    branch_output=$(command git branch --no-color 2>&1)
+    if [[ $? -eq 128 && $branch_output = *"is owned by someone else"* ]]; then
+        # https://github.blog/2022-04-12-git-security-vulnerability-announced/
+        color -n lred ' (repo owned by another user)'
+        return
+    fi
+
+    local branch=$(echo "$branch_output" | sed -nE 's/^\* (.*)$/\1/p')
     if [[ -z $branch ]]; then
         # e.g. Before any commits are made
         branch=$(command git symbolic-ref --short HEAD 2>/dev/null)
@@ -856,8 +866,6 @@ _prompt-pwd-git() {
     elif [[ -f "$root/.git/BISECT_LOG" ]]; then
         color -n fg-111 ' (bisecting)'
     else
-        # This must be split into two lines to get the exist code
-        # https://unix.stackexchange.com/a/346880/14368
         local gstatus
         gstatus=$(timeout 1 git status --porcelain=2 --branch 2>/dev/null)
         local exitcode=$?
