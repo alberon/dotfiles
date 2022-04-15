@@ -4,10 +4,14 @@ set -o errexit -o nounset -o pipefail
 cd
 source .bash/color.bash
 
+# Disable auto-update inside Docker containers because they are generally immutable
+if [[ -f /.dockerenv ]]; then
+    exit
+fi
+
+# Only run it once per day
 today=$(date +%Y%m%d)
 
-# Check if this has already been run today
-# Only run it once per day because it can be slow
 if [[ -f .local/dotfiles-last-auto-update ]]; then
     last_update=$(cat .local/dotfiles-last-auto-update)
     if [[ $last_update = $today ]]; then
