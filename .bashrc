@@ -95,6 +95,7 @@ fi
 
 alias b='c -'
 
+alias cat='bat-or-cat'
 alias chmox='chmod' # Common typo
 alias cp='cp -i'
 alias cy='cypress'

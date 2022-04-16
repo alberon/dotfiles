@@ -31,6 +31,8 @@ fi
 #---------------------------------------
 
 # Note: The ones lower down take precedence
+PATH="$PATH:$HOME/.bin/fallback"
+
 if [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
