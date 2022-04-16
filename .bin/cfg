@@ -1,9 +1,11 @@
 #!/bin/bash
 cd
 
-if [ $# -gt 0 ]; then
-    exec git "$@"
+if [[ $# -gt 0 ]]; then
+    command git "$@"
+elif command -v lazygit &>/dev/null; then
+    lazygit
 else
-    exec git status
+    command git status
 fi
 

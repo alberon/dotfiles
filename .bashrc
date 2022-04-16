@@ -375,6 +375,8 @@ g() {
 git() {
     if [[ $# -gt 0 ]]; then
         command git "$@"
+    elif command -v lazygit &>/dev/null; then
+        lazygit
     else
         command git status
     fi
