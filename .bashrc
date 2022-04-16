@@ -107,7 +107,6 @@ alias chmox='chmod' # Common typo
 alias cp='cp -i'
 alias cy='cypress'
 
-alias d='docker'
 alias db='docker build'
 alias dc='docker-compose'
 alias dpkg-reconfigure="$sudo dpkg-reconfigure"
@@ -144,8 +143,6 @@ else
     alias ls="ls -hF --color=always --hide='*.pyc' --hide='*.sublime-workspace'"
     alias lsa="ls -hFA --color=always --hide='*.pyc' --hide='*.sublime-workspace'"
 fi
-
-alias lzd='lazydocker'
 
 alias mux='tmuxinator'
 
