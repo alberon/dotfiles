@@ -85,6 +85,29 @@
 [commit]
     verbose = 2
 
+[core]
+    pager = delta-or-less
+
+[delta]
+    features = decorations
+    navigate = true
+
+[delta "decorations"]
+    file-decoration-style = brightwhite
+    file-style = brightwhite
+    grep-file-style = brightwhite
+    hunk-header-decoration-style = none
+    hunk-header-file-style = brightcyan
+    hunk-header-line-number-style = brightcyan
+    line-numbers = true
+    line-numbers-minus-style = red
+    line-numbers-plus-style = green
+    line-numbers-left-style = white
+    line-numbers-right-style = white
+
+[diff]
+    colorMoved = default
+
 [init]
     defaultBranch = master
 
