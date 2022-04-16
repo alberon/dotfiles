@@ -32,7 +32,14 @@ shopt -s extglob
 [[ -f /etc/bash_completion ]] && source /etc/bash_completion
 
 # fzf - fuzzy finder
-[[ -f ~/.fzf.bash ]] && source ~/.fzf.bash
+if [[ -f ~/.fzf.bash ]]; then
+    # Manual install
+    source ~/.fzf.bash
+else
+    # Ubuntu package
+    [[ -f /usr/share/doc/fzf/examples/key-bindings.bash ]] && source /usr/share/doc/fzf/examples/key-bindings.bash
+    [[ -f /usr/share/doc/fzf/examples/completion.bash ]] && source /usr/share/doc/fzf/examples/completion.bash
+fi
 
 # Google Cloud Shell
 [[ -f /google/devshell/bashrc.google ]] && source /google/devshell/bashrc.google
@@ -959,10 +966,10 @@ bind '"\e[1;7A": "\200\C-a\C-kc ..\C-m\201"'
 
 # Ctrl-Alt-Down
 if declare -f _fzf_setup_completion &>/dev/null; then
-    # See .fzf/shell/key-bindings.bash
+    # See /usr/share/doc/fzf/examples/key-bindings.bash
     bind '"\e[1;7B": "\ec"'
 else
-    bind '"\e[1;7B": "\C-a\C-kcd \e[Z"'
+    bind '"\e[1;7B": "\C-a\C-kc \e[Z"'
 fi
 
 # Space - Expand history (!!, !$, etc.) immediately
@@ -1027,8 +1034,9 @@ prompt_hostname=$(get-full-hostname)
 #---------------------------------------
 # fzf - fuzzy finder
 #---------------------------------------
-
 # https://github.com/junegunn/fzf
+
+# Custom filters
 _fzf_compgen_path() {
     echo "$1"
     command find -L "$1" \
@@ -1079,6 +1087,7 @@ export FZF_ALT_C_OPTS="
     --preview 'tree -C {} | head -200'
 "
 
+# Type "cd #<Tab>" (and other commands) to trigger fzf - because the default "cd **<Tab>" is harder to type
 export FZF_COMPLETION_TRIGGER='#'
 
 if declare -f _fzf_setup_completion &>/dev/null; then
@@ -1091,6 +1100,15 @@ if declare -f _fzf_setup_completion &>/dev/null; then
     _fzf_setup_completion path g
     _fzf_setup_completion path git
 fi
+
+# Override Alt-C / Ctrl-Alt-Down to use 'c' instead of 'cd'
+# Based on /usr/share/doc/fzf/examples/key-bindings.bash
+__fzf_cd__() {
+  local cmd dir
+  cmd="${FZF_ALT_C_COMMAND:-"command find -L . -mindepth 1 \\( -path '*/\\.*' -o -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune \
+    -o -type d -print 2> /dev/null | cut -b3-"}"
+  dir=$(eval "$cmd" | FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} --reverse $FZF_DEFAULT_OPTS $FZF_ALT_C_OPTS" $(__fzfcmd) +m) && printf 'c %q' "$dir"
+}
 
 
 #---------------------------------------
