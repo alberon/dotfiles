@@ -145,6 +145,8 @@ else
     alias lsa="ls -hFA --color=always --hide='*.pyc' --hide='*.sublime-workspace'"
 fi
 
+alias lzd='lazydocker'
+
 alias mux='tmuxinator'
 
 alias nslookup='_domain-command nslookup'
