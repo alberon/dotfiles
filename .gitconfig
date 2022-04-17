@@ -99,11 +99,20 @@
     hunk-header-decoration-style = none
     hunk-header-file-style = brightcyan
     hunk-header-line-number-style = brightcyan
+    hunk-header-style = cyan
     line-numbers = true
     line-numbers-minus-style = red
     line-numbers-plus-style = green
     line-numbers-left-style = white
     line-numbers-right-style = white
+    minus-non-emph-style = syntax 52
+    minus-emph-style = syntax 88
+    minus-empty-line-marker-style = syntax 52
+    minus-style = syntax 52
+    plus-non-emph-style = syntax 22
+    plus-emph-style = syntax 28
+    plus-empty-line-marker-style = syntax 22
+    plus-style = syntax 22
 
 [diff]
     colorMoved = default
