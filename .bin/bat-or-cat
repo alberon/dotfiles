@@ -1,6 +1,11 @@
 #!/bin/bash
 set -o errexit -o nounset -o pipefail
 
+# https://github.com/sharkdp/bat#on-ubuntu-using-apt
+if command -v batcat &>/dev/null; then
+    exec batcat --style=plain "$@"
+fi
+
 if command -v bat &>/dev/null; then
     exec bat --style=plain "$@"
 fi
