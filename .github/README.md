@@ -340,7 +340,7 @@ The `t` command makes it easy to run scripts specific to a project (or anywhere 
 repo/
 ├── ...
 └── scripts/
-    ├── download/
+    ├── deploy/
     │   ├── live.sh
     │   └── staging.sh
     └── push.sh
@@ -349,16 +349,16 @@ repo/
 To run these three scripts, you would normally type:
 
 ```bash
-scripts/download/live.sh
-scripts/download/staging.sh
+scripts/deploy/live.sh
+scripts/deploy/staging.sh
 scripts/push.sh
 ```
 
 But using the `t` command this is simplified to:
 
 ```bash
-t download live
-t download staging
+t deploy live
+t deploy staging
 t push
 ```
 
@@ -368,7 +368,7 @@ You can also:
 
 - Type `t <name> [args...]` to run a script with arguments
 - Type `t` alone to list all the scripts available
-- Type `t <dir>` to list all the scripts in a subdirectory (e.g. `t download`)
+- Type `t <dir>` to list all the scripts in a subdirectory (e.g. `t deploy`)
 - Use tab-completion (e.g. `t d<tab> s<tab>` is 7 keys instead of 18)
 
 ## How to fork Dotfiles
