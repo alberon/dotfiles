@@ -343,7 +343,7 @@ repo/
     ├── deploy/
     │   ├── live.sh
     │   └── staging.sh
-    └── push.sh
+    └── php.sh
 ```
 
 To run these three scripts, you would normally type:
@@ -351,7 +351,7 @@ To run these three scripts, you would normally type:
 ```bash
 scripts/deploy/live.sh
 scripts/deploy/staging.sh
-scripts/push.sh
+scripts/php.sh
 ```
 
 But using the `t` command this is simplified to:
@@ -359,10 +359,10 @@ But using the `t` command this is simplified to:
 ```bash
 t deploy live
 t deploy staging
-t push
+t php
 ```
 
-Note that the file extension is not required (it can be any extension - e.g. `.sh`/`.php` - or no extension), and files in subdirectories become subcommands. It will automatically search up the directory tree, if you are in a subdirectory of the project - in that case it's equivalent to `../../scripts/push.sh` (for example).
+Note that the file extension is not required (it can be any extension - e.g. `.sh`/`.php` - or no extension), and files in subdirectories become subcommands. It will automatically search up the directory tree, if you are in a subdirectory of the project - in that case it's equivalent to `../../scripts/php.sh` (for example).
 
 You can also:
 
