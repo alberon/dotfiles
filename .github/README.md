@@ -2,7 +2,7 @@
 
 [These dotfiles](https://github.com/alberon/dotfiles) are for use on shared or personal Alberon accounts.
 
-You can also fork them to make your own copy, which you can customise to your liking (see below).
+You can also fork them to make your own copy, which you can customise to your liking ([see below](#how-to-fork-dotfiles)).
 
 ## Installation
 
