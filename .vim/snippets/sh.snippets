@@ -1,18 +1,19 @@
-snippet #!
-	#!/bin/bash
-	set -o errexit -o nounset -o pipefail
-
-	${2}
-
 snippet ==
 	#===============================================================================
 	# ${1}
 	#===============================================================================
+	$0
 
 snippet --
 	#---------------------------------------
 	# ${1}
 	#---------------------------------------
+	$0
+
+snippet {
+	{
+		${1}
+	}
 
 snippet case
 	case ${1:word} in
@@ -45,6 +46,13 @@ snippet if
 		${2}
 	fi
 
+snippet she
+	#!/bin/bash
+	set -o errexit -o nounset -o pipefail
+	cd "$(dirname "\$0")/.."
+
+	${0}
+
 snippet then
 	then
 		${1}
@@ -59,8 +67,3 @@ snippet wh
 	while [ ${1:condition} ]; do
 		${2}
 	done
-
-snippet {
-	{
-		${1}
-	}
