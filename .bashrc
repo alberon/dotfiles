@@ -106,7 +106,7 @@ if command -v batcat &>/dev/null && ! command -v bat &>/dev/null; then
     alias bat='batcat'
 fi
 
-alias cat='bat-or-cat'
+alias cat="$HOME/.bin/bat-or-cat"
 alias chmox='chmod' # Common typo
 alias cp='cp -i'
 alias cy='cypress'
