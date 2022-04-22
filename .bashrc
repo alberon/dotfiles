@@ -513,7 +513,13 @@ marks() {
     if is-mac; then
         CLICOLOR_FORCE=1 command ls -lF "$HOME/.marks" | sed '1d;s/  / /g' | cut -d' ' -f9-
     else
-        command ls -l --color=always "$HOME/.marks" | sed '1d;s/  / /g' | cut -d' ' -f9-
+        command ls -l --color=always "$HOME/.marks" | sed '1d;s/  / /g' | cut -d' ' -f9- | {
+            if command -v column &>/dev/null; then
+                column -t
+            else
+                cat
+            fi
+        }
     fi
 }
 
