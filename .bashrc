@@ -994,6 +994,7 @@ bind 'Space: magic-space'
 dirhistory_past=()
 dirhistory_future=()
 
+export GPG_TTY=$(tty)
 export HISTCONTROL='ignoreboth'
 export HISTIGNORE='&'
 export HISTSIZE=50000
