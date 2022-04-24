@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# https://termbin.com/
+exec 3<>/dev/tcp/termbin.com/9999       # create FD
+[ -t 0 ] && echo -en $* >&3 || cat >&3  # send it
+url=$(tr -d '\0' <&3)                   # get the url
+exec 3<&-                               # remove FD (clean up)
+
+echo "Plain:     $url"
+echo "Formatted: ${url/:\/\//:\/\/l.}"
