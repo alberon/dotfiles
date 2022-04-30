@@ -994,6 +994,7 @@ bind 'Space: magic-space'
 dirhistory_past=()
 dirhistory_future=()
 
+export DOCKER_USER="$(id -u):$(id -g)" # https://stackoverflow.com/a/68711840/167815
 export GPG_TTY=$(tty)
 export HISTCONTROL='ignoreboth'
 export HISTIGNORE='&'
