@@ -35,7 +35,7 @@ color-range 'bg-l' fg-auto
 echo
 
 heading 'Styles'
-for style in bold dim underline blink rapidblink reverse hide strike; do
+for style in bold dim italic underline blink rapidblink reverse hide strike; do
     color-range '' bg-auto $style
     echo -n ' - '
     color lyellow -- "$(printf '%-10s' $style)"
