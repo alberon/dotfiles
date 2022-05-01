@@ -6,9 +6,11 @@ source ~/.bash/color.bash
 
 color lblue 'Downloading APT package information'
 sudo apt update
+echo
 
 color lblue 'Upgrading installed packages'
 sudo apt full-upgrade -y
+echo
 
 color lblue 'Installing additional packages'
 # Note: vim-gtk adds X11 clipboard support - but it takes much longer to install :(
@@ -18,6 +20,17 @@ if apt show fzf &>/dev/null; then
     packages="$packages fzf"
 fi
 sudo apt install -y $packages || true
+echo
 
 color lblue 'Removing unneeded packages'
 sudo apt autoremove -y
+echo
+
+color lblue 'Installing lazygit'
+curl -fsSL https://github.com/jesseduffield/lazygit/releases/download/v0.34/lazygit_0.34_Linux_x86_64.tar.gz \
+  | sudo tar zx -C /usr/local/bin/ lazygit
+echo
+
+color lblue 'Installing lazydocker'
+curl -fsSL https://github.com/jesseduffield/lazydocker/releases/download/v0.12/lazydocker_0.12_Linux_x86_64.tar.gz \
+  | sudo tar zx -C /usr/local/bin/ lazydocker
