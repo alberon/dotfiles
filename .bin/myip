@@ -1,5 +1,9 @@
 #!/bin/bash
 set -o errexit -o nounset -o pipefail
 
-curl ipinfo.io
-echo # Add missing trailing new line
+if command -v jq &>/dev/null; then
+    curl -fsS https://ipinfo.io/ | jq
+else
+    curl https://ipinfo.io/
+    echo # Add missing trailing new line
+fi
