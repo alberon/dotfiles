@@ -979,7 +979,7 @@ bind '"\e[1;7C": "\200\C-a\C-knextd\C-m\201"'
 bind '"\e[1;7A": "\200\C-a\C-kc ..\C-m\201"'
 
 # Ctrl-Alt-Down
-if declare -f _fzf_setup_completion &>/dev/null; then
+if declare -f __fzf_cd__ &>/dev/null; then
     # See /usr/share/doc/fzf/examples/key-bindings.bash
     bind '"\e[1;7B": "\ec"'
 else
