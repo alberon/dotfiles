@@ -10,7 +10,7 @@ You can also fork them to make your own copy, which you can customise to your li
 
 ```bash
 cd
-wget alberon.uk/cfg
+wget alberon.uk/cfg # Or: wget al0.uk/cfg
 . cfg
 ```
 
