@@ -976,7 +976,7 @@ bind '"\e[1;7D": "\200\C-a\C-kprevd\C-m\201"'
 bind '"\e[1;7C": "\200\C-a\C-knextd\C-m\201"'
 
 # Ctrl-Alt-Up
-bind '"\e[1;7A": "\200\C-a\C-kc ..\C-m\201"'
+bind '"\e[1;7A": "\200\C-a\C-ku\C-m\201"'
 
 # Ctrl-Alt-Down
 if declare -f __fzf_cd__ &>/dev/null; then
