@@ -3,14 +3,21 @@ set -o errexit -o nounset -o pipefail
 
 source ~/.bash/color.bash
 
-color blue bold 'Checking out master...'
-git checkout master
-echo
-color blue bold 'Renaming to main...'
-git branch -m master main
-echo
-color blue bold 'Fetching origin (if configured)...'
+branch=$(git branch --show-current)
+
+if [[ $branch != 'main' && $branch != 'master' ]]; then
+    color lred 'The master branch is not checked out' >&2
+    exit 1
+fi
+
+if [[ $branch != 'main' ]]; then
+    color lblue 'Renaming to main...'
+    git branch -m master main
+    echo
+fi
+
+color lblue 'Fetching origin (if configured)...'
 git fetch origin
 echo
-color blue bold 'Setting upstream branch (if configured)...'
+color lblue 'Setting upstream branch (if configured)...'
 git branch -u origin/main
