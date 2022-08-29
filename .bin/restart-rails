@@ -1,7 +1,7 @@
 #!/bin/bash
 
 root=$(pwd 2>/dev/null)
-while [ ! -e "$root/script/rails" ]; do
+while [[ ! -e "$root/script/rails" && ! -e "$root/bin/rails" ]]; do
     if [ "$root" = "" ]; then
         echo "Not inside a Rails application" >&2
         exit 1
