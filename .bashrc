@@ -81,6 +81,7 @@ alias a2enmod="$sudo a2enmod"
 alias a2ensite="$sudo a2ensite"
 alias addgroup="$sudo addgroup"
 alias adduser="$sudo adduser"
+alias ap='ansible-playbook'
 
 if is-cygwin; then
     alias agi='apt-cyg install'
