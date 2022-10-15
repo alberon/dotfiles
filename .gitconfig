@@ -118,7 +118,7 @@
     colorMoved = default
 
 [init]
-    defaultBranch = master
+    defaultBranch = main
 
 [merge]
     conflictstyle = diff3
