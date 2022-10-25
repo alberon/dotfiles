@@ -173,7 +173,6 @@ alias s='sudo '
 alias scra="$sudo systemctl reload apache2 && $sudo systemctl status apache2"
 alias service="$sudo service"
 alias shutdown="$sudo poweroff"
-alias snap="$sudo snap"
 alias sshak='ssh -o StrictHostKeyChecking=accept-new'
 alias sshstop='ssh -O stop'
 alias storm='phpstorm'
@@ -658,6 +657,15 @@ setup-docker() {
     maybe-sudo apt install docker.io &&
     maybe-sudo usermod -aG docker "$USER" &&
     exec maybe-sudo su -l "$USER"
+}
+
+snap() {
+    # e.g. "/usr/bin/snap run --command=complete hugo [...]"
+    if [[ "$@" =~ "--command=complete" ]]; then
+        command snap "$@"
+    else
+        maybe-sudo snap
+    fi
 }
 
 status() {
