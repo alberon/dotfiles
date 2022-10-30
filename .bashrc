@@ -664,7 +664,7 @@ snap() {
     if [[ "$@" =~ "--command=complete" ]]; then
         command snap "$@"
     else
-        maybe-sudo snap
+        maybe-sudo snap "$@"
     fi
 }
 
