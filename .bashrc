@@ -659,15 +659,6 @@ setup-docker() {
     exec maybe-sudo su -l "$USER"
 }
 
-snap() {
-    # e.g. "/usr/bin/snap run --command=complete hugo [...]"
-    if [[ "$@" =~ "--command=complete" ]]; then
-        command snap "$@"
-    else
-        maybe-sudo snap "$@"
-    fi
-}
-
 status() {
     # Show the result of the last command
     local status=$?
