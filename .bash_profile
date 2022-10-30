@@ -102,6 +102,11 @@ if [[ -z $DISPLAY ]]; then
     fi
 fi
 
+if [[ -z $XAUTHORITY ]]; then
+    # https://forum.snapcraft.io/t/x11-forwarding-using-ssh/2381/8
+    export XAUTHORITY=$HOME/.Xauthority
+fi
+
 # Stop Perl complaining on cPanel servers
 # I did set in MinTTY, but it's not picked up
 # Using en_US instead of en_GB to stop Vim and less complaining
