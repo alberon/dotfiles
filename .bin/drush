@@ -11,12 +11,12 @@ if dir="$(findup -f $exe1)"; then
 fi
 
 exe2=vendor/bin/drush
-if dir="$(findup -f $exe1)"; then
+if dir="$(findup -f $exe2)"; then
     exec "$dir/$exe2" $args "$@"
 fi
 
 exe3=www/vendor/bin/drush
-if dir="$(findup -f $exe2)"; then
+if dir="$(findup -f $exe3)"; then
     exec "$dir/$exe3" $args "$@"
 fi
 
