@@ -15,7 +15,3 @@ if ! ask 'This will drop and rebuild the database - are you sure?'; then
 fi
 
 artisan migrate:fresh --drop-views --seed
-
-if [[ -x scripts/ide-helper.sh && -d vendor/barryvdh/laravel-ide-helper ]]; then
-    scripts/ide-helper.sh
-fi
