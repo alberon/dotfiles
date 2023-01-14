@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# Usage:
+#   source ~/.dotfiles/uninstall
+#
+# Or to uninstall without confirming:
+#   FORCE_DOTFILES_UNINSTALL=1 source ~/.dotfiles/uninstall
+(
+    # Confirm
+    if [[ ${FORCE_DOTFILES_UNINSTALL:-} != 1 ]]; then
+        source ~/.bash/ask.sh
+        ask 'Are you sure you want to UNINSTALL DOTFILES?' n || exit
+    fi
+
+    # Prepare an (almost) empty branch
+    cd
+    git checkout --orphan blank
+    git reset
+    git add .gitignore
+    git commit -m 'Uninstall'
+
+    # Delete the files by checking out the empty branch (leaves the ignored files alone)
+    git add -A
+    git checkout -f
+
+    # Delete the repo and a few ignored files
+    rm -rf \
+        .cache/ctrlp \
+        .cache/vim \
+        .git \
+        .gitignore \
+        .local/bash-last-directory \
+        .local/dotfiles-last-auto-update \
+        .ssh/config_dynamic \
+        .vim
+
+    # Delete these only if they haven't been changed
+    [[ $(md5sum .my.cnf | cut -d' ' -f1) = 'dce3584e1dd8b14b7ec0322d330946c1' ]] && rm -f .my.cnf
+
+    # Restore the default (skeleton) files, skipping any existing files
+    cp -nr /etc/skel/. .
+
+) && exec bash -l
