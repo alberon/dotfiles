@@ -27,7 +27,7 @@ RUN useradd \
     test
 
 # The first time Bash is run, automatically run the config file
-RUN echo "[ ! -d ~/.git ] && cd && . cfg" >> /etc/bash.bashrc
+RUN echo "[[ ! -d ~/.git ]] && [[ -f ~/cfg ]] && cd && . cfg" >> /etc/bash.bashrc
 
 # Copy the cfg script
 COPY cfg /root/cfg
