@@ -10,7 +10,7 @@ You can also fork them to make your own copy, which you can customise to your li
 
 ```bash
 cd
-wget alberon.uk/cfg # Or: wget al0.uk/cfg
+wget al0.uk/cfg # Or: wget alberon.uk/cfg
 . cfg
 ```
 
@@ -69,7 +69,7 @@ Run "Ubuntu Terminal" from the start menu. Run:
 
 ```bash
 cd
-wget djm.me/cfg
+wget al0.uk/cfg # Or: wget alberon.uk/cfg
 . cfg
 ```
 
@@ -107,7 +107,7 @@ Then install dotfiles as above:
 
 ```bash
 cd
-wget djm.me/cfg
+wget al0.uk/cfg # Or: wget alberon.uk/cfg
 . cfg
 ```
 
@@ -147,7 +147,7 @@ Then install Dotfiles as normal:
 
 ```bash
 cd
-wget djm.me/cfg
+wget al0.uk/cfg # Or: wget alberon.uk/cfg
 . cfg
 ```
 
