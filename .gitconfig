@@ -156,3 +156,5 @@
 [include]
     path = .gitconfig_personal
     path = .gitconfig_local
+[safe]
+	directory = /home/www/.sites-manager
