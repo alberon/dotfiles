@@ -158,3 +158,4 @@
     path = .gitconfig_local
 [safe]
 	directory = /home/www/.sites-manager
+	directory = /home/odoo/custom_addons/medik8_customizations
